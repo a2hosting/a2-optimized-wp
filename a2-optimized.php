@@ -1,7 +1,7 @@
 <?php
 /*
    Plugin Name: A2 Optimized
-   Plugin URI: http://wordpress.org/extend/plugins/a2-optimized/
+   Plugin URI: https://github.com/A2-Hosting/a2optimized-wp
    Version: 1.0beta
    Author: a2hosting.com
    Description: A2 Optimized WordPress optimization plugin
@@ -26,7 +26,7 @@ function files_not_found_notice(){
 
   if(isset($whois->net->orgRef->handle)){
     if($whois->net->orgRef->handle == 'A2HOS'){
-      //$a2 = true;
+      $a2 = true;
     }
   }
 
