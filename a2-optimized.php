@@ -74,11 +74,12 @@ function files_not_found_notice(){
     if(version_compare(phpversion(), $A2_Optimized_minimalRequiredPhpVersion) < 0) {
         add_action('admin_notices', 'A2_Optimized_noticePhpVersionWrong');
     }
-		elseif(!file_exists('/opt/a2-optimized/wordpress_encoded/a2-optimized.php')){
-		  add_action('admin_notices', 'files_not_found_notice');
-		}
-		else{
-		  require_once '/opt/a2-optimized/wordpress_encoded/a2-optimized.php';
-		}
+    elseif(!file_exists('/opt/a2-optimized/wordpress_encoded/a2-optimized.php')){
+      add_action('admin_notices', 'files_not_found_notice');
+    }
+    else{
+      $GLOBALS['A2_Plugin_Dir'] = dirname(__FILE__);
+      require_once '/opt/a2-optimized/wordpress_encoded/a2-optimized.php';
+    }
 
 ?>
