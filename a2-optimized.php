@@ -1,7 +1,7 @@
 <?php
 /*
    Plugin Name: A2 Optimized
-   Plugin URI: https://github.com/A2-Hosting/a2optimized-wp
+   Plugin URI: www.a2hosting.com/kb/technical-review/optimizing-wordpress-with-the-a2-optimized-plugin
    Version: 1.0beta
    Author: a2hosting.com
    Description: A2 Optimized WordPress optimization plugin
