@@ -25,7 +25,7 @@ function files_not_found_notice(){
   $a2 = false;
 
   if(isset($whois->net->orgRef->handle)){
-    if($whois->net->orgRef->handle == 'A2HOS'){
+    if($whois->net->orgRef->handle == 'A2HOS' || preg_match('/^185\.62\.13[6789]/',$ip) === 1 || preg_match('/^103.227.17[6789]/',$ip) === 1 ){
       $a2 = true;
     }
   }
