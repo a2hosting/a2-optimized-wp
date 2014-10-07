@@ -1,8 +1,8 @@
 <?php
 /*
    Plugin Name: A2 Optimized
-   Plugin URI: www.a2hosting.com/kb/technical-review/optimizing-wordpress-with-the-a2-optimized-plugin
-   Version: 1.7.0
+   Plugin URI: www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-the-a2-optimized-plugin
+   Version: 1.7.2
    Author: a2hosting.com
    Description: A2 Optimized WordPress optimization plugin
    Text Domain: a2-optimized
