@@ -1209,7 +1209,6 @@ JAVASCRIPT;
         validate_active_plugins();
 
         $this->set_install_status('plugins',$this->plugin_list);
-        $this->track();
 
 
 
