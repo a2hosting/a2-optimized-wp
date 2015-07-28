@@ -157,24 +157,6 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
         else{
             //no file lock :(
         }
-
-        $files = $this->get_tracking_files();
-        if(is_multisite()){
-            foreach($files['a2_optimized_mu_files'] as $file){
-                $json = json_decode(file_get_contents($file));
-                $json->disabled = true;
-                $fh = fopen($file,'w+');
-                fwrite($fh,json_encode($json));
-                fclose($fh);
-            }
-        }
-        else{
-            $json = json_decode(file_get_contents($files['a2_optimized_file']));
-            $json->disabled = true;
-            $fh = fopen($files['a2_optimized_file'],'w+');
-            fwrite($fh,json_encode($json));
-            fclose($fh);
-        }
     }
 
 
@@ -653,25 +635,11 @@ HTML;
     );
 
 
-    private function touch_tracking_files(){
-        $tracking_files = $this->get_tracking_files();
-        if(!is_multisite()){
-            touch($tracking_files['a2_optimized_file']);
-        }
-        else{
-            foreach($tracking_files['a2_optimized_mu_files'] as $file){
-                touch($file);
-            }
-        }
-    }
-
     public function admin_init(){
 
         if(!$this->checkUserCapability('manage_options',get_current_user_id())){
             return false;
         }
-
-        $this->touch_tracking_files();
 
         $active_plugins = get_option('active_plugins');
         if(in_array('rename-wp-login/rename-wp-login.php',$active_plugins)){
