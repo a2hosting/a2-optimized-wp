@@ -1,7 +1,6 @@
 <?php
 
 
-
 if(is_admin()){
     require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
     class A2_Plugin_Installer_Skin Extends Plugin_Installer_Skin{
@@ -11,88 +10,15 @@ if(is_admin()){
 }
 
 
-
 class A2_Optimized_OptionsManager {
 
-
-
     private $optimizations;
-    private $optimizations_status;
     private $advanced_optimizations;
     private $advanced_optimization_status;
     private $optimization_count;
     private $advanced_optimization_count;
     private $plugin_list;
     private $install_status;
-
-
-
-
-
-    /*public function need_litespeed_notice(){
-      echo<<<HTML
-<div class="error" >
-  <p > 
-    The LiteSpeed Cache optimization is only available on <span class="success">Turbo Web Hosting</span> packages.
-  </p>
-</div>
-HTML;
-    }*/
-
-    public function get_tracking_files(){
-        $files = array();
-        preg_match('/\/home\/[^\/]+\//',$_SERVER['DOCUMENT_ROOT'], $match);
-        $files['cpanel_home_dir'] = $match[0];
-        $files['a2_optimized_dir'] = $files['cpanel_home_dir'].'.a2-optimized/';
-        if(!is_dir($files['a2_optimized_dir'])){
-            mkdir($files['a2_optimized_dir']);
-        }
-        $files['a2_optimized_wp_dir'] = $files['a2_optimized_dir'].".wordpress/";
-        if(!is_dir($files['a2_optimized_wp_dir'])){
-            mkdir($files['a2_optimized_wp_dir']);
-        }
-
-        $files['a2_optimized_file'] = $files['a2_optimized_wp_dir'].DB_NAME.'-'.get_current_blog_id().".json";
-        touch($files['a2_optimized_file']);
-
-        if(is_multisite()){
-            $files['a2_optimized_mu_files'] = array();
-            global $wpdb;
-            $sql = $wpdb->prepare("SELECT blog_id,path FROM $wpdb->blogs WHERE archived='0' AND deleted ='0' LIMIT 0,300", '');
-            $blogs = $wpdb->get_results($sql);
-
-            foreach($blogs as $blog){
-                $files['a2_optimized_mu_files'][$blog->blog_id] = $files['a2_optimized_wp_dir'].DB_NAME.'-'.$blog->blog_id.".json";
-                touch($files['a2_optimized_mu_files'][$blog->blog_id]);
-            }
-        }
-
-        return $files;
-    }
-
-    public function track($disabled = false){
-        $files = $this->get_tracking_files();
-        if($disabled == true){
-            $a2_optimized_status = json_decode(file_get_contents($files['a2_optimized_file']));
-        }
-        else{
-            $a2_optimized_status = $this->get_install_status();
-        }
-        $a2_optimized_status->type = 'WordPress';
-        $a2_optimized_status->disabled = $disabled;
-
-        if(is_multisite()){
-            $blog = get_blog_details();
-            $a2_optimized_status->home_dir = $_SERVER['DOCUMENT_ROOT'].$blog->path;
-        }
-        else{
-            $a2_optimized_status->home_dir = ABSPATH;
-        }
-
-        $fh = fopen($files['a2_optimized_file'],'w+');
-        fwrite($fh,json_encode($a2_optimized_status));
-        fclose($fh);
-    }
 
 
     public function get_install_status(){
@@ -131,7 +57,7 @@ HTML;
             }
         }
 
-        if(!$found){
+        if(!$found) {
             ob_start();
             $upgrader = new Plugin_Upgrader( new A2_Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')) );
             $upgrader->install($api->download_link);
@@ -139,7 +65,7 @@ HTML;
             $this->plugin_list = get_plugins();
         }
 
-        if($activate){
+        if($activate) {
             $plugins = $this->get_plugins();
             foreach($plugins as $file=>$plugin){
                 if($plugin['Name'] == $api->name){
@@ -346,8 +272,6 @@ HTML;
             'minify.engine'=> 'file'
         ));
     }
-
-
 
 
     /*public function enable_litespeed_cache(){
@@ -1316,7 +1240,7 @@ JAVASCRIPT;
 
         do_action('a2_notices');
 
-        echo<<<CSS
+        echo<<<STYLE
 <style type='text/css'>
 	div #honeypot {display: none;}
 	div.kb-search {text-align:center}
@@ -1417,7 +1341,7 @@ JAVASCRIPT;
 
 	
 </style>
-CSS;
+STYLE;
 
 
 
@@ -2616,10 +2540,6 @@ HTML;
 
 
 
-
-
-
-
     /**
      * Helper-function outputs the correct form element (input tag, select tag) for the given item
      * @param  $aOptionKey string name of the option (un-prefixed)
@@ -2702,63 +2622,4 @@ HTML;
         }
         return false;
     }
-
-    /**
-     * If you want to generate an email address like "no-reply@your-site.com" then
-     * you can use this to get the domain name part.
-     * E.g.  'no-reply@' . $this->getEmailDomain();
-     * This code was stolen from the wp_mail function, where it generates a default
-     * from "wordpress@your-site.com"
-     * @return string domain name
-     */
-    public function getEmailDomain() {
-        // Get the site domain and get rid of www.
-        $sitename = strtolower($_SERVER['SERVER_NAME']);
-        if (substr($sitename, 0, 4) == 'www.') {
-            $sitename = substr($sitename, 4);
-        }
-        return $sitename;
-    }
-
-
-
 }
-
-
-
-
-
-
-
-
-/*public class A2_Optimization {
-
-	public function enable(){
-		
-	}
-
-	public $slug;
-	public $name;
-	public $plugin;
-	public $plugin_slug;
-	public $file;
-	public $configured;
-	public $required;
-	public $
-	
-	'file'=>'gtmetrix-for-wordpress/gtmetrix-for-wordpress.php',
-	'configured'=>false,
-	'required_options'=>array('gfw_options'=>array('authorized')),
-	'description'=>'Plugin that actively keeps track of your WP install and sends you alerts if your site falls below certain criteria.',
-
-
-}
-
-
-
-
-*/
-
-
-
-?>
