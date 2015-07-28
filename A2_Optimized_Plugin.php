@@ -4,7 +4,7 @@ include_once('A2_Optimized_OptionsManager.php');
 
 error_reporting(E_ERROR);
 
-class A2_Optimized_Plugin extends A2_Optimized_InstallIndicator {
+class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 
     const optionInstalled = '_installed';
     const optionVersion = '_version';
