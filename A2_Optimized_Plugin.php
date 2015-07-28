@@ -118,7 +118,6 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
         touch(ABSPATH.'403.shtml');
         $this->write_htaccess();
 
-        $files = $this->get_tracking_files();
         if(is_multisite()){
             foreach($files['a2_optimized_mu_files'] as $file){
                 $json = json_decode(file_get_contents($file));
