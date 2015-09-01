@@ -13,6 +13,8 @@ if (file_exists("/opt/a2-optimized/wordpress/Optimizations.php")) {
     require_once "/opt/a2-optimized/wordpress/Optimizations.php";
 }
 
+require_once 'A2_Optimized_Optimizations.php';
+
 class A2_Optimized_OptionsManager {
 
     public $plugin_dir;
@@ -354,10 +356,12 @@ class A2_Optimized_OptionsManager {
 
         $thisdir = rtrim(__DIR__, "/");
 
-        wp_enqueue_style('bootstrap', "{$thisdir}/resources/bootstrap/css/bootstrap.css");
-        wp_enqueue_style('bootstrap-theme', "{$thisdir}/resources/bootstrap/css/bootstrap-theme.css");
-        wp_enqueue_script('bootstrap-theme', "{$thisdir}/resources/bootstrap/js/bootstrap.js", array('jquery'));
+        wp_enqueue_style('bootstrap', plugins_url('a2-optimized/resources/bootstrap/css/bootstrap.css'));
+        wp_enqueue_style('bootstrap-theme', plugins_url('a2-optimized/resources/bootstrap/css/bootstrap-theme.css'));
+        wp_enqueue_script('bootstrap-theme', plugins_url('a2-optimized/resources/bootstrap/js/bootstrap.js'), array('jquery'));
 
+
+        $image_dir = plugins_url('a2-optimized/resources/images');
 
         do_action('a2_notices');
 
@@ -387,7 +391,7 @@ class A2_Optimized_OptionsManager {
 		border-left:1px solid #caced3;
 		border-right:1px solid #caced3;
 		padding:15px 20px 0 20px;
-		background:#fff url({$thisdir}/resources/images/background-both.png) no-repeat;
+		background:#fff url({$image_dir}/background-both.png) no-repeat;
 	}
 	.fade{
 		opacity: 100 !important;
@@ -396,10 +400,10 @@ class A2_Optimized_OptionsManager {
 		width:24px;
 		height:24px;
 		float:left;
-		background: url({{$thisdir}/resources/images/icons.png) no-repeat -452px -112px;
+		background: url({$image_dir}/icons.png) no-repeat -452px -112px;
 	}
 	.checkbox.checked{
-		background: url('{$thisdir}/resources/images/icons.png') no-repeat -424px -112px;
+		background: url({$image_dir}/icons.png) no-repeat -424px -112px;
 	}
 	.optimization-status{
 		width:260px;
@@ -600,7 +604,7 @@ HTML;
 			<div>
 				<div>
 					<div style="float:left;clear:both">
-						<img src="{$thisdir}/resources/images/a2optimized.png"  style="margin-top:20px" />
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
 					</div>
 					<div style="float:right;">
 						{$kb_search_box}
@@ -714,7 +718,6 @@ HTML;
     public function get_plugin_status()
     {
         $thisclass = $this;
-
 
         $this->advanced_optimizations = array(
             'gtmetrix' => array(
@@ -1586,24 +1589,6 @@ PHP;
             $home_path = "/{$home_path[1]}/";
         }
 
-        $relative_content_dir = str_replace(ABSPATH, "", WP_CONTENT_DIR);
-        $relative_plugin_dir = str_replace(ABSPATH, "", WP_PLUGIN_DIR);
-        $resource_pattern = "{$relative_plugin_dir}/a2-optimized/resource/(.*)";
-
-
-        $a2htaccess = <<<APACHE
-
-# BEGIN A2 Optimized
-# DO NOT REMOVE
-<IfModule mod_rewrite.c>
-	RewriteEngine On
-	RewriteRule {$resource_pattern} {$relative_content_dir}/a2-resource.php?resource=$1 [L]
-</IfModule>
-ErrorDocument 403 /403.shtml
-# END A2 Optimized
-APACHE;
-
-
         $a2hardening = "";
 
 
@@ -1647,15 +1632,10 @@ APACHE;
 
         $htaccess = file_get_contents(ABSPATH . '.htaccess');
 
-        $pattern = "/[\r\n]*# BEGIN A2 Optimized.*# END A2 Optimized[\r\n]*/msiU";
-        $htaccess = preg_replace($pattern, '', $htaccess);
-        //$pattern = "/[\r\n]*# BEGIN LiteSpeed Cache.*# END LiteSpeed Cache[\r\n]*/msiU";
-        //$htaccess = preg_replace($pattern,'',$htaccess);
         $pattern = "/[\r\n]*# BEGIN WordPress Hardening.*# END WordPress Hardening[\r\n]*/msiU";
         $htaccess = preg_replace($pattern, '', $htaccess);
 
         $htaccess = <<<HTACCESS
-$a2htaccess
 $litespeed
 $a2hardening
 $htaccess
@@ -1700,33 +1680,7 @@ HTML;
 
     }
 
-    function get_plugin_slug($uri)
-    {
-        return array_pop(explode('/', trim($uri, '/')));
-    }
 
-    /**
-     * @return array of string name of options
-     */
-    public function getOptionNames()
-    {
-        return array_keys($this->getOptionMetaData());
-    }
-
-    /**
-     * Remove the prefix from the input $name.
-     * Idempotent: If no prefix found, just returns what was input.
-     * @param  $name string
-     * @return string $optionName without the prefix.
-     */
-    public function &unPrefix($name)
-    {
-        $optionNamePrefix = $this->getOptionNamePrefix();
-        if (strpos($name, $optionNamePrefix) === 0) {
-            return substr($name, strlen($optionNamePrefix));
-        }
-        return $name;
-    }
 
     /**
      * A wrapper function delegating to WP delete_option() but it prefixes the input $optionName
@@ -1772,37 +1726,7 @@ HTML;
         return empty($user) ? false : in_array($role, (array)$user->roles);
     }
 
-    /**
-     * @param  $optionName string name of a Role option (see comments in getRoleOption())
-     * @return bool indicates if the user has adequate permissions
-     */
-    public function canUserDoRoleOption($optionName)
-    {
-        $roleAllowed = $this->getRoleOption($optionName);
-        if ('Anyone' == $roleAllowed) {
-            return true;
-        }
-        return $this->isUserRoleEqualOrBetterThan($roleAllowed);
-    }
 
-    /**
-     * A Role Option is an option defined in getOptionMetaData() as a choice of WP standard roles, e.g.
-     * 'CanDoOperationX' => array('Can do Operation X', 'Administrator', 'Editor', 'Author', 'Contributor', 'Subscriber')
-     * The idea is use an option to indicate what role level a user must minimally have in order to do some operation.
-     * So if a Role Option 'CanDoOperationX' is set to 'Editor' then users which role 'Editor' or above should be
-     * able to do Operation X.
-     * Also see: canUserDoRoleOption()
-     * @param  $optionName
-     * @return string role name
-     */
-    public function getRoleOption($optionName)
-    {
-        $roleAllowed = $this->getOption($optionName);
-        if (!$roleAllowed || $roleAllowed == '') {
-            $roleAllowed = 'Administrator';
-        }
-        return $roleAllowed;
-    }
 
     /**
      * A wrapper function delegating to WP get_option() but it prefixes the input $optionName

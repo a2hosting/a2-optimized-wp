@@ -153,8 +153,6 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 
         $htaccess = file_get_contents(ABSPATH.'.htaccess');
 
-        $pattern = "/[\r\n]*# BEGIN A2 Optimized.*# END A2 Optimized[\r\n]*/msiU";
-        $htaccess = preg_replace($pattern,'',$htaccess);
         $pattern = "/[\r\n]*# BEGIN WordPress Hardening.*# END WordPress Hardening[\r\n]*/msiU";
         $htaccess = preg_replace($pattern,'',$htaccess);
 
@@ -192,7 +190,6 @@ HTML;
     public function login_captcha(){
 
         include_once('recaptchalib.php');
-
 
         $a2_recaptcha = $this->getOption('recaptcha');
         if($a2_recaptcha == 1 ){
