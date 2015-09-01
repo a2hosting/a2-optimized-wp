@@ -286,7 +286,6 @@ HTML;
 
     public function captcha_comment_authenticate($commentdata)
     {
-
         if (!$this->checkUserCapability('moderate_comments', get_current_user_id()) && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)) {
             include_once('recaptchalib.php');
 

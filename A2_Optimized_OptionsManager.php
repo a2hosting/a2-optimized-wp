@@ -960,7 +960,7 @@ HTML;
 
 
         $opts = new A2_Optimized_Optimizations($thisclass);
-        $optimizations = $opts->get_optimizations();
+        $this->optimizations = $opts->get_optimizations();
 
 
         $this->plugin_list = get_plugins();
