@@ -124,18 +124,8 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 
     public function uninstall()
     {
-        $this->otherUninstall();
-        $this->unInstallDatabaseTables();
-        $this->deleteSavedOptions();
         $this->markAsUnInstalled();
     }
-
-    protected function unInstallDatabaseTables() {
-        //        global $wpdb;
-        //        $tableName = $this->prefixTableName('mytable');
-        //        $wpdb->query("DROP TABLE IF EXISTS `$tableName`");
-    }
-
 
     protected function markAsUnInstalled()
     {
@@ -189,22 +179,24 @@ HTML;
 
     public function login_captcha(){
 
-        include_once('recaptchalib.php');
+        if (file_exists("/opt/a2-optimized/wordpress/recaptchalib.php")) {
+            include_once("/opt/a2-optimized/wordpress/recaptchalib.php");
 
-        $a2_recaptcha = $this->getOption('recaptcha');
-        if($a2_recaptcha == 1 ){
-            $key = $this->get_public_key();
-            if (!is_null($key)) {
-                $captcha = a2recaptcha_get_html($key, null, true);
-                echo <<<HTML
-            <style>
-              #recaptcha_area, #recaptcha_table{
-                margin-left: -12px !important;
-              }
-            </style>
+            $a2_recaptcha = $this->getOption('recaptcha');
+            if ($a2_recaptcha == 1) {
+                $key = $this->get_public_key();
+                if (!is_null($key)) {
+                    $captcha = a2recaptcha_get_html($key, null, true);
+                    echo <<<HTML
+                <style>
+                  #recaptcha_area, #recaptcha_table{
+                    margin-left: -12px !important;
+                  }
+                </style>
 
-            {$captcha}
+                {$captcha}
 HTML;
+                }
             }
         }
     }
@@ -222,23 +214,25 @@ HTML;
 
     public function comment_captcha(){
         if(!$this->checkUserCapability('moderate_comments', get_current_user_id() )){
-            include_once('recaptchalib.php');
+            if (file_exists("/opt/a2-optimized/wordpress/recaptchalib.php")) {
+                include_once("/opt/a2-optimized/wordpress/recaptchalib.php");
 
-            $a2_recaptcha = $this->getOption('recaptcha');
-            if($a2_recaptcha == 1){
+                $a2_recaptcha = $this->getOption('recaptcha');
+                if ($a2_recaptcha == 1) {
 
-                $key = $this->get_public_key();
-                if (!is_null($key)) {
-                    $captcha = a2recaptcha_get_html("6LdoEPQSAAAAAIXao_gJk8QotRtcjQ8vOabKzuG6", null, true);
-                    echo <<<HTML
-							<style>
-								#recaptcha_area{
-									margin: 10px auto !important;
-								}
-							</style>
+                    $key = $this->get_public_key();
+                    if (!is_null($key)) {
+                        $captcha = a2recaptcha_get_html("6LdoEPQSAAAAAIXao_gJk8QotRtcjQ8vOabKzuG6", null, true);
+                        echo <<<HTML
+                                <style>
+                                    #recaptcha_area{
+                                        margin: 10px auto !important;
+                                    }
+                                </style>
 
-							{$captcha}
+                                {$captcha}
 HTML;
+                    }
                 }
             }
         }
@@ -250,19 +244,21 @@ HTML;
         if ($username != '' && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)) {
             $a2_recaptcha = $this->getOption('recaptcha');
             if ($a2_recaptcha == 1) {
-                include_once('recaptchalib.php');
-                $privatekey = $this->get_pivate_key();
-                if (!is_null($key)) {
-                    $resp = a2recaptcha_check_answer($privatekey,
-                        $_SERVER["REMOTE_ADDR"],
-                        $_POST["recaptcha_challenge_field"],
-                        $_POST["recaptcha_response_field"]);
+                if (file_exists("/opt/a2-optimized/wordpress/recaptchalib.php")) {
+                    include_once("/opt/a2-optimized/wordpress/recaptchalib.php");
+                    $privatekey = $this->get_pivate_key();
+                    if (!is_null($key)) {
+                        $resp = a2recaptcha_check_answer($privatekey,
+                            $_SERVER["REMOTE_ADDR"],
+                            $_POST["recaptcha_challenge_field"],
+                            $_POST["recaptcha_response_field"]);
 
-                    if (!empty($username)) {
-                        if (!$resp->is_valid) {
-                            remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
-                            //wp_die("<strong>The reCAPTCHA wasn't entered correctly. Go back and try it again.</strong>: (reCAPTCHA said: {$resp->error})");
-                            return new WP_Error('recaptcha_error', "<strong>The reCAPTCHA wasn't entered correctly. Please try it again.</strong>");
+                        if (!empty($username)) {
+                            if (!$resp->is_valid) {
+                                remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
+                                //wp_die("<strong>The reCAPTCHA wasn't entered correctly. Go back and try it again.</strong>: (reCAPTCHA said: {$resp->error})");
+                                return new WP_Error('recaptcha_error', "<strong>The reCAPTCHA wasn't entered correctly. Please try it again.</strong>");
+                            }
                         }
                     }
                 }
@@ -284,23 +280,26 @@ HTML;
     public function captcha_comment_authenticate($commentdata)
     {
         if (!$this->checkUserCapability('moderate_comments', get_current_user_id()) && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)) {
-            include_once('recaptchalib.php');
+            if (file_exists("/opt/a2-optimized/wordpress/recaptchalib.php")) {
+                include_once("/opt/a2-optimized/wordpress/recaptchalib.php");
 
-            $a2_recaptcha = $this->getOption('recaptcha');
-            if ($a2_recaptcha == 1) {
-                $privatekey = $this->get_pivate_key();
-                if (!is_null($key)) {
-                    $resp = a2recaptcha_check_answer($privatekey,
-                        $_SERVER["REMOTE_ADDR"],
-                        $_POST["recaptcha_challenge_field"],
-                        $_POST["recaptcha_response_field"]);
 
-                    if (!empty($commentdata)) {
-                        if (!$resp->is_valid) {
-                            wp_die("<strong>The reCAPTCHA wasn't entered correctly. Please use your browsers back button and try again.</strong>");
+                $a2_recaptcha = $this->getOption('recaptcha');
+                if ($a2_recaptcha == 1) {
+                    $privatekey = $this->get_pivate_key();
+                    if (!is_null($key)) {
+                        $resp = a2recaptcha_check_answer($privatekey,
+                            $_SERVER["REMOTE_ADDR"],
+                            $_POST["recaptcha_challenge_field"],
+                            $_POST["recaptcha_response_field"]);
+
+                        if (!empty($commentdata)) {
+                            if (!$resp->is_valid) {
+                                wp_die("<strong>The reCAPTCHA wasn't entered correctly. Please use your browsers back button and try again.</strong>");
+                            }
+                        } else {
+                            wp_die("<strong>There was an error. Please try again.</strong>");
                         }
-                    } else {
-                        wp_die("<strong>There was an error. Please try again.</strong>");
                     }
                 }
             }
