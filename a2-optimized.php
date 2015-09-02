@@ -19,8 +19,11 @@
 class A2_Optimized {
   function __construct() {
 
+      $GLOBALS['A2_Plugin_Dir'] = dirname(__FILE__);
+
       require_once('A2_Optimized_Plugin.php');
       require_once ABSPATH.'wp-admin/includes/plugin.php';
+
 
       $a2Plugin = new A2_Optimized_Plugin();
 
