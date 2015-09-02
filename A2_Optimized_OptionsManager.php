@@ -595,7 +595,6 @@ HTML;
 		<ul class="nav nav-tabs">
 		  <li role="presentation" id="li-optimization-status" ><a onclick='document.location.hash="#optimization-status-tab"' href="#optimization-status" data-toggle="tab">Optimization Status {$optimization_circle}</a></li>
 		  <li role="presentation" id="li-optimization-warnings" ><a onclick='document.location.hash="#optimization-warnings-tab"' href="#optimization-warnings" data-toggle="tab">Warnings {$warning_circle}</a></li>
-		  <!--<li role="presentation" id="li-optimization-plugins" ><a onclick='document.location.hash="#optimization-plugins-tab"' href="#optimization-plugins" data-toggle="tab">Installed Plugins {$plugin_circle}</a></li>-->
 		  <li role="presentation" id="li-optimization-advanced" ><a onclick='document.location.hash="#optimization-advanced-tab"' href="#optimization-advanced" data-toggle="tab">Advanced Optimizations {$advanced_circle}</a></li>
 		</ul>
 
@@ -613,30 +612,17 @@ HTML;
 				<h3>Warnings</h3>
 				{$warnings}
 			</div>
-			<!--<div role="tabpanel" id="optimization-plugins" class="tab-pane">
-				<h3>Installed Plugins</h3>
-					{$plugin_html}
-			</div>-->
 
 			<div role="tabpanel" id="optimization-advanced" class="tab-pane">
 				<h3>Advanced Optimizations</h3>
 					{$this->advanced_optimization_status}
-				<!--<div class="optimization-status">
-					<span class="glyphicon glyphicon-warning-sign"></span> GT-Metrix <a href="" class="glyphicon glyphicon-download"></a><br>
-					<span class="glyphicon glyphicon-warning-sign"></span> P3 Profiler <a href="" class="glyphicon glyphicon-download"></a><br>
-					<span class="glyphicon glyphicon-warning-sign"></span> Cloudflare <a href="" class="glyphicon glyphicon-download"></a><br>
-					<span class="glyphicon glyphicon-ok"></span> 6Scan <a href="" class="glyphicon glyphicon-cog"></a><br>
-				</div>-->
 			</div>
 
 		</div>
 
-
-
 		<div  style="margin:10px 0;" class="alert alert-success">
 			We want to hear from you! Please share your thoughts and feedback in our <a href="https://my.a2hosting.com/a2-suggestion-box.php" target="_blank">Suggestion Box!</a>
 		</div>
-
 
 	</div>
 
