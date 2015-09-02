@@ -203,12 +203,14 @@ HTML;
 
     protected function get_public_key()
     {
-        if (file_exists("/opt/a2-optimized/wordpress/pubkey.php")) {
-            return file_get_contents("/opt/a2-optimized/wordpress_encoded/pubkey.php");
-        }
-        if ($key = get_option("a2_recaptcha_privkey")) {
+
+        if ($key = get_option("a2_recaptcha_pubkey", false)) {
             return $key;
         }
+        if (file_exists("/opt/a2-optimized/wordpress/pubkey")) {
+            return file_get_contents("/opt/a2-optimized/wordpress/pubkey");
+        }
+
         return null;
     }
 
@@ -222,7 +224,7 @@ HTML;
 
                     $key = $this->get_public_key();
                     if (!is_null($key)) {
-                        $captcha = a2recaptcha_get_html("6LdoEPQSAAAAAIXao_gJk8QotRtcjQ8vOabKzuG6", null, true);
+                        $captcha = a2recaptcha_get_html($key, null, true);
                         echo <<<HTML
                                 <style>
                                     #recaptcha_area{
@@ -246,7 +248,7 @@ HTML;
             if ($a2_recaptcha == 1) {
                 if (file_exists("/opt/a2-optimized/wordpress/recaptchalib.php")) {
                     include_once("/opt/a2-optimized/wordpress/recaptchalib.php");
-                    $privatekey = $this->get_pivate_key();
+                    $privatekey = $this->get_private_key();
                     if (!is_null($key)) {
                         $resp = a2recaptcha_check_answer($privatekey,
                             $_SERVER["REMOTE_ADDR"],
@@ -266,12 +268,12 @@ HTML;
         }
     }
 
-    protected function get_pivate_key()
+    protected function get_private_key()
     {
-        if (file_exists("/opt/a2-optimized/wordpress/privkey.php")) {
-            return file_get_contents("/opt/a2-optimized/wordpress_encoded/pk.php");
+        if (file_exists("/opt/a2-optimized/wordpress/privkey")) {
+            return file_get_contents("/opt/a2-optimized/wordpress/privkey");
         }
-        if ($key = get_option("a2_recaptcha_privkey")) {
+        if ($key = get_option("a2_recaptcha_privkey", false)) {
             return $key;
         }
         return null;
@@ -286,7 +288,7 @@ HTML;
 
                 $a2_recaptcha = $this->getOption('recaptcha');
                 if ($a2_recaptcha == 1) {
-                    $privatekey = $this->get_pivate_key();
+                    $privatekey = $this->get_private_key();
                     if (!is_null($key)) {
                         $resp = a2recaptcha_check_answer($privatekey,
                             $_SERVER["REMOTE_ADDR"],
