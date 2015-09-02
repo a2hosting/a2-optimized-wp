@@ -471,6 +471,7 @@ STYLE;
         $ini_error_reporting = ini_get('error_reporting');
         //ini_set('error_reporting',0);
 
+        $this->optimization_status = "";
 
         $optionMetaData = $this->getOptionMetaData();
 
@@ -486,7 +487,7 @@ STYLE;
 
 
         foreach ($this->advanced_optimizations as $shortname => &$item) {
-            $this->advanced_optimization_status .= $this->optimization_status($item);
+            $this->advanced_optimization_status .= $this->get_optimization_status($item);
             if ($item['configured']) {
                 $this->advanced_optimization_count++;
             }
@@ -494,8 +495,9 @@ STYLE;
 
         $this->optimization_count = 0;
 
+
         foreach ($this->optimizations as $shortname => &$item) {
-            $this->optimization_status .= $this->optimization_status($item);
+            $this->optimization_status .= $this->get_optimization_status($item);
             if ($item['configured']) {
                 $this->optimization_count++;
             }
@@ -885,7 +887,7 @@ JAVASCRIPT;
       update_option('a2_optimized_litespeed',$litespeed);
     }*/
 
-    function optimization_status(&$item)
+    function get_optimization_status(&$item)
     {
         if ($item != null) {
             $settings_slug = $this->getSettingsSlug();

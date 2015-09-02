@@ -653,14 +653,11 @@ class A2_Optimized_Optimizations
         }
     }
 
-    protected function get_private_warnings()
+    public function get_warnings()
     {
-        if (class_exists("A2_Optimized_Private_Optimizations")) {
-            $a2opt_priv = new A2_Optimized_Private_Optimizations();
-            return $a2opt_priv->get_warnings($this->thisclass);
-        } else {
-            return array();
-        }
+        $public_opts = $this->get_public_warnings();
+        $private_opts = $this->get_private_warnings();
+        return array_merge($public_opts, $private_opts);
     }
 
     protected function get_public_warnings()
@@ -741,6 +738,16 @@ class A2_Optimized_Optimizations
 
             )
         );
+    }
+
+    protected function get_private_warnings()
+    {
+        if (class_exists("A2_Optimized_Private_Optimizations")) {
+            $a2opt_priv = new A2_Optimized_Private_Optimizations();
+            return $a2opt_priv->get_warnings($this->thisclass);
+        } else {
+            return array();
+        }
     }
 
 }
