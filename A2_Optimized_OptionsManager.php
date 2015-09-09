@@ -360,7 +360,7 @@ class A2_Optimized_OptionsManager {
         wp_enqueue_script('bootstrap-theme', plugins_url('a2-optimized/resources/bootstrap/js/bootstrap.js'), array('jquery'));
 
 
-        $image_dir = plugins_url('a2-optimized/resources/images');
+        $image_dir = plugins_url(plugin_basename(__FILE__).'/resources/images');
 
         do_action('a2_notices');
 
@@ -561,6 +561,9 @@ HTML;
         $settingsGroup = get_class($this) . '-settings-group';
 
 
+
+        $description = $this->get_plugin_description();
+
         echo <<<HTML
 
 
@@ -581,9 +584,7 @@ HTML;
 			</div>
 			<div >
 				<div style="margin:20px 0;">
-					Your WordPress installation has been optimized to run at full
-					speed while hosted at A2 Hosting. You may use the settings on this page
-					to further customize and optimize your WordPress site.
+					{$description}
 				</div>
                 <div style="margin:20px 0;">
     				{$optimization_alert}
@@ -1294,11 +1295,11 @@ HTACCESS;
         return get_option('a2_optimized_deny_direct');
     }
 
-    public function banned_plugin_notice()
+    public function incompatible_plugin_notice()
     {
         echo <<<HTML
     <div class="error">
-        <p class="danger">The Plugin you are trying to install has been flagged as incompatible with A2 Optimized.</p>
+        <p class="danger">Proceed with caution: The Plugin you just installed may be incompatible with A2 Optimized.</p>
     </div>
 HTML;
 
@@ -1491,5 +1492,26 @@ HTML;
 </div>
 HTML;
 
+    }
+
+
+    function get_plugin_description()
+    {
+        if(is_dir("/opt/a2-optimized")) {
+            $description = <<<HTML
+Your WordPress installation has been optimized to run at full
+speed while hosted at A2 Hosting. You may use the settings on this page
+to further customize and optimize your WordPress site.
+HTML;
+        }
+        else{
+            $description = <<<HTML
+A2 Optimized was developed by A2 Hosting to make it faster and easier to configure the caching of all aspects of a WordPress site.
+This free plugin comes with many of the popular Optimizations that come with WordPress hosted at A2 Hosting.
+To get the full advantage of A2 Optimized, try hosting your site at <a href='https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized' target='_blank'>A2 Hosting</a>
+HTML;
+        }
+
+        return $description;
     }
 }
