@@ -384,6 +384,16 @@ class A2_Optimized_Optimizations
                     $item = $item[$slug];
                     $thisclass->deactivate_plugin($item['file']);
                 }
+            ),
+            'CloudFlare' => array(
+                'slug' => 'cloudflare',
+                'name' => 'CloudFlare',
+                'description' => 'Host with A2 Hosting to take advantage of the CloudFlare CDN',
+                'configured' => false,
+                'is_configured' => function(){
+                    return false;
+                },
+                'not_configured_links' => array('Host with A2'=>'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized')
             )
 
         );

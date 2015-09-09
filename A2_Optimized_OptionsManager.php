@@ -355,117 +355,17 @@ class A2_Optimized_OptionsManager {
 
         $thisdir = rtrim(__DIR__, "/");
 
-        wp_enqueue_style('bootstrap', plugins_url('a2-optimized/resources/bootstrap/css/bootstrap.css'));
-        wp_enqueue_style('bootstrap-theme', plugins_url('a2-optimized/resources/bootstrap/css/bootstrap-theme.css'));
-        wp_enqueue_script('bootstrap-theme', plugins_url('a2-optimized/resources/bootstrap/js/bootstrap.js'), array('jquery'));
+
+        wp_enqueue_style('a2-optimized-css', plugins_url('/resources/css/style.css',__FILE__));
+        wp_enqueue_style('bootstrap', plugins_url('/resources/bootstrap/css/bootstrap.css',__FILE__));
+        wp_enqueue_style('bootstrap-theme', plugins_url('/resources/bootstrap/css/bootstrap-theme.css',__FILE__));
+        wp_enqueue_script('bootstrap-theme', plugins_url('/resources/bootstrap/js/bootstrap.js',__FILE__), array('jquery'));
 
 
-        $image_dir = plugins_url(plugin_basename(__FILE__).'/resources/images');
+
+        $image_dir = plugins_url('/resources/images',__FILE__);
 
         do_action('a2_notices');
-
-        echo <<<STYLE
-<style type='text/css'>
-	div #honeypot {display: none;}
-	div.kb-search {text-align:center}
-	.kb-search input#kb-search-request {font-size: 22px; border-radius: 5px; color: #999; padding: 3px;}
-	.kb-search button { font-size: 15px; padding: 8px 14px; vertical-align:top; }
-	.btn.large { font-size: 15px; line-height: normal; padding: 9px 14px 9px; -webkit-border-radius: 6px; -moz-border-radius: 6px; border-radius: 6px; }
-
-	.input-large, input.large { width: auto; }
-	.input-large, input.large, textarea.large, select.large { width: 210px; }
-	input[type=button], input[type=reset], input[type=submit] { width: auto; height: auto; }
-	button, input[type="button"], input[type="reset"], input[type="submit"] { cursor: pointer; -webkit-appearance: button; }
-
-	body{
-		background-color: transparent !important;
-	}
-
-	.big-search .kb-search #kb-search-request {width: 300px;}
-
-
-
-	#content-general {
-		width:898px;
-		border-left:1px solid #caced3;
-		border-right:1px solid #caced3;
-		padding:15px 20px 0 20px;
-		background:#fff url({$image_dir}/background-both.png) no-repeat;
-	}
-	.fade{
-		opacity: 100 !important;
-	}
-	.checkbox{
-		width:24px;
-		height:24px;
-		float:left;
-		background: url({$image_dir}/icons.png) no-repeat -452px -112px;
-	}
-	.checkbox.checked{
-		background: url({$image_dir}/icons.png) no-repeat -424px -112px;
-	}
-	.optimization-status{
-		width:260px;
-		float:left;
-		font-size:1.2em;
-	}
-
-	.glyphicon-ok{
-		color:green;
-	}
-
-	.glyphicon-warning-sign{
-		color:orange;
-	}
-	.glyphicon-exclamation-sign{
-		color:red;
-	}
-
-	.danger{
-		color:red;
-	}
-
-	.warning{
-		color:orange;
-	}
-
-	.success{
-		color:green;
-	}
-
-
-
-	.badge-warning{
-		background-color:orange !important;
-	}
-	.badge-danger{
-		background-color:red !important;
-	}
-	.badge-success{
-		background-color:green !important;
-	}
-	.badge-default{
-		background-color:blue !important;
-	}
-
-	.optimization-item{
-		padding:10px;
-		border-width: 0 0 2px 0;
-		border-style: solid;
-	}
-
-	.tab-content{
-		background-color:#fff;
-		padding:10px;
-		border-color: #dddddd;
-		border-style: solid;
-		border-width: 0 1px 1px 1px;
-	}
-
-
-
-</style>
-STYLE;
 
 
         $ini_error_reporting = ini_get('error_reporting');
@@ -583,7 +483,7 @@ HTML;
 				<div style="clear:both;"></div>
 			</div>
 			<div >
-				<div style="margin:20px 0;">
+				<div style="margin:20px 0;" class="well">
 					{$description}
 				</div>
                 <div style="margin:20px 0;">
