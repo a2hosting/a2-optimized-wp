@@ -260,6 +260,20 @@ class A2_Optimized_Optimizations
                     $thisclass->set_lockdown(false);
                     $thisclass->write_wp_config();
                 }
+            ),
+            'wp-login' => array(
+                'name' => 'Login URL Change',
+                'slug' => 'wp-login',
+                'plugin' => 'Rename wp-login.php',
+                'configured' => false,
+                'kb' => 'http://www.a2hosting.com/kb/security/application-security/wordpress-security#a-namemethodRenameLoginPageaMethod-3.3A-Change-the-WordPress-login-URL',
+                'description' => '
+                    <p>Change the URL of your login page to make it harder for bots to find it to brute force attack.</p>
+                    <a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank" class="a2-exclusive"></a>
+                ',
+                'is_configured' => function(){
+                    return false;
+                }
             )
         );
     }
@@ -388,7 +402,26 @@ class A2_Optimized_Optimizations
             'CloudFlare' => array(
                 'slug' => 'cloudflare',
                 'name' => 'CloudFlare',
-                'description' => 'Host with A2 Hosting to take advantage of the CloudFlare CDN',
+                'premium'=>true,
+                'description' => '
+                        <p>
+                                CloudFlare is a free global CDN and DNS provider that can speed up and protect any site online.
+                        </p>
+
+                        <dl style="padding-left:20px">
+                                        <dt>CloudFlare CDN</dt>
+                                        <dd>Distribute your content around the world so it&apos;s closer to your visitors (speeding up your site).</dd>
+                                        <dt>CloudFlare optimizer</dt>
+                                        <dd>Web pages with ad servers and third party widgets load snappy on both mobile and computers.</dd>
+                                        <dt>CloudFlare security</dt>
+                                        <dd>Protect your website from a range of online threats from spammers to SQL injection to DDOS.</dd>
+                                        <dt>CloudFlare analytics</dt>
+                                        <dd>Get insight into all of your website&apos;s traffic including threats and search engine crawlers.</dd>
+                        </dl>
+                        <div class="alert alert-info">
+                                Host with A2 Hosting to take advantage of one click CloudFlare configuration.
+                        </div>
+                ',
                 'configured' => false,
                 'is_configured' => function(){
                     return false;
@@ -471,6 +504,16 @@ class A2_Optimized_Optimizations
                     'title' => 'Unused Themes',
                     'description' => 'One or more unused themes are installed. Unused themes should be deleted.  For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping#Theme_Housekeeping">WordPress Housekeeping</a>',
                     'config_url' => admin_url() . 'themes.php'
+                ),
+                'a2_hosting' => array(
+                    'title' => 'Not Hosted with A2 Hosting',
+                    'description' => 'Get faster page load times and more optimizations when you <a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank">host with A2 Hosting</a>.',
+                    'is_warning' => function () {
+                        if(is_dir("/opt/a2-optimized"))
+                            return false;
+                        return true;
+                    },
+                    'config_url' => "https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized"
                 )
             ),
             'Bad Plugins' => array(
