@@ -387,8 +387,8 @@ class A2_Optimized_Optimizations
                         <li>Turbo Web Hosting servers have a built-in caching engine for Full Page Cache and Edge Side Includes.</li>
                     </ul>
                 ',
-                'is_configured' => function(){
-                    return ( is_dir("/opt/a2-optimized") && is_dir("/usr/local/lsws") );
+                'is_configured' => function (&$item) use (&$thisclass){
+                    $item['configured'] = ( is_dir("/opt/a2-optimized") && is_dir("/usr/local/lsws") );
                 }
             ),
             'memcached' => array(
