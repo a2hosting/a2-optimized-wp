@@ -29,15 +29,15 @@ class A2_Optimized_Optimizations
         $thisclass = $this->thisclass;
 
         return array(
-            'cache' => array(
-                'slug' => 'cache',
+            'page_cache' => array(
+                'slug' => 'page_cache',
                 'name' => 'Page Caching with W3 Total Cache',
                 'plugin' => 'W3 Total Cache',
                 'configured' => false,
                 'description' => 'Utilize W3 Total Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.',
                 'is_configured' => function (&$item) use (&$thisclass) {
                     $w3tc = $thisclass->get_w3tc_config();
-                    if ($w3tc['pgcache.enabled'] && $w3tc['dbcache.enabled'] && $w3tc['objectcache.enabled'] && $w3tc['browsercache.enabled']) {
+                    if ($w3tc['pgcache.enabled']) {
                         $item['configured'] = true;
                         $permalink_structure = get_option('permalink_structure');
                         $vars = array();
@@ -55,6 +55,34 @@ class A2_Optimized_Optimizations
                             }
                         }
 
+                        if (count($vars) != 0) {
+                            $thisclass->update_w3tc($vars);
+                        }
+
+                        $thisclass->set_install_status('page_cache', true);
+                    } else {
+                        $thisclass->set_install_status('page_cache', false);
+                    }
+                },
+                'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+                'disable' => function () use (&$thisclass) {
+                    $thisclass->disable_w3tc_page_cache();
+                },
+                'enable' => function () use (&$thisclass) {
+                    $thisclass->enable_w3tc_page_cache();
+                }
+            ),
+            'db_cache' => array(
+                'slug' => 'db_cache',
+                'name' => 'DB Caching with W3 Total Cache',
+                'plugin' => 'W3 Total Cache',
+                'configured' => false,
+                'description' => 'Utilize W3 Total Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.',
+                'is_configured' => function (&$item) use (&$thisclass) {
+                    $w3tc = $thisclass->get_w3tc_config();
+                    if ($w3tc['dbcache.enabled']) {
+                        $vars = array();
+                        $item['configured'] = true;
                         if (class_exists('W3_Config')) {
                             if (class_exists('WooCommerce')) {
                                 if (array_search('_wc_session_', $w3tc['dbcache.reject.sql']) === false) {
@@ -63,24 +91,72 @@ class A2_Optimized_Optimizations
                                 }
                             }
                         }
-
                         if (count($vars) != 0) {
                             $thisclass->update_w3tc($vars);
                         }
 
-                        $thisclass->set_install_status('cache', true);
+                        $thisclass->set_install_status('db_cache', true);
                     } else {
-                        $thisclass->set_install_status('cache', false);
+                        $thisclass->set_install_status('db_cache', false);
                     }
                 },
                 'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
                 'disable' => function () use (&$thisclass) {
-                    $thisclass->disable_w3tc_cache();
+                    $thisclass->disable_w3tc_db_cache();
                 },
                 'enable' => function () use (&$thisclass) {
-                    $thisclass->enable_w3tc_cache();
+                    $thisclass->enable_w3tc_db_cache();
                 }
             ),
+
+            'object_cache' => array(
+                'slug' => 'object_cache',
+                'name' => 'Object Caching with W3 Total Cache',
+                'plugin' => 'W3 Total Cache',
+                'configured' => false,
+                'description' => 'Utilize W3 Total Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.',
+                'is_configured' => function (&$item) use (&$thisclass) {
+                    $w3tc = $thisclass->get_w3tc_config();
+                    if ($w3tc['objectcache.enabled']) {
+                        $item['configured'] = true;
+                        $thisclass->set_install_status('object_cache', true);
+                    } else {
+                        $thisclass->set_install_status('object_cache', false);
+                    }
+                },
+                'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+                'disable' => function () use (&$thisclass) {
+                    $thisclass->disable_w3tc_object_cache();
+                },
+                'enable' => function () use (&$thisclass) {
+                    $thisclass->enable_w3tc_object_cache();
+                }
+            ),
+
+            'browser_cache' => array(
+                'slug' => 'browser_cache',
+                'name' => 'Browser Caching with W3 Total Cache',
+                'plugin' => 'W3 Total Cache',
+                'configured' => false,
+                'description' => 'Utilize W3 Total Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.',
+                'is_configured' => function (&$item) use (&$thisclass) {
+                    $w3tc = $thisclass->get_w3tc_config();
+                    if ($w3tc['browsercache.enabled']) {
+                        $item['configured'] = true;
+                        $thisclass->set_install_status('browser_cache', true);
+                    } else {
+                        $thisclass->set_install_status('browser_cache', false);
+                    }
+                },
+                'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+                'disable' => function () use (&$thisclass) {
+                    $thisclass->disable_w3tc_browser_cache();
+                },
+                'enable' => function () use (&$thisclass) {
+                    $thisclass->enable_w3tc_browser_cache();
+                }
+            ),
+
             'minify' => array(
                 'name' => 'Minify HTML Pages',
                 'slug' => 'minify',
@@ -264,17 +340,75 @@ class A2_Optimized_Optimizations
             'wp-login' => array(
                 'name' => 'Login URL Change',
                 'slug' => 'wp-login',
+                'premium' => true,
                 'plugin' => 'Rename wp-login.php',
                 'configured' => false,
                 'kb' => 'http://www.a2hosting.com/kb/security/application-security/wordpress-security#a-namemethodRenameLoginPageaMethod-3.3A-Change-the-WordPress-login-URL',
                 'description' => '
                     <p>Change the URL of your login page to make it harder for bots to find it to brute force attack.</p>
-                    <a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank" class="a2-exclusive"></a>
                 ',
                 'is_configured' => function(){
                     return false;
                 }
+            ),
+            'captcha' => array(
+                'name' => 'reCAPTCHA on comments and login',
+                'plugin' => 'reCAPTCHA',
+                'slug' => 'captcha',
+                'premium' => true,
+                'configured' => false,
+                'description' => 'Decreases spam and increases site security by adding a CAPTCHA to comment forms and the login screen.  Without a CAPTCHA, bots will easily be able to post comments to you blog or brute force login to your admin panel.',
+                'is_configured' => function (&$item){
+                    return false;
+                }
+            ),
+            'images' => array(
+                'name' => 'Compress Images on Upload',
+                'plugin' => 'EWWW Image Optimizer',
+                'slug' => 'images',
+                'premium' => true,
+                'configured' => false,
+                'description' => 'Makes your site faster by compressing images to make them smaller.',
+                'is_configured' => function (&$item) {
+                    return false;
+                }
+            ),
+            'turbo' => array(
+                'name' => 'Turbo Web Hosting',
+                'slug' => 'turbo',
+                'configured' => false,
+                'premium'=>true,
+                'description' => '
+                    <ul>
+                        <li>Turbo Web Hosting servers compile .htaccess files to make speed improvements. Any changes to .htaccess files are immediately re-compiled.</li>
+                        <li>Turbo Web Hosting servers have their own PHP API that provides speed improvements over FastCGI and PHP-FPM (FastCGI Process Manager). </li>
+                        <li>To serve static files, Turbo Web Hosting servers do not need to create a worker process as the user. Servers only create a worker process for PHP scripts, which results in faster performance.</li>
+                        <li>PHP OpCode Caching is enabled by default. Accounts are allocated 256 MB of memory toward OpCode caching.</li>
+                        <li>Turbo Web Hosting servers have a built-in caching engine for Full Page Cache and Edge Side Includes.</li>
+                    </ul>
+                ',
+                'is_configured' => function(){
+                    return ( is_dir("/opt/a2-optimized") && is_dir("/usr/local/lsws/") );
+                }
+            ),
+            'memcached' => array(
+                'name' => 'Memcached Database and Object Cache',
+                'slug' => 'memcached',
+                'configured' => false,
+                'premium'=>true,
+                'description' => '
+                    <ul>
+                        <li>Extremely fast and powerful caching system.</li>
+                        <li>Store frequently used database queries and WordPress objects in Memcached.</li>
+                        <li>Memcached is an in-memory key-value store for small chunks of arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.</li>
+                        <li>Take advantage of A2 Hosting&apos;s one-click memcached configuration for WordPress.</li>
+                    </ul>
+                ',
+                'is_configured' => function (){
+                    return false;
+                }
             )
+
         );
     }
 
@@ -297,7 +431,6 @@ class A2_Optimized_Optimizations
 
     protected function get_public_advanced()
     {
-
         $thisclass = $this->thisclass;
 
         return array(

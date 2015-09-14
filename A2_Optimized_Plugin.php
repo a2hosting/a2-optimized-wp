@@ -392,20 +392,7 @@ HTML;
 
     public function myStyleSheet()
     {
-
-        echo <<<STYLE
-   <style type="text/css">
-        #edge-mode{
-            display:none !important;
-        }
-        #gfw-hosting-meta-box{
-            display:none !important;
-        }
-        img[title=Logo]{
-            display:none;
-        }
-   </style>
-STYLE;
+        wp_enqueue_style('a2-optimized-css', plugins_url('/resources/css/style.css',__FILE__));
     }
 
     /**

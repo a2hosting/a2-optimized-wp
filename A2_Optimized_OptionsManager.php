@@ -266,6 +266,48 @@ class A2_Optimized_OptionsManager {
         $this->update_w3tc($vars);
     }
 
+
+    public function enable_w3tc_page_cache(){
+        $permalink_structure = get_option('permalink_structure');
+        $vars = array();
+        if($permalink_structure == ''){
+            $vars['pgcache.engine']='file';
+        }
+        else{
+            $vars['pgcache.engine']='file_generic';
+        }
+
+        $vars['pgcache.enabled'] = true;
+        $this->update_w3tc($vars);
+    }
+
+    public function enable_w3tc_db_cache(){
+        $permalink_structure = get_option('permalink_structure');
+        $vars = array();
+        $vars['dbcache.engine'] = 'file';
+        $vars['dbcache.enabled'] = true;
+        $this->update_w3tc($vars);
+    }
+
+    public function enable_w3tc_object_cache(){
+        $permalink_structure = get_option('permalink_structure');
+        $vars = array();
+
+        $vars['objectcache.engine'] = 'file';
+        $vars['objectcache.enabled'] = true;
+
+        $this->update_w3tc($vars);
+    }
+
+    public function enable_w3tc_browser_cache(){
+        $permalink_structure = get_option('permalink_structure');
+        $vars = array();
+        $vars['browsercache.enabled'] = true;
+        $this->update_w3tc($vars);
+    }
+
+
+
     public function update_w3tc($vars)
     {
         $vars = array_merge($this->get_w3tc_defaults(), $vars);
@@ -293,6 +335,32 @@ class A2_Optimized_OptionsManager {
             'browsercache.enabled' => false,
         ));
     }
+
+
+    public function disable_w3tc_page_cache(){
+        $vars = array();
+        $vars['pgcache.enabled'] = false;
+        $this->update_w3tc($vars);
+    }
+
+    public function disable_w3tc_db_cache(){
+        $vars = array();
+        $vars['dbcache.enabled'] = false;
+        $this->update_w3tc($vars);
+    }
+
+    public function disable_w3tc_object_cache(){
+        $vars = array();
+        $vars['objectcache.enabled'] = false;
+        $this->update_w3tc($vars);
+    }
+
+    public function disable_w3tc_browser_cache(){
+        $vars = array();
+        $vars['browsercache.enabled'] = false;
+        $this->update_w3tc($vars);
+    }
+
 
     public function disable_html_minify()
     {
@@ -356,7 +424,6 @@ class A2_Optimized_OptionsManager {
         $thisdir = rtrim(__DIR__, "/");
 
 
-        wp_enqueue_style('a2-optimized-css', plugins_url('/resources/css/style.css',__FILE__));
         wp_enqueue_style('bootstrap', plugins_url('/resources/bootstrap/css/bootstrap.css',__FILE__));
         wp_enqueue_style('bootstrap-theme', plugins_url('/resources/bootstrap/css/bootstrap-theme.css',__FILE__));
         wp_enqueue_script('bootstrap-theme', plugins_url('/resources/bootstrap/js/bootstrap.js',__FILE__), array('jquery'));
@@ -375,13 +442,13 @@ class A2_Optimized_OptionsManager {
 
         $optionMetaData = $this->getOptionMetaData();
 
-        $kbpage = $this->curl('https://www.a2hosting.com/kb');
         $csrf_token = 0;
+        /*$kbpage = $this->curl('https://www.a2hosting.com/kb');
 
 
         if (preg_match('/name="csrf_token" value="([a-z0-9]{40})"/', $kbpage, $csrf_match)) {
             $csrf_token = $csrf_match[1];
-        }
+        }*/
 
         $optimization_status = "";
 
@@ -405,7 +472,7 @@ class A2_Optimized_OptionsManager {
 
         if ($this->optimization_count == count($this->optimizations)) {
             $optimization_alert = '<div  class="alert alert-success">Your site has been fully optimized!</div>';
-        } elseif (!$this->optimizations['cache']['configured']) {
+        } elseif (!$this->optimizations['page_cache']['configured']) {
             $optimization_alert = '<div  class="alert alert-danger">Your site is NOT optimized!</div>';
         } elseif ($this->optimization_count > 5) {
             $optimization_alert = '<div  class="alert alert-success">Your site has been partially optimized!</div>';
@@ -436,7 +503,7 @@ HTML;
 				<input type="hidden" name="site_id" value="1" />
 				<input type="hidden" name="csrf_token" value="{$csrf_token}" />
 			</div>
-			<input type="text" id="kb-search-request" name="keywords" placeholder="Search The Knowledge Base">
+			<input type="text" id="kb-search-request" name="keywords" placeholder="Search The A2 Knowledge Base">
 			<button class='btn btn-success' type='submit'>Search</button>
 			<div id='honeypot'><input type='text' class='input'></div>
 		</form>
@@ -483,9 +550,7 @@ HTML;
 				<div style="clear:both;"></div>
 			</div>
 			<div >
-				<div style="margin:20px 0;" class="well">
-					{$description}
-				</div>
+
                 <div style="margin:20px 0;">
     				{$optimization_alert}
 				</div>
@@ -497,6 +562,7 @@ HTML;
 		  <li role="presentation" id="li-optimization-status" ><a onclick='document.location.hash="#optimization-status-tab"' href="#optimization-status" data-toggle="tab">Optimization Status {$optimization_circle}</a></li>
 		  <li role="presentation" id="li-optimization-warnings" ><a onclick='document.location.hash="#optimization-warnings-tab"' href="#optimization-warnings" data-toggle="tab">Warnings {$warning_circle}</a></li>
 		  <li role="presentation" id="li-optimization-advanced" ><a onclick='document.location.hash="#optimization-advanced-tab"' href="#optimization-advanced" data-toggle="tab">Advanced Optimizations {$advanced_circle}</a></li>
+		  <li role="presentation" id="li-optimization-about" ><a onclick='document.location.hash="#optimization-about-tab"' href="#optimization-about" data-toggle="tab">About A2 Optimized</a></li>
 		</ul>
 
 
@@ -519,6 +585,122 @@ HTML;
 					{$this->advanced_optimization_status}
 			</div>
 
+            <div role="tabpanel" id="optimization-about" class="tab-pane">
+				<div style="margin:20px 0;">
+				    <h3>About A2 Optimized</h3>
+                    <ul style="list-style-type: disc;list-style-position: inside">
+                        <li>A2 Optimized was developed by A2 Hosting to make it faster and easier to configure the caching of all aspects of a WordPress site.</li>
+                        <li>This free plugin comes with many of the popular Optimizations that come with WordPress hosted at A2 Hosting.</li>
+                        <li>To get the full advantage of A2 Optimized, try hosting your site at <a href='https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized' target='_blank'>A2 Hosting</a></li>
+                    </ul>
+				</div>
+				<div style="margin:20px 0;">
+				    <h3>Free Optimizations</h3>
+				    <dt>Caching with W3 Total Cache</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Enable Page, Object and Database caching with W3 Total cache in one click.</li>
+                            <li>Page Caching stores full copies of pages on the disk so that php code and database queries can be skipped by the web server.</li>
+                            <li>Object Caching stores commonly used elements such as menus / widgets and forms on disk or in memory to speed up page rendering.</li>
+                            <li>Database cache stores copies of common database queries on disk or in memcory to speed up page rendering.</li>
+                        </ul>
+                    </dd>
+                    <dt>Minify HTML Pages</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Auto Configure W3 Total Cache to remove excess white space and comments from html pages to compress their size.</li>
+                            <li>This provides for minor imporvements in page load time.</li>
+                        </ul>
+                    </dd>
+                    <dt>Minify CSS Files</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Auto Configure W3 Total Cache to condense CSS files into non human-readable compressed files.</li>
+                            <li>Combines multiple css files into a single download.</li>
+                            <li>Can provide significant speed imporvements for page loads.</li>
+                        </ul>
+                    </dd>
+                    <dt>Minify JS Files</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Auto Configure W3 Total Cache to condense JavaScript files into non human-readable compressed files.</li>
+                            <li>Combines multiple js files into a single download.</li>
+                            <li>Can provide significant speed imporvements for page loads.</li>
+                        </ul>
+                    </dd>
+                    <dt>Gzip Compression Enabled</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Turns on gzip compression using W3 Total Cache.</li>
+                            <li>Ensures that files are compressed before transfering them.</li>
+                            <li>Can provide significant speed imporvements for page loads.</li>
+                            <li>Reduces bandwidth required to serve web pages.</li>
+                        </ul>
+                    </dd>
+                    <dt>Deny Direct Access to Configuration Files and Comment Form</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Enables WordPress hardening rules in .htaccess to prevent browser access to certain files.</li>
+                            <li>Prevents bots from submitting to comment forms.</li>
+                            <li>Turn this off if you use systems that post to the comment form without visiting the page.</li>
+                        </ul>
+                    </dd>
+                    <dt>Lock Editing of Plugins and Themes from the WP Admin</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Turns off the file editor in the wp-admin.</li>
+                            <li>Prevents plugins and themes from being tampered with from the wp-admin.</li>
+                        </ul>
+                    </dd>
+				</div>
+				<div style="margin:20px 0;">
+				    <h3>A2 Hosting Exclusive Optimizations</h3>
+				    <p>
+				        These one-click optimizations are only available while hosted at A2 Hosting.
+                    </p>
+				    <dt>Login URL Change</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Move the login page from the default wp-login.php to a random URL.</li>
+                            <li>Prevents bots from automatically brute-force attacking wp-login.php</li>
+                        </ul>
+                    </dd>
+                    <dt>reCAPTCHA on comments and login</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>provides google reCAPTCHA on both the Login form and comments.</li>
+                            <li>Prevents bots from automatically brute-force attacking wp-login.php</li>
+                            <li>Prevents bots from automatically spamming comments.</li>
+                        </ul>
+                    </dd>
+                    <dt>Compress Images on Upload</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Enables and configures EWWW Image Optimizer.</li>
+                            <li>Compresses images that are uploaded to save bandwidth.</li>
+                            <li>Improves page load times: especially on sites with many images.</li>
+                        </ul>
+                    </dd>
+                    <dt>Turbo Web Hosting</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Take advantage of A2 Hosting's Turbo Web Hosting platform.</li>
+                            <li>Faster serving of static files.</li>
+                            <li>Pre-compiled .htaccess files on the web server for imporved performance.</li>
+                            <li>PHP OpCode cache enabled by default</li>
+                            <li>Custom php engine that is faster than Fast-CGI and FPM</li>
+                        </ul>
+                    </dd>
+                    <dt>Memcached Database and Object Cache</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Database and Object cache in memory instead of on disk.</li>
+                            <li>Secure and Faster Memcached using Unix socket files.</li>
+                            <li>Significant improvement in page load times, especially on pages that can not use full page cache such as wp-admin</li>
+                        </ul>
+                    </dd>
+                </div>
+			</div>
 		</div>
 
 		<div  style="margin:10px 0;" class="alert alert-success">
@@ -549,6 +731,10 @@ HTML;
 					case "optimization-advanced-tab":
 						document.getElementById("li-optimization-advanced").setAttribute("class","active");
 						document.getElementById("optimization-advanced").setAttribute("class","tab-pane active");
+						break;
+					case "optimization-about-tab":
+						document.getElementById("li-optimization-about").setAttribute("class","active");
+						document.getElementById("optimization-about").setAttribute("class","tab-pane active");
 						break;
 					default:
 						document.getElementById("li-optimization-status").setAttribute("class","active");
@@ -858,21 +1044,27 @@ HTML;
                 }
             }
 
+            $premium = "";
+            if (isset($item['premium'])) {
+                $premium = '<div style="float:right;padding-right:10px"><a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank" class="a2-exclusive"></a></div>';
+            }
+
             $link_html = rtrim($link_html, "|");
 
             return <<<HTML
 <div class="optimization-item">
-	<div style="float:left;width:44px;font-size:36px">
+	<div class="optimization-item-one" >
 		<span class="glyphicon glyphicon-{$glyph}"></span>
 	</div>
-	<div style="float:left;">
+	<div class="optimization-item-two">
 		<b>{$item['name']}</b><br>
 		<span class="{$active_color}">{$active_text}</span>
 	</div>
-	<div style="clear:both;">
+	{$premium}
+	<div class="optimization-item-three">
 		<p>{$item['description']}</p>
 	</div>
-	<div>
+	<div class="optimization-item-four">
 		{$link_html}
 	</div>
 </div>
@@ -1397,20 +1589,11 @@ HTML;
 
     function get_plugin_description()
     {
-        if(is_dir("/opt/a2-optimized")) {
+
             $description = <<<HTML
-Your WordPress installation has been optimized to run at full
-speed while hosted at A2 Hosting. You may use the settings on this page
-to further customize and optimize your WordPress site.
+
 HTML;
-        }
-        else{
-            $description = <<<HTML
-A2 Optimized was developed by A2 Hosting to make it faster and easier to configure the caching of all aspects of a WordPress site.
-This free plugin comes with many of the popular Optimizations that come with WordPress hosted at A2 Hosting.
-To get the full advantage of A2 Optimized, try hosting your site at <a href='https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized' target='_blank'>A2 Hosting</a>
-HTML;
-        }
+
 
         return $description;
     }
