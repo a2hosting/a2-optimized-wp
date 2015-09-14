@@ -388,7 +388,7 @@ class A2_Optimized_Optimizations
                     </ul>
                 ',
                 'is_configured' => function(){
-                    return ( is_dir("/opt/a2-optimized") && is_dir("/usr/local/lsws/") );
+                    return ( is_dir("/opt/a2-optimized") && is_dir("/usr/local/lsws") );
                 }
             ),
             'memcached' => array(
