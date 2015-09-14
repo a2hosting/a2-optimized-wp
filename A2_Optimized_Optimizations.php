@@ -532,7 +532,7 @@ class A2_Optimized_Optimizations
                     $thisclass->deactivate_plugin($item['file']);
                 }
             ),
-            'CloudFlare' => array(
+            'cloudflare' => array(
                 'slug' => 'cloudflare',
                 'name' => 'CloudFlare',
                 'premium'=>true,
