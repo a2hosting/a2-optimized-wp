@@ -558,34 +558,34 @@ HTML;
 		</div>
 
 
-		<ul class="nav nav-tabs">
-		  <li role="presentation" id="li-optimization-status" ><a onclick='document.location.hash="#optimization-status-tab"' href="#optimization-status" data-toggle="tab">Optimization Status {$optimization_circle}</a></li>
-		  <li role="presentation" id="li-optimization-warnings" ><a onclick='document.location.hash="#optimization-warnings-tab"' href="#optimization-warnings" data-toggle="tab">Warnings {$warning_circle}</a></li>
-		  <li role="presentation" id="li-optimization-advanced" ><a onclick='document.location.hash="#optimization-advanced-tab"' href="#optimization-advanced" data-toggle="tab">Advanced Optimizations {$advanced_circle}</a></li>
-		  <li role="presentation" id="li-optimization-about" ><a onclick='document.location.hash="#optimization-about-tab"' href="#optimization-about" data-toggle="tab">About A2 Optimized</a></li>
+		<ul class="nav nav-tabs" roll="tablist">
+		  <li role="tab" aria-controls="optimization-status" id="li-optimization-status" ><a onclick='document.location.hash="#optimization-status-tab"' href="#optimization-status" data-toggle="tab">Optimization Status {$optimization_circle}</a></li>
+		  <li role="tab" aria-controls="optimization-warnings" id="li-optimization-warnings" ><a onclick='document.location.hash="#optimization-warnings-tab"' href="#optimization-warnings" data-toggle="tab">Warnings {$warning_circle}</a></li>
+		  <li role="tab" aria-controls="optimization-advanced" id="li-optimization-advanced" ><a onclick='document.location.hash="#optimization-advanced-tab"' href="#optimization-advanced" data-toggle="tab">Advanced Optimizations {$advanced_circle}</a></li>
+		  <li role="tab" aria-controls="optimization-about" id="li-optimization-about" ><a onclick='document.location.hash="#optimization-about-tab"' href="#optimization-about" data-toggle="tab">About A2 Optimized</a></li>
 		</ul>
 
 
 
 
 		<div class="tab-content">
-			<div role="tabpanel" id="optimization-status" class="tab-pane">
+			<div role="tabpanel" aria-labelledby="li-optimization-status" id="optimization-status" class="tab-pane">
 				<h3>Optimization Status</h3>
 				<div >
 					{$this->optimization_status}
 				</div>
 			</div>
-			<div role="tabpanel" id="optimization-warnings" class="tab-pane">
+			<div role="tabpanel" aria-labelledby="li-optimization-warnings" id="optimization-warnings" class="tab-pane">
 				<h3>Warnings</h3>
 				{$warnings}
 			</div>
 
-			<div role="tabpanel" id="optimization-advanced" class="tab-pane">
+			<div role="tabpanel" aria-labelledby="li-optimization-advanced" id="optimization-advanced" class="tab-pane">
 				<h3>Advanced Optimizations</h3>
 					{$this->advanced_optimization_status}
 			</div>
 
-            <div role="tabpanel" id="optimization-about" class="tab-pane">
+            <div role="tabpanel" aria-labelledby="li-optimization-about" id="optimization-about" class="tab-pane">
 				<div style="margin:20px 0;">
 				    <h3>About A2 Optimized</h3>
                     <ul style="list-style-type: disc;list-style-position: inside">
@@ -1255,6 +1255,11 @@ HTML;
         update_option('a2_optimized_lockdown', $lockdown);
     }
 
+    public function set_nomods($lockdown = true)
+    {
+        update_option('a2_optimized_nomods', $lockdown);
+    }
+
     public function set_deny_direct($deny = true)
     {
         update_option('a2_optimized_deny_direct', $deny);
@@ -1264,10 +1269,15 @@ HTML;
     {
 
         $lockdown = $this->get_lockdown();
+
+
+        $nomods = $this->get_nomods();
+
         touch(ABSPATH . 'wp-config.php');
         copy(ABSPATH . 'wp-config.php', ABSPATH . 'wp-config.php.bak.a2');
 
-        $a2_config = '';
+
+        $a2_config = "";
         if ($lockdown) {
             $a2_config = <<<PHP
 
@@ -1276,6 +1286,20 @@ define('DISALLOW_FILE_EDIT', true);
 // END A2 CONFIG
 PHP;
         }
+
+        if ($nomods) {
+            $a2_config .= <<<PHP
+
+define('DISALLOW_FILE_MODS', true);
+
+PHP;
+        }
+
+
+
+
+
+
 
         $wpconfig = file_get_contents(ABSPATH . 'wp-config.php');
         $pattern = "/[\r\n]*[\/][\/] BEGIN A2 CONFIG.*[\/][\/] END A2 CONFIG[\r\n]*/msU";
@@ -1293,6 +1317,11 @@ PHP;
     public function get_lockdown()
     {
         return get_option('a2_optimized_lockdown');
+    }
+
+    public function get_nomods()
+    {
+        return get_option('a2_optimized_nomods');
     }
 
     public function write_htaccess()
