@@ -358,7 +358,7 @@ class A2_Optimized_Optimizations
                 'premium' => true,
                 'configured' => false,
                 'description' => 'Decreases spam and increases site security by adding a CAPTCHA to comment forms and the login screen.  Without a CAPTCHA, bots will easily be able to post comments to you blog or brute force login to your admin panel.',
-                'is_configured' => function (&$item){
+                'is_configured' => function (){
                     return false;
                 }
             ),
@@ -369,7 +369,7 @@ class A2_Optimized_Optimizations
                 'premium' => true,
                 'configured' => false,
                 'description' => 'Makes your site faster by compressing images to make them smaller.',
-                'is_configured' => function (&$item) {
+                'is_configured' => function () {
                     return false;
                 }
             ),
@@ -387,8 +387,8 @@ class A2_Optimized_Optimizations
                         <li>Turbo Web Hosting servers have a built-in caching engine for Full Page Cache and Edge Side Includes.</li>
                     </ul>
                 ',
-                'is_configured' => function (&$item) use (&$thisclass){
-                    $item['configured'] = ( is_dir("/opt/a2-optimized") && is_dir("/usr/local/lsws") );
+                'is_configured' => function (){
+                    return false;
                 }
             ),
             'memcached' => array(
