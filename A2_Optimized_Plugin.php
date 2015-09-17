@@ -24,6 +24,8 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
         'w3tc_about',
         'w3tc_faq'
     );
+
+    //list of plugins that may conflict, displays a notice on installation of these plugins
     private $incompatible_plugins = array(
         'wp-super-cache',
         'wp-fastest-cache',
@@ -392,7 +394,7 @@ HTML;
 
     public function myStyleSheet()
     {
-        wp_enqueue_style('a2-optimized-css', plugins_url('/resources/css/style.css',__FILE__));
+        wp_enqueue_style('a2-optimized-css', plugins_url('/assets/css/style.css',__FILE__));
     }
 
     /**
@@ -699,6 +701,27 @@ HTML;
             'manage_options',
             $this->getSettingsSlug(),
             array(&$this, 'settingsPage'));
+    }
+
+
+    public function incompatible_plugin_notice()
+    {
+        echo <<<HTML
+    <div class="error">
+        <p class="danger">Proceed with caution: The Plugin you just installed may be incompatible with A2 Optimized.</p>
+    </div>
+HTML;
+
+    }
+
+    public function config_page_notice()
+    {
+        echo <<<HTML
+    <div class="updated">
+        <p>This site has been configured using the A2 Optimized plugin.  We, at A2 Hosting, have spent quite a bit of time figuring out the best set of options for this plugin; however, if you think you need to customize configuration: by all means... Continue.  If you have arrived here by mistake, you may use the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized administration page to configure this plugin</a>.</p>
+    </div>
+HTML;
+
     }
 
 

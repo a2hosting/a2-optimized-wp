@@ -424,13 +424,13 @@ class A2_Optimized_OptionsManager {
         $thisdir = rtrim(__DIR__, "/");
 
 
-        wp_enqueue_style('bootstrap', plugins_url('/resources/bootstrap/css/bootstrap.css',__FILE__));
-        wp_enqueue_style('bootstrap-theme', plugins_url('/resources/bootstrap/css/bootstrap-theme.css',__FILE__));
-        wp_enqueue_script('bootstrap-theme', plugins_url('/resources/bootstrap/js/bootstrap.js',__FILE__), array('jquery'));
+        wp_enqueue_style('bootstrap', plugins_url('/assets/bootstrap/css/bootstrap.css',__FILE__));
+        wp_enqueue_style('bootstrap-theme', plugins_url('/assets/bootstrap/css/bootstrap-theme.css',__FILE__));
+        wp_enqueue_script('bootstrap-theme', plugins_url('/assets/bootstrap/js/bootstrap.js',__FILE__), array('jquery'));
 
 
 
-        $image_dir = plugins_url('/resources/images',__FILE__);
+        $image_dir = plugins_url('/assets/images',__FILE__);
 
         do_action('a2_notices');
 
@@ -1415,27 +1415,6 @@ HTACCESS;
     {
         return get_option('a2_optimized_deny_direct');
     }
-
-    public function incompatible_plugin_notice()
-    {
-        echo <<<HTML
-    <div class="error">
-        <p class="danger">Proceed with caution: The Plugin you just installed may be incompatible with A2 Optimized.</p>
-    </div>
-HTML;
-
-    }
-
-    public function config_page_notice()
-    {
-        echo <<<HTML
-    <div class="updated">
-        <p>This site has been configured using the A2 Optimized plugin.  We at A2 hosting have spent quite a bit of time figuring out the best set of options for this plugin; however, if you think you know better: by all means... Continue.  If you have arrived here by mistake, you may use the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized administration page to configure this plugin</a>.</p>
-    </div>
-HTML;
-
-    }
-
 
 
     /**
