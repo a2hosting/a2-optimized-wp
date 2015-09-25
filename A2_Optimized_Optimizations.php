@@ -1,11 +1,5 @@
 <?php
 
-/**
- * Created by PhpStorm.
- * Author: Benjamin cool
- * Date: 7/28/15
- * Time: 2:44 PM
- */
 class A2_Optimized_Optimizations
 {
 
@@ -77,7 +71,7 @@ class A2_Optimized_Optimizations
                 'name' => 'DB Caching with W3 Total Cache',
                 'plugin' => 'W3 Total Cache',
                 'configured' => false,
-                'description' => 'Utilize W3 Total Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.',
+                'description' => 'Speed up the site by storing the responses of common database queries in a cache.',
                 'is_configured' => function (&$item) use (&$thisclass) {
                     $w3tc = $thisclass->get_w3tc_config();
                     if ($w3tc['dbcache.enabled']) {
@@ -114,7 +108,7 @@ class A2_Optimized_Optimizations
                 'name' => 'Object Caching with W3 Total Cache',
                 'plugin' => 'W3 Total Cache',
                 'configured' => false,
-                'description' => 'Utilize W3 Total Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.',
+                'description' => 'Store a copy of widgets and menu bars in cache to reduce the time it takes to render pages.',
                 'is_configured' => function (&$item) use (&$thisclass) {
                     $w3tc = $thisclass->get_w3tc_config();
                     if ($w3tc['objectcache.enabled']) {
@@ -138,7 +132,7 @@ class A2_Optimized_Optimizations
                 'name' => 'Browser Caching with W3 Total Cache',
                 'plugin' => 'W3 Total Cache',
                 'configured' => false,
-                'description' => 'Utilize W3 Total Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.',
+                'description' => 'Add Rules to the web server to tell the browser to store a copy of static files to reduce the load time pages requested after the first page is loaded.',
                 'is_configured' => function (&$item) use (&$thisclass) {
                     $w3tc = $thisclass->get_w3tc_config();
                     if ($w3tc['browsercache.enabled']) {
@@ -514,6 +508,50 @@ class A2_Optimized_Optimizations
                         $thisclass->set_install_status('P3', true);
                     } else {
                         $thisclass->set_install_status('P3', false);
+                    }
+                },
+                'enable' => function ($slug) use (&$thisclass) {
+                    $item = $thisclass->get_advanced_optimizations();
+                    $item = $item[$slug];
+                    if (!isset($thisclass->plugin_list[$item['file']])) {
+                        $thisclass->install_plugin($item['plugin_slug']);
+                    }
+                    if (!is_plugin_active($item['file'])) {
+                        $thisclass->activate_plugin($item['file']);
+                    }
+                },
+                'disable' => function ($slug) use (&$thisclass) {
+                    $item = $thisclass->get_advanced_optimizations();
+                    $item = $item[$slug];
+                    $thisclass->deactivate_plugin($item['file']);
+                }
+            ),
+            'clef' => array(
+                'slug' => 'clef',
+                'name' => 'Two-Factor / Passwordless login with Clef',
+                'description' => '<p>Secure two-factor that people love to use: strong authentication without passwords or tokens; single sign on/off; magical user experience.</p>',
+                'plugin' => 'Clef',
+                'plugin_slug' => 'wpclef',
+                'file' => 'wpclef/wpclef.php',
+                'configured' => false,
+                'not_configured_links' => array(),
+                'configured_links' => array(
+                    'Configure Clef' => 'admin.php?page=clef'
+                ),
+                'partially_configured_links' => array(
+                    'Configure Clef' => 'admin.php?page=clef'
+                ),
+                'partially_configured_message' => 'Click &quot;Configure Clef&quot; to complete the configuration of Clef.',
+                //'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/adding-two-factor-authentication-with-clef',
+                'is_configured' => function (&$item) use (&$thisclass) {
+                    $clef_options = get_option('wpclef');
+                    if (is_plugin_active($item['file']) && isset($clef_options['clef_settings_app_id']) && isset($clef_options['clef_settings_app_secret'])) {
+                        $item['configured'] = true;
+                        $thisclass->set_install_status('clef', true);
+                    } elseif (is_plugin_active($item['file'])) {
+                        $item['partially_configured'] = true;
+                    } else {
+                        $thisclass->set_install_status('clef', false);
                     }
                 },
                 'enable' => function ($slug) use (&$thisclass) {

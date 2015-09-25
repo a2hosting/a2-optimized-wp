@@ -596,15 +596,34 @@ HTML;
 				</div>
 				<div style="margin:20px 0;">
 				    <h3>Free Optimizations</h3>
-				    <dt>Caching with W3 Total Cache</dt>
+				    <dt>Page Caching with W3 Total Cache</dt>
                     <dd>
                         <ul style="list-style-type: disc;list-style-position: inside">
-                            <li>Enable Page, Object and Database caching with W3 Total cache in one click.</li>
                             <li>Page Caching stores full copies of pages on the disk so that php code and database queries can be skipped by the web server.</li>
-                            <li>Object Caching stores commonly used elements such as menus / widgets and forms on disk or in memory to speed up page rendering.</li>
+                        </ul>
+                    </dd>
+                    <dt>DB Caching with W3 Total Cache</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
                             <li>Database cache stores copies of common database queries on disk or in memcory to speed up page rendering.</li>
                         </ul>
                     </dd>
+                    <dt>Object Caching with W3 Total Cache</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Object Caching stores commonly used elements such as menus / widgets and forms on disk or in memory to speed up page rendering.</li>
+                        </ul>
+                    </dd>
+
+                    <dt>Browser Caching with W3 Total Cache</dt>
+                    <dd>
+                        <ul style="list-style-type: disc;list-style-position: inside">
+                            <li>Add Rules to the web server to tell the browser to store a copy of static files to reduce the load time pages requested after the first page is loaded.</li>
+                        </ul>
+                    </dd>
+
+
+
                     <dt>Minify HTML Pages</dt>
                     <dd>
                         <ul style="list-style-type: disc;list-style-position: inside">
@@ -1232,7 +1251,7 @@ HTML;
 		<span class="glyphicon glyphicon-exclamation-sign"></span>
 	</div>
 	<div style="float:left;">
-		<b>{$plugin['Name']} is not Active</b><br>
+		<b>Inactive Plugin: {$plugin['Name']}</b><br>
 	</div>
 	<div style="clear:both;">
 		<p>Deactivated plugins should be deleted. Deactivating a plugin does not remove the plugin and its files from your website.  Plugins with security flaws may still affect your site even when not active.</p>
