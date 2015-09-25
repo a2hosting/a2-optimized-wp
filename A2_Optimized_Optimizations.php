@@ -528,7 +528,7 @@ class A2_Optimized_Optimizations
             ),
             'clef' => array(
                 'slug' => 'clef',
-                'name' => 'Two-Factor / Passwordless login with Clef',
+                'name' => 'Two-Factor Authentication with Clef',
                 'description' => '<p>Secure two-factor that people love to use: strong authentication without passwords or tokens; single sign on/off; magical user experience.</p>',
                 'plugin' => 'Clef',
                 'plugin_slug' => 'wpclef',
