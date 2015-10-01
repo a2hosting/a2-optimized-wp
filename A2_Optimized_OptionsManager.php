@@ -1,5 +1,10 @@
 <?php
 
+/*
+    Author: Benjamin Cool
+    Author URI: https://www.a2hosting.com/
+    License: GPLv2 or Later
+*/
 
 if(is_admin()){
     require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -524,12 +529,24 @@ HTML;
 HTML;
         }
 
-
         $settingsGroup = get_class($this) . '-settings-group';
-
-
-
         $description = $this->get_plugin_description();
+
+        if($this->is_a2()) {
+            $feedback = <<<HTML
+        <div  style="margin:10px 0;" class="alert alert-success">
+            We want to hear from you! Please share your thoughts and feedback in our <a href="https://my.a2hosting.com/a2-suggestion-box.php" target="_blank">Suggestion Box!</a>
+        </div>
+HTML;
+        }
+        else {
+            $feedback = <<<HTML
+        <div  style="margin:10px 0;" class="alert alert-success">
+            We want to hear from you! Please share your thoughts and feedback in our wordpress.org <a href="https://wordpress.org/support/plugin/a2-optimized/" target="_blank">support forum!</a>
+        </div>
+HTML;
+        }
+
 
         echo <<<HTML
 
@@ -588,37 +605,36 @@ HTML;
             <div role="tabpanel" aria-labelledby="li-optimization-about" id="optimization-about" class="tab-pane">
 				<div style="margin:20px 0;">
 				    <h3>About A2 Optimized</h3>
-                    <ul style="list-style-type: disc;list-style-position: inside">
-                        <li>A2 Optimized was developed by A2 Hosting to make it faster and easier to configure the caching of all aspects of a WordPress site.</li>
-                        <li>This free plugin comes with many of the popular Optimizations that come with WordPress hosted at A2 Hosting.</li>
-                        <li>To get the full advantage of A2 Optimized, try hosting your site at <a href='https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized' target='_blank'>A2 Hosting</a></li>
-                    </ul>
+                    <p>A2 Optimized was developed by A2 Hosting to make it faster and easier to configure the caching of all aspects of a WordPress site.</p>
+                    <p>This free plugin comes with many of the popular Optimizations that come with WordPress hosted at A2 Hosting.</p>
+                    <p>To get the full advantage of A2 Optimized, host your site at <a href='https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized' target='_blank'>A2 Hosting</a></p>
+
 				</div>
 				<div style="margin:20px 0;">
 				    <h3>Free Optimizations</h3>
 				    <dt>Page Caching with W3 Total Cache</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
-                            <li>Page Caching stores full copies of pages on the disk so that php code and database queries can be skipped by the web server.</li>
+                        <ul>
+                            <li>Page Caching stores full copies of pages on the disk so that PHP code and database queries can be skipped by the web server.</li>
                         </ul>
                     </dd>
                     <dt>DB Caching with W3 Total Cache</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
-                            <li>Database cache stores copies of common database queries on disk or in memcory to speed up page rendering.</li>
+                        <ul>
+                            <li>Database cache stores copies of common database queries on disk or in memory to speed up page rendering.</li>
                         </ul>
                     </dd>
                     <dt>Object Caching with W3 Total Cache</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
-                            <li>Object Caching stores commonly used elements such as menus / widgets and forms on disk or in memory to speed up page rendering.</li>
+                        <ul>
+                            <li>Object Caching stores commonly used elements such as menus, widgets and forms on disk or in memory to speed up page rendering.</li>
                         </ul>
                     </dd>
 
                     <dt>Browser Caching with W3 Total Cache</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
-                            <li>Add Rules to the web server to tell the browser to store a copy of static files to reduce the load time pages requested after the first page is loaded.</li>
+                        <ul>
+                            <li>Add Rules to the web server to tell the visitor's browser to store a copy of static files to reduce the load time for pages requested after the first page is loaded.</li>
                         </ul>
                     </dd>
 
@@ -626,39 +642,39 @@ HTML;
 
                     <dt>Minify HTML Pages</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
-                            <li>Auto Configure W3 Total Cache to remove excess white space and comments from html pages to compress their size.</li>
-                            <li>This provides for minor imporvements in page load time.</li>
+                        <ul>
+                            <li style="list-style-position: inside">Auto Configure W3 Total Cache to remove excess white space and comments from HTML pages to compress their size.</li>
+                            <li>Smaller html pages download faster.</li>
                         </ul>
                     </dd>
                     <dt>Minify CSS Files</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
-                            <li>Auto Configure W3 Total Cache to condense CSS files into non human-readable compressed files.</li>
+                        <ul>
+                            <li>Auto Configure W3 Total Cache to condense CSS files.</li>
                             <li>Combines multiple css files into a single download.</li>
                             <li>Can provide significant speed imporvements for page loads.</li>
                         </ul>
                     </dd>
                     <dt>Minify JS Files</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
+                        <ul>
                             <li>Auto Configure W3 Total Cache to condense JavaScript files into non human-readable compressed files.</li>
                             <li>Combines multiple js files into a single download.</li>
-                            <li>Can provide significant speed imporvements for page loads.</li>
+                            <li>Can provide significant speed improvements for page loads.</li>
                         </ul>
                     </dd>
                     <dt>Gzip Compression Enabled</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
+                        <ul>
                             <li>Turns on gzip compression using W3 Total Cache.</li>
-                            <li>Ensures that files are compressed before transfering them.</li>
-                            <li>Can provide significant speed imporvements for page loads.</li>
+                            <li>Ensures that files are compressed before sending them to the visitor's browser.</li>
+                            <li>Can provide significant speed improvements for page loads.</li>
                             <li>Reduces bandwidth required to serve web pages.</li>
                         </ul>
                     </dd>
                     <dt>Deny Direct Access to Configuration Files and Comment Form</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
+                        <ul>
                             <li>Enables WordPress hardening rules in .htaccess to prevent browser access to certain files.</li>
                             <li>Prevents bots from submitting to comment forms.</li>
                             <li>Turn this off if you use systems that post to the comment form without visiting the page.</li>
@@ -666,7 +682,7 @@ HTML;
                     </dd>
                     <dt>Lock Editing of Plugins and Themes from the WP Admin</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
+                        <ul>
                             <li>Turns off the file editor in the wp-admin.</li>
                             <li>Prevents plugins and themes from being tampered with from the wp-admin.</li>
                         </ul>
@@ -679,22 +695,22 @@ HTML;
                     </p>
 				    <dt>Login URL Change</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
+                        <ul>
                             <li>Move the login page from the default wp-login.php to a random URL.</li>
                             <li>Prevents bots from automatically brute-force attacking wp-login.php</li>
                         </ul>
                     </dd>
                     <dt>reCAPTCHA on comments and login</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
-                            <li>provides google reCAPTCHA on both the Login form and comments.</li>
+                        <ul>
+                            <li>Provides google reCAPTCHA on both the Login form and comments.</li>
                             <li>Prevents bots from automatically brute-force attacking wp-login.php</li>
                             <li>Prevents bots from automatically spamming comments.</li>
                         </ul>
                     </dd>
                     <dt>Compress Images on Upload</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
+                        <ul>
                             <li>Enables and configures EWWW Image Optimizer.</li>
                             <li>Compresses images that are uploaded to save bandwidth.</li>
                             <li>Improves page load times: especially on sites with many images.</li>
@@ -702,19 +718,19 @@ HTML;
                     </dd>
                     <dt>Turbo Web Hosting</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
+                        <ul>
                             <li>Take advantage of A2 Hosting's Turbo Web Hosting platform.</li>
                             <li>Faster serving of static files.</li>
                             <li>Pre-compiled .htaccess files on the web server for imporved performance.</li>
                             <li>PHP OpCode cache enabled by default</li>
-                            <li>Custom php engine that is faster than Fast-CGI and FPM</li>
+                            <li>Custom PHP engine that is faster than Fast-CGI and FPM</li>
                         </ul>
                     </dd>
                     <dt>Memcached Database and Object Cache</dt>
                     <dd>
-                        <ul style="list-style-type: disc;list-style-position: inside">
+                        <ul>
                             <li>Database and Object cache in memory instead of on disk.</li>
-                            <li>Secure and Faster Memcached using Unix socket files.</li>
+                            <li>More secure and faster Memcached using Unix socket files.</li>
                             <li>Significant improvement in page load times, especially on pages that can not use full page cache such as wp-admin</li>
                         </ul>
                     </dd>
@@ -722,9 +738,7 @@ HTML;
 			</div>
 		</div>
 
-		<div  style="margin:10px 0;" class="alert alert-success">
-			We want to hear from you! Please share your thoughts and feedback in our <a href="https://my.a2hosting.com/a2-suggestion-box.php" target="_blank">Suggestion Box!</a>
-		</div>
+		$feedback
 
 	</div>
 
@@ -1613,6 +1627,13 @@ HTML;
 
     }
 
+
+    protected function is_a2(){
+        if( is_dir("/opt/a2-optimized") ){
+            return true;
+        }
+        return false;
+    }
 
     function get_plugin_description()
     {

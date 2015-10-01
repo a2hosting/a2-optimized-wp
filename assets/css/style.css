@@ -14,6 +14,33 @@ body{
     background-color: transparent !important;
 }
 
+/* Tab Navigation */
+.nav-tabs {
+    margin: 0;
+    padding: 0;
+    border: 0;
+}
+.nav-tabs > li > a {
+    background: #DADADA;
+    border-radius: 0;
+}
+.nav-tabs > li.active > a,
+.nav-tabs > li.active > a:hover {
+    background: #F5F5F5;
+}
+
+/* Tab Content */
+.tab-pane {
+    background: #FFFFFF;
+    box-shadow: 0 0 4px rgba(0,0,0,.4);
+    border-radius: 0;
+    padding: 10px;
+}
+
+#optimization-about ul{
+    list-style: inside disc;
+}
+
 .big-search .kb-search #kb-search-request {width: 300px;}
 
 

@@ -1,10 +1,9 @@
 === A2 Optimized WP ===
-Contributors: Benjamin Cool
-Donate link: https://www.a2hosting.com/wordpress-hosting/
-Tags: Speed, Optimize, Secure, Fast
+Contributors: a2bcool
+Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
 Requires at least: 3.5
-Tested up to: 4.3
-Stable tag: 0.1
+Tested up to: 4.3.1
+Stable tag: 4.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -152,4 +151,7 @@ New GPL plugin, now updates are through the wordpress.org repository
 
 == Screenshots ==
 
-1. A2 Optimized Administrative Panel
+1. A2 Optimized Optimizations Page
+2. A2 Optimized Warnings Page
+3. A2 Optimized Advanced Optimizations Page
+4. About A2 Optimized Page
