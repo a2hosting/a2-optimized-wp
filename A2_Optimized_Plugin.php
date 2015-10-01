@@ -1,4 +1,11 @@
 <?php
+
+/*
+    Author: Benjamin Cool
+    Author URI: https://www.a2hosting.com/
+    License: GPLv2 or Later
+*/
+
 include_once('A2_Optimized_OptionsManager.php');
 
 
