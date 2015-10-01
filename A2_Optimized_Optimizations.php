@@ -1,5 +1,11 @@
 <?php
 
+/*
+    Author: Benjamin Cool
+    Author URI: https://www.a2hosting.com/
+    License: GPLv2 or Later
+*/
+
 class A2_Optimized_Optimizations
 {
 
@@ -132,7 +138,7 @@ class A2_Optimized_Optimizations
                 'name' => 'Browser Caching with W3 Total Cache',
                 'plugin' => 'W3 Total Cache',
                 'configured' => false,
-                'description' => 'Add Rules to the web server to tell the browser to store a copy of static files to reduce the load time pages requested after the first page is loaded.',
+                'description' => 'Add Rules to the web server to tell the visitor&apos;s browser to store a copy of static files to reduce the load time pages requested after the first page is loaded.',
                 'is_configured' => function (&$item) use (&$thisclass) {
                     $w3tc = $thisclass->get_w3tc_config();
                     if ($w3tc['browsercache.enabled']) {
@@ -529,7 +535,7 @@ class A2_Optimized_Optimizations
             'clef' => array(
                 'slug' => 'clef',
                 'name' => 'Two-Factor Authentication with Clef',
-                'description' => '<p>Secure two-factor that people love to use: strong authentication without passwords or tokens; single sign on/off; magical user experience.</p>',
+                'description' => '<p>Clef provides easy-to-use strong two-factor authentication using smartphones. It replaces insecure passwords and cumbersome one-time codes with the beautiful Clef Wave.</p>',
                 'plugin' => 'Clef',
                 'plugin_slug' => 'wpclef',
                 'file' => 'wpclef/wpclef.php',
