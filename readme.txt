@@ -1,5 +1,5 @@
 === A2 Optimized WP ===
-Contributors: a2bcool
+Contributors: A2BCool, a2hosting
 Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
 Requires at least: 3.5
 Tested up to: 4.3.1
@@ -134,14 +134,20 @@ W3 Total Cache is the only plugin that handles all types of caching.  It caches 
 
 = Can I use A2 Optimized on any host =
 
-Yes.  A2 Optimized works on any host that supports WordPress.  While A2 Hosting provides a few more tools for speeding up your site
+Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hosting provides a few more tools for speeding up your site when hosted on an A2 Hosting server.
 
 
 
 == Changelog ==
 
+= 2.0.1 =
+*minor bug fixes
+*check for PHP version >= 5.3
+
+
 = 2.0 =
 *Move from SaaS to Full GPL
+
 
 == Upgrade Notice ==
 

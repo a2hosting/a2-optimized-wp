@@ -102,7 +102,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 
     public function getVersion()
     {
-        return $this->getPluginHeaderValue('1.9.3.4');
+        return $this->getPluginHeaderValue('Version');
     }
 
     public function getPluginHeaderValue($key)
@@ -259,7 +259,7 @@ HTML;
                 if (file_exists("/opt/a2-optimized/wordpress/recaptchalib.php")) {
                     include_once("/opt/a2-optimized/wordpress/recaptchalib.php");
                     $privatekey = $this->get_private_key();
-                    if (!is_null($key)) {
+                    if (!is_null($privatekey)) {
                         $resp = a2recaptcha_check_answer($privatekey,
                             $_SERVER["REMOTE_ADDR"],
                             $_POST["recaptcha_challenge_field"],
@@ -267,7 +267,7 @@ HTML;
 
                         if (!empty($username)) {
                             if (!$resp->is_valid) {
-                                remove_filter('authenticate', 'wp_authenticate_username_password', 20, 3);
+                                remove_filter('authenticate', 'wp_authenticate_username_password', 20);
                                 //wp_die("<strong>The reCAPTCHA wasn't entered correctly. Go back and try it again.</strong>: (reCAPTCHA said: {$resp->error})");
                                 return new WP_Error('recaptcha_error', "<strong>The reCAPTCHA wasn't entered correctly. Please try it again.</strong>");
                             }
@@ -299,7 +299,7 @@ HTML;
                 $a2_recaptcha = $this->getOption('recaptcha');
                 if ($a2_recaptcha == 1) {
                     $privatekey = $this->get_private_key();
-                    if (!is_null($key)) {
+                    if (!is_null($privatekey)) {
                         $resp = a2recaptcha_check_answer($privatekey,
                             $_SERVER["REMOTE_ADDR"],
                             $_POST["recaptcha_challenge_field"],
@@ -412,7 +412,7 @@ HTML;
     public function dashboard_widget()
     {
 
-        $logo_url = plugins_url() . "/a2-optimized/resource/images/a2optimized.png";
+        $logo_url = plugins_url() . "/a2-optimized-wp/assets/images/a2optimized.png";
 
         wp_add_dashboard_widget(
             'a2_optimized',         // Widget slug.
