@@ -1,11 +1,11 @@
 # A2 Optimized WP
 
-Contributors: A2BCool, a2hosting
-Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
-Requires at least: 3.5
-Tested up to: 4.3.1
-Stable tag: 4.3.1
-License: GPLv2 or later
+Contributors: A2BCool, a2hosting  
+Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting  
+Requires at least: 3.5  
+Tested up to: 4.3.1  
+Stable tag: 4.3.1  
+License: GPLv2 or later  
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Make your site faster and more secure with a few clicks of a button.
