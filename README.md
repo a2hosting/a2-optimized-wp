@@ -1,4 +1,4 @@
-=== A2 Optimized WP ===
+# A2 Optimized WP
 Contributors: A2BCool, a2hosting
 Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
 Requires at least: 3.5
@@ -9,7 +9,7 @@ License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Make your site faster and more secure with the click of a few buttons
 
-== Description ==
+## Description
 
 A2 Optimized is designed to make it *quick and easy* to *speed up* and secure your website by installing
 and configuring several well known, stable plugins with the click of a few buttons.
@@ -20,7 +20,7 @@ A2 Optimized has broken it down into the most valuable optimizations and will au
 W3 Total Cache for what works best in most shared hosting environments.
 
 
-= Free Optimizations =
+### Free Optimizations
 
 **Caching with W3 Total Cache**:
 
@@ -64,7 +64,7 @@ W3 Total Cache for what works best in most shared hosting environments.
 * Turns off the file editor in the wp-admin.
 * Prevents plugins and themes from being tampered with from the wp-admin.
 
-= A2 Hosting Exclusive Optimizations =
+### A2 Hosting Exclusive Optimizations
 
 **These one-click optimizations are only available while hosted at A2 Hosting.**
 
@@ -100,7 +100,7 @@ W3 Total Cache for what works best in most shared hosting environments.
 * Significant improvement in page load times, especially on pages that can not use full page cache such as wp-admin.
 
 
-== Installation ==
+## Installation
 
 1. Upload a2-optimized into the wp-content/plugins/ directory
 1. Activate the plugin through the 'Plugins' menu in WordPress
@@ -110,54 +110,55 @@ W3 Total Cache for what works best in most shared hosting environments.
 1. Check out Advanced Optimizations that may help you identify plugins that may be slowing down your site.
 
 
-== Frequently Asked Questions ==
+## Frequently Asked Questions
 
-= How does A2 Optimized speed up my site? =
+### How does A2 Optimized speed up my site?
 
 Caching is the fastest and easiest way to speed up a dynamic website.
 A2 Optimized will install and configure W3 Total Cache with the click of a few buttons.
 
-= Does A2 Optimized make all sites faster? =
+### Does A2 Optimized make all sites faster?
 
 A2 Optimized will speed up most sites; however, not all plugins are compatible with W3 Total Cache.
 
 If your site is slower after enabling caching in A2 Optimized,
 talk to a developer about finding better solutions for the plugins that you are using.
 
-= Can I use A2 Optimized with WordFence? =
+### Can I use A2 Optimized with WordFence?
 
 A2 Optimized is compatible with most of the features in WordFence, however you should disable caching and logging in WordFence.
 
-= Why use W3 Total Cache over WP Super Cache? =
+### Why use W3 Total Cache over WP Super Cache?
 
 W3 Total Cache is the only plugin that handles all types of caching.  It caches frequently used database queries, objects and pages.  It also allows the use of Memcached as a storage engine for cache.
 
-= Can I use A2 Optimized on any host? =
+### Can I use A2 Optimized on any host?
 
 Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hosting provides a few more tools for speeding up your site when hosted on an A2 Hosting server.
 
 
 
-== Changelog ==
+## Changelog
 
-= 2.0.1 =
+### 2.0.1
 *minor bug fixes
 *check for PHP version >= 5.3
 
 
-= 2.0 =
-*Move from SaaS to Full GPL
+### 2.0
+* Move from SaaS to Full GPL
 
 
-== Upgrade Notice ==
+## Upgrade Notice
 
-= 2.0 =
-New GPL plugin, now updates are through the wordpress.org repository
+### 2.0
+* New GPL plugin, now updates are through the wordpress.org repository
 
 
-== Screenshots ==
+## Screenshots
 
 1. A2 Optimized Optimizations Page
-2. A2 Optimized Warnings Page
-3. A2 Optimized Advanced Optimizations Page
-4. About A2 Optimized Page
+1. A2 Optimized Warnings Page
+1. A2 Optimized Advanced Optimizations Page
+1. About A2 Optimized Page
+
