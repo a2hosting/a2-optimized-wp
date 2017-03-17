@@ -13,7 +13,7 @@ Make your site faster and more secure with a few clicks of a button.
 ## Description
 
 A2 Optimized is designed to make it *quick and easy* to *speed up* and secure your website by installing
-and configuring several well known, stable plugins with the click of a few buttons.
+and configuring several well known, stable plugins with a few clicks of a button.
 
 **Have you ever tried to configure *W3 Total cache* and got lost in the mess of configuration pages?**
 
