@@ -1,4 +1,5 @@
 # A2 Optimized WP
+
 Contributors: A2BCool, a2hosting
 Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
 Requires at least: 3.5
@@ -7,7 +8,7 @@ Stable tag: 4.3.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Make your site faster and more secure with the click of a few buttons
+Make your site faster and more secure with a few clicks of a button.
 
 ## Description
 
@@ -66,7 +67,7 @@ W3 Total Cache for what works best in most shared hosting environments.
 
 ### A2 Hosting Exclusive Optimizations
 
-**These one-click optimizations are only available while hosted at A2 Hosting.**
+*These one-click optimizations are only available while hosted at A2 Hosting.*
 
 **Login URL Change**:
 
@@ -141,9 +142,8 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 ## Changelog
 
 ### 2.0.1
-*minor bug fixes
-*check for PHP version >= 5.3
-
+* Minor bug fixes
+* Check for PHP version >= 5.3
 
 ### 2.0
 * Move from SaaS to Full GPL
