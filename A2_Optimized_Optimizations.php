@@ -532,50 +532,6 @@ class A2_Optimized_Optimizations
                     $thisclass->deactivate_plugin($item['file']);
                 }
             ),
-            'clef' => array(
-                'slug' => 'clef',
-                'name' => 'Two-Factor Authentication with Clef',
-                'description' => '<p>Clef provides easy-to-use strong two-factor authentication using smartphones. It replaces insecure passwords and cumbersome one-time codes with the beautiful Clef Wave.</p>',
-                'plugin' => 'Clef',
-                'plugin_slug' => 'wpclef',
-                'file' => 'wpclef/wpclef.php',
-                'configured' => false,
-                'not_configured_links' => array(),
-                'configured_links' => array(
-                    'Configure Clef' => 'admin.php?page=clef'
-                ),
-                'partially_configured_links' => array(
-                    'Configure Clef' => 'admin.php?page=clef'
-                ),
-                'partially_configured_message' => 'Click &quot;Configure Clef&quot; to complete the configuration of Clef.',
-                //'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/adding-two-factor-authentication-with-clef',
-                'is_configured' => function (&$item) use (&$thisclass) {
-                    $clef_options = get_option('wpclef');
-                    if (is_plugin_active($item['file']) && isset($clef_options['clef_settings_app_id']) && isset($clef_options['clef_settings_app_secret'])) {
-                        $item['configured'] = true;
-                        $thisclass->set_install_status('clef', true);
-                    } elseif (is_plugin_active($item['file'])) {
-                        $item['partially_configured'] = true;
-                    } else {
-                        $thisclass->set_install_status('clef', false);
-                    }
-                },
-                'enable' => function ($slug) use (&$thisclass) {
-                    $item = $thisclass->get_advanced_optimizations();
-                    $item = $item[$slug];
-                    if (!isset($thisclass->plugin_list[$item['file']])) {
-                        $thisclass->install_plugin($item['plugin_slug']);
-                    }
-                    if (!is_plugin_active($item['file'])) {
-                        $thisclass->activate_plugin($item['file']);
-                    }
-                },
-                'disable' => function ($slug) use (&$thisclass) {
-                    $item = $thisclass->get_advanced_optimizations();
-                    $item = $item[$slug];
-                    $thisclass->deactivate_plugin($item['file']);
-                }
-            ),
             'cloudflare' => array(
                 'slug' => 'cloudflare',
                 'name' => 'CloudFlare',

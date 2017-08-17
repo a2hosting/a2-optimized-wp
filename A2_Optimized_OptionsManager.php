@@ -146,16 +146,9 @@ class A2_Optimized_OptionsManager {
     {
         $file = 'w3-total-cache/w3-total-cache.php';
         $slug = 'w3-total-cache';
-        if (!class_exists('W3_ConfigWriter')) {
-            $plugins = $this->get_plugins();
-            if (isset($plugins[$file])) {
-                activate_plugin($file);
-            } else {
-                $this->install_plugin($slug);
-                $this->activate_plugin($file);
-                $this->hit_the_w3tc_page();
-            }
-        }
+        $this->install_plugin($slug);
+        $this->activate_plugin($file);
+        $this->hit_the_w3tc_page();
     }
 
     public function get_plugins()
@@ -179,6 +172,11 @@ class A2_Optimized_OptionsManager {
 
         foreach ($plugins as $file => $plugin) {
             if ($plugin['Name'] == $api->name) {
+                if (version_compare($plugin['Version'], '162.0.0.0') === -1) {
+                    $this->uninstall_plugin($file);
+                    break;
+                }
+                
                 $found = true;
             }
         }
@@ -186,6 +184,11 @@ class A2_Optimized_OptionsManager {
         if (!$found) {
             ob_start();
             $upgrader = new Plugin_Upgrader(new A2_Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
+            
+            if ($slug == 'w3-total-cache') {
+                $api->download_link = 'http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/w3-total-cache.zip';
+            }
+            
             $upgrader->install($api->download_link);
             ob_end_clean();
             $this->plugin_list = get_plugins();
@@ -447,13 +450,6 @@ class A2_Optimized_OptionsManager {
 
         $optionMetaData = $this->getOptionMetaData();
 
-        $csrf_token = 0;
-        /*$kbpage = $this->curl('https://www.a2hosting.com/kb');
-
-
-        if (preg_match('/name="csrf_token" value="([a-z0-9]{40})"/', $kbpage, $csrf_match)) {
-            $csrf_token = $csrf_match[1];
-        }*/
 
         $optimization_status = "";
 
@@ -505,12 +501,9 @@ HTML;
 			<div class='hiddenFields'>
 				<input type="hidden" name="ACT" value="25" />
 				<input type="hidden" name="RP" value="kb/results" />
-				<input type="hidden" name="site_id" value="1" />
-				<input type="hidden" name="csrf_token" value="{$csrf_token}" />
 			</div>
 			<input type="text" id="kb-search-request" name="keywords" placeholder="Search The A2 Knowledge Base">
 			<button class='btn btn-success' type='submit'>Search</button>
-			<div id='honeypot'><input type='text' class='input'></div>
 		</form>
 	</div>
 </div>
@@ -535,7 +528,7 @@ HTML;
         if($this->is_a2()) {
             $feedback = <<<HTML
         <div  style="margin:10px 0;" class="alert alert-success">
-            We want to hear from you! Please share your thoughts and feedback in our <a href="https://my.a2hosting.com/a2-suggestion-box.php" target="_blank">Suggestion Box!</a>
+            We want to hear from you! Please share your thoughts and feedback in our <a href="https://my.a2hosting.com/?m=a2_suggestionbox" target="_blank">Suggestion Box!</a>
         </div>
 HTML;
         }
@@ -551,8 +544,7 @@ HTML;
         echo <<<HTML
 
 
-
-<section id="content-general">
+<section id="a2opt-content-general">
 	<div  class="wrap">
 		<div>
 			<div>

@@ -2,12 +2,12 @@
 /*
     Plugin Name: A2 Optimized WP
     Plugin URI: https://wordpress.org/plugins/a2-optimized/
-    Version: 2.0.1
+    Version: 2.0.7
     Author: A2 Hosting
     Author URI: https://www.a2hosting.com/
     Description: A2 Optimized - WordPress Optimization Plugin
     Text Domain: a2-optimized
-    License: GPLv2 or Later
+    License: GPLv3
 */
 
 
