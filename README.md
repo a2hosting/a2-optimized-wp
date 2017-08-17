@@ -1,12 +1,12 @@
 # A2 Optimized WP
 
-Contributors: A2BCool, a2hosting  
-Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting  
-Requires at least: 3.5  
-Tested up to: 4.3.1  
-Stable tag: 4.3.1  
-License: GPLv2 or later  
-License URI: http://www.gnu.org/licenses/gpl-2.0.html
+Contributors: A2BCool, a2hosting, dmatteson, sputala
+Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
+Requires at least: 3.8
+Tested up to: 4.8
+Stable tag: 2.0.7
+License: GPLv3
+License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
 Make your site faster and more secure with a few clicks of a button.
 
@@ -140,6 +140,18 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 
 ## Changelog
+
+### 2.0.7
+*Revert use of PHP short arrays
+
+### 2.0.6
+*Removed Clef and tested against WordPress 4.8
+
+### 2.0.3
+*Added dmatteson as a plugin author
+
+### 2.0.2
+*added namespace class to css to prevent collision with other plugins
 
 ### 2.0.1
 * Minor bug fixes
