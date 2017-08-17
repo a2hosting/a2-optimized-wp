@@ -142,16 +142,16 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 ## Changelog
 
 ### 2.0.7
-*Revert use of PHP short arrays
+* Revert use of PHP short arrays
 
 ### 2.0.6
-*Removed Clef and tested against WordPress 4.8
+* Removed Clef and tested against WordPress 4.8
 
 ### 2.0.3
-*Added dmatteson as a plugin author
+* Added dmatteson as a plugin author
 
 ### 2.0.2
-*added namespace class to css to prevent collision with other plugins
+* added namespace class to css to prevent collision with other plugins
 
 ### 2.0.1
 * Minor bug fixes
