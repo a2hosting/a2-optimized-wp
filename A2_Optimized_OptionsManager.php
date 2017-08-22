@@ -269,6 +269,7 @@ class A2_Optimized_OptionsManager {
         $vars['objectcache.enabled'] = true;
         $vars['dbcache.enabled'] = true;
         $vars['pgcache.enabled'] = true;
+        $vars['pgcache.cache.ssl'] = true;
         $vars['browsercache.enabled'] = true;
 
         $this->update_w3tc($vars);
@@ -286,6 +287,7 @@ class A2_Optimized_OptionsManager {
         }
 
         $vars['pgcache.enabled'] = true;
+        $vars['pgcache.cache.ssl'] = true;
         $this->update_w3tc($vars);
     }
 
