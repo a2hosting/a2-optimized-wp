@@ -569,7 +569,9 @@ HTML;
                 }
             }
         }
-
+        if (in_array('w3-total-cache/w3-total-cache.php', $active_plugins)) {
+            wp_enqueue_script('a2_functions', plugins_url('/assets/js/functions.js',__FILE__), array('jquery'));
+        }
 
         if (isset($_GET['page']) && in_array($_GET['page'], $this->config_pages)) {
             add_action('admin_notices', array(&$this, 'config_page_notice'));
