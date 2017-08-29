@@ -102,7 +102,7 @@ class A2_Optimized_OptionsManager {
 			'objectcache.file.gc' => 7200,
 
 			'browsercache.cssjs.last_modified' => true,
-			'browsercache.cssjs.compression' => true,
+			'browsercache.cssjs.compression' => false,
 			'browsercache.cssjs.expires' => true,
 			'browsercache.cssjs.lifetime' => 31536000,
 			'browsercache.cssjs.nocookies' => false,
@@ -111,7 +111,7 @@ class A2_Optimized_OptionsManager {
 			'browsercache.cssjs.etag' => true,
 			'browsercache.cssjs.w3tc' => true,
 			'browsercache.cssjs.replace' => true,
-			'browsercache.html.compression' => true,
+			'browsercache.html.compression' => false,
 			'browsercache.html.last_modified' => true,
 			'browsercache.html.expires' => true,
 			'browsercache.html.lifetime' => 30,
@@ -121,7 +121,7 @@ class A2_Optimized_OptionsManager {
 			'browsercache.html.w3tc' => true,
 			'browsercache.html.replace' => true,
 			'browsercache.other.last_modified' => true,
-			'browsercache.other.compression' => true,
+			'browsercache.other.compression' => false,
 			'browsercache.other.expires' => true,
 			'browsercache.other.lifetime' => 31536000,
 			'browsercache.other.nocookies' => false,
@@ -951,7 +951,6 @@ JAVASCRIPT;
 					if (isset($item['remove_link']) && $item['remove_link'] == true && ($server_info->cf || $server_info->gzip || $server_info->br)) {
 						// skip adding "disable" link if 'remove_link' key is set and site is behind cloudflare
 						// used for Gzip options
-						//TODO: Check for general compression settings (server gzip, etc not just cf), build other compression detection methods.
 					} else {
 						$links[] = ["?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self'];
 					}
