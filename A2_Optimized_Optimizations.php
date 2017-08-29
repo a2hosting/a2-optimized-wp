@@ -249,7 +249,7 @@ class A2_Optimized_Optimizations {
 				'description' => 'Makes your site significantly faster by compressing all text files to make them smaller.',
 				'is_configured' => function (&$item) use (&$thisclass) {
 					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['browsercache.other.compression'] || $this->server_info->cf) {
+					if ($w3tc['browsercache.other.compression'] || $this->server_info->cf || $this->server_info->gzip || $this->server_info->br) {
 						$item['configured'] = true;
 						$thisclass->set_install_status('gzip', true);
 					} else {

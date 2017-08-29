@@ -396,6 +396,7 @@ class A2_Optimized_OptionsManager {
 		if (!current_user_can('manage_options')) {
 			wp_die(__('You do not have sufficient permissions to access A2 Optimized.', 'a2-optimized'));
 		}
+		$server_info = new A2_Optimized_Server_Info();
 
 		$thisclass = $this;
 
@@ -422,7 +423,7 @@ class A2_Optimized_OptionsManager {
 		$optimization_status = '';
 
 		foreach ($this->advanced_optimizations as $shortname => &$item) {
-			$this->advanced_optimization_status .= $this->get_optimization_status($item);
+			$this->advanced_optimization_status .= $this->get_optimization_status($item, $server_info);
 			if ($item['configured']) {
 				$this->advanced_optimization_count++;
 			}
@@ -431,7 +432,7 @@ class A2_Optimized_OptionsManager {
 		$this->optimization_count = 0;
 
 		foreach ($this->optimizations as $shortname => &$item) {
-			$this->optimization_status .= $this->get_optimization_status($item);
+			$this->optimization_status .= $this->get_optimization_status($item, $server_info);
 			if ($item['configured']) {
 				$this->optimization_count++;
 			}
@@ -739,7 +740,6 @@ HTML;
 
 	public function get_plugin_status() {
 		$thisclass = $this;
-		$server_info = new A2_Optimized_Server_Info();
 		$opts = new A2_Optimized_Optimizations($thisclass);
 		$this->advanced_optimizations = $opts->get_advanced();
 		$this->optimizations = $opts->get_optimizations();
@@ -928,7 +928,8 @@ JAVASCRIPT;
 	  update_option('a2_optimized_litespeed',$litespeed);
 	}*/
 
-	public function get_optimization_status(&$item) {
+	public function get_optimization_status(&$item, $server_info) {
+		//$server_info = new A2_Optimized_Server_Info();
 		if ($item != null) {
 			$settings_slug = $this->getSettingsSlug();
 
@@ -947,7 +948,7 @@ JAVASCRIPT;
 
 				//if (isset($item['disable']) && $item['disable'] != 'disabled') {
 				if (isset($item['disable'])) {
-					if ($server_info->cf && isset($item['remove_link']) && $item['remove_link'] == true) {
+					if (isset($item['remove_link']) && $item['remove_link'] == true && ($server_info->cf || $server_info->gzip || $server_info->br)) {
 						// skip adding "disable" link if 'remove_link' key is set and site is behind cloudflare
 						// used for Gzip options
 						//TODO: Check for general compression settings (server gzip, etc not just cf), build other compression detection methods.
