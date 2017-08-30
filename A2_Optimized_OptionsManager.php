@@ -37,6 +37,8 @@ class A2_Optimized_OptionsManager {
 			$this->enable_w3_total_cache();
 		}
 
+		//@TODO: move desired W3TC version out of here and into a constant
+
 		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/w3-total-cache/w3-total-cache.php');
 		if ($w3tc_plugin_data['Version'] != '162.0.0.0') {
 			$this->enable_w3_total_cache();
