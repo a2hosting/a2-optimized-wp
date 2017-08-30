@@ -5,7 +5,7 @@
 	Author URI: https://www.a2hosting.com/
 	License: GPLv2 or Later
 */
-require_once 'A2_Optimized_Server_Info.php';
+
 if (is_admin()) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 	class A2_Plugin_Installer_Skin extends Plugin_Installer_Skin {
@@ -34,6 +34,13 @@ class A2_Optimized_OptionsManager {
 	public function set_w3tc_defaults() {
 		$vars = $this->get_w3tc_defaults();
 		if (!class_exists('W3_ConfigData')) {
+			$this->enable_w3_total_cache();
+		}
+
+		//@TODO: move desired W3TC version out of here and into a constant
+
+		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/w3-total-cache/w3-total-cache.php');
+		if ($w3tc_plugin_data['Version'] != '162.0.0.0') {
 			$this->enable_w3_total_cache();
 		}
 
@@ -307,7 +314,14 @@ class A2_Optimized_OptionsManager {
 		if (!class_exists('W3_ConfigData')) {
 			$this->enable_w3_total_cache();
 		}
+<<<<<<<<< saved version
 
+=========
+		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/w3-total-cache/w3-total-cache.php');
+		if ($w3tc_plugin_data['Version'] != '162.0.0.0') {
+			$this->enable_w3_total_cache();
+		}
+>>>>>>>>> local version
 		$config_writer = new W3_ConfigWriter(0, false);
 		foreach ($vars as $name => $val) {
 			$config_writer->set($name, $val);
@@ -929,7 +943,6 @@ JAVASCRIPT;
 	}*/
 
 	public function get_optimization_status(&$item, $server_info) {
-		//$server_info = new A2_Optimized_Server_Info();
 		if ($item != null) {
 			$settings_slug = $this->getSettingsSlug();
 
@@ -946,7 +959,6 @@ JAVASCRIPT;
 				$active_text = 'Configured';
 				$glyph = 'ok';
 
-				//if (isset($item['disable']) && $item['disable'] != 'disabled') {
 				if (isset($item['disable'])) {
 					if (isset($item['remove_link']) && $item['remove_link'] == true && ($server_info->cf || $server_info->gzip || $server_info->br)) {
 						// skip adding "disable" link if 'remove_link' key is set and site is behind cloudflare
