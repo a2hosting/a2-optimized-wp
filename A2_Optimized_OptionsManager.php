@@ -1147,7 +1147,7 @@ HTML;
 			}
 		}
 
-		return [$warning_html, $num_warnings];
+		return array($warning_html, $num_warnings);
 	}
 
 	private function warning_display($warning) {
