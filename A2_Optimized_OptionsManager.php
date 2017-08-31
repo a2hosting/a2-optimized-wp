@@ -1,7 +1,7 @@
 <?php
 
 /*
-	Author: Benjamin Cool, Andrew Jones
+	Author: Benjamin Cool	Author: Benjamin Cool, Andrew Jones
 	Author URI: https://www.a2hosting.com/
 	License: GPLv2 or Later
 */
@@ -113,7 +113,7 @@ class A2_Optimized_OptionsManager {
 			'objectcache.file.gc' => 7200,
 
 			'browsercache.cssjs.last_modified' => true,
-			'browsercache.cssjs.compression' => true,
+			'browsercache.cssjs.compression' => false,
 			'browsercache.cssjs.expires' => true,
 			'browsercache.cssjs.lifetime' => 31536000,
 			'browsercache.cssjs.nocookies' => false,
@@ -122,7 +122,7 @@ class A2_Optimized_OptionsManager {
 			'browsercache.cssjs.etag' => true,
 			'browsercache.cssjs.w3tc' => true,
 			'browsercache.cssjs.replace' => true,
-			'browsercache.html.compression' => true,
+			'browsercache.html.compression' => false,
 			'browsercache.html.last_modified' => true,
 			'browsercache.html.expires' => true,
 			'browsercache.html.lifetime' => 30,
@@ -132,7 +132,7 @@ class A2_Optimized_OptionsManager {
 			'browsercache.html.w3tc' => true,
 			'browsercache.html.replace' => true,
 			'browsercache.other.last_modified' => true,
-			'browsercache.other.compression' => true,
+			'browsercache.other.compression' => false,
 			'browsercache.other.expires' => true,
 			'browsercache.other.lifetime' => 31536000,
 			'browsercache.other.nocookies' => false,
@@ -413,6 +413,7 @@ class A2_Optimized_OptionsManager {
 		if (!current_user_can('manage_options')) {
 			wp_die(__('You do not have sufficient permissions to access A2 Optimized.', 'a2-optimized'));
 		}
+		$server_info = new A2_Optimized_Server_Info();
 
 		$thisclass = $this;
 
@@ -439,7 +440,7 @@ class A2_Optimized_OptionsManager {
 		$optimization_status = '';
 
 		foreach ($this->advanced_optimizations as $shortname => &$item) {
-			$this->advanced_optimization_status .= $this->get_optimization_status($item);
+			$this->advanced_optimization_status .= $this->get_optimization_status($item, $server_info);
 			if ($item['configured']) {
 				$this->advanced_optimization_count++;
 			}
@@ -448,7 +449,7 @@ class A2_Optimized_OptionsManager {
 		$this->optimization_count = 0;
 
 		foreach ($this->optimizations as $shortname => &$item) {
-			$this->optimization_status .= $this->get_optimization_status($item);
+			$this->optimization_status .= $this->get_optimization_status($item, $server_info);
 			if ($item['configured']) {
 				$this->optimization_count++;
 			}
@@ -945,7 +946,7 @@ JAVASCRIPT;
 	  update_option('a2_optimized_litespeed',$litespeed);
 	}*/
 
-	public function get_optimization_status(&$item) {
+	public function get_optimization_status(&$item, $server_info) {
 		if ($item != null) {
 			$settings_slug = $this->getSettingsSlug();
 
@@ -963,7 +964,12 @@ JAVASCRIPT;
 				$glyph = 'ok';
 
 				if (isset($item['disable'])) {
-					$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self');
+					if (isset($item['remove_link']) && $item['remove_link'] == true && ($server_info->cf || $server_info->gzip || $server_info->br)) {
+						// skip adding "disable" link if 'remove_link' key is set and site is behind cloudflare
+						// used for Gzip options
+					} else {
+						$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self');
+					}
 				}
 				if (isset($item['settings'])) {
 					$links[] = array("{$item['settings']}", 'Configure', '_self');
