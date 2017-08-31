@@ -23,7 +23,7 @@ class A2_Optimized {
 		$A2_Optimized_minimalRequiredPhpVersion = '5.3.0';
 
 		if (version_compare(PHP_VERSION, $A2_Optimized_minimalRequiredPhpVersion) < 0) {
-			add_action('admin_notices', [&$this,'A2_Optimized_noticePhpVersionWrong']);
+			add_action('admin_notices', array(&$this,'A2_Optimized_noticePhpVersionWrong'));
 
 			return;
 		}
@@ -44,10 +44,10 @@ class A2_Optimized {
 	  $a2Plugin->addActionsAndFilters();
 
 	  // Register the Plugin Activation Hook
-	  register_activation_hook(__FILE__, [&$a2Plugin, 'activate']);
+	  register_activation_hook(__FILE__, array(&$a2Plugin, 'activate'));
 
 	  // Register the Plugin Deactivation Hook
-	  register_deactivation_hook(__FILE__, [&$a2Plugin, 'deactivate']);
+	  register_deactivation_hook(__FILE__, array(&$a2Plugin, 'deactivate'));
 	}
 
 	public function A2_Optimized_noticePhpVersionWrong() {

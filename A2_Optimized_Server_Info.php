@@ -28,7 +28,7 @@ class A2_Optimized_Server_Info {
 	 *
 	 **/
 	private function server_header_call() {
-		$encodings = ['gzip', 'br'];
+		$encodings = array('gzip', 'br');
 
 		$ch = curl_init();
 		curl_setopt($ch, CURLOPT_URL, home_url());
