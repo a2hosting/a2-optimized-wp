@@ -1,7 +1,7 @@
 <?php
 
 /*
-	Author: Benjamin Cool
+	Author: Benjamin Cool, Andrew Jones
 	Author URI: https://www.a2hosting.com/
 	License: GPLv2 or Later
 */
