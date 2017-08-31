@@ -335,12 +335,12 @@ class A2_Optimized_OptionsManager {
 	}
 
 	public function disable_w3tc_cache() {
-		$this->update_w3tc([
+		$this->update_w3tc(array(
 			'pgcache.enabled' => false,
 			'dbcache.enabled' => false,
 			'objectcache.enabled' => false,
 			'browsercache.enabled' => false,
-		]);
+		));
 	}
 
 	public function disable_w3tc_page_cache() {
@@ -368,20 +368,20 @@ class A2_Optimized_OptionsManager {
 	}
 
 	public function disable_html_minify() {
-		$this->update_w3tc([
+		$this->update_w3tc(array(
 			'minify.html.enable' => false,
 			'minify.html.enabled' => false,
 			'minify.auto' => false
-		]);
+		));
 	}
 
 	public function enable_html_minify() {
-		$this->update_w3tc([
+		$this->update_w3tc(array(
 			'minify.html.enable' => true,
 			'minify.enabled' => true,
 			'minify.auto' => false,
 			'minify.engine' => 'file'
-		]);
+		));
 	}
 
 	public function curl_save_w3tc($cookie, $url) {
@@ -894,7 +894,7 @@ JAVASCRIPT;
 		$this->deactivate_plugin($file);
 		uninstall_plugin($file);
 		if ($delete) {
-			delete_plugins([$file]);
+			delete_plugins(array($file));
 		}
 		unset($this->plugin_list[$file]);
 		$this->clear_w3_total_cache();
@@ -1291,7 +1291,7 @@ PHP;
 		//make sure it is writable by owner and readable by everybody
 		chmod(ABSPATH . '.htaccess', 0644);
 
-		$home_path = explode('/', str_replace(['http://', 'https://'], '', home_url()), 2);
+		$home_path = explode('/', str_replace(array('http://', 'https://'), '', home_url()), 2);
 
 		if (!isset($home_path[1]) || $home_path[1] == '') {
 			$home_path = '/';
