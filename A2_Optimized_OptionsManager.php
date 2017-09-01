@@ -1,7 +1,7 @@
 <?php
 
 /*
-	Author: Benjamin Cool
+	Author: Benjamin Cool	Author: Benjamin Cool, Andrew Jones
 	Author URI: https://www.a2hosting.com/
 	License: GPLv2 or Later
 */
@@ -30,6 +30,12 @@ class A2_Optimized_OptionsManager {
 	private $advanced_optimization_count;
 	private $plugin_list;
 	private $install_status;
+	private $a2_w3tc_current_version;
+
+	public function __construct() {
+		// The version of A2 maintained W3TC we want installed
+		$this->a2_w3tc_current_version = '162.0.0.0';
+	}
 
 	public function set_w3tc_defaults() {
 		$vars = $this->get_w3tc_defaults();
@@ -37,10 +43,8 @@ class A2_Optimized_OptionsManager {
 			$this->enable_w3_total_cache();
 		}
 
-		//@TODO: move desired W3TC version out of here and into a constant
-
 		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/w3-total-cache/w3-total-cache.php');
-		if ($w3tc_plugin_data['Version'] != '162.0.0.0') {
+		if ($w3tc_plugin_data['Version'] != $this->a2_w3tc_current_version) {
 			$this->enable_w3_total_cache();
 		}
 
@@ -167,15 +171,18 @@ class A2_Optimized_OptionsManager {
 
 		$found = false;
 
+		if ($slug == 'w3-total-cache') {
+			$file = 'w3-total-cache/w3-total-cache.php';
+			$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $file);
+			if ($w3tc_plugin_data['Version'] != $this->a2_w3tc_current_version) {
+				$this->uninstall_plugin($file);
+			}
+		}
+
 		$plugins = $this->get_plugins();
 
 		foreach ($plugins as $file => $plugin) {
 			if ($plugin['Name'] == $api->name) {
-				if (version_compare($plugin['Version'], '162.0.0.0') === -1) {
-					$this->uninstall_plugin($file);
-					break;
-				}
-
 				$found = true;
 			}
 		}
@@ -314,12 +321,10 @@ class A2_Optimized_OptionsManager {
 		if (!class_exists('W3_ConfigData')) {
 			$this->enable_w3_total_cache();
 		}
-
 		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/w3-total-cache/w3-total-cache.php');
-		if ($w3tc_plugin_data['Version'] != '162.0.0.0') {
+		if ($w3tc_plugin_data['Version'] != $this->a2_w3tc_current_version) {
 			$this->enable_w3_total_cache();
 		}
-
 		$config_writer = new W3_ConfigWriter(0, false);
 		foreach ($vars as $name => $val) {
 			$config_writer->set($name, $val);
@@ -752,6 +757,7 @@ HTML;
 
 	public function get_plugin_status() {
 		$thisclass = $this;
+
 		$opts = new A2_Optimized_Optimizations($thisclass);
 		$this->advanced_optimizations = $opts->get_advanced();
 		$this->optimizations = $opts->get_optimizations();
