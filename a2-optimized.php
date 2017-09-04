@@ -59,6 +59,35 @@ class A2_Optimized {
 			'<br />' . __(' To learn how to change the version of php running on your site') . ' <a target="_blank" href="http://www.a2hosting.com/kb/cpanel/cpanel-software-and-services/php-version">' . __('read this Knowledge Base Article') . '</a>.' .
 			'</div>';
 	}
+
+	// add plugin upgrade notification
+	function showUpgradeNotification($currentPluginMetadata){
+		// Notice Transient
+		$upgrade_notices = get_transient('a2_opt_ug_notes');
+		if(!$upgrade_notices){
+			$response = wp_remote_get( 'http://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice' );
+			if ( is_array( $response ) ) {
+				$upgrade_notices = array();
+				$body = json_decode($response['body']); // use the content
+				foreach($body as $item){
+					$upgrade_notices[$item->title->rendered] = "Version " . $item->title->rendered . ": " . strip_tags($item->content->rendered);
+				};
+				set_transient('a2_opt_ug_notes', $upgrade_notices, 3600 * 12);
+			} else {
+				return;
+			};
+		};
+
+		foreach($upgrade_notices as $ver => $notice){
+			if (version_compare($currentPluginMetadata['Version'], $ver) < 0){
+	        	echo '</div><p style="background-color: #d54e21; padding: 10px; color: #f9f9f9; margin-top: 10px" class="update-message notice inline notice-warning notice-alt"><strong>Important Upgrade Notice:</strong><br />';
+	        	echo esc_html($notice), '</p><div>';
+	        	break;
+			}
+		}
+	}
 }
 
 $a2opt_class = new A2_Optimized();
+
+add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', array( 'A2_Optimized','showUpgradeNotification'), 10, 2);
