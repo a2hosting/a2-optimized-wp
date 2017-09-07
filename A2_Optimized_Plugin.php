@@ -172,59 +172,39 @@ HTML;
 	}
 
 	public function login_captcha() {
-		if (file_exists('/opt/a2-optimized/wordpress/recaptchalib.php')) {
-			include_once('/opt/a2-optimized/wordpress/recaptchalib.php');
+		if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')) {
+			include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
 
 			$a2_recaptcha = $this->getOption('recaptcha');
 			if ($a2_recaptcha == 1) {
-				$key = $this->get_public_key();
-				if (!is_null($key)) {
 					$captcha = a2recaptcha_get_html($key, null, true);
 					echo <<<HTML
                 <style>
-                  #recaptcha_area, #recaptcha_table{
-                    margin-left: -12px !important;
+                  .g-recaptcha{
+                    position: relative;
+                    top: -6px;
+                    left: -15px;
                   }
                 </style>
 
                 {$captcha}
 HTML;
-				}
 			}
 		}
 	}
 
-	protected function get_public_key() {
-		if ($key = get_option('a2_recaptcha_pubkey', false)) {
-			return $key;
-		}
-		if (file_exists('/opt/a2-optimized/wordpress/pubkey')) {
-			return file_get_contents('/opt/a2-optimized/wordpress/pubkey');
-		}
-
-		return null;
-	}
-
 	public function comment_captcha() {
 		if (!$this->checkUserCapability('moderate_comments', get_current_user_id() )) {
-			if (file_exists('/opt/a2-optimized/wordpress/recaptchalib.php')) {
-				include_once('/opt/a2-optimized/wordpress/recaptchalib.php');
+			if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')) {
+				include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
 
 				$a2_recaptcha = $this->getOption('recaptcha');
 				if ($a2_recaptcha == 1) {
-					$key = $this->get_public_key();
-					if (!is_null($key)) {
 						$captcha = a2recaptcha_get_html($key, null, true);
 						echo <<<HTML
-                                <style>
-                                    #recaptcha_area{
-                                        margin: 10px auto !important;
-                                    }
-                                </style>
 
                                 {$captcha}
 HTML;
-					}
 				}
 			}
 		}
@@ -234,21 +214,14 @@ HTML;
 		if ($username != '' && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)) {
 			$a2_recaptcha = $this->getOption('recaptcha');
 			if ($a2_recaptcha == 1) {
-				if (file_exists('/opt/a2-optimized/wordpress/recaptchalib.php')) {
-					include_once('/opt/a2-optimized/wordpress/recaptchalib.php');
-					$privatekey = $this->get_private_key();
-					if (!is_null($privatekey)) {
-						$resp = a2recaptcha_check_answer($privatekey,
-							$_SERVER['REMOTE_ADDR'],
-							$_POST['recaptcha_challenge_field'],
-							$_POST['recaptcha_response_field']);
+				if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')) {
+					include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
+					$resp = a2recaptcha_check_answer($_POST['g-recaptcha-response']);
 
-						if (!empty($username)) {
-							if (!$resp->is_valid) {
-								remove_filter('authenticate', 'wp_authenticate_username_password', 20);
-								//wp_die("<strong>The reCAPTCHA wasn't entered correctly. Go back and try it again.</strong>: (reCAPTCHA said: {$resp->error})");
-								return new WP_Error('recaptcha_error', "<strong>The reCAPTCHA wasn't entered correctly. Please try it again.</strong>");
-							}
+					if (!empty($username)) {
+						if (!$resp) {
+							remove_filter('authenticate', 'wp_authenticate_username_password', 20);
+							return new WP_Error('recaptcha_error', "<strong>The reCAPTCHA wasn't entered correctly. Please try it again.</strong>");
 						}
 					}
 				}
@@ -256,38 +229,22 @@ HTML;
 		}
 	}
 
-	protected function get_private_key() {
-		if (file_exists('/opt/a2-optimized/wordpress/privkey')) {
-			return file_get_contents('/opt/a2-optimized/wordpress/privkey');
-		}
-		if ($key = get_option('a2_recaptcha_privkey', false)) {
-			return $key;
-		}
-
-		return null;
-	}
 
 	public function captcha_comment_authenticate($commentdata) {
 		if (!$this->checkUserCapability('moderate_comments', get_current_user_id()) && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)) {
-			if (file_exists('/opt/a2-optimized/wordpress/recaptchalib.php')) {
-				include_once('/opt/a2-optimized/wordpress/recaptchalib.php');
+			if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')) {
+				include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
 
 				$a2_recaptcha = $this->getOption('recaptcha');
 				if ($a2_recaptcha == 1) {
-					$privatekey = $this->get_private_key();
-					if (!is_null($privatekey)) {
-						$resp = a2recaptcha_check_answer($privatekey,
-							$_SERVER['REMOTE_ADDR'],
-							$_POST['recaptcha_challenge_field'],
-							$_POST['recaptcha_response_field']);
+					$resp = a2recaptcha_check_answer($_POST['g-recaptcha-response']);
 
-						if (!empty($commentdata)) {
-							if (!$resp->is_valid) {
-								wp_die("<strong>The reCAPTCHA wasn't entered correctly. Please use your browsers back button and try again.</strong>");
-							}
-						} else {
-							wp_die('<strong>There was an error. Please try again.</strong>');
+					if (!empty($commentdata)) {
+						if (!$resp) {
+							wp_die("<strong>The reCAPTCHA wasn't entered correctly. Please use your browsers back button and try again.</strong>");
 						}
+					} else {
+						wp_die('<strong>There was an error. Please try again.</strong>');
 					}
 				}
 			}
