@@ -35,6 +35,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 		'wp-super-cache',
 		'wp-fastest-cache',
 		'wp-file-cache',
+		'w3-total-cache',
 		'better-wp-security',
 		'wordfence'
 	);
@@ -486,8 +487,9 @@ HTML;
 			add_action('admin_notices', array(&$this, 'config_page_notice'));
 		}
 
-		if (isset($_GET['action']) && $_GET['action'] == 'install-plugin') {
-			if (isset($_GET['plugin']) && in_array($_GET['plugin'], $this->incompatible_plugins)) {
+		foreach($active_plugins as $active_plugin){
+			$plugin_folder = explode('/', $active_plugin);
+			if(in_array($plugin_folder[0], $this->incompatible_plugins)){
 				add_action('admin_notices', array(&$this, 'incompatible_plugin_notice'));
 			}
 		}
