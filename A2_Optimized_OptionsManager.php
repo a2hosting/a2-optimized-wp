@@ -1,9 +1,22 @@
 <?php
 
 /*
-	Author: Benjamin Cool	Author: Benjamin Cool, Andrew Jones
+	Author: Benjamin Cool, Andrew Jones
 	Author URI: https://www.a2hosting.com/
 	License: GPLv2 or Later
+
+	TODO:
+	Change a2-w3-total-cache version away from 162.xxx, get inline with w3-total-cache-fixed versioning
+	Add w3-total-cache to list of "bad" plugins
+	Agg. check that "bad" w3 total cache is not active while our version is.
+		Hide interface?
+		Stop any attempts at enabling optimizations?
+	No longer automatically uninstall w3-total-total cache
+	Prompt current users to disable w3-total-cache and install a2-w3-total-cache
+	Include RKV updater code in new a2-w3-total-cache plugin
+	Check if we need to namespace anything in a2-w3-total-cache so if both are active site won't error out (Cannot redeclare w3_instance())
+	Remove RKV from /opt/a2-optimized maybe?
+	New users will be prompted to take action that downloads a2-w3-total-cache
 */
 
 if (is_admin()) {
@@ -34,7 +47,8 @@ class A2_Optimized_OptionsManager {
 
 	public function __construct() {
 		// The version of A2 maintained W3TC we want installed
-		$this->a2_w3tc_current_version = '162.0.0.0';
+		// @TODO: Pull this from wp-plugins.a2hosting.com
+		$this->a2_w3tc_current_version = '162.9.4.6.4';
 	}
 
 	public function set_w3tc_defaults() {
@@ -43,7 +57,7 @@ class A2_Optimized_OptionsManager {
 			$this->enable_w3_total_cache();
 		}
 
-		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/w3-total-cache/w3-total-cache.php');
+		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/a2-w3-total-cache/a2-w3-total-cache.php');
 		if ($w3tc_plugin_data['Version'] != $this->a2_w3tc_current_version) {
 			$this->enable_w3_total_cache();
 		}
@@ -149,8 +163,8 @@ class A2_Optimized_OptionsManager {
 	}
 
 	public function enable_w3_total_cache() {
-		$file = 'w3-total-cache/w3-total-cache.php';
-		$slug = 'w3-total-cache';
+		$file = 'a2-w3-total-cache/a2-w3-total-cache.php';
+		$slug = 'a2-w3-total-cache';
 		$this->install_plugin($slug);
 		$this->activate_plugin($file);
 		$this->hit_the_w3tc_page();
@@ -171,8 +185,8 @@ class A2_Optimized_OptionsManager {
 
 		$found = false;
 
-		if ($slug == 'w3-total-cache') {
-			$file = 'w3-total-cache/w3-total-cache.php';
+		if ($slug == 'a2-w3-total-cache') {
+			$file = 'a2-w3-total-cache/a2-w3-total-cache.php';
 			$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $file);
 			if ($w3tc_plugin_data['Version'] != $this->a2_w3tc_current_version) {
 				$this->uninstall_plugin($file);
@@ -191,8 +205,8 @@ class A2_Optimized_OptionsManager {
 			ob_start();
 			$upgrader = new Plugin_Upgrader(new A2_Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
 
-			if ($slug == 'w3-total-cache') {
-				$api->download_link = 'http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/w3-total-cache.zip';
+			if ($slug == 'a2-w3-total-cache') {
+				$api->download_link = 'http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/a2-w3-total-cache.zip'; // TODO: Update repo with new zip
 			}
 
 			$upgrader->install($api->download_link);
@@ -219,7 +233,7 @@ class A2_Optimized_OptionsManager {
 	}
 
 	public function clear_w3_total_cache() {
-		if (is_plugin_active('w3-total-cache/w3-total-cache.php')) {
+		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
 			//TODO:  add clear cache
 		}
 	}
@@ -321,7 +335,7 @@ class A2_Optimized_OptionsManager {
 		if (!class_exists('W3_ConfigData')) {
 			$this->enable_w3_total_cache();
 		}
-		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/w3-total-cache/w3-total-cache.php');
+		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/a2-w3-total-cache/a2-w3-total-cache.php');
 		if ($w3tc_plugin_data['Version'] != $this->a2_w3tc_current_version) {
 			$this->enable_w3_total_cache();
 		}

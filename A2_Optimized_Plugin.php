@@ -478,7 +478,7 @@ HTML;
 				}
 			}
 		}
-		if (in_array('w3-total-cache/w3-total-cache.php', $active_plugins)) {
+		if (in_array('a2-w3-total-cache/a2-w3-total-cache.php', $active_plugins)) {
 			wp_enqueue_script('a2_functions', plugins_url('/assets/js/functions.js', __FILE__), array('jquery'));
 		}
 
