@@ -422,14 +422,25 @@ class A2_Optimized_OptionsManager {
 		$ini_error_reporting = ini_get('error_reporting');
 		//ini_set('error_reporting',0);
 
-		if(isset($_GET['a2-page']) && $_GET['a2-page'] == 'wizard'){
-			// Show wizard here...
+		if(isset($_GET['a2-page'])){
 			if(isset($_GET['step'])){
 				$step = $_GET['step'];
 			} else {
 				$step = 1;
-			}
-			$this->wizard_html($step);
+			};
+
+			// Show wizard here...
+			if($_GET['a2-page'] == 'newuser_wizard'){
+				$this->newuser_wizard_html($step);
+			};
+			if($_GET['a2-page'] == 'upgrade_wizard'){
+				$this->upgrade_wizard_html($step);
+			};
+			if($_GET['a2-page'] == 'w3tcfixed_confirm'){
+				//User has said they want to keep W3 TC Fixed, set site option here...
+				update_option( 'a2opt_w3tcfixed_confirm', true);
+				$this->settings_page_html();
+			};
 		} else {
 			$this->settings_page_html();
 		}
@@ -438,6 +449,17 @@ class A2_Optimized_OptionsManager {
 	}
 
 	private function settings_page_html() {
+		/*
+			@TODO
+			Require upgrade path:
+			old W3TC fixed plugin is installed & active
+			official W3TC plugin is installed & active
+			w3-total-cache-fixed is installed & active AND on 0.9.5.x branch
+
+			Offer upgrade path, but allow optimizations with user confirmation:
+			w3-total-cache-fixed is installed & active AND on 0.9.4.x branch
+
+		*/
 		$server_info = new A2_Optimized_Server_Info();
 		$optimization_count = 0;
 		$this->get_plugin_status();
@@ -459,16 +481,47 @@ class A2_Optimized_OptionsManager {
 
 		$this->optimization_alert = '';
 
-		if(
+		if(is_plugin_active('w3-total-cache/w3-total-cache.php')){
+			// Prompt to disable and upgrade, ours or official doesn't matter at this point
+			$this->optimization_alert = "<div class='alert alert-info'>";
+			$this->optimization_alert .= "<p>We no longer support W3 Total Cache. We will walk you through the process of uninstalling it and installing a A2 Optimized version.</p>";
+			$this->optimization_alert .= "<p class='text-warning'>placeholder text, please change.</p>";
+			$this->optimization_alert .= "<p><a href='/wp-admin/admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Disable W3 Total Cache</a></p>";
+			$this->optimization_alert .= "</div>";
+
+		} elseif(is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')) {
+			// Check version of W3 Total Cache Fixed
+			// if it's 0.9.5.x, they need to disable and install our version
+			// if it's 0.9.4.x, they should be ok and can dismiss the dialog
+			$w3tc_fixed_info = get_plugin_data('w3-total-cache-fixed/w3-total-cache-fixed.php');
+			if(version_compare($w3tc_fixed_info['Version'], '0.9.5.0') >= 0){
+				$this->optimization_alert = "<div class='alert alert-info'>";
+				$this->optimization_alert .= "<p>We do not support W3 Total Cache Fixed 0.9.5.x branch (" . $w3tc_fixed_info['Version'] . "). We will walk you through the process of uninstalling it and installing a A2 Optimized version.</p>";
+				$this->optimization_alert .= "<p class='text-warning'>placeholder text, please change.</p>";
+				$this->optimization_alert .= "<p><a href='/wp-admin/admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Disable W3 Total Cache Fixed</a></p>";
+				$this->optimization_alert .= "</div>";
+			} elseif(get_option('a2opt_w3tcfixed_confirm') === false) {
+				$this->optimization_alert = "<div class='alert alert-info'>";
+				$this->optimization_alert .= "<p>We do not recommend W3 Total Cache Fixed 0.9.4.x branch (" . $w3tc_fixed_info['Version'] . "). Things should work, but we are not always able to test for changes and updates in that plugin. We can walk you through the process of uninstalling W3 Total Cache fixed and installing a A2 Optimized version.</p>";
+				$this->optimization_alert .= "<p><a href='/wp-admin/admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Disable W3 Total Cache Fixed</a></p>";
+				$this->optimization_alert .= "<p>If you'd really like to keep using W3 Total Cache Fixed, use the button below to get rid of this alert.</p>";
+				$this->optimization_alert .= "<p><a href='/wp-admin/admin.php?a2-page=w3tcfixed_confirm&page=A2_Optimized_Plugin_admin' class='btn btn-warning'>I know what I'm doing</a></p>";
+				$this->optimization_alert .= "</div>";
+			};
+
+		} elseif(
+			// Do they have A2 Fixed W3 Total Cache installed and active yet?
 			$this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php') === false
 				|| is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php') === false
 		){
 			$this->optimization_alert = "<div class='alert alert-info'>";
 			$this->optimization_alert .= "<p>Please install A2 W3 Total Cache. Text here about why it's needed, etc</p>";
 			$this->optimization_alert .= "<p class='text-warning'>placeholder text, please change.</p>";
-			$this->optimization_alert .= "<p><a href='/wp-admin/admin.php?a2-page=wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Begin</a></p>";
+			$this->optimization_alert .= "<p><a href='/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Begin</a></p>";
 			$this->optimization_alert .= "</div>";
+
 		}
+
 
 
 		$this->optimization_count = 0;
@@ -481,15 +534,15 @@ class A2_Optimized_OptionsManager {
 		}
 
 		if ($this->optimization_count == count($this->optimizations)) {
-			$optimization_alert = '<div  class="alert alert-success">Your site has been fully optimized!</div>';
+			$optimization_alert = '<div class="alert alert-success">Your site has been fully optimized!</div>';
 		} elseif (!$this->optimizations['page_cache']['configured']) {
-			$optimization_alert = '<div  class="alert alert-danger">Your site is NOT optimized!</div>';
+			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		} elseif ($this->optimization_count > 5) {
-			$optimization_alert = '<div  class="alert alert-success">Your site has been partially optimized!</div>';
+			$optimization_alert = '<div class="alert alert-success">Your site has been partially optimized!</div>';
 		} elseif ($this->optimization_count > 2) {
-			$optimization_alert = '<div  class="alert alert-danger">Your site is barely optimized!</div>';
+			$optimization_alert = '<div class="alert alert-danger">Your site is barely optimized!</div>';
 		} else {
-			$optimization_alert = '<div  class="alert alert-danger">Your site is NOT optimized!</div>';
+			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		}
 
 		$optimization_number = count($this->optimizations);
@@ -768,7 +821,7 @@ HTML;
 	}
 
 
-	private function wizard_html($setup_step = 1) {
+	private function newuser_wizard_html($setup_step = 1) {
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
 
@@ -793,11 +846,15 @@ HTML;
 			<h3>Downloading A2 W3 Total Cache plugin</h3>
 			<p class='loading-spinner'><img src='/wp-content/plugins/a2-optimized-wp/assets/images/spinner.gif' style='height: auto; width: 50px;' /></p>
 HTML;
-			$plugin_install = $this->install_plugin('a2-w3-total-cache');
-			if($plugin_install){
-				$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
+			if($this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php')){
+					$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
 			} else {
-				$plugin_install_output = "<p class='text-danger'>Problem installing plugin. More information.....</p>";
+				$plugin_install = $this->install_plugin('a2-w3-total-cache');
+				if($plugin_install){
+					$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
+				} else {
+					$plugin_install_output = "<p class='text-danger'>Problem installing plugin. More information.....</p>";
+				};
 			};
 
 			echo <<<HTML
@@ -852,8 +909,140 @@ HTML;
 
 HTML;
 		}
+	}
 
+	private function upgrade_wizard_html($setup_step = 1) {
+		$image_dir = plugins_url('/assets/images', __FILE__);
+		$kb_search_box = $this->kb_searchbox_html();
 
+		if($setup_step == 1){
+			echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>Disabling incompatible W3 Total Cache plugin</h3>
+			<p class='loading-spinner'><img src='/wp-content/plugins/a2-optimized-wp/assets/images/spinner.gif' style='height: auto; width: 50px;' /></p>
+HTML;
+
+			$this->deactivate_plugin('w3-total-cache/w3-total-cache.php');
+			$this->deactivate_plugin('w3-total-cache-fixed/w3-total-cache-fixed.php');
+			$plugin_install_output = "<p>Plugin has been deactivated. Next we'll download A2 Fixed W3 Total Cache.</p><p><a href='/wp-admin/admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Continue</a></p>";
+
+			echo <<<HTML
+			<div>
+				{$plugin_install_output}
+			</div>
+		</div>
+		$feedback
+
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+<style>
+.loading-spinner { display: none; }
+</style>
+HTML;
+
+		}
+
+		if($setup_step == 2){
+			echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>Downloading A2 W3 Total Cache plugin</h3>
+			<p class='loading-spinner'><img src='/wp-content/plugins/a2-optimized-wp/assets/images/spinner.gif' style='height: auto; width: 50px;' /></p>
+HTML;
+			if($this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php')){
+					$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
+			} else {
+				$plugin_install = $this->install_plugin('a2-w3-total-cache');
+				if($plugin_install){
+					$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
+				} else {
+					$plugin_install_output = "<p class='text-danger'>Problem installing plugin. More information.....</p>";
+				};
+			};
+
+			echo <<<HTML
+			<div>
+				{$plugin_install_output}
+			</div>
+		</div>
+		$feedback
+
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+<style>
+.loading-spinner { display: none; }
+</style>
+HTML;
+
+		}
+
+		if($setup_step == 3){
+			$this->activate_plugin('a2-w3-total-cache/a2-w3-total-cache.php');
+			echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>Activating A2 W3 Total Cache plugin</h3>
+			<div>
+				<p>Complete!</p>
+				<p><a href='/wp-admin/admin.php?page=A2_Optimized_Plugin_admin' class='btn btn-success'>Start Configuration</a></p>
+			</div>
+		</div>
+		$feedback
+
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+
+HTML;
+		}
 	}
 
 	private function kb_searchbox_html() {
