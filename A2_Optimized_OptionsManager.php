@@ -6,12 +6,10 @@
 	License: GPLv2 or Later
 
 	TODO:
-	Change a2-w3-total-cache version away from 162.xxx, get inline with w3-total-cache-fixed versioning
-	Add w3-total-cache to list of "bad" plugins
-	Prompt current users to disable w3-total-cache and install a2-w3-total-cache
 	Include RKV updater code in new a2-w3-total-cache plugin
-	Check if we need to namespace anything in a2-w3-total-cache so if both are active site won't error out (Cannot redeclare w3_instance())
 	Remove RKV from /opt/a2-optimized maybe?
+
+	W3 Total Cache Fixed 0.9.5.x branch acts funny and tries to install files. Are we trying to optimize something automatically?
 */
 
 if (is_admin()) {
@@ -449,17 +447,6 @@ class A2_Optimized_OptionsManager {
 	}
 
 	private function settings_page_html() {
-		/*
-			@TODO
-			Require upgrade path:
-			old W3TC fixed plugin is installed & active
-			official W3TC plugin is installed & active
-			w3-total-cache-fixed is installed & active AND on 0.9.5.x branch
-
-			Offer upgrade path, but allow optimizations with user confirmation:
-			w3-total-cache-fixed is installed & active AND on 0.9.4.x branch
-
-		*/
 		$server_info = new A2_Optimized_Server_Info();
 		$optimization_count = 0;
 		$this->get_plugin_status();
@@ -846,15 +833,11 @@ HTML;
 			<h3>Downloading A2 W3 Total Cache plugin</h3>
 			<p class='loading-spinner'><img src='/wp-content/plugins/a2-optimized-wp/assets/images/spinner.gif' style='height: auto; width: 50px;' /></p>
 HTML;
-			if($this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php')){
-					$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
+			$plugin_install = $this->install_plugin('a2-w3-total-cache');
+			if($plugin_install){
+				$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
 			} else {
-				$plugin_install = $this->install_plugin('a2-w3-total-cache');
-				if($plugin_install){
-					$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
-				} else {
-					$plugin_install_output = "<p class='text-danger'>Problem installing plugin. More information.....</p>";
-				};
+				$plugin_install_output = "<p class='text-danger'>Problem installing plugin. More information.....</p>";
 			};
 
 			echo <<<HTML
@@ -936,10 +919,12 @@ HTML;
 			<h3>Disabling incompatible W3 Total Cache plugin</h3>
 			<p class='loading-spinner'><img src='/wp-content/plugins/a2-optimized-wp/assets/images/spinner.gif' style='height: auto; width: 50px;' /></p>
 HTML;
-
-			$this->deactivate_plugin('w3-total-cache/w3-total-cache.php');
-			$this->deactivate_plugin('w3-total-cache-fixed/w3-total-cache-fixed.php');
-			$plugin_install_output = "<p>Plugin has been deactivated. Next we'll download A2 Fixed W3 Total Cache.</p><p><a href='/wp-admin/admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Continue</a></p>";
+			$plugin_install = $this->install_plugin('a2-w3-total-cache');
+			if($plugin_install){
+				$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
+			} else {
+				$plugin_install_output = "<p class='text-danger'>Problem installing plugin. More information.....</p>";
+			};
 
 			echo <<<HTML
 			<div>
@@ -980,15 +965,11 @@ HTML;
 			<h3>Downloading A2 W3 Total Cache plugin</h3>
 			<p class='loading-spinner'><img src='/wp-content/plugins/a2-optimized-wp/assets/images/spinner.gif' style='height: auto; width: 50px;' /></p>
 HTML;
-			if($this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php')){
-					$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
+			$plugin_install = $this->install_plugin('a2-w3-total-cache');
+			if($plugin_install){
+				$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
 			} else {
-				$plugin_install = $this->install_plugin('a2-w3-total-cache');
-				if($plugin_install){
-					$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
-				} else {
-					$plugin_install_output = "<p class='text-danger'>Problem installing plugin. More information.....</p>";
-				};
+				$plugin_install_output = "<p class='text-danger'>Problem installing plugin. More information.....</p>";
 			};
 
 			echo <<<HTML
