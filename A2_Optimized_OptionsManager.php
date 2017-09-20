@@ -4,12 +4,6 @@
 	Author: Benjamin Cool, Andrew Jones
 	Author URI: https://www.a2hosting.com/
 	License: GPLv2 or Later
-
-	TODO:
-	Include RKV updater code in new a2-w3-total-cache plugin
-	Remove RKV from /opt/a2-optimized maybe?
-
-	W3 Total Cache Fixed 0.9.5.x branch acts funny and tries to install files. Are we trying to optimize something automatically?
 */
 
 if (is_admin()) {
