@@ -1,9 +1,17 @@
 <?php
 
 /*
-	Author: Benjamin Cool	Author: Benjamin Cool, Andrew Jones
+	Author: Benjamin Cool, Andrew Jones
 	Author URI: https://www.a2hosting.com/
 	License: GPLv2 or Later
+
+	TODO:
+	Change a2-w3-total-cache version away from 162.xxx, get inline with w3-total-cache-fixed versioning
+	Add w3-total-cache to list of "bad" plugins
+	Prompt current users to disable w3-total-cache and install a2-w3-total-cache
+	Include RKV updater code in new a2-w3-total-cache plugin
+	Check if we need to namespace anything in a2-w3-total-cache so if both are active site won't error out (Cannot redeclare w3_instance())
+	Remove RKV from /opt/a2-optimized maybe?
 */
 
 if (is_admin()) {
@@ -30,31 +38,27 @@ class A2_Optimized_OptionsManager {
 	private $advanced_optimization_count;
 	private $plugin_list;
 	private $install_status;
-	private $a2_w3tc_current_version;
 
 	public function __construct() {
-		// The version of A2 maintained W3TC we want installed
-		$this->a2_w3tc_current_version = '162.0.0.0';
+
 	}
 
-	public function set_w3tc_defaults() {
-		$vars = $this->get_w3tc_defaults();
-		if (!class_exists('W3_ConfigData')) {
-			$this->enable_w3_total_cache();
-		}
-
-		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/w3-total-cache/w3-total-cache.php');
-		if ($w3tc_plugin_data['Version'] != $this->a2_w3tc_current_version) {
-			$this->enable_w3_total_cache();
-		}
-
-		$config_writer = new W3_ConfigWriter(0, false);
-		foreach ($vars as $name => $val) {
-			$config_writer->set($name, $val);
-		}
-		$config_writer->set('common.instance_id', mt_rand());
-		$config_writer->save();
-		$this->refresh_w3tc();
+	private function get_current_w3tc_version() {
+		$version = get_transient('a2_w3tc_current_version');
+		if(!$version){
+			$response = wp_remote_get( 'http://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice?notice_plugin=3&per_page=1' );
+			if ( is_array( $response ) ) {
+				$body = json_decode($response['body']); // use the content
+				foreach($body as $item){
+					$version = $item->title->rendered;
+					set_transient('a2_w3tc_current_version', $version, 3600 * 12);
+				};
+			} else {
+				$version = null;
+				set_transient('a2_w3tc_current_version', $version, 3600);
+			};
+		};
+		return $version;
 	}
 
 	public function get_w3tc_defaults() {
@@ -149,8 +153,8 @@ class A2_Optimized_OptionsManager {
 	}
 
 	public function enable_w3_total_cache() {
-		$file = 'w3-total-cache/w3-total-cache.php';
-		$slug = 'w3-total-cache';
+		$file = 'a2-w3-total-cache/a2-w3-total-cache.php';
+		$slug = 'a2-w3-total-cache';
 		$this->install_plugin($slug);
 		$this->activate_plugin($file);
 		$this->hit_the_w3tc_page();
@@ -168,15 +172,12 @@ class A2_Optimized_OptionsManager {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 		$api = plugins_api('plugin_information', array('slug' => $slug));
+		$response = true;
 
 		$found = false;
 
-		if ($slug == 'w3-total-cache') {
-			$file = 'w3-total-cache/w3-total-cache.php';
-			$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/' . $file);
-			if ($w3tc_plugin_data['Version'] != $this->a2_w3tc_current_version) {
-				$this->uninstall_plugin($file);
-			}
+		if ($slug == 'a2-w3-total-cache') {
+			$file = 'a2-w3-total-cache/a2-w3-total-cache.php';
 		}
 
 		$plugins = $this->get_plugins();
@@ -191,11 +192,11 @@ class A2_Optimized_OptionsManager {
 			ob_start();
 			$upgrader = new Plugin_Upgrader(new A2_Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
 
-			if ($slug == 'w3-total-cache') {
-				$api->download_link = 'http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/w3-total-cache.zip';
+			if ($slug == 'a2-w3-total-cache') {
+				$api->download_link = 'http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/a2-w3-total-cache.zip';
 			}
 
-			$upgrader->install($api->download_link);
+			$response = $upgrader->install($api->download_link);
 			ob_end_clean();
 			$this->plugin_list = get_plugins();
 		}
@@ -210,6 +211,7 @@ class A2_Optimized_OptionsManager {
 		}
 
 		$this->clear_w3_total_cache();
+		return $response;
 	}
 
 	public function activate_plugin($file) {
@@ -219,7 +221,7 @@ class A2_Optimized_OptionsManager {
 	}
 
 	public function clear_w3_total_cache() {
-		if (is_plugin_active('w3-total-cache/w3-total-cache.php')) {
+		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
 			//TODO:  add clear cache
 		}
 	}
@@ -318,13 +320,6 @@ class A2_Optimized_OptionsManager {
 	public function update_w3tc($vars) {
 		$vars = array_merge($this->get_w3tc_defaults(), $vars);
 
-		if (!class_exists('W3_ConfigData')) {
-			$this->enable_w3_total_cache();
-		}
-		$w3tc_plugin_data = get_plugin_data( WP_PLUGIN_DIR . '/w3-total-cache/w3-total-cache.php');
-		if ($w3tc_plugin_data['Version'] != $this->a2_w3tc_current_version) {
-			$this->enable_w3_total_cache();
-		}
 		$config_writer = new W3_ConfigWriter(0, false);
 		foreach ($vars as $name => $val) {
 			$config_writer->set($name, $val);
@@ -413,14 +408,10 @@ class A2_Optimized_OptionsManager {
 		if (!current_user_can('manage_options')) {
 			wp_die(__('You do not have sufficient permissions to access A2 Optimized.', 'a2-optimized'));
 		}
-		$server_info = new A2_Optimized_Server_Info();
 
 		$thisclass = $this;
 
-		$optimization_count = 0;
-		$this->get_plugin_status();
-
-		$thisdir = rtrim(__DIR__, '/');
+		//$thisdir = rtrim(__DIR__, '/');
 
 		wp_enqueue_style('bootstrap', plugins_url('/assets/bootstrap/css/bootstrap.css', __FILE__));
 		wp_enqueue_style('bootstrap-theme', plugins_url('/assets/bootstrap/css/bootstrap-theme.css', __FILE__));
@@ -428,12 +419,32 @@ class A2_Optimized_OptionsManager {
 
 		$image_dir = plugins_url('/assets/images', __FILE__);
 
-		do_action('a2_notices');
-
 		$ini_error_reporting = ini_get('error_reporting');
 		//ini_set('error_reporting',0);
 
+		if(isset($_GET['a2-page']) && $_GET['a2-page'] == 'wizard'){
+			// Show wizard here...
+			if(isset($_GET['step'])){
+				$step = $_GET['step'];
+			} else {
+				$step = 1;
+			}
+			$this->wizard_html($step);
+		} else {
+			$this->settings_page_html();
+		}
+
+		ini_set('error_reporting', $ini_error_reporting);
+	}
+
+	private function settings_page_html() {
+		$server_info = new A2_Optimized_Server_Info();
+		$optimization_count = 0;
+		$this->get_plugin_status();
 		$this->optimization_status = '';
+		$image_dir = plugins_url('/assets/images', __FILE__);
+
+		do_action('a2_notices');
 
 		$optionMetaData = $this->getOptionMetaData();
 
@@ -445,6 +456,20 @@ class A2_Optimized_OptionsManager {
 				$this->advanced_optimization_count++;
 			}
 		}
+
+		$this->optimization_alert = '';
+
+		if(
+			$this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php') === false
+				|| is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php') === false
+		){
+			$this->optimization_alert = "<div class='alert alert-info'>";
+			$this->optimization_alert .= "<p>Please install A2 W3 Total Cache. Text here about why it's needed, etc</p>";
+			$this->optimization_alert .= "<p class='text-warning'>placeholder text, please change.</p>";
+			$this->optimization_alert .= "<p><a href='/wp-admin/admin.php?a2-page=wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Begin</a></p>";
+			$this->optimization_alert .= "</div>";
+		}
+
 
 		$this->optimization_count = 0;
 
@@ -476,20 +501,7 @@ class A2_Optimized_OptionsManager {
 HTML;
 		}
 
-		$kb_search_box = <<<HTML
-<div class='big-search' style="margin-top:34px" >
-	<div class='kb-search' >
-		<form method="post" action="https://www.a2hosting.com/" target="_blank"  >
-			<div class='hiddenFields'>
-				<input type="hidden" name="ACT" value="25" />
-				<input type="hidden" name="RP" value="kb/results" />
-			</div>
-			<input type="text" id="kb-search-request" name="keywords" placeholder="Search The A2 Knowledge Base">
-			<button class='btn btn-success' type='submit'>Search</button>
-		</form>
-	</div>
-</div>
-HTML;
+		$kb_search_box = $this->kb_searchbox_html();
 
 		list($warnings, $num_warnings) = $this->warnings();
 
@@ -558,6 +570,7 @@ HTML;
 		<div class="tab-content">
 			<div role="tabpanel" aria-labelledby="li-optimization-status" id="optimization-status" class="tab-pane">
 				<h3>Optimization Status</h3>
+				{$this->optimization_alert}
 				<div >
 					{$this->optimization_status}
 				</div>
@@ -752,7 +765,112 @@ HTML;
 
 HTML;
 
-		ini_set('error_reporting', $ini_error_reporting);
+	}
+
+
+	private function wizard_html($setup_step = 1) {
+		$image_dir = plugins_url('/assets/images', __FILE__);
+		$kb_search_box = $this->kb_searchbox_html();
+
+		if($setup_step == 1){
+			echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>Downloading A2 W3 Total Cache plugin</h3>
+			<p class='loading-spinner'><img src='/wp-content/plugins/a2-optimized-wp/assets/images/spinner.gif' style='height: auto; width: 50px;' /></p>
+HTML;
+			$plugin_install = $this->install_plugin('a2-w3-total-cache');
+			if($plugin_install){
+				$plugin_install_output = "<p>Plugin has been downloaded...</p><p><a href='/wp-admin/admin.php?a2-page=wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate plugin</a></p>";
+			} else {
+				$plugin_install_output = "<p class='text-danger'>Problem installing plugin. More information.....</p>";
+			};
+
+			echo <<<HTML
+			<div>
+				{$plugin_install_output}
+			</div>
+		</div>
+		$feedback
+
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+<style>
+.loading-spinner { display: none; }
+</style>
+HTML;
+
+		}
+
+		if($setup_step == 2){
+			$this->activate_plugin('a2-w3-total-cache/a2-w3-total-cache.php');
+			echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>Activating A2 W3 Total Cache plugin</h3>
+			<div>
+				<p>Complete!</p>
+				<p><a href='/wp-admin/admin.php?page=A2_Optimized_Plugin_admin' class='btn btn-success'>Start Configuration</a></p>
+			</div>
+		</div>
+		$feedback
+
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+
+HTML;
+		}
+
+
+	}
+
+	private function kb_searchbox_html() {
+		return <<<HTML
+<div class='big-search' style="margin-top:34px" >
+	<div class='kb-search' >
+		<form method="post" action="https://www.a2hosting.com/" target="_blank"  >
+			<div class='hiddenFields'>
+				<input type="hidden" name="ACT" value="25" />
+				<input type="hidden" name="RP" value="kb/results" />
+			</div>
+			<input type="text" id="kb-search-request" name="keywords" placeholder="Search The A2 Knowledge Base">
+			<button class='btn btn-success' type='submit'>Search</button>
+		</form>
+	</div>
+</div>
+HTML;
 	}
 
 	public function get_plugin_status() {
@@ -947,7 +1065,7 @@ JAVASCRIPT;
 	}*/
 
 	public function get_optimization_status(&$item, $server_info) {
-		if ($item != null) {
+		if ($item != null){
 			$settings_slug = $this->getSettingsSlug();
 
 			if (isset($item['is_configured'])) {
@@ -957,6 +1075,17 @@ JAVASCRIPT;
 			$active_text = 'Not Activated';
 			$glyph = 'exclamation-sign';
 			$links = array();
+
+			$active_class = '';
+			if(
+				$item['plugin'] == 'W3 Total Cache'
+				&& (
+					$this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php') === false
+					|| is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php') === false
+				)
+			){
+				$active_class = 'inactive';
+			}
 
 			if ($item['configured']) {
 				$active_color = 'success';
@@ -1006,7 +1135,7 @@ JAVASCRIPT;
 					}
 				}
 			} else {
-				if (isset($item['enable'])) {
+				if (isset($item['enable']) && $active_class == '') {
 					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", 'Enable', '_self');
 				}
 
@@ -1037,10 +1166,11 @@ HTML;
 				$premium = '<div style="float:right;padding-right:10px"><a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank" class="a2-exclusive"></a></div>';
 			}
 
+
 			$link_html = rtrim($link_html, '|');
 
 			return <<<HTML
-<div class="optimization-item">
+<div class="optimization-item {$active_class}">
 	<div class="optimization-item-one" >
 		<span class="glyphicon glyphicon-{$glyph}"></span>
 	</div>
@@ -1204,7 +1334,7 @@ HTML;
 	    return $string;
 	}*/
 
-	private function plugin_not_active_warning($plugin) {
+		private function plugin_not_active_warning($plugin) {
 		$manage = 'plugins.php?plugin_status=inactive';
 
 		return <<<HTML
@@ -1539,6 +1669,15 @@ HTML;
 		}
 
 		return false;
+	}
+
+	private function is_plugin_installed($slug) {
+		$plugins = get_plugins();
+		if(array_key_exists($slug, $plugins)){
+			return true;
+		}
+		return false;
+
 	}
 
 	public function get_plugin_description() {
