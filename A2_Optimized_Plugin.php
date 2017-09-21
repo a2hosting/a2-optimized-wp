@@ -35,7 +35,6 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 		'wp-super-cache',
 		'wp-fastest-cache',
 		'wp-file-cache',
-		//'w3-total-cache',
 		'better-wp-security',
 		'wordfence'
 	);
@@ -324,7 +323,7 @@ HTML;
 	}
 
 	public function myStyleSheet() {
-		wp_enqueue_style('a2-optimized-css', plugins_url('/assets/css/style.css', __FILE__));
+		wp_enqueue_style('a2-optimized-css', plugins_url('/assets/css/style.css?v=2.0.9.2', __FILE__));
 	}
 
 	/**
@@ -492,7 +491,12 @@ HTML;
 			if(in_array($plugin_folder[0], $this->incompatible_plugins)){
 				add_action('admin_notices', array(&$this, 'incompatible_plugin_notice'));
 			}
+			// Check for W3 Total Cache and show upgrade notice
+			if($plugin_folder[0] == 'w3-total-cache' && !$_GET['a2-page']){
+				add_action('admin_notices', array(&$this, 'w3totalcache_plugin_notice'));
+			}
 		}
+
 
 		//we don't need this function anymore since the new reCaptcha is now compatible with other recaptcha plugins
 		//if(function_exists('recaptcha_get_html')){
@@ -607,9 +611,35 @@ HTML;
 	}
 
 	public function incompatible_plugin_notice() {
+		$active_plugins = get_option('active_plugins');
+		$plugins_arr = array();
+		foreach($active_plugins as $active_plugin){
+			$plugin_folder = explode('/', $active_plugin);
+			if(in_array($plugin_folder[0], $this->incompatible_plugins)){
+				$folder = WP_PLUGIN_DIR . '/' . $active_plugin;
+				$plugin_data = get_plugin_data($folder, false, false);
+				$plugins_arr[] = $plugin_data['Name'];
+			}
+		}
+		if(count($plugins_arr) > 1){
+			$plugin_output = implode(', ', $plugins_arr);
+		} else {
+			$plugin_output = $plugins_arr[0];
+		}
+
 		echo <<<HTML
     <div class="error">
-        <p class="danger">Proceed with caution: The Plugin you just installed may be incompatible with A2 Optimized.</p>
+        <p class="danger">Proceed with caution: The plugin(s) you just installed, {$plugin_output} may be incompatible with A2 Optimized.</p>
+    </div>
+HTML;
+	}
+
+	public function w3totalcache_plugin_notice() {
+		$admin_url = admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin');
+		echo <<<HTML
+    <div class="error">
+        <p class="danger">We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we can help you disable this W3 Total Cache plugin version and install a A2 Hosting supported version of W3 Total Cache in its place.</p>
+        <p><a href="{$admin_url}" class="button-primary">Disable W3 Total Cache</a></p>
     </div>
 HTML;
 	}

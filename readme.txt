@@ -141,6 +141,11 @@ Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimize
 
 == Changelog ==
 
+= 2.0.9.2 =
+*Clearer information regarding W3 Total Cache upgrade
+*Fixed issue where sites installed in subdirectories may not function as expected
+
+
 = 2.0.9 =
 *Updated reCAPTCHA to API v2
 *Better support and triage for unsupported versions of W3 Total Cache

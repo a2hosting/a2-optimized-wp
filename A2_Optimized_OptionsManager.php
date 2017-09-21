@@ -539,8 +539,6 @@ class A2_Optimized_OptionsManager {
 		$this->get_plugin_status();
 		$this->optimization_status = '';
 		$image_dir = plugins_url('/assets/images', __FILE__);
-		$home_url = home_url();
-
 
 		do_action('a2_notices');
 
@@ -560,7 +558,7 @@ class A2_Optimized_OptionsManager {
 		if(is_plugin_active('w3-total-cache/w3-total-cache.php')){
 			$this->optimization_alert = "<div class='alert alert-info'>";
 			$this->optimization_alert .= "<p>We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we will help you disable this W3 Total Cache plugin version and install an A2 Hosting supported version of W3 Total Cache in its place.</p>";
-			$this->optimization_alert .= "<p><a href='" . $home_url . "/wp-admin/admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Disable W3 Total Cache</a></p>";
+			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Disable W3 Total Cache</a></p>";
 			$this->optimization_alert .= "</div>";
 
 		} elseif(is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')) {
@@ -568,14 +566,14 @@ class A2_Optimized_OptionsManager {
 			if(version_compare($w3tc_fixed_info['Version'], '0.9.5.0') >= 0){
 				$this->optimization_alert = "<div class='alert alert-info'>";
 				$this->optimization_alert .= "<p>We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we will help you disable this W3 Total Cache plugin version and install an A2 Hosting supported version of W3 Total Cache in its place.</p>";
-				$this->optimization_alert .= "<p><a href='" . $home_url . "/wp-admin/admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Disable W3 Total Cache Fixed</a></p>";
+				$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Disable W3 Total Cache Fixed</a></p>";
 				$this->optimization_alert .= "</div>";
 			} elseif(get_option('a2opt_w3tcfixed_confirm') === false) {
 				$this->optimization_alert = "<div class='alert alert-info'>";
 				$this->optimization_alert .= "<p>Please note that you have W3 Total Cache Fixed v0.9.4.x plugin installed. We cannot guarantee our optimizations will be fully supported with this version. To ensure the best compatibility for your WordPress site, please disable the W3 Total Cache Fixed plugin by clicking the button below and install our supported W3 Total Cache plugin, which is based on W3 Total Cache Fixed.</p>";
-				$this->optimization_alert .= "<p><a href='" . $home_url . "/wp-admin/admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Disable W3 Total Cache Fixed</a></p>";
+				$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Disable W3 Total Cache Fixed</a></p>";
 				$this->optimization_alert .= "<p>If you would like to keep your currently installed W3 Total Cache Fixed plugin, you may click the button below to dismiss this dialog and enable the optimization options below.</p>";
-				$this->optimization_alert .= "<p><a href='" . $home_url . "/wp-admin/admin.php?a2-page=w3tcfixed_confirm&page=A2_Optimized_Plugin_admin' class='btn btn-warning'>I accept the risks</a></p>";
+				$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=w3tcfixed_confirm&page=A2_Optimized_Plugin_admin') . "' class='btn btn-warning'>I accept the risks</a></p>";
 				$this->optimization_alert .= "</div>";
 			};
 
@@ -585,7 +583,7 @@ class A2_Optimized_OptionsManager {
 		){
 			$this->optimization_alert = "<div class='alert alert-info'>";
 			$this->optimization_alert .= "<p>Thank you for installing A2 Optimized for WordPress. Some features below require an additional plugin. We will walk you through the process of installing our supported version of W3 Total Cache that will enable the rest of the options below.</p>";
-			$this->optimization_alert .= "<p><a href='" . $home_url . "/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin' class='btn btn-success'>Begin Installation</a></p>";
+			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Begin Installation</a></p>";
 			$this->optimization_alert .= "</div>";
 
 		}
@@ -647,7 +645,7 @@ HTML;
 		} else {
 			$feedback = <<<HTML
         <div  style="margin:10px 0;" class="alert alert-success">
-            We want to hear from you! Please share your thoughts and feedback in our wordpress.org <a href="https://wordpress.org/support/plugin/a2-optimized/" target="_blank">support forum!</a>
+            We want to hear from you! Please share your thoughts and feedback in our wordpress.org <a href="https://wordpress.org/support/plugin/a2-optimized-wp/" target="_blank">support forum!</a>
         </div>
 HTML;
 		}
@@ -897,7 +895,6 @@ HTML;
 	private function newuser_wizard_html($setup_step = 1) {
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
-		$home_url = home_url();
 
 
 		if($setup_step == 1){
@@ -919,15 +916,15 @@ HTML;
 		</div>
 		<div class="tab-content">
 			<h3>Downloading A2 W3 Total Cache plugin</h3>
-			<p class='loading-spinner'><img src='{$home_url}/wp-content/plugins/a2-optimized-wp/assets/images/spinner.gif' style='height: auto; width: 50px;' /></p>
+			<p class='loading-spinner'><img src='{$image_dir}/spinner.gif' style='height: auto; width: 50px;' /></p>
 HTML;
 
 			if($this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php')){
-				$plugin_install_output = "<p>W3 Total Cache has now been successfully downloaded. Next we will activate the plugin.</p><p><a href='" . $home_url . "/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate</a></p>";
+				$plugin_install_output = "<p>W3 Total Cache has now been successfully downloaded. Next we will activate the plugin.</p><p><a href='" . admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2') . "' class='btn btn-success'>Activate</a></p>";
 			} else {
 				$plugin_install = $this->install_plugin('a2-w3-total-cache');
 				if($plugin_install){
-					$plugin_install_output = "<p>W3 Total Cache has now been successfully downloaded. Next we will activate the plugin.</p><p><a href='" . $home_url . "/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2' class='btn btn-success'>Activate</a></p>";
+					$plugin_install_output = "<p>W3 Total Cache has now been successfully downloaded. Next we will activate the plugin.</p><p><a href='" . admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2') . "' class='btn btn-success'>Activate</a></p>";
 				} else {
 					$plugin_install_output = "<p class='text-danger'>We couldn’t install the new plugin to your site. This is usually caused by permission issues or low disk space. You may need to contact your web host for more information.</p><p>You may also download the zip archive of the plugin below and attempt to install it manually.</p><p><a href='http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/a2-w3-total-cache-0.9.4.6.4.zip' class='btn btn-info' target='_blank'>Download ZIP</a>";
 				};
@@ -952,6 +949,8 @@ HTML;
 
 		if($setup_step == 2){
 			$this->activate_plugin('a2-w3-total-cache/a2-w3-total-cache.php');
+			$admin_url = admin_url('admin.php?page=A2_Optimized_Plugin_admin');
+
 			echo <<<HTML
 <section id="a2opt-content-general">
 	<div  class="wrap">
@@ -972,7 +971,7 @@ HTML;
 			<h3>Congratulations!</h3>
 			<div>
 				<p>W3 Total Cache is now installed. Let’s get started with the configuration.</p>
-				<p><a href='{$home_url}/wp-admin/admin.php?page=A2_Optimized_Plugin_admin' class='btn btn-success'>Start Configuration</a></p>
+				<p><a href='{$admin_url}' class='btn btn-success'>Start Configuration</a></p>
 			</div>
 		</div>
 		$feedback
@@ -995,6 +994,7 @@ HTML;
 	private function upgrade_wizard_html($setup_step = 1) {
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
+		$admin_url = admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=1');
 
 		if($setup_step == 1){
 			echo <<<HTML
@@ -1015,11 +1015,11 @@ HTML;
 		</div>
 		<div class="tab-content">
 			<h3>Disabling incompatible W3 Total Cache plugin</h3>
-			<p class='loading-spinner'><img src='{$home_url}/wp-content/plugins/a2-optimized-wp/assets/images/spinner.gif' style='height: auto; width: 50px;' /></p>
+			<p class='loading-spinner'><img src='{$image_dir}/spinner.gif' style='height: auto; width: 50px;' /></p>
 HTML;
 			$this->deactivate_plugin('w3-total-cache/w3-total-cache.php');
 			$this->deactivate_plugin('w3-total-cache-fixed/w3-total-cache-fixed.php');
-			$plugin_install_output = "<p>W3 Total Cache has been disabled. We will now download a supported version of W3 Total Cache to your site.</p><p><a href='" . $home_url . "/wp-admin/admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=1' class='btn btn-success'>Install supported W3 Total Cache</a></p>";
+			$plugin_install_output = "<p>W3 Total Cache has been disabled. We will now download a supported version of W3 Total Cache to your site.</p><p><a href='" . $admin_url . "' class='btn btn-success'>Install supported W3 Total Cache</a></p>";
 
 			echo <<<HTML
 			<div>
