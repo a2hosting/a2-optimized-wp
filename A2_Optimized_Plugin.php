@@ -35,7 +35,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 		'wp-super-cache',
 		'wp-fastest-cache',
 		'wp-file-cache',
-		'w3-total-cache',
+		//'w3-total-cache',
 		'better-wp-security',
 		'wordfence'
 	);
