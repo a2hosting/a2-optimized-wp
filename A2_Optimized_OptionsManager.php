@@ -494,9 +494,9 @@ class A2_Optimized_OptionsManager {
 
 		//$thisdir = rtrim(__DIR__, '/');
 
-		wp_enqueue_style('bootstrap', plugins_url('/assets/bootstrap/css/bootstrap.css', __FILE__));
-		wp_enqueue_style('bootstrap-theme', plugins_url('/assets/bootstrap/css/bootstrap-theme.css', __FILE__));
-		wp_enqueue_script('bootstrap-theme', plugins_url('/assets/bootstrap/js/bootstrap.js', __FILE__), array('jquery'));
+		wp_enqueue_style('bootstrap', plugins_url('/assets/bootstrap/css/bootstrap.css', __FILE__), '', $thisclass->getVersion());
+		wp_enqueue_style('bootstrap-theme', plugins_url('/assets/bootstrap/css/bootstrap-theme.css', __FILE__), '', $thisclass->getVersion());
+		wp_enqueue_script('bootstrap-theme', plugins_url('/assets/bootstrap/js/bootstrap.js', __FILE__), array('jquery'), $thisclass->getVersion());
 
 		$image_dir = plugins_url('/assets/images', __FILE__);
 
@@ -1984,6 +1984,27 @@ HTML;
 		return false;
 
 	}
+
+	public function getVersion() {
+		return $this->getPluginHeaderValue('Version');
+	}
+
+	public function getPluginHeaderValue($key) {
+		// Read the string from the comment header of the main plugin file
+		$data = file_get_contents($this->getPluginDir() . DIRECTORY_SEPARATOR . $this->getMainPluginFileName());
+		$match = array();
+		preg_match('/' . $key . ':\s*(\S+)/', $data, $match);
+		if (count($match) >= 1) {
+			return $match[1];
+		}
+
+		return null;
+	}
+
+	protected function getPluginDir() {
+		return dirname(__FILE__);
+	}
+
 
 /**
  * Get the description for the plugin

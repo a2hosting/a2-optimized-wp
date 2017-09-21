@@ -323,7 +323,7 @@ HTML;
 	}
 
 	public function myStyleSheet() {
-		wp_enqueue_style('a2-optimized-css', plugins_url('/assets/css/style.css?v=2.0.9.2', __FILE__));
+		wp_enqueue_style('a2-optimized-css', plugins_url('/assets/css/style.css', __FILE__), '', $this->getVersion());
 	}
 
 	/**
