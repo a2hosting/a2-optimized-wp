@@ -16,7 +16,13 @@ class A2_Optimized_Server_Info {
 	/* Is server using Brotli? */
 	public $br = false;
 
-	public function __construct() {
+	/* Results from cache */
+	public $cached = true;
+
+	public function __construct($use_cached_results = true, $w3tc) {
+		$this->used_cached_results = $use_cached_results;
+		$this->cached = $cached;
+		$this->w3tc_config = $w3tc;
 		$this->server_header_call();
 	}
 
@@ -41,10 +47,14 @@ class A2_Optimized_Server_Info {
 
 		foreach ($encodings as $encoding) {
 			curl_setopt($ch, CURLOPT_ENCODING, $encoding);
-			$header = get_transient( 'a2-serverheader-' . $encoding );
+			$header = null;
+			if($this->use_cached_results){
+				$header = get_transient( 'a2-server_resp2-' . $encoding );
+			}
 			if (!$header) {
+				$this->cached = false;
 				$header = curl_exec($ch);
-				set_transient( 'a2-serverheader-' . $encoding, $header, 12 * HOUR_IN_SECONDS );
+				set_transient( 'a2-server_resp2-' . $encoding, $header, 12 * HOUR_IN_SECONDS );
 			}
 			$temp_headers = explode("\n", $header);
 			foreach ($temp_headers as $i => $header) {
@@ -66,5 +76,6 @@ class A2_Optimized_Server_Info {
 			}
 		}
 		curl_close($ch);
+
 	}
 }

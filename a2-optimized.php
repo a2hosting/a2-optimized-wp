@@ -14,7 +14,7 @@
 // Run initialization
 /////////////////////////////////
 
-require_once('A2_Optimized_Plugin.php');
+require_once 'A2_Optimized_Plugin.php';
 require_once ABSPATH . 'wp-admin/includes/plugin.php';
 require_once 'A2_Optimized_Server_Info.php';
 
@@ -34,10 +34,10 @@ class A2_Optimized {
 
 	  // Install the plugin
 	  if (!$a2Plugin->isInstalled()) {
-	  	$a2Plugin->install();
+		$a2Plugin->install();
 	  } else {
 	  	// Perform any version-upgrade activities prior to activation (e.g. database changes)
-		  $a2Plugin->upgrade();
+		$a2Plugin->upgrade();
 	  }
 
 	  // Add callbacks to hooks
@@ -89,5 +89,4 @@ class A2_Optimized {
 }
 
 $a2opt_class = new A2_Optimized();
-
 add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', array( 'A2_Optimized','showUpgradeNotification'), 10, 2);

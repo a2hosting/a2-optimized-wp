@@ -118,7 +118,6 @@ class A2_Optimized_OptionsManager {
 			'objectcache.file.gc' => 7200,
 
 			'browsercache.cssjs.last_modified' => true,
-			'browsercache.cssjs.compression' => false,
 			'browsercache.cssjs.expires' => true,
 			'browsercache.cssjs.lifetime' => 31536000,
 			'browsercache.cssjs.nocookies' => false,
@@ -127,7 +126,6 @@ class A2_Optimized_OptionsManager {
 			'browsercache.cssjs.etag' => true,
 			'browsercache.cssjs.w3tc' => true,
 			'browsercache.cssjs.replace' => true,
-			'browsercache.html.compression' => false,
 			'browsercache.html.last_modified' => true,
 			'browsercache.html.expires' => true,
 			'browsercache.html.lifetime' => 30,
@@ -137,7 +135,6 @@ class A2_Optimized_OptionsManager {
 			'browsercache.html.w3tc' => true,
 			'browsercache.html.replace' => true,
 			'browsercache.other.last_modified' => true,
-			'browsercache.other.compression' => false,
 			'browsercache.other.expires' => true,
 			'browsercache.other.lifetime' => 31536000,
 			'browsercache.other.nocookies' => false,
@@ -322,6 +319,7 @@ class A2_Optimized_OptionsManager {
 
 		$vars['pgcache.enabled'] = true;
 		$vars['pgcache.cache.ssl'] = true;
+
 		$this->update_w3tc($vars);
 	}
 
@@ -330,10 +328,11 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_db_cache() {
-		$permalink_structure = get_option('permalink_structure');
 		$vars = array();
+
 		$vars['dbcache.engine'] = 'file';
 		$vars['dbcache.enabled'] = true;
+
 		$this->update_w3tc($vars);
 	}
 
@@ -342,7 +341,6 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_object_cache() {
-		$permalink_structure = get_option('permalink_structure');
 		$vars = array();
 
 		$vars['objectcache.engine'] = 'file';
@@ -356,11 +354,40 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_browser_cache() {
-		$permalink_structure = get_option('permalink_structure');
 		$vars = array();
+
 		$vars['browsercache.enabled'] = true;
+
 		$this->update_w3tc($vars);
 	}
+
+	/**
+	 *  Enable gzip for w3tc
+	 *
+	 */
+	 public function enable_w3tc_gzip() {
+		$vars = array();
+
+		$vars['browsercache.other.compression'] = true;
+		$vars['browsercache.html.compression'] = true;
+		$vars['browsercache.cssjs.compression'] = true;
+
+		$this->update_w3tc($vars);
+	 }
+
+	 /**
+	 *  Disable gzip for w3tc
+	 *
+	 */
+	 public function disable_w3tc_gzip() {
+		$vars = array();
+
+		$vars['browsercache.other.compression'] = false;
+		$vars['browsercache.html.compression'] = false;
+		$vars['browsercache.cssjs.compression'] = false;
+
+		$this->update_w3tc($vars);
+	 }
 
 	/**
 	 * Update w3tc plugin
@@ -460,6 +487,35 @@ class A2_Optimized_OptionsManager {
 		));
 	}
 
+	/**
+	 * Preconfigure Gzip settings
+	 *
+	 */
+	 public function preconfigure_gzip_setting(){
+	 	// Check transient for last time this was called...
+	 	//Check if gzip w3tc is enabled
+	 	$w3tc = $this->get_w3tc_config();
+	 	//var_dump($w3tc);
+	 	echo('setting ' . $w3tc['browsercache.html.compression']);
+	 	if ($w3tc['browsercache.html.compression']){
+		 	// disable w3tc gzip
+		 	$this->disable_w3tc_gzip();
+		 	echo('disabled w3tc gzip');
+		 	// check server info to see if it is gziping by default
+	 		$server_info = new A2_Optimized_Server_Info(false, $w3tc);
+	 		var_dump($server_info);
+		 	// if gzip is handled by server (not w3tc) set server info to make it clear server is handling it
+		 	echo('gzip ' . $server_info->gzip);
+		 	echo('cached ' . $server_info->cached);
+			if($server_info->gzip == false){
+			 	// else turn it back on
+			 	$this->enable_w3tc_gzip();
+			 	echo('enabled w3tc gzip');
+			}
+	 	}
+	 	echo(' done!');
+	 }
+
 	public function curl_save_w3tc($cookie, $url) {
 		$post = 'w3tc_save_options=Save all settings&_wpnonce=' . wp_create_nonce('w3tc') . '&_wp_http_referer=%2Fwp-admin%2Fadmin.php%3Fpage%3Dw3tc_general%26&w3tc_note%3Dconfig_save';
 
@@ -534,7 +590,15 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	private function settings_page_html() {
-		$server_info = new A2_Optimized_Server_Info();
+		$w3tc = $this->get_w3tc_config();
+		/*
+		$previous_setting = $w3tc['browsercache.html.compression'];
+		$this->disable_w3tc_gzip();
+		$server_info = new A2_Optimized_Server_Info(true, $w3tc);
+		if($previous_setting && (!$server_info->gzip||!$server_info->cf||!$server_info->br)){
+			$this->enable_w3tc_gzip();
+		}
+		*/
 		$optimization_count = 0;
 		$this->get_plugin_status();
 		$this->optimization_status = '';
@@ -1931,10 +1995,10 @@ HTML;
 HTML;
 	}
 
-/**
- * Check Check for the correct a2_optimized directory
- * @return boolean true|false
- */
+	/**
+	 * Check Check for the correct a2_optimized directory
+	 * @return boolean true|false
+	 */
 	protected function is_a2() {
 		if ( is_dir('/opt/a2-optimized') ) {
 			return true;
@@ -1943,11 +2007,11 @@ HTML;
 		return false;
 	}
 
-/**
- * Check for installed plugin
- * @param string $slug The plugin that we check for installation
- * @return boolean true|false
- */
+	/**
+	 * Check for installed plugin
+	 * @param string $slug The plugin that we check for installation
+	 * @return boolean true|false
+	 */
 	private function is_plugin_installed($slug) {
 		$plugins = get_plugins();
 		if(array_key_exists($slug, $plugins)){
@@ -1957,10 +2021,10 @@ HTML;
 
 	}
 
-/**
- * Check for a valid and active w3tc plugin
- * @return boolean true|false
- */
+	/**
+	 * Check for a valid and active w3tc plugin
+	 * @return boolean true|false
+	 */
 	private function is_valid_w3tc_installed(){
 		/* W3 Total Cache Offical is not valid */
 		if(is_plugin_active('w3-total-cache/w3-total-cache.php')){
@@ -2006,10 +2070,10 @@ HTML;
 	}
 
 
-/**
- * Get the description for the plugin
- * @return string $description The description of the plugin
- */
+	/**
+	 * Get the description for the plugin
+	 * @return string $description The description of the plugin
+	 */
 	public function get_plugin_description() {
 		$description = <<<HTML
 
