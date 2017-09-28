@@ -408,7 +408,7 @@ HTML;
 
 	public function locked_files_notice() {
 		echo <<<HTML
-<div id="editing-locked" class="updated" >
+<div id="editing-locked" class="notice notice-success" >
      <p ><b style="color:#00CC00">Editing of plugin and theme files</b> in the wp-admin is <b style="color:#00CC00">disabled</b> by A2 Optimized<br>
      <b style="color:#00CC00">This is recommended for security reasons</b>. You can modify this setting on the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized Configuration page</a></p>
 </div>
@@ -417,7 +417,7 @@ HTML;
 
 	public function recaptcha_installed_notice() {
 		echo <<<HTML
-<div id="recaptcha-installed" class="error" >
+<div id="recaptcha-installed" class="notice notice-error" >
      <p ><b style="color:#00CC00">A ReCaptacha plugin is installed.</b><br>
      Disable and delete any plugins using reCaptcha to use the reCaptcha functionality built into A2 Optimized.
      <br> </p>
@@ -427,7 +427,7 @@ HTML;
 
 	public function not_locked_files_notice() {
 		echo <<<HTML
-<div id="editing-locked" class="error" >
+<div id="editing-locked" class="notice notice-error" >
      <p ><b style="color:red">Editing of plugin and theme files</b> in the wp-admin is <b style="color:red">enabled</b><br>
      <b style="color:red">This is not recommended for security reasons</b>. You can modify this setting on the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized Configuration page</a></p>
 </div>
@@ -494,7 +494,7 @@ HTML;
 			// Check for W3 Total Cache and show upgrade notice
 			if($plugin_folder[0] == 'w3-total-cache' && !$_GET['a2-page']){
 				add_action('admin_notices', array(&$this, 'w3totalcache_plugin_notice'));
-			}
+		}
 		}
 
 
@@ -628,8 +628,8 @@ HTML;
 		}
 
 		echo <<<HTML
-    <div class="error">
-        <p class="danger">Proceed with caution: The plugin(s) you just installed, {$plugin_output} may be incompatible with A2 Optimized.</p>
+    <div class="notice notice-warning">
+        <p class="danger">Proceed with caution: A currently active plugin, {$plugin_output} may be incompatible with A2 Optimized.</p>
     </div>
 HTML;
 	}
@@ -637,7 +637,7 @@ HTML;
 	public function w3totalcache_plugin_notice() {
 		$admin_url = admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin');
 		echo <<<HTML
-    <div class="error">
+    <div class="notice notice-warning">
         <p class="danger">We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we can help you disable this W3 Total Cache plugin version and install a A2 Hosting supported version of W3 Total Cache in its place.</p>
         <p><a href="{$admin_url}" class="button-primary">Disable W3 Total Cache</a></p>
     </div>
@@ -646,7 +646,7 @@ HTML;
 
 	public function config_page_notice() {
 		echo <<<HTML
-    <div class="updated">
+    <div class="notice notice-info">
         <p>This site has been configured using the A2 Optimized plugin.  We, at A2 Hosting, have spent quite a bit of time figuring out the best set of options for this plugin; however, if you think you need to customize configuration: by all means... Continue.  If you have arrived here by mistake, you may use the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized administration page to configure this plugin</a>.</p>
     </div>
 HTML;

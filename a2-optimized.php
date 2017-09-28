@@ -52,7 +52,7 @@ class A2_Optimized {
 
 	public function A2_Optimized_noticePhpVersionWrong() {
 		global $A2_Optimized_minimalRequiredPhpVersion;
-		echo '<div class="updated fade">' .
+		echo '<div class="notice notice-warning fade is-dismissible">' .
 			__('Error: plugin "A2 Optimized" requires a newer version of PHP to be running.', 'a2-optimized') .
 			'<br/>' . __('Minimal version of PHP required: ', 'a2-optimized') . '<strong>' . $A2_Optimized_minimalRequiredPhpVersion . '</strong>' .
 			'<br/>' . __('Your site is running PHP version: ', 'a2-optimized') . '<strong>' . phpversion() . '</strong>' .
