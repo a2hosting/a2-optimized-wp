@@ -156,6 +156,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 	}
 
 	public function upgrade() {
+		//
 	}
 
 	public function update_notice() {

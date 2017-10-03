@@ -13,7 +13,14 @@ class A2_Optimized_Optimizations {
 
 	public function __construct($thisclass) {
 		$this->thisclass = $thisclass;
-		$this->server_info = new A2_Optimized_Server_Info();
+		// disable gzip before testing server info
+		$w3tc = $thisclass->get_w3tc_config();
+		$previous_setting = $w3tc['browsercache.html.compression'];
+		$thisclass->disable_w3tc_gzip();
+		$this->server_info = new A2_Optimized_Server_Info(true, $w3tc);
+		if($previous_setting && (!$this->server_info->gzip||!$this->server_info->cf||!$this->server_info->br)){
+			$thisclass->enable_w3tc_gzip();
+		}
 	}
 
 	public function get_optimizations() {
@@ -250,7 +257,7 @@ class A2_Optimized_Optimizations {
 				'description' => 'Makes your site significantly faster by compressing all text files to make them smaller.',
 				'is_configured' => function (&$item) use (&$thisclass) {
 					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['browsercache.other.compression'] || $thisclass->server_info->cf || $thisclass->server_info->gzip || $thisclass->server_info->br) {
+					if ($w3tc['browsercache.html.compression'] || $thisclass->server_info->cf || $thisclass->server_info->gzip || $thisclass->server_info->br) {
 						$item['configured'] = true;
 						$thisclass->set_install_status('gzip', true);
 					} else {
@@ -258,18 +265,10 @@ class A2_Optimized_Optimizations {
 					}
 				},
 				'enable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
-						'browsercache.other.compression' => true,
-						'browsercache.html.compression' => true,
-						'browsercache.cssjs.compression' => true
-					));
+					$thisclass->enable_w3tc_gzip();
 				},
 				'disable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
-						'browsercache.other.compression' => false,
-						'browsercache.html.compression' => false,
-						'browsercache.cssjs.compression' => false
-					));
+					$thisclass->disable_w3tc_gzip();
 				},
 				'remove_link' => true
 			),
