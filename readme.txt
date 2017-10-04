@@ -12,13 +12,11 @@ Make your site faster and more secure with the click of a few buttons
 
 == Description ==
 
-A2 Optimized is designed to make it *quick and easy* to *speed up* and secure your website by installing
-and configuring several well known, stable plugins with the click of a few buttons.
+A2 Optimized is designed to make it *quick and easy* to *speed up* and secure your website by installing and configuring several well known, stable plugins with the click of a few buttons.
 
 **Have you ever tried to configure *W3 Total cache* and got lost in the mess of configuration pages?**
 
-A2 Optimized has broken it down into the most valuable optimizations and will automatically configure
-W3 Total Cache for what works best in most shared hosting environments.
+A2 Optimized has broken it down into the most valuable optimizations and will automatically configure W3 Total Cache for what works best in most shared hosting environments.
 
 
 = Free Optimizations =
@@ -122,8 +120,7 @@ A2 Optimized will install and configure W3 Total Cache with the click of a few b
 
 A2 Optimized will speed up most sites; however, not all plugins are compatible with W3 Total Cache.
 
-If your site is slower after enabling caching in A2 Optimized,
-talk to a developer about finding better solutions for the plugins that you are using.
+If your site is slower after enabling caching in A2 Optimized, talk to a developer about finding better solutions for the plugins that you are using.
 
 = Can I use A2 Optimized with WordFence =
 
