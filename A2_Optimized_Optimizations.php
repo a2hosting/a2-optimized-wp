@@ -13,7 +13,6 @@ class A2_Optimized_Optimizations {
 
 	public function __construct($thisclass) {
 		$this->thisclass = $thisclass;
-		// disable gzip before testing server info
 		$w3tc = $thisclass->get_w3tc_config();
 		$previous_setting = $w3tc['browsercache.html.compression'];
 		$thisclass->disable_w3tc_gzip();

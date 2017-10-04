@@ -487,34 +487,6 @@ class A2_Optimized_OptionsManager {
 		));
 	}
 
-	/**
-	 * Preconfigure Gzip settings
-	 *
-	 */
-	 public function preconfigure_gzip_setting(){
-	 	// Check transient for last time this was called...
-	 	//Check if gzip w3tc is enabled
-	 	$w3tc = $this->get_w3tc_config();
-	 	//var_dump($w3tc);
-	 	echo('setting ' . $w3tc['browsercache.html.compression']);
-	 	if ($w3tc['browsercache.html.compression']){
-		 	// disable w3tc gzip
-		 	$this->disable_w3tc_gzip();
-		 	echo('disabled w3tc gzip');
-		 	// check server info to see if it is gziping by default
-	 		$server_info = new A2_Optimized_Server_Info(false, $w3tc);
-	 		var_dump($server_info);
-		 	// if gzip is handled by server (not w3tc) set server info to make it clear server is handling it
-		 	echo('gzip ' . $server_info->gzip);
-		 	echo('cached ' . $server_info->cached);
-			if($server_info->gzip == false){
-			 	// else turn it back on
-			 	$this->enable_w3tc_gzip();
-			 	echo('enabled w3tc gzip');
-			}
-	 	}
-	 	echo(' done!');
-	 }
 
 	public function curl_save_w3tc($cookie, $url) {
 		$post = 'w3tc_save_options=Save all settings&_wpnonce=' . wp_create_nonce('w3tc') . '&_wp_http_referer=%2Fwp-admin%2Fadmin.php%3Fpage%3Dw3tc_general%26&w3tc_note%3Dconfig_save';
@@ -591,14 +563,7 @@ class A2_Optimized_OptionsManager {
 	 */
 	private function settings_page_html() {
 		$w3tc = $this->get_w3tc_config();
-		/*
-		$previous_setting = $w3tc['browsercache.html.compression'];
-		$this->disable_w3tc_gzip();
-		$server_info = new A2_Optimized_Server_Info(true, $w3tc);
-		if($previous_setting && (!$server_info->gzip||!$server_info->cf||!$server_info->br)){
-			$this->enable_w3tc_gzip();
-		}
-		*/
+
 		$optimization_count = 0;
 		$this->get_plugin_status();
 		$this->optimization_status = '';
