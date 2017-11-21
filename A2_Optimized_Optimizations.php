@@ -338,6 +338,7 @@ class A2_Optimized_Optimizations {
 				'name' => 'Login URL Change',
 				'slug' => 'wp-login',
 				'premium' => true,
+				'hide_managed' => true,
 				'plugin' => 'Rename wp-login.php',
 				'configured' => false,
 				'kb' => 'http://www.a2hosting.com/kb/security/application-security/wordpress-security#a-namemethodRenameLoginPageaMethod-3.3A-Change-the-WordPress-login-URL',
@@ -353,6 +354,7 @@ class A2_Optimized_Optimizations {
 				'plugin' => 'reCAPTCHA',
 				'slug' => 'captcha',
 				'premium' => true,
+				'hide_managed' => true,
 				'configured' => false,
 				'description' => 'Decreases spam and increases site security by adding a CAPTCHA to comment forms and the login screen.  Without a CAPTCHA, bots will easily be able to post comments to you blog or brute force login to your admin panel.',
 				'is_configured' => function () {

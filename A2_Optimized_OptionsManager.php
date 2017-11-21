@@ -1305,6 +1305,11 @@ JAVASCRIPT;
 
 	public function get_optimization_status(&$item, $server_info) {
 		if ($item != null){
+
+			if($this->is_a2_managed() && isset($item['hide_managed']) && $item['hide_managed'] === true){
+				return;
+			}
+
 			$settings_slug = $this->getSettingsSlug();
 
 			if (isset($item['is_configured'])) {
@@ -1971,6 +1976,19 @@ HTML;
 
 		return false;
 	}
+
+	/**
+	 * Check to see if this is a ManagedWP install
+	 *
+	 * return bool
+	 */
+	 protected function is_a2_managed(){
+	 	$a2managed = get_option('a2_managed',0);
+	 	if( $a2managed == true ){
+	 		return true;
+	 	}
+	 	return false;
+	 }
 
 	/**
 	 * Check for installed plugin
