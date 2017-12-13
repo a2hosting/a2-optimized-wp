@@ -1904,17 +1904,23 @@ HTACCESS;
 	 * @return bool
 	 */
 	public function checkUserCapability($capability, $user_id = null) {
-		if (!is_numeric($user_id)) {
-			$user_id = wp_get_current_user();
-		}
-		if (is_numeric($user_id)) {
-			$user = get_userdata($user_id);
-		} else {
-			return false;
-		}
-		$capabilities = (array)$user->allcaps;
 
-		return empty($user) ? false : isset($capabilities["{$capability}"]) ? $capabilities["{$capability}"] : false;
+		if (!is_numeric($user_id)) {
+			$user = wp_get_current_user();
+		} else {
+			$user = get_userdata($user_id);
+		}
+
+		if (is_object($user)) {
+			$capabilities = (array)$user->allcaps;
+
+			if (isset($capabilities[$capability])) {
+				return $capabilities[$capability];
+			}
+		}
+
+		return false;
+
 	}
 
 
