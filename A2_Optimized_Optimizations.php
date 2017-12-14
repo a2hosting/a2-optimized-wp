@@ -252,7 +252,6 @@ class A2_Optimized_Optimizations {
 				'slug' => 'gzip',
 				'plugin' => 'W3 Total Cache',
 				'configured' => false,
-				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
 				'description' => 'Makes your site significantly faster by compressing all text files to make them smaller.',
 				'is_configured' => function (&$item) use (&$thisclass) {
 					$w3tc = $thisclass->get_w3tc_config();
