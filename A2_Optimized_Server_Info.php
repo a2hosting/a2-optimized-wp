@@ -18,10 +18,12 @@ class A2_Optimized_Server_Info {
 
 	/* Results from cache */
 	public $cached = true;
+	public $use_cached_results;
+
+	public $w3tc_config;
 
 	public function __construct($use_cached_results = true, $w3tc) {
 		$this->used_cached_results = $use_cached_results;
-		$this->cached = $cached;
 		$this->w3tc_config = $w3tc;
 		$this->server_header_call();
 	}

@@ -36,7 +36,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 		'wp-fastest-cache',
 		'wp-file-cache',
 		'better-wp-security',
-		'wordfence'
+		'wordfence',
 	);
 
 	public function install() {
@@ -495,7 +495,7 @@ HTML;
 			// Check for W3 Total Cache and show upgrade notice
 			if($plugin_folder[0] == 'w3-total-cache' && !$_GET['a2-page']){
 				add_action('admin_notices', array(&$this, 'w3totalcache_plugin_notice'));
-		}
+			}
 		}
 
 

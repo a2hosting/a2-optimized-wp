@@ -15,12 +15,13 @@ class A2_Optimized_Optimizations {
 		$this->thisclass = $thisclass;
 		$w3tc = $thisclass->get_w3tc_config();
 		$previous_setting = $w3tc['browsercache.html.compression'];
-		$thisclass->disable_w3tc_gzip();
+		$thisclass->disable_w3tc_gzip(); //Slow
 		$this->server_info = new A2_Optimized_Server_Info(true, $w3tc);
 		if($previous_setting && (!$this->server_info->gzip||!$this->server_info->cf||!$this->server_info->br)){
 			$thisclass->enable_w3tc_gzip();
 		}
 	}
+
 
 	public function get_optimizations() {
 		$public_opts = $this->get_public_optimizations();
