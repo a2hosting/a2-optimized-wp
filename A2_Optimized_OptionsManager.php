@@ -411,7 +411,7 @@ class A2_Optimized_OptionsManager {
 			}
 			$config_writer->set('common.instance_id', mt_rand());
 			$config_writer->save();
-			$this->refresh_w3tc(); //Slow
+			$this->refresh_w3tc();
 		}
 	}
 
@@ -571,9 +571,9 @@ class A2_Optimized_OptionsManager {
 
 		$thisclass = $this;
 		$w3tc = $this->get_w3tc_config();
-		$opts = new A2_Optimized_Optimizations($thisclass); // Slow
+		$opts = new A2_Optimized_Optimizations($thisclass);
 		$optimization_count = 0;
-		$this->get_plugin_status(); // Slow
+		$this->get_plugin_status();
 		$this->optimization_status = '';
 		$image_dir = plugins_url('/assets/images', __FILE__);
 

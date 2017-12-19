@@ -16,14 +16,9 @@ class A2_Optimized_Server_Info {
 	/* Is server using Brotli? */
 	public $br = false;
 
-	/* Results from cache */
-	public $cached = true;
-	public $use_cached_results;
-
 	public $w3tc_config;
 
-	public function __construct($use_cached_results = true, $w3tc) {
-		$this->used_cached_results = $use_cached_results;
+	public function __construct($w3tc) {
 		$this->w3tc_config = $w3tc;
 		$this->server_header_call();
 	}
@@ -49,14 +44,12 @@ class A2_Optimized_Server_Info {
 
 		foreach ($encodings as $encoding) {
 			curl_setopt($ch, CURLOPT_ENCODING, $encoding);
-			$header = null;
-			if($this->use_cached_results){
-				$header = get_transient( 'a2-server_resp2-' . $encoding );
-			}
-			if (!$header) {
-				$this->cached = false;
+
+			$header = get_transient( 'a2-server_resp2-' . $encoding );
+
+			if (false === $header) {
 				$header = curl_exec($ch);
-				set_transient( 'a2-server_resp2-' . $encoding, $header, 12 * HOUR_IN_SECONDS );
+				set_transient( 'a2-server_resp2-' . $encoding, $header, WEEK_IN_SECONDS );
 			}
 			$temp_headers = explode("\n", $header);
 			foreach ($temp_headers as $i => $header) {
