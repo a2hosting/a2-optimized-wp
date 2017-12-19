@@ -553,7 +553,7 @@ class A2_Optimized_OptionsManager {
 				$this->recaptcha_settings_html();
 			};
 			if($_GET['a2-page'] == 'recaptcha_settings_save'){
-				$this->recaptcha_settings_save(); // @TODO: this stops page loading...
+				$this->recaptcha_settings_save();
 				$this->settings_page_html();
 			};
 		} else {
@@ -1092,7 +1092,7 @@ HTML;
 	private function recaptcha_settings_html() {
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
-		$admin_url = admin_url('admin.php?a2-page=recaptcha_settings_save&page=A2_Optimized_Plugin_admin');
+		$admin_url = admin_url('admin.php?a2-page=recaptcha_settings_save&page=A2_Optimized_Plugin_admin&save_settings=1');
 
 		$a2_recaptcha_usecustom = get_option('a2_recaptcha_usecustom');
 		$a2_recaptcha_sitekey = get_option('a2_recaptcha_sitekey');
