@@ -546,8 +546,14 @@ class A2_Optimized_OptionsManager {
 				$this->upgrade_wizard_html($step);
 			};
 			if($_GET['a2-page'] == 'w3tcfixed_confirm'){
-				//User has said they want to keep W3 TC Fixed, set site option here...
 				update_option( 'a2opt_w3tcfixed_confirm', true);
+				$this->settings_page_html();
+			};
+			if($_GET['a2-page'] == 'recaptcha_settings'){
+				$this->recaptcha_settings_html();
+			};
+			if($_GET['a2-page'] == 'recaptcha_settings_save'){
+				$this->recaptcha_settings_save(); // @TODO: this stops page loading...
 				$this->settings_page_html();
 			};
 		} else {
@@ -583,6 +589,8 @@ class A2_Optimized_OptionsManager {
 		}
 
 		$this->optimization_alert = '';
+
+
 
 		if(is_plugin_active('w3-total-cache/w3-total-cache.php')){
 			$this->optimization_alert = "<div class='alert alert-info'>";
@@ -655,6 +663,12 @@ HTML;
 
 		$advanced_circle = '';
 
+		$save_alert = '';
+
+		if($_GET['save_settings']){
+			$save_alert = '<div class="alert alert-success">Settings Saved</div>';
+		}
+
 		$warning_circle = '';
 		if ($num_warnings > 0) {
 			$warning_circle = <<<HTML
@@ -700,6 +714,7 @@ HTML;
 
                 <div style="margin:20px 0;">
     				{$optimization_alert}
+    				{$save_alert}
 				</div>
 			</div>
 		</div>
@@ -1068,6 +1083,94 @@ HTML;
 
 		}
 
+	}
+
+	/**
+	 * reCaptcha Settings Page
+	 *
+	 */
+	private function recaptcha_settings_html() {
+		$image_dir = plugins_url('/assets/images', __FILE__);
+		$kb_search_box = $this->kb_searchbox_html();
+		$admin_url = admin_url('admin.php?a2-page=recaptcha_settings_save&page=A2_Optimized_Plugin_admin');
+
+		$a2_recaptcha_usecustom = get_option('a2_recaptcha_usecustom');
+		$a2_recaptcha_sitekey = get_option('a2_recaptcha_sitekey');
+		$a2_recaptcha_secretkey = get_option('a2_recaptcha_secretkey');
+		$a2_recaptcha_theme = get_option('a2_recaptcha_theme');
+
+		$dark_selected = '';
+		if($a2_recaptcha_theme == 'dark'){
+			$dark_selected = 'selected';
+		}
+		$custom_selected = '';
+		if($a2_recaptcha_usecustom){
+			$custom_selected = 'checked';
+		}
+
+		echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>reCaptcha Settings</h3>
+			<div>
+				<form action="{$admin_url}" method="POST">
+					<div class="form-group">
+					    <label>
+							<input type="checkbox" name="a2_recaptcha_usecustom" value="1" {$custom_selected}>
+					       Use my settings below for reCaptcha
+					    </label>
+				    </div>
+					<div class="form-group">
+					    <label for="a2_recaptcha_sitekey">Site Key</label>
+					    <input type="text" class="form-control" id="a2_recaptcha_sitekey" name="a2_recaptcha_sitekey" value="{$a2_recaptcha_sitekey}" placeholder="Site Key">
+					</div>
+					<div class="form-group">
+					    <label for="a2_recaptcha_secretkey">Secret Key</label>
+					    <input type="text" class="form-control" id="a2_recaptcha_secretkey" name="a2_recaptcha_secretkey"  value="{$a2_recaptcha_secretkey}" placeholder="Secret Key">
+					</div>
+					<div class="form-group">
+					    <label for="exampleInputEmail1">Theme</label>
+						<select class="form-control" id="a2_recaptcha_theme" name="a2_recaptcha_theme">
+						  <option value="light" >Light</option>
+						  <option value="dark" {$dark_selected}>Dark</option>
+						</select>
+					</div>
+					<button type="submit" class="btn btn-success">Save Settings</button>
+				</form>
+			</div>
+		</div>
+
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+HTML;
+
+	}
+
+	/**
+	 * Save reCaptcha Settings
+	 *
+	 */
+	private function recaptcha_settings_save() {
+		update_option('a2_recaptcha_usecustom', $_POST['a2_recaptcha_usecustom']);
+		update_option('a2_recaptcha_sitekey', $_POST['a2_recaptcha_sitekey']);
+		update_option('a2_recaptcha_secretkey', $_POST['a2_recaptcha_secretkey']);
+		update_option('a2_recaptcha_theme', $_POST['a2_recaptcha_theme']);
 	}
 
 	/**
