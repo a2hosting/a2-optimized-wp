@@ -1095,8 +1095,8 @@ HTML;
 		$admin_url = admin_url('admin.php?a2-page=recaptcha_settings_save&page=A2_Optimized_Plugin_admin&save_settings=1');
 
 		$a2_recaptcha_usecustom = get_option('a2_recaptcha_usecustom');
-		$a2_recaptcha_sitekey = get_option('a2_recaptcha_sitekey');
-		$a2_recaptcha_secretkey = get_option('a2_recaptcha_secretkey');
+		$a2_recaptcha_sitekey = esc_textarea(get_option('a2_recaptcha_sitekey'));
+		$a2_recaptcha_secretkey = esc_textarea(get_option('a2_recaptcha_secretkey'));
 		$a2_recaptcha_theme = get_option('a2_recaptcha_theme');
 
 		$dark_selected = '';
@@ -1167,10 +1167,10 @@ HTML;
 	 *
 	 */
 	private function recaptcha_settings_save() {
-		update_option('a2_recaptcha_usecustom', $_POST['a2_recaptcha_usecustom']);
-		update_option('a2_recaptcha_sitekey', $_POST['a2_recaptcha_sitekey']);
-		update_option('a2_recaptcha_secretkey', $_POST['a2_recaptcha_secretkey']);
-		update_option('a2_recaptcha_theme', $_POST['a2_recaptcha_theme']);
+		update_option('a2_recaptcha_usecustom', sanitize_text_field($_POST['a2_recaptcha_usecustom']));
+		update_option('a2_recaptcha_sitekey', sanitize_text_field($_POST['a2_recaptcha_sitekey']));
+		update_option('a2_recaptcha_secretkey', sanitize_text_field($_POST['a2_recaptcha_secretkey']));
+		update_option('a2_recaptcha_theme', sanitize_text_field($_POST['a2_recaptcha_theme']));
 	}
 
 	/**
