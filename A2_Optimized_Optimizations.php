@@ -337,7 +337,6 @@ class A2_Optimized_Optimizations {
 				'name' => 'Login URL Change',
 				'slug' => 'wp-login',
 				'premium' => true,
-				'hide_managed' => true,
 				'plugin' => 'Rename wp-login.php',
 				'configured' => false,
 				'kb' => 'http://www.a2hosting.com/kb/security/application-security/wordpress-security#a-namemethodRenameLoginPageaMethod-3.3A-Change-the-WordPress-login-URL',
