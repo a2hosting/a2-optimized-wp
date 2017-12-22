@@ -14,11 +14,24 @@ class A2_Optimized_Optimizations {
 	public function __construct($thisclass) {
 		$this->thisclass = $thisclass;
 		$w3tc = $thisclass->get_w3tc_config();
-		$previous_setting = $w3tc['browsercache.html.compression'];
-		$thisclass->disable_w3tc_gzip();
-		$this->server_info = new A2_Optimized_Server_Info(true, $w3tc);
-		if($previous_setting && (!$this->server_info->gzip||!$this->server_info->cf||!$this->server_info->br)){
-			$thisclass->enable_w3tc_gzip();
+		$this->check_server_gzip();
+		$this->server_info = new A2_Optimized_Server_Info($w3tc);
+	}
+
+	/**
+	 * Checks if gzip test has been run to see if server is serving gzip, if not we run it.
+	 * Expires after one week to reduce number of curl calls to server
+	 */
+	public function check_server_gzip(){
+		$checked_gzip = get_transient('a2_checked_gzip');
+		if(false === $checked_gzip){
+			$w3tc = $this->thisclass->get_w3tc_config();
+			$previous_setting = $w3tc['browsercache.html.compression'];
+			$this->thisclass->disable_w3tc_gzip();
+			if($previous_setting && (!$this->server_info->gzip||!$this->server_info->cf||!$this->server_info->br)){
+				$this->thisclass->enable_w3tc_gzip();
+			}
+			set_transient('a2_checked_gzip', true, WEEK_IN_SECONDS);
 		}
 	}
 

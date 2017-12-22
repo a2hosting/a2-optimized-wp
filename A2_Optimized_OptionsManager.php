@@ -244,9 +244,15 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function hit_the_w3tc_page() {
+		$disregarded_cookies = [
+			'PHPSESSID',
+			];
+
 		$cookie = '';
 		foreach ($_COOKIE as $name => $val) {
-			$cookie .= "{$name}={$val};";
+			if(!in_array($name, $disregarded_cookies)){
+				$cookie .= "{$name}={$val};";
+			}
 		}
 		rtrim($cookie, ';');
 		$ch = curl_init();
@@ -562,8 +568,10 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	private function settings_page_html() {
-		$w3tc = $this->get_w3tc_config();
 
+		$thisclass = $this;
+		$w3tc = $this->get_w3tc_config();
+		$opts = new A2_Optimized_Optimizations($thisclass);
 		$optimization_count = 0;
 		$this->get_plugin_status();
 		$this->optimization_status = '';
@@ -575,12 +583,12 @@ class A2_Optimized_OptionsManager {
 
 		$optimization_status = '';
 
-		foreach ($this->advanced_optimizations as $shortname => &$item) {
-			$this->advanced_optimization_status .= $this->get_optimization_status($item, $server_info);
-			if ($item['configured']) {
-				$this->advanced_optimization_count++;
-			}
-		}
+		 foreach ($this->advanced_optimizations as $shortname => &$item) {
+		 	$this->advanced_optimization_status .= $this->get_optimization_status($item, $opts->server_info);
+		 	if ($item['configured']) {
+		 		$this->advanced_optimization_count++;
+		 	}
+		 }
 
 		$this->optimization_alert = '';
 
@@ -617,12 +625,10 @@ class A2_Optimized_OptionsManager {
 
 		}
 
-
-
 		$this->optimization_count = 0;
 
 		foreach ($this->optimizations as $shortname => &$item) {
-			$this->optimization_status .= $this->get_optimization_status($item, $server_info);
+			$this->optimization_status .= $this->get_optimization_status($item, $opts->server_info);
 			if ($item['configured']) {
 				$this->optimization_count++;
 			}
@@ -1322,7 +1328,7 @@ JAVASCRIPT;
 
 			$active_class = '';
 			if(
-				$item['plugin'] == 'W3 Total Cache'
+				isset($item['plugin']) && $item['plugin'] == 'W3 Total Cache'
 				&& (
 					$this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php') === false
 					|| is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php') === false
