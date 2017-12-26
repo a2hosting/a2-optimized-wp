@@ -4,11 +4,7 @@ Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
 Requires at least: 3.8
 Tested up to: 4.9.1
-<<<<<<< HEAD
-Stable tag: 2.0.9.7
-=======
-Stable tag: 2.0.9.8
->>>>>>> bfweb-1515
+Stable tag: 2.0.10
 Requires PHP: 5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -142,6 +138,9 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 
 ## Changelog
+### 2.0.10
+* Settings page for custom reCaptcha options
+
 ### 2.0.9.8
 * Fixed issue with some plugins causing slowdowns on dashboard screen
 
