@@ -368,7 +368,7 @@ class A2_Optimized_Optimizations {
 				'premium' => true,
 				'hide_managed' => true,
 				'configured' => false,
-				'description' => 'Decreases spam and increases site security by adding a CAPTCHA to comment forms and the login screen.  Without a CAPTCHA, bots will easily be able to post comments to you blog or brute force login to your admin panel.',
+				'description' => 'Decreases spam and increases site security by adding a CAPTCHA to comment forms and the login screen.  Without a CAPTCHA, bots will easily be able to post comments to you blog or brute force login to your admin panel. You may override the default settings and use your own Site Key and select a theme.',
 				'is_configured' => function () {
 					return false;
 				}
