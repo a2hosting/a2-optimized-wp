@@ -560,6 +560,29 @@ class A2_Optimized_OptionsManager {
 			};
 			if($_GET['a2-page'] == 'recaptcha_settings_save'){
 				$this->recaptcha_settings_save();
+			if($_GET['a2-page'] == 'enable-rwl'){
+				if($_GET['enable'] == '1'){
+					if (!isset($this->plugin_list['rename-wp-login/rename-wp-login.php'])) {
+                        $this->install_plugin('rename-wp-login');
+                    }
+                    $this->activate_plugin('rename-wp-login/rename-wp-login.php');
+
+                    if (get_option('a2_login_page') === false) {
+                        if (get_option('rwl_page') === false) {
+                            $length = 4;
+                            $rwl_page = $this->getRandomString($length);
+                            update_option('a2_login_page', $rwl_page);
+                            update_option('rwl_page', $rwl_page);
+                        } else {
+                            update_option('a2_login_page', get_option('rwl_page'));
+                        }
+                    } else {
+                        update_option('rwl_page', get_option('a2_login_page'));
+                    }
+                    delete_option('rwl_redirect');
+                }
+
+				update_option('a2_managed_changelogin', 1);
 				$this->settings_page_html();
 			};
 		} else {
@@ -2165,6 +2188,31 @@ HTML;
 
 	protected function getPluginDir() {
 		return dirname(__FILE__);
+	}
+
+
+	/**
+	 * Generates a random string of lower case letters, used for Rename WP Login URL
+	 *
+	 * @param int $length The length of the random string
+	 * @return string $output The random string
+	 */
+	public function getRandomString($length = 4){
+		$output = '';
+		$valid_chars = "abcdefghijklmnopqrstuvwxyz";
+        // count the number of chars in the valid chars string so we know how many choices we have
+        $num_valid_chars = strlen($valid_chars);
+        // repeat the steps until we've created a string of the right length
+        for ($i = 0; $i < $length; $i++) {
+            // pick a random number from 1 up to the number of valid chars
+            $random_pick = mt_rand(1, $num_valid_chars);
+            // take the random character out of the string of valid chars
+            // subtract 1 from $random_pick because strings are indexed starting at 0, and we started picking at 1
+            $random_char = $valid_chars[$random_pick - 1];
+            // add the randomly-chosen char onto the end of our string so far
+            $output .= $random_char;
+        }
+        return $output;
 	}
 
 
