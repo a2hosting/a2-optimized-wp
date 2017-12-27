@@ -560,6 +560,7 @@ class A2_Optimized_OptionsManager {
 			};
 			if($_GET['a2-page'] == 'recaptcha_settings_save'){
 				$this->recaptcha_settings_save();
+			};
 			if($_GET['a2-page'] == 'enable-rwl'){
 				if($_GET['enable'] == '1'){
 					if (!isset($this->plugin_list['rename-wp-login/rename-wp-login.php'])) {
