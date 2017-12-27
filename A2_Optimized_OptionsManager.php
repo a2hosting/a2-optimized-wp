@@ -244,9 +244,9 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function hit_the_w3tc_page() {
-		$disregarded_cookies = [
+		$disregarded_cookies = array(
 			'PHPSESSID',
-			];
+			);
 
 		$cookie = '';
 		foreach ($_COOKIE as $name => $val) {
