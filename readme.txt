@@ -137,6 +137,9 @@ Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimize
 
 
 == Changelog ==
+= 2.0.10.3 =^M
+*Emails site admin if login URL changes^M
+
 = 2.0.19 =
 *Settings page for custom reCaptcha options
 
