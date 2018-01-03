@@ -32,7 +32,6 @@ class A2_Optimized_OptionsManager {
 	private $install_status;
 
 	public function __construct() {
-
 	}
 
 	/**
@@ -41,19 +40,20 @@ class A2_Optimized_OptionsManager {
 	 */
 	private function get_current_w3tc_version() {
 		$version = get_transient('a2_w3tc_current_version');
-		if(!$version){
+		if (!$version) {
 			$response = wp_remote_get( 'http://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice?notice_plugin=3&per_page=1' );
 			if ( is_array( $response ) ) {
 				$body = json_decode($response['body']); // use the content
-				foreach($body as $item){
+				foreach ($body as $item) {
 					$version = $item->title->rendered;
 					set_transient('a2_w3tc_current_version', $version, 3600 * 12);
-				};
+				}
 			} else {
 				$version = null;
 				set_transient('a2_w3tc_current_version', $version, 3600);
-			};
-		};
+			}
+		}
+
 		return $version;
 	}
 
@@ -224,6 +224,7 @@ class A2_Optimized_OptionsManager {
 		}
 
 		$this->clear_w3_total_cache();
+
 		return $response;
 	}
 
@@ -250,7 +251,7 @@ class A2_Optimized_OptionsManager {
 
 		$cookie = '';
 		foreach ($_COOKIE as $name => $val) {
-			if(!in_array($name, $disregarded_cookies)){
+			if (!in_array($name, $disregarded_cookies)) {
 				$cookie .= "{$name}={$val};";
 			}
 		}
@@ -294,9 +295,9 @@ class A2_Optimized_OptionsManager {
 		$permalink_structure = get_option('permalink_structure');
 		$vars = array();
 		if ($permalink_structure == '') {
-			$vars['pgcache.engine']='file';
+			$vars['pgcache.engine'] = 'file';
 		} else {
-			$vars['pgcache.engine']='file_generic';
+			$vars['pgcache.engine'] = 'file_generic';
 		}
 		$vars['dbcache.engine'] = 'file';
 		$vars['objectcache.engine'] = 'file';
@@ -318,9 +319,9 @@ class A2_Optimized_OptionsManager {
 		$permalink_structure = get_option('permalink_structure');
 		$vars = array();
 		if ($permalink_structure == '') {
-			$vars['pgcache.engine']='file';
+			$vars['pgcache.engine'] = 'file';
 		} else {
-			$vars['pgcache.engine']='file_generic';
+			$vars['pgcache.engine'] = 'file_generic';
 		}
 
 		$vars['pgcache.enabled'] = true;
@@ -371,7 +372,7 @@ class A2_Optimized_OptionsManager {
 	 *  Enable gzip for w3tc
 	 *
 	 */
-	 public function enable_w3tc_gzip() {
+	public function enable_w3tc_gzip() {
 		$vars = array();
 
 		$vars['browsercache.other.compression'] = true;
@@ -379,13 +380,13 @@ class A2_Optimized_OptionsManager {
 		$vars['browsercache.cssjs.compression'] = true;
 
 		$this->update_w3tc($vars);
-	 }
+	}
 
-	 /**
-	 *  Disable gzip for w3tc
-	 *
-	 */
-	 public function disable_w3tc_gzip() {
+	/**
+	*  Disable gzip for w3tc
+	*
+	*/
+	public function disable_w3tc_gzip() {
 		$vars = array();
 
 		$vars['browsercache.other.compression'] = false;
@@ -393,7 +394,7 @@ class A2_Optimized_OptionsManager {
 		$vars['browsercache.cssjs.compression'] = false;
 
 		$this->update_w3tc($vars);
-	 }
+	}
 
 	/**
 	 * Update w3tc plugin
@@ -404,7 +405,7 @@ class A2_Optimized_OptionsManager {
 		$vars = array_merge($this->get_w3tc_defaults(), $vars);
 
 		/* Make sure we're running a compatible version of W3 Total Cache */
-		if($this->is_valid_w3tc_installed() && class_exists('W3_ConfigData')){
+		if ($this->is_valid_w3tc_installed() && class_exists('W3_ConfigData')) {
 			$config_writer = new W3_ConfigWriter(0, false);
 			foreach ($vars as $name => $val) {
 				$config_writer->set($name, $val);
@@ -493,7 +494,6 @@ class A2_Optimized_OptionsManager {
 		));
 	}
 
-
 	public function curl_save_w3tc($cookie, $url) {
 		$post = 'w3tc_save_options=Save all settings&_wpnonce=' . wp_create_nonce('w3tc') . '&_wp_http_referer=%2Fwp-admin%2Fadmin.php%3Fpage%3Dw3tc_general%26&w3tc_note%3Dconfig_save';
 
@@ -537,55 +537,56 @@ class A2_Optimized_OptionsManager {
 		$ini_error_reporting = ini_get('error_reporting');
 		//ini_set('error_reporting',0);
 
-		if(isset($_GET['a2-page'])){
-			if(isset($_GET['step'])){
+		if (isset($_GET['a2-page'])) {
+			if (isset($_GET['step'])) {
 				$step = $_GET['step'];
 			} else {
 				$step = 1;
-			};
+			}
 
 			// Show wizard here...
-			if($_GET['a2-page'] == 'newuser_wizard'){
+			if ($_GET['a2-page'] == 'newuser_wizard') {
 				$this->newuser_wizard_html($step);
-			};
-			if($_GET['a2-page'] == 'upgrade_wizard'){
+			}
+			if ($_GET['a2-page'] == 'upgrade_wizard') {
 				$this->upgrade_wizard_html($step);
-			};
-			if($_GET['a2-page'] == 'w3tcfixed_confirm'){
+			}
+			if ($_GET['a2-page'] == 'w3tcfixed_confirm') {
 				update_option( 'a2opt_w3tcfixed_confirm', true);
 				$this->settings_page_html();
-			};
-			if($_GET['a2-page'] == 'recaptcha_settings'){
+			}
+			if ($_GET['a2-page'] == 'recaptcha_settings') {
 				$this->recaptcha_settings_html();
-			};
-			if($_GET['a2-page'] == 'recaptcha_settings_save'){
+			}
+			if ($_GET['a2-page'] == 'recaptcha_settings_save') {
 				$this->recaptcha_settings_save();
-			};
-			if($_GET['a2-page'] == 'enable-rwl'){
-				if($_GET['enable'] == '1'){
+				$this->settings_page_html();
+			}
+			if ($_GET['a2-page'] == 'enable-rwl') {
+				if ($_GET['enable'] == '1') {
 					if (!isset($this->plugin_list['rename-wp-login/rename-wp-login.php'])) {
-                        $this->install_plugin('rename-wp-login');
-                    }
-                    $this->activate_plugin('rename-wp-login/rename-wp-login.php');
+						$this->install_plugin('rename-wp-login');
+					}
+					$this->activate_plugin('rename-wp-login/rename-wp-login.php');
 
-                    if (get_option('a2_login_page') === false) {
-                        if (get_option('rwl_page') === false) {
-                            $length = 4;
-                            $rwl_page = $this->getRandomString($length);
-                            update_option('a2_login_page', $rwl_page);
-                            update_option('rwl_page', $rwl_page);
-                        } else {
-                            update_option('a2_login_page', get_option('rwl_page'));
-                        }
-                    } else {
-                        update_option('rwl_page', get_option('a2_login_page'));
-                    }
-                    delete_option('rwl_redirect');
-                }
+					if (get_option('a2_login_page') === false) {
+						if (get_option('rwl_page') === false) {
+							$length = 4;
+							$rwl_page = $this->getRandomString($length);
+							update_option('a2_login_page', $rwl_page);
+							update_option('rwl_page', $rwl_page);
+						} else {
+							update_option('a2_login_page', get_option('rwl_page'));
+						}
+					} else {
+						update_option('rwl_page', get_option('a2_login_page'));
+					}
+					delete_option('rwl_redirect');
+				}
 
 				update_option('a2_managed_changelogin', 1);
 				$this->settings_page_html();
-			};
+			}
 		} else {
 			$this->settings_page_html();
 		}
@@ -598,7 +599,6 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	private function settings_page_html() {
-
 		$thisclass = $this;
 		$w3tc = $this->get_w3tc_config();
 		$opts = new A2_Optimized_Optimizations($thisclass);
@@ -613,48 +613,43 @@ class A2_Optimized_OptionsManager {
 
 		$optimization_status = '';
 
-		 foreach ($this->advanced_optimizations as $shortname => &$item) {
-		 	$this->advanced_optimization_status .= $this->get_optimization_status($item, $opts->server_info);
-		 	if ($item['configured']) {
-		 		$this->advanced_optimization_count++;
-		 	}
-		 }
+		foreach ($this->advanced_optimizations as $shortname => &$item) {
+			$this->advanced_optimization_status .= $this->get_optimization_status($item, $opts->server_info);
+			if ($item['configured']) {
+				$this->advanced_optimization_count++;
+			}
+		}
 
 		$this->optimization_alert = '';
 
-
-
-		if(is_plugin_active('w3-total-cache/w3-total-cache.php')){
+		if (is_plugin_active('w3-total-cache/w3-total-cache.php')) {
 			$this->optimization_alert = "<div class='alert alert-info'>";
-			$this->optimization_alert .= "<p>We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we will help you disable this W3 Total Cache plugin version and install an A2 Hosting supported version of W3 Total Cache in its place.</p>";
+			$this->optimization_alert .= '<p>We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we will help you disable this W3 Total Cache plugin version and install an A2 Hosting supported version of W3 Total Cache in its place.</p>';
 			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Disable W3 Total Cache</a></p>";
-			$this->optimization_alert .= "</div>";
-
-		} elseif(is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')) {
+			$this->optimization_alert .= '</div>';
+		} elseif (is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')) {
 			$w3tc_fixed_info = get_plugin_data('w3-total-cache-fixed/w3-total-cache-fixed.php');
-			if(version_compare($w3tc_fixed_info['Version'], '0.9.5.0') >= 0){
+			if (version_compare($w3tc_fixed_info['Version'], '0.9.5.0') >= 0) {
 				$this->optimization_alert = "<div class='alert alert-info'>";
-				$this->optimization_alert .= "<p>We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we will help you disable this W3 Total Cache plugin version and install an A2 Hosting supported version of W3 Total Cache in its place.</p>";
+				$this->optimization_alert .= '<p>We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we will help you disable this W3 Total Cache plugin version and install an A2 Hosting supported version of W3 Total Cache in its place.</p>';
 				$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Disable W3 Total Cache Fixed</a></p>";
-				$this->optimization_alert .= "</div>";
-			} elseif(get_option('a2opt_w3tcfixed_confirm') === false) {
+				$this->optimization_alert .= '</div>';
+			} elseif (get_option('a2opt_w3tcfixed_confirm') === false) {
 				$this->optimization_alert = "<div class='alert alert-info'>";
-				$this->optimization_alert .= "<p>Please note that you have W3 Total Cache Fixed v0.9.4.x plugin installed. We cannot guarantee our optimizations will be fully supported with this version. To ensure the best compatibility for your WordPress site, please disable the W3 Total Cache Fixed plugin by clicking the button below and install our supported W3 Total Cache plugin, which is based on W3 Total Cache Fixed.</p>";
+				$this->optimization_alert .= '<p>Please note that you have W3 Total Cache Fixed v0.9.4.x plugin installed. We cannot guarantee our optimizations will be fully supported with this version. To ensure the best compatibility for your WordPress site, please disable the W3 Total Cache Fixed plugin by clicking the button below and install our supported W3 Total Cache plugin, which is based on W3 Total Cache Fixed.</p>';
 				$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Disable W3 Total Cache Fixed</a></p>";
-				$this->optimization_alert .= "<p>If you would like to keep your currently installed W3 Total Cache Fixed plugin, you may click the button below to dismiss this dialog and enable the optimization options below.</p>";
+				$this->optimization_alert .= '<p>If you would like to keep your currently installed W3 Total Cache Fixed plugin, you may click the button below to dismiss this dialog and enable the optimization options below.</p>';
 				$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=w3tcfixed_confirm&page=A2_Optimized_Plugin_admin') . "' class='btn btn-warning'>I accept the risks</a></p>";
-				$this->optimization_alert .= "</div>";
-			};
-
-		} elseif(
+				$this->optimization_alert .= '</div>';
+			}
+		} elseif (
 			$this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php') === false
 				|| is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php') === false
-		){
+		) {
 			$this->optimization_alert = "<div class='alert alert-info'>";
-			$this->optimization_alert .= "<p>Thank you for installing A2 Optimized for WordPress. Some features below require an additional plugin. We will walk you through the process of installing our supported version of W3 Total Cache that will enable the rest of the options below.</p>";
+			$this->optimization_alert .= '<p>Thank you for installing A2 Optimized for WordPress. Some features below require an additional plugin. We will walk you through the process of installing our supported version of W3 Total Cache that will enable the rest of the options below.</p>';
 			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Begin Installation</a></p>";
-			$this->optimization_alert .= "</div>";
-
+			$this->optimization_alert .= '</div>';
 		}
 
 		$this->optimization_count = 0;
@@ -695,7 +690,7 @@ HTML;
 
 		$save_alert = '';
 
-		if($_GET['save_settings']){
+		if ($_GET['save_settings']) {
 			$save_alert = '<div class="alert alert-success">Settings Saved</div>';
 		}
 
@@ -957,9 +952,7 @@ HTML;
 		</script>
 
 HTML;
-
 	}
-
 
 	/**
 	 * Wizard to install the W3TC plugin
@@ -970,8 +963,7 @@ HTML;
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
 
-
-		if($setup_step == 1){
+		if ($setup_step == 1) {
 			echo <<<HTML
 <section id="a2opt-content-general">
 	<div  class="wrap">
@@ -993,16 +985,16 @@ HTML;
 			<p class='loading-spinner'><img src='{$image_dir}/spinner.gif' style='height: auto; width: 50px;' /></p>
 HTML;
 
-			if($this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php')){
+			if ($this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php')) {
 				$plugin_install_output = "<p>W3 Total Cache has now been successfully downloaded. Next we will activate the plugin.</p><p><a href='" . admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2') . "' class='btn btn-success'>Activate</a></p>";
 			} else {
 				$plugin_install = $this->install_plugin('a2-w3-total-cache');
-				if($plugin_install){
+				if ($plugin_install) {
 					$plugin_install_output = "<p>W3 Total Cache has now been successfully downloaded. Next we will activate the plugin.</p><p><a href='" . admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2') . "' class='btn btn-success'>Activate</a></p>";
 				} else {
 					$plugin_install_output = "<p class='text-danger'>We couldn’t install the new plugin to your site. This is usually caused by permission issues or low disk space. You may need to contact your web host for more information.</p><p>You may also download the zip archive of the plugin below and attempt to install it manually.</p><p><a href='http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/a2-w3-total-cache.zip' class='btn btn-info' target='_blank'>Download ZIP</a>";
-				};
-			};
+				}
+			}
 			echo <<<HTML
 			<div>
 				{$plugin_install_output}
@@ -1018,10 +1010,9 @@ HTML;
 .loading-spinner { display: none; }
 </style>
 HTML;
-
 		}
 
-		if($setup_step == 2){
+		if ($setup_step == 2) {
 			$this->activate_plugin('a2-w3-total-cache/a2-w3-total-cache.php');
 			$admin_url = admin_url('admin.php?page=A2_Optimized_Plugin_admin');
 
@@ -1070,7 +1061,7 @@ HTML;
 		$kb_search_box = $this->kb_searchbox_html();
 		$admin_url = admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=1');
 
-		if($setup_step == 1){
+		if ($setup_step == 1) {
 			echo <<<HTML
 <section id="a2opt-content-general">
 	<div  class="wrap">
@@ -1110,9 +1101,7 @@ HTML;
 .loading-spinner { display: none; }
 </style>
 HTML;
-
 		}
-
 	}
 
 	/**
@@ -1130,11 +1119,11 @@ HTML;
 		$a2_recaptcha_theme = get_option('a2_recaptcha_theme');
 
 		$dark_selected = '';
-		if($a2_recaptcha_theme == 'dark'){
+		if ($a2_recaptcha_theme == 'dark') {
 			$dark_selected = 'selected';
 		}
 		$custom_selected = '';
-		if($a2_recaptcha_usecustom){
+		if ($a2_recaptcha_usecustom) {
 			$custom_selected = 'checked';
 		}
 
@@ -1189,7 +1178,6 @@ HTML;
 	<div style="clear:both;padding:10px;"></div>
 </section>
 HTML;
-
 	}
 
 	/**
@@ -1437,9 +1425,8 @@ JAVASCRIPT;
 	}*/
 
 	public function get_optimization_status(&$item, $server_info) {
-		if ($item != null){
-
-			if($this->is_a2_managed() && isset($item['hide_managed']) && $item['hide_managed'] === true){
+		if ($item != null) {
+			if ($this->is_a2_managed() && isset($item['hide_managed']) && $item['hide_managed'] === true) {
 				return;
 			}
 
@@ -1454,13 +1441,13 @@ JAVASCRIPT;
 			$links = array();
 
 			$active_class = '';
-			if(
+			if (
 				isset($item['plugin']) && $item['plugin'] == 'W3 Total Cache'
 				&& (
 					$this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php') === false
 					|| is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php') === false
 				)
-			){
+			) {
 				$active_class = 'inactive';
 			}
 
@@ -1542,7 +1529,6 @@ HTML;
 			if (isset($item['premium'])) {
 				$premium = '<div style="float:right;padding-right:10px"><a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank" class="a2-exclusive"></a></div>';
 			}
-
 
 			$link_html = rtrim($link_html, '|');
 
@@ -1669,7 +1655,6 @@ HTML;
 		return array($warning_html, $num_warnings);
 	}
 
-
 	/**
 	 * Warning display for plugin
 	 * @param string $warning The warning for installing or updating plugin
@@ -1698,31 +1683,31 @@ HTML;
 
 	/*
 	public function plugin_list(){
-	    //Name,PluginURI,Version,Description,Author,AuthorURI,TextDomain,DomainPath,Network,Title,AuthorName
+		//Name,PluginURI,Version,Description,Author,AuthorURI,TextDomain,DomainPath,Network,Title,AuthorName
 
-	    $string = "";
-	    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		$string = "";
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
-	    $plugins = $this->get_plugins();
-	    foreach($plugins as $filename=>$plugin){
-	        $name = $plugin['Name'];
-	        $title = $plugin['Title'];
-	        $checked = "";
-	        if(is_plugin_active($filename)){
-	            $checked = "checked='checked'";
-	        }
-	        ob_start();
-	        $dump = ob_get_contents();
-	        ob_end_clean();
-	        $string .=<<<HTML
-	        <div class="wrap">
-	            <span style="font-size:16pt"><input type="checkbox" $checked> $title</span> <a href="">delete</a>
-	            {$dump}
-	        </div>
+		$plugins = $this->get_plugins();
+		foreach($plugins as $filename=>$plugin){
+			$name = $plugin['Name'];
+			$title = $plugin['Title'];
+			$checked = "";
+			if(is_plugin_active($filename)){
+				$checked = "checked='checked'";
+			}
+			ob_start();
+			$dump = ob_get_contents();
+			ob_end_clean();
+			$string .=<<<HTML
+			<div class="wrap">
+				<span style="font-size:16pt"><input type="checkbox" $checked> $title</span> <a href="">delete</a>
+				{$dump}
+			</div>
 HTML;
 
-	    }
-	    return $string;
+		}
+		return $string;
 	}*/
 
 	/**
@@ -1732,7 +1717,7 @@ HTML;
 	 * @return markup HTML the formatted HTML to display plugin status on web page
 	 *
 	 */
-		private function plugin_not_active_warning($plugin) {
+	private function plugin_not_active_warning($plugin) {
 		$manage = 'plugins.php?plugin_status=inactive';
 
 		return <<<HTML
@@ -2037,7 +2022,6 @@ HTACCESS;
 	 * @return bool
 	 */
 	public function checkUserCapability($capability, $user_id = null) {
-
 		if (!is_numeric($user_id)) {
 			$user = wp_get_current_user();
 		} else {
@@ -2053,9 +2037,7 @@ HTACCESS;
 		}
 
 		return false;
-
 	}
-
 
 	/**
 	 * Display plugin name, status and description
@@ -2121,13 +2103,14 @@ HTML;
 	 *
 	 * return bool
 	 */
-	 protected function is_a2_managed(){
-	 	$a2managed = get_option('a2_managed',0);
-	 	if( $a2managed == true ){
-	 		return true;
-	 	}
-	 	return false;
-	 }
+	protected function is_a2_managed() {
+		$a2managed = get_option('a2_managed', 0);
+		if ( $a2managed == true ) {
+			return true;
+		}
+
+		return false;
+	}
 
 	/**
 	 * Check for installed plugin
@@ -2136,27 +2119,27 @@ HTML;
 	 */
 	private function is_plugin_installed($slug) {
 		$plugins = get_plugins();
-		if(array_key_exists($slug, $plugins)){
+		if (array_key_exists($slug, $plugins)) {
 			return true;
 		}
-		return false;
 
+		return false;
 	}
 
 	/**
 	 * Check for a valid and active w3tc plugin
 	 * @return boolean true|false
 	 */
-	private function is_valid_w3tc_installed(){
+	private function is_valid_w3tc_installed() {
 		/* W3 Total Cache Offical is not valid */
-		if(is_plugin_active('w3-total-cache/w3-total-cache.php')){
+		if (is_plugin_active('w3-total-cache/w3-total-cache.php')) {
 			return false;
 		}
 
 		/* W3 Total Cache Fixed < 0.9.5.x is ok */
-		if(is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')){
+		if (is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')) {
 			$w3tc_fixed_info = get_plugin_data('w3-total-cache-fixed/w3-total-cache-fixed.php');
-			if(version_compare($w3tc_fixed_info['Version'], '0.9.5.0') >= 0){
+			if (version_compare($w3tc_fixed_info['Version'], '0.9.5.0') >= 0) {
 				return false;
 			} else {
 				return true;
@@ -2164,11 +2147,11 @@ HTML;
 		}
 
 		/* A2 Fixed W3TC is ok */
-		if(is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')){
+		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
 			return true;
 		}
-		return false;
 
+		return false;
 	}
 
 	public function getVersion() {
@@ -2191,31 +2174,30 @@ HTML;
 		return dirname(__FILE__);
 	}
 
-
 	/**
 	 * Generates a random string of lower case letters, used for Rename WP Login URL
 	 *
 	 * @param int $length The length of the random string
 	 * @return string $output The random string
 	 */
-	public function getRandomString($length = 4){
+	public function getRandomString($length = 4) {
 		$output = '';
-		$valid_chars = "abcdefghijklmnopqrstuvwxyz";
-        // count the number of chars in the valid chars string so we know how many choices we have
-        $num_valid_chars = strlen($valid_chars);
-        // repeat the steps until we've created a string of the right length
-        for ($i = 0; $i < $length; $i++) {
-            // pick a random number from 1 up to the number of valid chars
-            $random_pick = mt_rand(1, $num_valid_chars);
-            // take the random character out of the string of valid chars
-            // subtract 1 from $random_pick because strings are indexed starting at 0, and we started picking at 1
-            $random_char = $valid_chars[$random_pick - 1];
-            // add the randomly-chosen char onto the end of our string so far
-            $output .= $random_char;
-        }
-        return $output;
-	}
+		$valid_chars = 'abcdefghijklmnopqrstuvwxyz';
+		// count the number of chars in the valid chars string so we know how many choices we have
+		$num_valid_chars = strlen($valid_chars);
+		// repeat the steps until we've created a string of the right length
+		for ($i = 0; $i < $length; $i++) {
+			// pick a random number from 1 up to the number of valid chars
+			$random_pick = mt_rand(1, $num_valid_chars);
+			// take the random character out of the string of valid chars
+			// subtract 1 from $random_pick because strings are indexed starting at 0, and we started picking at 1
+			$random_char = $valid_chars[$random_pick - 1];
+			// add the randomly-chosen char onto the end of our string so far
+			$output .= $random_char;
+		}
 
+		return $output;
+	}
 
 	/**
 	 * Get the description for the plugin
