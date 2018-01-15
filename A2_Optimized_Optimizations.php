@@ -22,13 +22,13 @@ class A2_Optimized_Optimizations {
 	 * Checks if gzip test has been run to see if server is serving gzip, if not we run it.
 	 * Expires after one week to reduce number of curl calls to server
 	 */
-	public function check_server_gzip(){
+	public function check_server_gzip() {
 		$checked_gzip = get_transient('a2_checked_gzip');
-		if(false === $checked_gzip){
+		if (false === $checked_gzip) {
 			$w3tc = $this->thisclass->get_w3tc_config();
 			$previous_setting = $w3tc['browsercache.html.compression'];
 			$this->thisclass->disable_w3tc_gzip();
-			if($previous_setting && (!$this->server_info->gzip||!$this->server_info->cf||!$this->server_info->br)){
+			if ($previous_setting && (!$this->server_info->gzip || !$this->server_info->cf || !$this->server_info->br)) {
 				$this->thisclass->enable_w3tc_gzip();
 			}
 			set_transient('a2_checked_gzip', true, WEEK_IN_SECONDS);
@@ -365,7 +365,6 @@ class A2_Optimized_Optimizations {
 				'plugin' => 'reCAPTCHA',
 				'slug' => 'captcha',
 				'premium' => true,
-				'hide_managed' => true,
 				'configured' => false,
 				'description' => 'Decreases spam and increases site security by adding a CAPTCHA to comment forms and the login screen.  Without a CAPTCHA, bots will easily be able to post comments to you blog or brute force login to your admin panel. You may override the default settings and use your own Site Key and select a theme.',
 				'is_configured' => function () {
@@ -387,7 +386,7 @@ class A2_Optimized_Optimizations {
 				'name' => 'Turbo Web Hosting',
 				'slug' => 'turbo',
 				'configured' => false,
-				'premium'=> true,
+				'premium' => true,
 				'description' => '
                     <ul>
                         <li>Turbo Web Hosting servers compile .htaccess files to make speed improvements. Any changes to .htaccess files are immediately re-compiled.</li>
@@ -405,7 +404,7 @@ class A2_Optimized_Optimizations {
 				'name' => 'Memcached Database and Object Cache',
 				'slug' => 'memcached',
 				'configured' => false,
-				'premium'=>true,
+				'premium' => true,
 				'description' => '
                     <ul>
                         <li>Extremely fast and powerful caching system.</li>
@@ -543,7 +542,7 @@ class A2_Optimized_Optimizations {
 			'cloudflare' => array(
 				'slug' => 'cloudflare',
 				'name' => 'CloudFlare',
-				'premium'=>true,
+				'premium' => true,
 				'description' => '
                         <p>
                                 CloudFlare is a free global CDN and DNS provider that can speed up and protect any site online.
@@ -567,7 +566,7 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				},
-				'not_configured_links' => array('Host with A2'=>'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized')
+				'not_configured_links' => array('Host with A2' => 'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized')
 			)
 		);
 	}

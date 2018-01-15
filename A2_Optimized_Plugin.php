@@ -173,13 +173,13 @@ HTML;
 	}
 
 	public function login_captcha() {
-		if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')) {
+		if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php') && get_option('a2_managed') === false) {
 			include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
 
 			$a2_recaptcha = $this->getOption('recaptcha');
 			if ($a2_recaptcha == 1) {
-					$captcha = a2recaptcha_get_html($key, null, true);
-					echo <<<HTML
+				$captcha = a2recaptcha_get_html($key, null, true);
+				echo <<<HTML
                 <style>
                   .g-recaptcha{
                     position: relative;
@@ -201,8 +201,8 @@ HTML;
 
 				$a2_recaptcha = $this->getOption('recaptcha');
 				if ($a2_recaptcha == 1) {
-						$captcha = a2recaptcha_get_html($key, null, true);
-						echo <<<HTML
+					$captcha = a2recaptcha_get_html($key, null, true);
+					echo <<<HTML
 
                                 {$captcha}
 HTML;
@@ -222,6 +222,7 @@ HTML;
 					if (!empty($username)) {
 						if (!$resp) {
 							remove_filter('authenticate', 'wp_authenticate_username_password', 20);
+
 							return new WP_Error('recaptcha_error', "<strong>The reCAPTCHA wasn't entered correctly. Please try it again.</strong>");
 						}
 					}
@@ -229,7 +230,6 @@ HTML;
 			}
 		}
 	}
-
 
 	public function captcha_comment_authenticate($commentdata) {
 		if (!$this->checkUserCapability('moderate_comments', get_current_user_id()) && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)) {
@@ -283,11 +283,11 @@ HTML;
 		add_filter( 'allow_minor_auto_core_updates', '__return_true' );
 		add_filter('auto_update_translation', '__return_true');
 		/*add_filter( 'allow_major_auto_core_updates', '__return_true' );
-	    add_filter( 'allow_minor_auto_core_updates', '__return_true' );
-	    add_filter( 'auto_update_plugin', '__return_true' );
-	    add_filter( 'auto_update_theme', '__return_true' );
-	    add_filter( 'auto_update_translation', '__return_true' );
-	    */
+		add_filter( 'allow_minor_auto_core_updates', '__return_true' );
+		add_filter( 'auto_update_plugin', '__return_true' );
+		add_filter( 'auto_update_theme', '__return_true' );
+		add_filter( 'auto_update_translation', '__return_true' );
+		*/
 
 		if (is_admin()) {
 			add_filter('admin_init', array(&$this, 'admin_init'));
@@ -487,17 +487,16 @@ HTML;
 			add_action('admin_notices', array(&$this, 'config_page_notice'));
 		}
 
-		foreach($active_plugins as $active_plugin){
+		foreach ($active_plugins as $active_plugin) {
 			$plugin_folder = explode('/', $active_plugin);
-			if(in_array($plugin_folder[0], $this->incompatible_plugins)){
+			if (in_array($plugin_folder[0], $this->incompatible_plugins)) {
 				add_action('admin_notices', array(&$this, 'incompatible_plugin_notice'));
 			}
 			// Check for W3 Total Cache and show upgrade notice
-			if($plugin_folder[0] == 'w3-total-cache' && !$_GET['a2-page']){
+			if ($plugin_folder[0] == 'w3-total-cache' && !$_GET['a2-page']) {
 				add_action('admin_notices', array(&$this, 'w3totalcache_plugin_notice'));
 			}
 		}
-
 
 		//we don't need this function anymore since the new reCaptcha is now compatible with other recaptcha plugins
 		//if(function_exists('recaptcha_get_html')){
@@ -524,11 +523,15 @@ HTML;
 	protected function addSettingsSubMenuPageToMenu() {
 		$this->requireExtraPluginFiles();
 		$displayName = $this->getPluginDisplayName();
-		add_menu_page($displayName,
+		add_menu_page(
+			$displayName,
 			$displayName,
 			'manage_options',
 			$this->getSettingsSlug(),
-			array(&$this, 'settingsPage'), null, 3.14159265359);
+			array(&$this, 'settingsPage'),
+			null,
+			3.14159265359
+		);
 	}
 
 	protected function requireExtraPluginFiles() {
@@ -583,46 +586,52 @@ HTML;
 	protected function addSettingsSubMenuPageToPluginsMenu() {
 		$this->requireExtraPluginFiles();
 		$displayName = $this->getPluginDisplayName();
-		add_submenu_page('plugins.php',
+		add_submenu_page(
+			'plugins.php',
 			$displayName,
 			$displayName,
 			'manage_options',
 			$this->getSettingsSlug(),
-			array(&$this, 'settingsPage'));
+			array(&$this, 'settingsPage')
+		);
 	}
 
 	protected function addSettingsSubMenuPageToDashboard() {
 		$this->requireExtraPluginFiles();
 		$displayName = $this->getPluginDisplayName();
-		add_dashboard_page($displayName,
+		add_dashboard_page(
+			$displayName,
 			$displayName,
 			'manage_options',
 			$this->getSettingsSlug(),
-			array(&$this, 'settingsPage'));
+			array(&$this, 'settingsPage')
+		);
 	}
 
 	protected function addSettingsSubMenuPageToSettingsMenu() {
 		$this->requireExtraPluginFiles();
 		$displayName = $this->getPluginDisplayName();
-		add_options_page($displayName,
+		add_options_page(
+			$displayName,
 			$displayName,
 			'manage_options',
 			$this->getSettingsSlug(),
-			array(&$this, 'settingsPage'));
+			array(&$this, 'settingsPage')
+		);
 	}
 
 	public function incompatible_plugin_notice() {
 		$active_plugins = get_option('active_plugins');
 		$plugins_arr = array();
-		foreach($active_plugins as $active_plugin){
+		foreach ($active_plugins as $active_plugin) {
 			$plugin_folder = explode('/', $active_plugin);
-			if(in_array($plugin_folder[0], $this->incompatible_plugins)){
+			if (in_array($plugin_folder[0], $this->incompatible_plugins)) {
 				$folder = WP_PLUGIN_DIR . '/' . $active_plugin;
 				$plugin_data = get_plugin_data($folder, false, false);
 				$plugins_arr[] = $plugin_data['Name'];
 			}
 		}
-		if(count($plugins_arr) > 1){
+		if (count($plugins_arr) > 1) {
 			$plugin_output = implode(', ', $plugins_arr);
 		} else {
 			$plugin_output = $plugins_arr[0];
