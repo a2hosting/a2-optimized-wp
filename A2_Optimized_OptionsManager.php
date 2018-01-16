@@ -1201,8 +1201,8 @@ HTML;
 	<div class='kb-search' >
 		<form method="post" action="https://www.a2hosting.com/" target="_blank"  >
 			<div class='hiddenFields'>
-				<input type="hidden" name="ACT" value="25" />
-				<input type="hidden" name="RP" value="kb/results" />
+				<input type="hidden" name="ACT" value="47" />
+				<input type="hidden" name="params" value="eyJyZXF1aXJlZCI6ImtleXdvcmRzIn0">
 			</div>
 			<input type="text" id="kb-search-request" name="keywords" placeholder="Search The A2 Knowledge Base">
 			<button class='btn btn-success' type='submit'>Search</button>
