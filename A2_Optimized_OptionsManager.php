@@ -1204,7 +1204,6 @@ HTML;
 				<input type="hidden" name="ACT" value="47" />
 				<input type="hidden" name="token" value="1f81a1eb1ad8983c63ec32492457c38a4cd0e615" />
 				<input type="hidden" name="params" value="eyJyZXF1aXJlZCI6ImtleXdvcmRzIn0">
-				<input type="hidden" name="site_id" value="1">
 			</div>
 			<input type="text" id="kb-search-request" name="keywords" placeholder="Search The A2 Knowledge Base">
 			<button class='btn btn-success' type='submit'>Search</button>
