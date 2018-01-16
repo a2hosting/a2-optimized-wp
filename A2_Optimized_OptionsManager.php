@@ -1202,7 +1202,6 @@ HTML;
 		<form method="post" action="https://www.a2hosting.com/" target="_blank"  >
 			<div class='hiddenFields'>
 				<input type="hidden" name="ACT" value="47" />
-				<input type="hidden" name="token" value="1f81a1eb1ad8983c63ec32492457c38a4cd0e615" />
 				<input type="hidden" name="params" value="eyJyZXF1aXJlZCI6ImtleXdvcmRzIn0">
 			</div>
 			<input type="text" id="kb-search-request" name="keywords" placeholder="Search The A2 Knowledge Base">
