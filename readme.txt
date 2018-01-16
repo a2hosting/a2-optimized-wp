@@ -3,7 +3,7 @@ Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
 Requires at least: 3.8
 Tested up to: 4.9.1
-Stable tag: 2.0.10.4
+Stable tag: 2.0.10.5
 Requires PHP: 5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -137,6 +137,9 @@ Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimize
 
 
 == Changelog ==
+= 2.0.10.5 =^M
+*Fixed error with KB search
+
 = 2.0.10.4 =^M
 *reCaptcha for comments enabled for mangaged hosting^M
 
