@@ -1498,6 +1498,23 @@ JAVASCRIPT;
 						}
 					}
 				}
+			} elseif ($item['optional']) {
+				$active_color = 'warning';
+				$active_text = 'Optional';
+				$glyph = 'warning-sign';
+				if (isset($item['enable']) && $active_class == '') {
+					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", 'Enable', '_self');
+				}
+
+				if (isset($item['not_configured_links'])) {
+					foreach ($item['not_configured_links'] as $name => $link) {
+						if (gettype($link) == 'array') {
+							$links[] = array($link[0], $name, $link[1]);
+						} else {
+							$links[] = array($link, $name, '_self');
+						}
+					}
+				}
 			} else {
 				if (isset($item['enable']) && $active_class == '') {
 					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", 'Enable', '_self');
@@ -1533,7 +1550,7 @@ HTML;
 			$link_html = rtrim($link_html, '|');
 
 			return <<<HTML
-<div class="optimization-item {$active_class}">
+<div class="optimization-item {$active_class} {$item['slug']}">
 	<div class="optimization-item-one" >
 		<span class="glyphicon glyphicon-{$glyph}"></span>
 	</div>
@@ -2049,7 +2066,11 @@ HTACCESS;
 
 		$glyph = 'warning-sign';
 		if (!$plugin['active']) {
-			$glyph = 'exclamation-sign';
+			if ($plugin['optional']) {
+				$glyph = 'warning-sign';
+			} else {
+				$glyph = 'exclamation-sign';
+			}
 			$links['Activate'] = admin_url() . 'admin.php?page=' . $this->getSettingsSlug() . "&activate={$plugin['Name']}";
 		} else {
 			$glyph = 'ok';
