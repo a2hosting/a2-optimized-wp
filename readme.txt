@@ -137,6 +137,9 @@ Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimize
 
 
 == Changelog ==
+= 2.0.10.7 =^M
+*Changed protect config files to an optional optimization
+
 = 2.0.10.5 =^M
 *Fixed error with KB search
 
