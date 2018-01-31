@@ -173,7 +173,7 @@ HTML;
 	}
 
 	public function login_captcha() {
-		if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php') && get_option('a2_managed') === false) {
+		if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php') && !$this->is_a2_managed()) {
 			include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
 
 			$a2_recaptcha = $this->getOption('recaptcha');
@@ -212,7 +212,7 @@ HTML;
 	}
 
 	public function captcha_authenticate($user, $username, $password) {
-		if ($username != '' && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) && get_option('a2_managed') === false) {
+		if ($username != '' && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST) && !$this->is_a2_managed()) {
 			$a2_recaptcha = $this->getOption('recaptcha');
 			if ($a2_recaptcha == 1) {
 				if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')) {

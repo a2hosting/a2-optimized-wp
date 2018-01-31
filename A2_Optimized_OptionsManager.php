@@ -2125,12 +2125,7 @@ HTML;
 	 * return bool
 	 */
 	protected function is_a2_managed() {
-		$a2managed = get_option('a2_managed', 0);
-		if ( $a2managed == true ) {
-			return true;
-		}
-
-		return false;
+		return file_exists('/opt/a2-optimized/wordpress/a2managed');
 	}
 
 	/**
