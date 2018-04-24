@@ -178,7 +178,7 @@ HTML;
 
 			$a2_recaptcha = $this->getOption('recaptcha');
 			if ($a2_recaptcha == 1) {
-				$captcha = a2recaptcha_get_html($key, null, true);
+				$captcha = a2recaptcha_get_html();
 				echo <<<HTML
                 <style>
                   .g-recaptcha{
@@ -201,7 +201,7 @@ HTML;
 
 				$a2_recaptcha = $this->getOption('recaptcha');
 				if ($a2_recaptcha == 1) {
-					$captcha = a2recaptcha_get_html($key, null, true);
+					$captcha = a2recaptcha_get_html();
 					echo <<<HTML
 
                                 {$captcha}
