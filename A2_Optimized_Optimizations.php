@@ -498,48 +498,6 @@ class A2_Optimized_Optimizations {
 					$thisclass->deactivate_plugin($item['file']);
 				}
 			),
-			'P3' => array(
-				'slug' => 'P3',
-				'name' => 'P3 (Plugin Performance Profiler)',
-				'description' => '
-      			<p>See which plugins are slowing down your site.
-      			This plugin creates a performance report for your site.</p>
-      			<p>
-      				<b>Use this plugin only if your site is experiencing issues with slow load times.</b><br><b style="color:red">The P3 plugin will slow down your site.</b>
-      			</p>
-',
-				'plugin' => 'P3 Profiler',
-				'plugin_slug' => 'p3-profiler',
-				'file' => 'p3-profiler/p3-profiler.php',
-				'configured' => false,
-				'configured_links' => array(
-					'Test Performance' => 'tools.php?page=p3-profiler',
-				),
-				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/debugging-wordpress-with-p3-profiler',
-				'is_configured' => function (&$item) use (&$thisclass) {
-					if (is_plugin_active($item['file'])) {
-						$item['configured'] = true;
-						$thisclass->set_install_status('P3', true);
-					} else {
-						$thisclass->set_install_status('P3', false);
-					}
-				},
-				'enable' => function ($slug) use (&$thisclass) {
-					$item = $thisclass->get_advanced_optimizations();
-					$item = $item[$slug];
-					if (!isset($thisclass->plugin_list[$item['file']])) {
-						$thisclass->install_plugin($item['plugin_slug']);
-					}
-					if (!is_plugin_active($item['file'])) {
-						$thisclass->activate_plugin($item['file']);
-					}
-				},
-				'disable' => function ($slug) use (&$thisclass) {
-					$item = $thisclass->get_advanced_optimizations();
-					$item = $item[$slug];
-					$thisclass->deactivate_plugin($item['file']);
-				}
-			),
 			'cloudflare' => array(
 				'slug' => 'cloudflare',
 				'name' => 'CloudFlare',
