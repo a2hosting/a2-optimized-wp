@@ -690,7 +690,7 @@ HTML;
 
 		$save_alert = '';
 
-		if ($_GET['save_settings']) {
+		if (isset($_GET['save_settings']) && $_GET['save_settings']) {
 			$save_alert = '<div class="alert alert-success">Settings Saved</div>';
 		}
 
@@ -1498,7 +1498,7 @@ JAVASCRIPT;
 						}
 					}
 				}
-			} elseif ($item['optional']) {
+			} elseif (isset($item['optional']) && $item['optional']) {
 				$active_color = 'warning';
 				$active_text = 'Optional';
 				$glyph = 'warning-sign';
