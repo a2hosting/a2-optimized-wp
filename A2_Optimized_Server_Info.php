@@ -71,6 +71,5 @@ class A2_Optimized_Server_Info {
 			}
 		}
 		curl_close($ch);
-
 	}
 }

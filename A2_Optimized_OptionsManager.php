@@ -1700,31 +1700,31 @@ HTML;
 
 	/*
 	public function plugin_list(){
-		//Name,PluginURI,Version,Description,Author,AuthorURI,TextDomain,DomainPath,Network,Title,AuthorName
+	    //Name,PluginURI,Version,Description,Author,AuthorURI,TextDomain,DomainPath,Network,Title,AuthorName
 
-		$string = "";
-		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+	    $string = "";
+	    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
-		$plugins = $this->get_plugins();
-		foreach($plugins as $filename=>$plugin){
-			$name = $plugin['Name'];
-			$title = $plugin['Title'];
-			$checked = "";
-			if(is_plugin_active($filename)){
-				$checked = "checked='checked'";
-			}
-			ob_start();
-			$dump = ob_get_contents();
-			ob_end_clean();
-			$string .=<<<HTML
-			<div class="wrap">
-				<span style="font-size:16pt"><input type="checkbox" $checked> $title</span> <a href="">delete</a>
-				{$dump}
-			</div>
+	    $plugins = $this->get_plugins();
+	    foreach($plugins as $filename=>$plugin){
+	        $name = $plugin['Name'];
+	        $title = $plugin['Title'];
+	        $checked = "";
+	        if(is_plugin_active($filename)){
+	            $checked = "checked='checked'";
+	        }
+	        ob_start();
+	        $dump = ob_get_contents();
+	        ob_end_clean();
+	        $string .=<<<HTML
+	        <div class="wrap">
+	            <span style="font-size:16pt"><input type="checkbox" $checked> $title</span> <a href="">delete</a>
+	            {$dump}
+	        </div>
 HTML;
 
-		}
-		return $string;
+	    }
+	    return $string;
 	}*/
 
 	/**
