@@ -564,22 +564,22 @@ class A2_Optimized_OptionsManager {
 			}
 			if ($_GET['a2-page'] == 'enable-rwl') {
 				if ($_GET['enable'] == '1') {
-					if (!isset($this->plugin_list['rename-wp-login/rename-wp-login.php'])) {
-						$this->install_plugin('rename-wp-login');
+					if (!isset($this->plugin_list['easy-hide-login/wp-hide-login.php'])) {
+						$this->install_plugin('easy-hide-login');
 					}
-					$this->activate_plugin('rename-wp-login/rename-wp-login.php');
+					$this->activate_plugin('easy-hide-login/wp-hide-login.php');
 
 					if (get_option('a2_login_page') === false) {
-						if (get_option('rwl_page') === false) {
+						if (get_option('wpseh_l01gnhdlwp') === false) {
 							$length = 4;
 							$rwl_page = $this->getRandomString($length);
 							update_option('a2_login_page', $rwl_page);
-							update_option('rwl_page', $rwl_page);
+							update_option('wpseh_l01gnhdlwp', $rwl_page);
 						} else {
-							update_option('a2_login_page', get_option('rwl_page'));
+							update_option('a2_login_page', get_option('wpseh_l01gnhdlwp'));
 						}
 					} else {
-						update_option('rwl_page', get_option('a2_login_page'));
+						update_option('wpseh_l01gnhdlwp', get_option('a2_login_page'));
 					}
 					delete_option('rwl_redirect');
 				}

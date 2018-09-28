@@ -436,7 +436,7 @@ HTML;
 	}
 
 	public function rwl_notice() {
-		$rwl_page = get_option('rwl_page');
+		$rwl_page = get_option('wpseh_l01gnhdlwp');
 		$home_page = get_home_url();
 		$admin_url = get_admin_url();
 
@@ -465,8 +465,8 @@ HTML;
 		}
 
 		$active_plugins = get_option('active_plugins');
-		if (in_array('rename-wp-login/rename-wp-login.php', $active_plugins)) {
-			if ($rwl_page = get_option('rwl_page')) {
+		if (in_array('easy-hide-login/wp-hide-login.php', $active_plugins)) {
+			if ($rwl_page = get_option('wpseh_l01gnhdlwp')) {
 				if ($rwl_page != '') {
 					add_action('admin_notices', array(&$this, 'rwl_notice'));
 					if ($a2_login_page = get_option('a2_login_page')) {
