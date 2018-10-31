@@ -448,7 +448,7 @@ HTML;
 			update_option('a2_login_page', $rwl_page);
 		}
 
-		$link = wp_login_url();
+		$link = get_home_url() . "?" . $rwl_page;
 
 		if (!(strpos(get_option('a2_login_bookmarked', ''), $link) === 0)) {
 			echo <<<HTML
