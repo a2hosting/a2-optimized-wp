@@ -41,7 +41,7 @@ class A2_Optimized_OptionsManager {
 	private function get_current_w3tc_version() {
 		$version = get_transient('a2_w3tc_current_version');
 		if (!$version) {
-			$response = wp_remote_get( 'http://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice?notice_plugin=3&per_page=1' );
+			$response = wp_remote_get( 'https://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice?notice_plugin=3&per_page=1' );
 			if ( is_array( $response ) ) {
 				$body = json_decode($response['body']); // use the content
 				foreach ($body as $item) {
@@ -206,7 +206,7 @@ class A2_Optimized_OptionsManager {
 			$upgrader = new Plugin_Upgrader(new A2_Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
 
 			if ($slug == 'a2-w3-total-cache') {
-				$api->download_link = 'http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/a2-w3-total-cache.zip';
+				$api->download_link = 'https://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/a2-w3-total-cache.zip';
 			}
 
 			$response = $upgrader->install($api->download_link);
@@ -992,7 +992,7 @@ HTML;
 				if ($plugin_install) {
 					$plugin_install_output = "<p>W3 Total Cache has now been successfully downloaded. Next we will activate the plugin.</p><p><a href='" . admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin&step=2') . "' class='btn btn-success'>Activate</a></p>";
 				} else {
-					$plugin_install_output = "<p class='text-danger'>We couldn’t install the new plugin to your site. This is usually caused by permission issues or low disk space. You may need to contact your web host for more information.</p><p>You may also download the zip archive of the plugin below and attempt to install it manually.</p><p><a href='http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/a2-w3-total-cache.zip' class='btn btn-info' target='_blank'>Download ZIP</a>";
+					$plugin_install_output = "<p class='text-danger'>We couldn’t install the new plugin to your site. This is usually caused by permission issues or low disk space. You may need to contact your web host for more information.</p><p>You may also download the zip archive of the plugin below and attempt to install it manually.</p><p><a href='https://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/a2-w3-total-cache.zip' class='btn btn-info' target='_blank'>Download ZIP</a>";
 				}
 			}
 			echo <<<HTML
