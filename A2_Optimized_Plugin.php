@@ -36,7 +36,6 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 		'wp-fastest-cache',
 		'wp-file-cache',
 		'better-wp-security',
-		'wordfence',
 	);
 
 	public function install() {
@@ -283,11 +282,11 @@ HTML;
 		add_filter( 'allow_minor_auto_core_updates', '__return_true' );
 		add_filter('auto_update_translation', '__return_true');
 		/*add_filter( 'allow_major_auto_core_updates', '__return_true' );
-	    add_filter( 'allow_minor_auto_core_updates', '__return_true' );
-	    add_filter( 'auto_update_plugin', '__return_true' );
-	    add_filter( 'auto_update_theme', '__return_true' );
-	    add_filter( 'auto_update_translation', '__return_true' );
-	    */
+		add_filter( 'allow_minor_auto_core_updates', '__return_true' );
+		add_filter( 'auto_update_plugin', '__return_true' );
+		add_filter( 'auto_update_theme', '__return_true' );
+		add_filter( 'auto_update_translation', '__return_true' );
+		*/
 
 		if (is_admin()) {
 			add_filter('admin_init', array(&$this, 'admin_init'));
@@ -448,7 +447,7 @@ HTML;
 			update_option('a2_login_page', $rwl_page);
 		}
 
-		$link = get_home_url() . "?" . $rwl_page;
+		$link = get_home_url() . '?' . $rwl_page;
 
 		if (!(strpos(get_option('a2_login_bookmarked', ''), $link) === 0)) {
 			echo <<<HTML
@@ -495,6 +494,10 @@ HTML;
 			// Check for W3 Total Cache and show upgrade notice
 			if ($plugin_folder[0] == 'w3-total-cache' && !$_GET['a2-page']) {
 				add_action('admin_notices', array(&$this, 'w3totalcache_plugin_notice'));
+			}
+			// Check for Wordfence and if WAF rules are setup correctly, show notice if not
+			if ($plugin_folder[0] == 'wordfence' && $this->wordfence_waf_check() === false) {
+				add_action('admin_notices', array(&$this, 'wordfence_plugin_notice'));
 			}
 		}
 
@@ -640,6 +643,22 @@ HTML;
 		echo <<<HTML
     <div class="notice notice-warning">
         <p class="danger">Proceed with caution: A currently active plugin, {$plugin_output} may be incompatible with A2 Optimized.</p>
+    </div>
+HTML;
+	}
+
+	public function wordfence_waf_check() {
+		// Check if the .htaccess file has a Wordfence WAF entry
+		$htaccess = file_get_contents(ABSPATH . '.htaccess');
+
+		return strpos($htaccess, 'Wordfence WAF');
+	}
+	
+	public function wordfence_plugin_notice() {
+		echo <<<HTML
+    <div class="notice notice-warning">
+        <p class="danger">Wordfence is not properly configured to work with A2 Optimized. Please review the Wordfence help document below to update your Wordfence settings.</p>
+        <p><a href="https://www.wordfence.com/help/firewall/optimizing-the-firewall/" class="button-primary" target="_blank">Optimizing The Wordfence Firewall</a></p>
     </div>
 HTML;
 	}
