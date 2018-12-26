@@ -619,21 +619,7 @@ class A2_Optimized_Optimizations {
 			'Bad Plugins' => array(
 				'wp-super-cache',
 				'wp-file-cache',
-				'wordfence',
 				'wp-db-backup',
-				//'WP DB Manager',
-				//'BackupWordPress',
-				//'Broken Link Checker',
-				//'MyReviewPlugin',
-				//'LinkMan',
-				//'Google XML Sitemaps',
-				//'Fuzzy SEO Booster',
-				//'Tweet Blender',
-				//'Dynamic Related Posts',
-				//'SEO Auto Links & Related Posts',
-				//'Yet Another Related Posts Plugin',
-				//'Similar Posts',
-				//'Contextual Related Posts',
 			)
 		);
 	}
