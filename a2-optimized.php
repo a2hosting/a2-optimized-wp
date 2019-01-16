@@ -43,7 +43,7 @@ class A2_Optimized {
 	  // Add callbacks to hooks
 	  $a2Plugin->addActionsAndFilters();
 
-	  // Register the Plugin Activation Hook
+		  // Register the Plugin Activation Hook
 	  register_activation_hook(__FILE__, array(&$a2Plugin, 'activate'));
 
 	  // Register the Plugin Deactivation Hook
@@ -61,7 +61,7 @@ class A2_Optimized {
 	}
 
 	// add plugin upgrade notification
-	public function showUpgradeNotification($currentPluginMetadata) {
+	public static function showUpgradeNotification($currentPluginMetadata) {
 		// Notice Transient
 		$upgrade_notices = get_transient('a2_opt_ug_notes');
 		if (!$upgrade_notices) {
@@ -88,5 +88,4 @@ class A2_Optimized {
 	}
 }
 
-$a2opt_class = new A2_Optimized();
 add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', array( 'A2_Optimized','showUpgradeNotification'), 10, 2);
