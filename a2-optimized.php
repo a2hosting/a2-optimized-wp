@@ -2,7 +2,7 @@
 /*
 	Plugin Name: A2 Optimized WP
 	Plugin URI: https://wordpress.org/plugins/a2-optimized/
-	Version: 2.0.10.7.8
+	Version: 2.0.10.7.9.1
 	Author: A2 Hosting
 	Author URI: https://www.a2hosting.com/
 	Description: A2 Optimized - WordPress Optimization Plugin
@@ -88,4 +88,5 @@ class A2_Optimized {
 	}
 }
 
+$a2opt_class = new A2_Optimized();
 add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', array( 'A2_Optimized','showUpgradeNotification'), 10, 2);
