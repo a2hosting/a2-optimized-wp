@@ -270,7 +270,7 @@ HTML;
 		$result = curl_exec($ch);
 		curl_close($ch);
 	}
-
+	
 	public function addActionsAndFilters() {
 		add_action('permalink_structure_changed', array(&$this, 'permalink_changed'));
 

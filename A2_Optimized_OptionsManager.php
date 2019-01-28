@@ -395,6 +395,24 @@ class A2_Optimized_OptionsManager {
 
 		$this->update_w3tc($vars);
 	}
+	
+	/**
+	*  Enable WooCommerce Cart Fragment Dequeuing
+	*
+	*/
+	public function enable_woo_cart_fragments() {
+		update_option('a2_wc_cart_fragments', 1);
+		update_option('woocommerce_cart_redirect_after_add', 'yes'); // Recommended WooCommerce setting when disabling cart fragments
+	}
+	
+	/**
+	*  Disable WooCommerce Cart Fragment Dequeuing
+	*
+	*/
+	public function disable_woo_cart_fragments() {
+		delete_option('a2_wc_cart_fragments');
+		delete_option('woocommerce_cart_redirect_after_add');
+	}
 
 	/**
 	 * Update w3tc plugin
