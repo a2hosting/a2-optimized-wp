@@ -283,6 +283,30 @@ class A2_Optimized_Optimizations {
 				},
 				'remove_link' => true
 			),
+			'woo-cart-fragments' => array(
+				'name' => 'Dequeue WooCommerce Cart Fragments AJAX calls',
+				'slug' => 'woo-cart-fragments',
+				'plugin' => 'A2 Optimized',
+				'optional' => true,
+				'configured' => false,
+				'description' => '
+                    <p>Disable WooCommerce Cart Fragments on your homepage. Also enables "redirect to cart page" option in WooCommerce</p>
+				',
+				'is_configured' => function (&$item) use (&$thisclass) {
+					if (get_option('a2_wc_cart_fragments')) {
+						$item['configured'] = true;
+						$thisclass->set_install_status('woo-cart-fragments', true);
+					} else {
+						$thisclass->set_install_status('woo-cart-fragments', false);
+					}
+				},
+				'enable' => function () use (&$thisclass) {
+					$thisclass->enable_woo_cart_fragments();
+				},
+				'disable' => function () use (&$thisclass) {
+					$thisclass->disable_woo_cart_fragments();
+				},
+			),
 			'htaccess' => array(
 				'name' => 'Deny Direct Access to Configuration Files and Comment Form',
 				'slug' => 'htaccess',

@@ -86,7 +86,18 @@ class A2_Optimized {
 			}
 		}
 	}
+
+
+	// Remove WooCommerce AJAX calls from homepage if user has selected
+	function dequeue_woocommerce_cart_fragments() {
+		if (is_front_page() && get_option('a2_wc_cart_fragments')){
+			wp_dequeue_script('wc-cart-fragments');
+		}
+	}
+	
 }
 
 $a2opt_class = new A2_Optimized();
 add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', array( 'A2_Optimized','showUpgradeNotification'), 10, 2);
+
+add_action( 'wp_enqueue_scripts', array('A2_Optimized', 'dequeue_woocommerce_cart_fragments'), 11, 2); 
