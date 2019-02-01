@@ -89,7 +89,7 @@ class A2_Optimized {
 
 
 	// Remove WooCommerce AJAX calls from homepage if user has selected
-	function dequeue_woocommerce_cart_fragments() {
+	public static function dequeue_woocommerce_cart_fragments() {
 		if (is_front_page() && get_option('a2_wc_cart_fragments')){
 			wp_dequeue_script('wc-cart-fragments');
 		}
