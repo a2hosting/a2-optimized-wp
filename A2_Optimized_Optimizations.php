@@ -307,6 +307,30 @@ class A2_Optimized_Optimizations {
 					$thisclass->disable_woo_cart_fragments();
 				},
 			),
+			'xmlrpc-requests' => array(
+				'name' => 'Block Unauthorized XML-RPC Requests',
+				'slug' => 'xmlrpc-requests',
+				'plugin' => 'A2 Optimized',
+				'optional' => true,
+				'configured' => false,
+				'description' => '
+                    <p>Completely Disable XML-RPC services</p>
+				',
+				'is_configured' => function (&$item) use (&$thisclass) {
+					if (get_option('a2_block_xmlrpc')) {
+						$item['configured'] = true;
+						$thisclass->set_install_status('xmlrpc-requests', true);
+					} else {
+						$thisclass->set_install_status('xmlrpc-requests', false);
+					}
+				},
+				'enable' => function () use (&$thisclass) {
+					$thisclass->enable_xmlrpc_requests();
+				},
+				'disable' => function () use (&$thisclass) {
+					$thisclass->disable_xmlrpc_requests();
+				},
+			),
 			'htaccess' => array(
 				'name' => 'Deny Direct Access to Configuration Files and Comment Form',
 				'slug' => 'htaccess',
