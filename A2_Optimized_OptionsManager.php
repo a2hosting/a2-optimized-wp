@@ -413,6 +413,22 @@ class A2_Optimized_OptionsManager {
 		delete_option('a2_wc_cart_fragments');
 		delete_option('woocommerce_cart_redirect_after_add');
 	}
+	
+	/**
+	*  Enable Blocking of XML-RPC Requests
+	*
+	*/
+	public function enable_xmlrpc_requests() {
+		update_option('a2_block_xmlrpc', 1);
+	}
+	
+	/**
+	*  Disable Blocking of XML-RPC Requests
+	*
+	*/
+	public function disable_xmlrpc_requests() {
+		delete_option('a2_block_xmlrpc');
+	}
 
 	/**
 	 * Update w3tc plugin
@@ -1718,31 +1734,31 @@ HTML;
 
 	/*
 	public function plugin_list(){
-	    //Name,PluginURI,Version,Description,Author,AuthorURI,TextDomain,DomainPath,Network,Title,AuthorName
+		//Name,PluginURI,Version,Description,Author,AuthorURI,TextDomain,DomainPath,Network,Title,AuthorName
 
-	    $string = "";
-	    include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		$string = "";
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
-	    $plugins = $this->get_plugins();
-	    foreach($plugins as $filename=>$plugin){
-	        $name = $plugin['Name'];
-	        $title = $plugin['Title'];
-	        $checked = "";
-	        if(is_plugin_active($filename)){
-	            $checked = "checked='checked'";
-	        }
-	        ob_start();
-	        $dump = ob_get_contents();
-	        ob_end_clean();
-	        $string .=<<<HTML
-	        <div class="wrap">
-	            <span style="font-size:16pt"><input type="checkbox" $checked> $title</span> <a href="">delete</a>
-	            {$dump}
-	        </div>
+		$plugins = $this->get_plugins();
+		foreach($plugins as $filename=>$plugin){
+			$name = $plugin['Name'];
+			$title = $plugin['Title'];
+			$checked = "";
+			if(is_plugin_active($filename)){
+				$checked = "checked='checked'";
+			}
+			ob_start();
+			$dump = ob_get_contents();
+			ob_end_clean();
+			$string .=<<<HTML
+			<div class="wrap">
+				<span style="font-size:16pt"><input type="checkbox" $checked> $title</span> <a href="">delete</a>
+				{$dump}
+			</div>
 HTML;
 
-	    }
-	    return $string;
+		}
+		return $string;
 	}*/
 
 	/**

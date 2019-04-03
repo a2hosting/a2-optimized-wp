@@ -308,6 +308,10 @@ HTML;
 			add_action('comment_form_after_fields', array(&$this, 'comment_captcha'));
 			add_filter('preprocess_comment', array(&$this, 'captcha_comment_authenticate'), 1, 3);
 		}
+		if ($this->is_xmlrpc_request() && get_option('a2_block_xmlrpc')) {
+			$this->block_xmlrpc_request();
+			add_filter('xmlrpc_methods', array(&$this, 'remove_xmlrpc_methods'));
+		}
 	}
 
 	public function plugin_settings_link($links) {
@@ -646,6 +650,112 @@ HTML;
     </div>
 HTML;
 	}
+
+	/*
+	 *	XML-RPC Functions
+	 */
+
+	/* Is this a xmlrpc request? */
+	public function is_xmlrpc_request() {
+		return defined('XMLRPC_REQUEST') && XMLRPC_REQUEST;
+	}
+	
+	/* Block this xmlrpc request unless other criteria are met */
+	private function block_xmlrpc_request() {
+		if ($this->client_is_automattic()) {
+			return;
+		}
+		
+		if ($this->clientip_whitelisted()) {
+			return;
+		}
+		
+		if (!headers_sent()) {
+			header('Connection: close');
+			header('Content-Type: text/xml');
+			header('Date: ' . date('r'));
+		}
+		echo '<?xml version="1.0"?><methodResponse><fault><value><struct><member><name>faultCode</name><value><int>405</int></value></member><member><name>faultString</name><value><string>XML-RPC is disabled</string></value></member></struct></value></fault></methodResponse>';
+		exit;
+	}
+
+	/* Stop advertising we accept certain requests */
+	public function remove_xmlrpc_methods($xml_rpc_methods) {
+		if ($this->client_is_automattic()) {
+			return $xml_rpc_methods;
+		}
+		
+		if ($this->clientip_whitelisted()) {
+			return $xml_rpc_methods;
+		}
+
+		unset($xml_rpc_methods['pingback.ping']); // block pingbacks
+		unset($xml_rpc_methods['pingback.extensions.getPingbacks']); // block pingbacks
+
+		return $xml_rpc_methods;
+	}
+	
+	public function clientip_whitelisted() {
+		// For future consideration
+		return false;
+	}
+	
+	/* Checks if a Automattic plugin is installed
+		Checks if IP making request if from Automattic
+		https://jetpack.com/support/hosting-faq/
+	*/
+	public function client_is_automattic() {
+		//check for jetpack / akismet / vaultpress
+		if(
+			!is_plugin_active('jetpack/jetpack.php')
+			&& !is_plugin_active('akismet/akismet.php')
+			&& !is_plugin_active('vaultpress/vaultpress.php')){
+				return false;
+			};
+		
+		$ip_address = $_SERVER['REMOTE_ADDR'];
+		if ($this->is_ip_in_range(
+			$ip_address,
+			array(
+				'122.248.245.244', // Jetpack
+				'54.217.201.243', // Jetpack
+				'54.232.116.4', // Jetpack
+				array('195.234.108.0', '195.234.111.255'), // Jetpack
+				array('192.0.64.1', '192.0.127.255'), // VaultPress range
+				//array('192.0.80.0', '192.0.95.255'), // Akismet (covered by VaultPress range)
+				//array('192.0.96.0', '192.0.111.255'), // Akismet
+				//array('192.0.112.0', '192.0.127.255'), // Akismet
+			)
+		)) {
+			return true;
+		}
+
+		return false;
+	}
+	
+	/* Use ip2long to do comparisons */
+	public function is_ip_in_range($ip_address, $range_array) {
+		$ip_long = ip2long($ip_address);
+		foreach ($range_array as $item) {
+			if (is_array($item)) {
+				$ip_low = ip2long($item[0]);
+				$ip_hi = ip2long($item[1]);
+				if ($ip_long <= $ip_hi && $ip_low <= $ip_long) {
+					return true;
+				}
+			} else {
+				if ($ip_long == ip2long($item)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+	
+	/*
+	 *	WordFence WAF Functions
+	 */
 
 	public function wordfence_waf_check() {
 		// Check if the .htaccess file has a Wordfence WAF entry
