@@ -662,7 +662,7 @@ HTML;
 	
 	/* Block this xmlrpc request unless other criteria are met */
 	private function block_xmlrpc_request() {
-		if (is_plugin_active('jetpack/jetpack.php') && $this->clientip_is_automattic()) {
+		if ($this->client_is_automattic()) {
 			return;
 		}
 		
@@ -681,7 +681,7 @@ HTML;
 
 	/* Stop advertising we accept certain requests */
 	public function remove_xmlrpc_methods($xml_rpc_methods) {
-		if (is_plugin_active('jetpack/jetpack.php') && $this->clientip_is_automattic()) {
+		if ($this->client_is_automattic()) {
 			return $xml_rpc_methods;
 		}
 		
@@ -700,10 +700,19 @@ HTML;
 		return false;
 	}
 	
-	/* Listing of Automattic IP addresses
+	/* Checks if a Automattic plugin is installed
+		Checks if IP making request if from Automattic
 		https://jetpack.com/support/hosting-faq/
 	*/
-	public function clientip_is_automattic() {
+	public function client_is_automattic() {
+		//check for jetpack / akismet / vaultpress
+		if(
+			!is_plugin_active('jetpack/jetpack.php')
+			&& !is_plugin_active('akismet/akismet.php')
+			&& !is_plugin_active('vaultpress/vaultpress.php')){
+				return false;
+			};
+		
 		$ip_address = $_SERVER['REMOTE_ADDR'];
 		if ($this->is_ip_in_range(
 			$ip_address,
@@ -713,7 +722,7 @@ HTML;
 				'54.232.116.4', // Jetpack
 				array('195.234.108.0', '195.234.111.255'), // Jetpack
 				array('192.0.64.1', '192.0.127.255'), // VaultPress range
-				//array('192.0.80.0', '192.0.95.255'), // Akismet (covered by VaultPress)
+				//array('192.0.80.0', '192.0.95.255'), // Akismet (covered by VaultPress range)
 				//array('192.0.96.0', '192.0.111.255'), // Akismet
 				//array('192.0.112.0', '192.0.127.255'), // Akismet
 			)
