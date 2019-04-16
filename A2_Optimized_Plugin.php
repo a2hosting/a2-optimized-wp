@@ -155,7 +155,9 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 	}
 
 	public function upgrade() {
-		unlink(ABSPATH . 'wp-config.php.bak.a2');
+		if(file_exists(ABSPATH . 'wp-config.php.bak.a2')){
+			unlink(ABSPATH . 'wp-config.php.bak.a2');
+		}
 	}
 
 	public function update_notice() {
