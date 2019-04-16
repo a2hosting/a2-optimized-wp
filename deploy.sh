@@ -52,8 +52,8 @@ echo "Tagging new version in git"
 git tag -a "$NEWVERSION1" -m "Tagging version $NEWVERSION1"
 
 echo "Pushing latest commit to github, with tags"
-git push github master
-git push github master --tags
+#git push github master
+#git push github master --tags
 
 echo
 echo "Creating local copy of SVN repo ..."
