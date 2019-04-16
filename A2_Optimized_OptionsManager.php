@@ -1831,7 +1831,7 @@ HTML;
 		$nomods = $this->get_nomods();
 
 		touch(ABSPATH . 'wp-config.php');
-		copy(ABSPATH . 'wp-config.php', ABSPATH . 'wp-config.php.bak.a2');
+		copy(ABSPATH . 'wp-config.php', ABSPATH . 'wp-config.bak-a2.php');
 
 		$a2_config = '';
 		if ($lockdown) {
