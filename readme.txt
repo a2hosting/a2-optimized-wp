@@ -137,32 +137,32 @@ Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimize
 
 
 == Changelog ==
-= 2.0.10.8 =^M
+= 2.0.10.8 =
 *Added option to block unauthorized XML-RPC calls
 
-= 2.0.10.7.10 =^M
+= 2.0.10.7.10 =
 *Added option to dequeue WooCommerce cart fragment calls
 
-= 2.0.10.7.8 =^M
+= 2.0.10.7.8 =
 *Wordfence is no longer marked as an incompatible plugin
 
-= 2.0.10.7.3 =^M
+= 2.0.10.7.3 =
 *Changed code to reduce notices for users with debug enabled
 
-= 2.0.10.7.2 =^M
+= 2.0.10.7.2 =
 *Removed P3 Profiler from list of optional plugins
 
-= 2.0.10.7 =^M
+= 2.0.10.7 =
 *Changed protect config files to an optional optimization
 
-= 2.0.10.5 =^M
+= 2.0.10.5 =
 *Fixed error with KB search
 
-= 2.0.10.4 =^M
-*reCaptcha for comments enabled for mangaged hosting^M
+= 2.0.10.4 =
+*reCaptcha for comments enabled for mangaged hosting
 
-= 2.0.10.3 =^M
-*Emails site admin if login URL changes^M
+= 2.0.10.3 =
+*Emails site admin if login URL changes
 
 = 2.0.19 =
 *Settings page for custom reCaptcha options
