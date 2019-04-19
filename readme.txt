@@ -12,6 +12,8 @@ Make your site faster and more secure with the click of a few buttons
 
 == Description ==
 
+**This update fixes an important security issue. Please upgrade immediately**
+
 A2 Optimized is designed to make it *quick and easy* to *speed up* and secure your website by installing and configuring several well known, stable plugins with the click of a few buttons.
 
 **Have you ever tried to configure *W3 Total cache* and got lost in the mess of configuration pages?**
@@ -137,6 +139,9 @@ Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimize
 
 
 == Changelog ==
+= 2.0.10.9 =
+*Fixes security issue that may expose wp-config.php contents
+
 = 2.0.10.8 =
 *Added option to block unauthorized XML-RPC calls
 
@@ -219,6 +224,9 @@ Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimize
 
 
 == Upgrade Notice ==
+
+= 2.0.10.9 =
+Important security update. Please upgrade immediately.
 
 = 2.0 =
 New GPL plugin, now updates are through the wordpress.org repository
