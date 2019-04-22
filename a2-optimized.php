@@ -10,6 +10,9 @@
 	License: GPLv3
 */
 
+// Prevent direct access to this file
+if ( ! defined( 'WPINC' ) )  die;
+
 //////////////////////////////////
 // Run initialization
 /////////////////////////////////

@@ -5,6 +5,10 @@
 	Author URI: https://www.a2hosting.com/
 	License: GPLv2 or Later
 */
+
+// Prevent direct access to this file
+if ( ! defined( 'WPINC' ) )  die;
+
 require_once 'A2_Optimized_Server_Info.php';
 
 class A2_Optimized_Optimizations {
