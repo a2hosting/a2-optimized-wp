@@ -6,6 +6,9 @@
  *
  **/
 
+// Prevent direct access to this file
+if ( ! defined( 'WPINC' ) )  die;
+
 class A2_Optimized_Server_Info {
 	/* Is server behind Cloud Flare? */
 	public $cf = false;

@@ -6,6 +6,9 @@
 	License: GPLv2 or Later
 */
 
+// Prevent direct access to this file
+if ( ! defined( 'WPINC' ) )  die;
+
 include_once('A2_Optimized_OptionsManager.php');
 
 class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
