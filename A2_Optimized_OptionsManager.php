@@ -819,6 +819,15 @@ HTML;
 
 				</div>
 				<div style="margin:20px 0;">
+					<h3>Additional Plugins Installed on A2 Hosting</h3>
+					<p><strong>A2 Total Cache</strong><br />
+					A community supported fork of W3 Total Cache</p>
+					<p><strong>Easy Hide Login</strong><br />
+					Changes the location of the WordPress login page</p>
+					<p><strong>EWWW Image Optimizer</strong><br />
+					Compress and optimize images on upload</p>
+				</div>
+				<div style="margin:20px 0;">
 				    <h3>Free Optimizations</h3>
 				    <dt>Page Caching with W3 Total Cache</dt>
                     <dd>
