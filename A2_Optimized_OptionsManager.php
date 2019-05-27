@@ -33,6 +33,8 @@ class A2_Optimized_OptionsManager {
 	private $advanced_optimization_count;
 	private $plugin_list;
 	private $install_status;
+	private $salts_array;
+	private $new_salts;
 
 	public function __construct() {
 	}
@@ -432,6 +434,86 @@ class A2_Optimized_OptionsManager {
 	public function disable_xmlrpc_requests() {
 		delete_option('a2_block_xmlrpc');
 	}
+
+
+	/**
+	*  Regenerate wp-config.php salts
+	*
+	*/
+	public function regenerate_wpconfig_salts() {
+		$this->salts_array = array(
+            "define('AUTH_KEY',",
+            "SECURE_AUTH_KEY",
+            "LOGGED_IN_KEY",
+            "NONCE_KEY",
+            "define('AUTH_SALT',",
+            "SECURE_AUTH_SALT",
+            "LOGGED_IN_SALT",
+            "NONCE_SALT",
+        );
+
+        $returned_salts = file_get_contents("https://api.wordpress.org/secret-key/1.1/salt/");
+        $this->new_salts = explode("\n", $returned_salts);
+
+		update_option('a2_updated_regenerate-salts', date('F jS, Y'));
+
+        return $this->writeSalts($this->salts_array, $this->new_salts);
+	}
+
+	public function regenerate_wpconfig_desc() {
+		$output = '<p>Generate new salt values for wp-config.php<br /><strong>This will log out all users including yourself</strong><br />Last regenerated:</p>'; 
+		
+		return $output;
+	}
+
+    private function writeSalts($salts_array, $new_salts){
+
+        $config_file = $this->config_file_path();
+
+        $tmp_config_file = ABSPATH . 'wp-config-tmp.php';
+
+        foreach ($salts_array as $salt_key => $salt_value) {
+
+            $readin_config = fopen($config_file, 'r');
+            $writing_config = fopen($tmp_config_file, 'w');
+
+            $replaced = false;
+            while (!feof($readin_config)) {
+                $line = fgets($readin_config);
+                if (stristr($line, $salt_value)) {
+                    $line = $new_salts[$salt_key] . "\n";
+                    $replaced = true;
+                }
+                fputs($writing_config, $line);
+            }
+
+            fclose($readin_config);
+            fclose($writing_config);
+
+            if ($replaced) {
+                rename($tmp_config_file, $config_file);
+            } else {
+                unlink($tmp_config_file);
+            }
+        }
+    }
+    
+    private function config_file_path(){
+
+        $salts_file_name = 'wp-config';
+        $config_file = ABSPATH . $salts_file_name . '.php';
+        $config_file_up = ABSPATH . '../' . $salts_file_name . '.php';
+
+        if (file_exists($config_file) && is_writable($config_file)) {
+            return $config_file;
+        } elseif (file_exists($config_file_up) && is_writable($config_file_up) && !file_exists(dirname(ABSPATH) . '/wp-settings.php')) {
+            return $config_file_up;
+        }
+
+        return false;
+    }
+
+
 
 	/**
 	 * Update w3tc plugin
@@ -1549,7 +1631,11 @@ JAVASCRIPT;
 				$active_text = 'Optional';
 				$glyph = 'warning-sign';
 				if (isset($item['enable']) && $active_class == '') {
-					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", 'Enable', '_self');
+					$action_text = "Enable";
+					if(isset($item['update'])){
+						$action_text = "Update Now";	
+					}
+					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", $action_text, '_self');
 				}
 
 				if (isset($item['not_configured_links'])) {
@@ -1593,6 +1679,16 @@ HTML;
 				$premium = '<div style="float:right;padding-right:10px"><a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank" class="a2-exclusive"></a></div>';
 			}
 
+			$description = $item['description'];
+			if(isset($item['last_updated']) && $item['last_updated']){
+				$description .= 'Last Updated: ';
+				if(get_option('a2_updated_' . $item['slug'])){
+					$description .= get_option('a2_updated_' . $item['slug']);
+				} else {
+					$description .= 'Never';
+				}
+			}
+
 			$link_html = rtrim($link_html, '|');
 
 			return <<<HTML
@@ -1606,7 +1702,7 @@ HTML;
 	</div>
 	{$premium}
 	<div class="optimization-item-three">
-		<p>{$item['description']}</p>
+		<p>{$description}</p>
 	</div>
 	<div class="optimization-item-four">
 		{$link_html}

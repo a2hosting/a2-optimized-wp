@@ -335,6 +335,29 @@ class A2_Optimized_Optimizations {
 					$thisclass->disable_xmlrpc_requests();
 				},
 			),
+			'regenerate-salts' => array(
+				'name' => 'Regenerate wp-config salts',
+				'slug' => 'regenerate-salts',
+				'plugin' => 'A2 Optimized',
+				'optional' => true,
+				'configured' => false,
+				'is_configured' => function (&$item) use (&$thisclass) {
+					if (get_option('a2_updated_regenerate-salts')) {
+						$last_updated = strtotime(get_option('a2_updated_regenerate-salts'));
+						if($last_updated > strtotime('-3 Months')){
+							$item['configured'] = true;
+						}
+					}
+				},
+				'description' => '
+                    <p>Generate new salt values for wp-config.php<br /><strong>This will log out all users including yourself</strong></p>
+				',
+				'last_updated' => true,
+				'update' => true,
+				'enable' => function () use (&$thisclass) {
+					$thisclass->regenerate_wpconfig_salts();
+				},
+			),
 			'htaccess' => array(
 				'name' => 'Deny Direct Access to Configuration Files and Comment Form',
 				'slug' => 'htaccess',
