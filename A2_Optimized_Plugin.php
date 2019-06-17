@@ -542,7 +542,7 @@ HTML;
 			$this->getSettingsSlug(),
 			array(&$this, 'settingsPage'),
 			null,
-			3.14159265359
+			3
 		);
 	}
 
