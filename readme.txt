@@ -2,8 +2,8 @@
 Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
 Requires at least: 3.8
-Tested up to: 5.2.1
-Stable tag: 2.0.10.9.5
+Tested up to: 5.2.4
+Stable tag: 2.0.10.9.6
 Requires PHP: 5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -139,94 +139,97 @@ Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimize
 
 
 == Changelog ==
-= 2.0.10.9.4 =
-*Fixed compatibility issue with X Theme
+
+= 2.0.10.9.6 =
+* Adjustments to Cloudflare detection
 
 = 2.0.10.9.4 =
-*Added feature to regenerate wp-config salts
+* Fixed compatibility issue with X Theme
+
+= 2.0.10.9.4 =
+* Added feature to regenerate wp-config salts
 
 = 2.0.10.9.3 = 
-*Added helpful information on extra plugins installed along with A2 Optimized on A2 Hosting accounts
+* Added helpful information on extra plugins installed along with A2 Optimized on A2 Hosting accounts
 
 = 2.0.10.8 =
-*Added option to block unauthorized XML-RPC calls
+* Added option to block unauthorized XML-RPC calls
 
 = 2.0.10.7.10 =
-*Added option to dequeue WooCommerce cart fragment calls
+* Added option to dequeue WooCommerce cart fragment calls
 
 = 2.0.10.7.8 =
-*Wordfence is no longer marked as an incompatible plugin
+* Wordfence is no longer marked as an incompatible plugin
 
 = 2.0.10.7.3 =
-*Changed code to reduce notices for users with debug enabled
+* Changed code to reduce notices for users with debug enabled
 
 = 2.0.10.7.2 =
-*Removed P3 Profiler from list of optional plugins
+* Removed P3 Profiler from list of optional plugins
 
 = 2.0.10.7 =
-*Changed protect config files to an optional optimization
+* Changed protect config files to an optional optimization
 
 = 2.0.10.5 =
-*Fixed error with KB search
+* Fixed error with KB search
 
 = 2.0.10.4 =
-*reCaptcha for comments enabled for mangaged hosting
+* reCaptcha for comments enabled for mangaged hosting
 
 = 2.0.10.3 =
-*Emails site admin if login URL changes
+* Emails site admin if login URL changes
 
 = 2.0.19 =
-*Settings page for custom reCaptcha options
+* Settings page for custom reCaptcha options
 
 = 2.0.9.8 =
-*Fixed issue with some plugins causing slowdowns on dashboard screen
+* Fixed issue with some plugins causing slowdowns on dashboard screen
 
 = 2.0.9.7 =
-*Fixed issue with getting current user for some operations
-*Removed incorrect KB link
+* Fixed issue with getting current user for some operations
+* Removed incorrect KB link
 
 = 2.0.9.3 =
-*Clearer information when incompatible plugins are detected
-*Fixed issue with gzipping being enabled inadvertantly while changing other settings
+* Clearer information when incompatible plugins are detected
+* Fixed issue with gzipping being enabled inadvertantly while changing other settings
 
 = 2.0.9.2 =
-*Clearer information regarding W3 Total Cache upgrade
-*Fixed issue where sites installed in subdirectories may not function as expected
+* Clearer information regarding W3 Total Cache upgrade
+* Fixed issue where sites installed in subdirectories may not function as expected
 
 = 2.0.9 =
-*Updated reCAPTCHA to API v2
-*Better support and triage for unsupported versions of W3 Total Cache
-*Better support for mobile and tablet screen sizes on our optimizations page
+* Updated reCAPTCHA to API v2
+* Better support and triage for unsupported versions of W3 Total Cache
+* Better support for mobile and tablet screen sizes on our optimizations page
 
 = 2.0.8.5 =
-*Added plugin update notices to ensure users are aware of any important update details
+* Added plugin update notices to ensure users are aware of any important update details
 
 = 2.0.8.2 =
-*Additional check for compatible W3TC
-*Added check to see if your server is already has compression enabled
+* Additional check for compatible W3TC
+* Added check to see if your server is already has compression enabled
 
 = 2.0.8 =
-*Enable SSL caching by default
+* Enable SSL caching by default
 
 = 2.0.7 =
-*Revert use of PHP short arrays
+* Revert use of PHP short arrays
 
 = 2.0.6 =
-*Removed Clef and tested against WordPress 4.8
+* Removed Clef and tested against WordPress 4.8
 
 = 2.0.3 =
-*Added dmatteson as a plugin author
+* Added dmatteson as a plugin author
 
 = 2.0.2 =
-*added namespace class to css to prevent collision with other plugins
+* added namespace class to css to prevent collision with other plugins
 
 = 2.0.1 =
-*minor bug fixes
-*check for PHP version >= 5.3
-
+* minor bug fixes
+* check for PHP version >= 5.3
 
 = 2.0 =
-*Move from SaaS to Full GPL
+* Move from SaaS to Full GPL
 
 
 == Upgrade Notice ==
