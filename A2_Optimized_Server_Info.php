@@ -66,6 +66,9 @@ class A2_Optimized_Server_Info {
 			if (isset($headers['Server']) && (strpos(strtolower($headers['Server']), 'cloudflare') !== false)) {
 				$this->cf = true;
 			}
+			if (isset($headers['server']) && (strpos(strtolower($headers['server']), 'cloudflare') !== false)) {
+				$this->cf = true;
+			}
 			if (isset($headers['Content-Encoding']) && (strpos(strtolower($headers['Content-Encoding']), 'gzip') !== false)) {
 				$this->gzip = true;
 			}
