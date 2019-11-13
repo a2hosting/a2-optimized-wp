@@ -11,7 +11,9 @@
 */
 
 // Prevent direct access to this file
-if ( ! defined( 'WPINC' ) )  die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 //////////////////////////////////
 // Run initialization
@@ -35,22 +37,22 @@ class A2_Optimized {
 
 		$a2Plugin = new A2_Optimized_Plugin();
 
-	  // Install the plugin
-	  if (!$a2Plugin->isInstalled()) {
-	  	$a2Plugin->install();
-	  } else {
-	  	// Perform any version-upgrade activities prior to activation (e.g. database changes)
-		$a2Plugin->upgrade();
-	  }
+		// Install the plugin
+		if (!$a2Plugin->isInstalled()) {
+			$a2Plugin->install();
+		} else {
+			// Perform any version-upgrade activities prior to activation (e.g. database changes)
+			$a2Plugin->upgrade();
+		}
 
-	  // Add callbacks to hooks
-	  $a2Plugin->addActionsAndFilters();
+		// Add callbacks to hooks
+		$a2Plugin->addActionsAndFilters();
 
-		  // Register the Plugin Activation Hook
-	  register_activation_hook(__FILE__, array(&$a2Plugin, 'activate'));
+		// Register the Plugin Activation Hook
+		register_activation_hook(__FILE__, array(&$a2Plugin, 'activate'));
 
-	  // Register the Plugin Deactivation Hook
-	  register_deactivation_hook(__FILE__, array(&$a2Plugin, 'deactivate'));
+		// Register the Plugin Deactivation Hook
+		register_deactivation_hook(__FILE__, array(&$a2Plugin, 'deactivate'));
 	}
 
 	public function A2_Optimized_noticePhpVersionWrong() {
@@ -90,17 +92,15 @@ class A2_Optimized {
 		}
 	}
 
-
 	// Remove WooCommerce AJAX calls from homepage if user has selected
 	public static function dequeue_woocommerce_cart_fragments() {
-		if (is_front_page() && get_option('a2_wc_cart_fragments')){
+		if (is_front_page() && get_option('a2_wc_cart_fragments')) {
 			wp_dequeue_script('wc-cart-fragments');
 		}
 	}
-	
 }
 
 $a2opt_class = new A2_Optimized();
 add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', array( 'A2_Optimized','showUpgradeNotification'), 10, 2);
 
-add_action( 'wp_enqueue_scripts', array('A2_Optimized', 'dequeue_woocommerce_cart_fragments'), 11, 2); 
+add_action( 'wp_enqueue_scripts', array('A2_Optimized', 'dequeue_woocommerce_cart_fragments'), 11, 2);
