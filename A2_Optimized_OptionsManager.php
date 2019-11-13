@@ -12,8 +12,6 @@ if ( ! defined( 'WPINC' ) )  die;
 if (is_admin()) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
 	class A2_Plugin_Installer_Skin extends Plugin_Installer_Skin {
-		public function feedback($type) {
-		}
 		public function error($error) {
 		}
 	}
