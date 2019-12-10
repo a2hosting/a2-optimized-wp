@@ -1,500 +1,462 @@
 <?php
 
 /*
-    Author: Benjamin Cool
-    Author URI: https://www.a2hosting.com/
-    License: GPLv2 or Later
+	Author: Benjamin Cool
+	Author URI: https://www.a2hosting.com/
+	License: GPLv2 or Later
 */
 
-if(is_admin()){
-    require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
-    class A2_Plugin_Installer_Skin Extends Plugin_Installer_Skin{
-        public function feedback($type){}
-        public function error($error){}
-    }
+if (is_admin()) {
+	require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
+	class A2_Plugin_Installer_Skin extends Plugin_Installer_Skin {
+		public function feedback($type) {
+		}
+		public function error($error) {
+		}
+	}
 }
 
-if (file_exists("/opt/a2-optimized/wordpress/Optimizations.php")) {
-    require_once "/opt/a2-optimized/wordpress/Optimizations.php";
+if (file_exists('/opt/a2-optimized/wordpress/Optimizations.php')) {
+	require_once '/opt/a2-optimized/wordpress/Optimizations.php';
 }
 require_once 'A2_Optimized_Optimizations.php';
 
 class A2_Optimized_OptionsManager {
-
-    public $plugin_dir;
-    private $optimizations;
-    private $advanced_optimizations;
-    private $advanced_optimization_status;
-    private $optimization_count;
-    private $advanced_optimization_count;
-    private $plugin_list;
-    private $install_status;
-
-    public function set_w3tc_defaults()
-    {
-        $vars = $this->get_w3tc_defaults();
-        if (!class_exists('W3_ConfigData')) {
-            $this->enable_w3_total_cache();
-        }
-
-        $config_writer = new W3_ConfigWriter(0, false);
-        foreach ($vars as $name => $val) {
-            $config_writer->set($name, $val);
-        }
-        $config_writer->set('common.instance_id', mt_rand());
-        $config_writer->save();
-        $this->refresh_w3tc();
-    }
-
-    public function get_w3tc_defaults()
-    {
-        return array(
-            'pgcache.check.domain' => true,
-            'pgcache.prime.post.enabled' => true,
-            'pgcache.reject.logged' => true,
-            'pgcache.reject.request_head' => true,
-            'pgcache.purge.front_page' => true,
-            'pgcache.purge.home' => true,
-            'pgcache.purge.post' => true,
-            'pgcache.purge.comments' => true,
-            'pgcache.purge.author' => true,
-            'pgcache.purge.terms' => true,
-            'pgcache.purge.archive.daily' => true,
-            'pgcache.purge.archive.monthly' => true,
-            'pgcache.purge.archive.yearly' => true,
-            'pgcache.purge.feed.blog' => true,
-            'pgcache.purge.feed.comments' => true,
-            'pgcache.purge.feed.author' => true,
-            'pgcache.purge.feed.terms' => true,
-            'pgcache.cache.feed' => true,
-            'pgcache.debug' => false,
-            'pgcache.purge.postpages_limit' => 0,//purge all pages that list posts
-            'pgcache.purge.feed.types' => array(
-                0 => 'rdf',
-                1 => 'rss',
-                2 => 'rss2',
-                3 => 'atom'
-            ),
-            'minify.debug' => false,
-            'dbcache.debug' => false,
-            'objectcache.debug' => false,
-
-            'mobile.enabled' => true,
-
-
-            'minify.auto' => false,
-            'minify.html.engine' => 'html',
-            'minify.html.inline.css' => true,
-            'minify.html.inline.js' => true,
-
-
-            'minify.js.engine' => 'js',
-            'minify.css.engine' => 'css',
-
-            'minify.js.header.embed_type' => 'nb-js',
-            'minify.js.body.embed_type' => 'nb-js',
-            'minify.js.footer.embed_type' => 'nb-js',
-
-            'minify.lifetime' => 14400,
-            'minify.file.gc' => 144000,
-
-            'dbcache.lifetime' => 3600,
-            'dbcache.file.gc' => 7200,
-
-
-            'objectcache.lifetime' => 3600,
-            'objectcache.file.gc' => 7200,
-
-            'browsercache.cssjs.last_modified' => true,
-            'browsercache.cssjs.compression' => true,
-            'browsercache.cssjs.expires' => true,
-            'browsercache.cssjs.lifetime' => 31536000,
-            'browsercache.cssjs.nocookies' => false,
-            'browsercache.cssjs.cache.control' => true,
-            'browsercache.cssjs.cache.policy' => 'cache_maxage',
-            'browsercache.cssjs.etag' => true,
-            'browsercache.cssjs.w3tc' => true,
-            'browsercache.cssjs.replace' => true,
-            'browsercache.html.compression' => true,
-            'browsercache.html.last_modified' => true,
-            'browsercache.html.expires' => true,
-            'browsercache.html.lifetime' => 30,
-            'browsercache.html.cache.control' => true,
-            'browsercache.html.cache.policy' => 'cache_maxage',
-            'browsercache.html.etag' => true,
-            'browsercache.html.w3tc' => true,
-            'browsercache.html.replace' => true,
-            'browsercache.other.last_modified' => true,
-            'browsercache.other.compression' => true,
-            'browsercache.other.expires' => true,
-            'browsercache.other.lifetime' => 31536000,
-            'browsercache.other.nocookies' => false,
-            'browsercache.other.cache.control' => true,
-            'browsercache.other.cache.policy' => 'cache_maxage',
-            'browsercache.other.etag' => true,
-            'browsercache.other.w3tc' => true,
-            'browsercache.other.replace' => true,
-
-            'config.check' => true,
-
-            'varnish.enabled' => false
-
-        );
-    }
-
-    public function enable_w3_total_cache()
-    {
-        $file = 'w3-total-cache/w3-total-cache.php';
-        $slug = 'w3-total-cache';
-        $this->install_plugin($slug);
-        $this->activate_plugin($file);
-        $this->hit_the_w3tc_page();
-    }
-
-    public function get_plugins()
-    {
-        if (isset($this->plugin_list)) {
-            return $this->plugin_list;
-        } else {
-            return get_plugins();
-        }
-    }
-
-    public function install_plugin($slug, $activate = false)
-    {
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-        $api = plugins_api('plugin_information', array('slug' => $slug));
-
-        $found = false;
-
-        $plugins = $this->get_plugins();
-
-        foreach ($plugins as $file => $plugin) {
-            if ($plugin['Name'] == $api->name) {
-                if (version_compare($plugin['Version'], '162.0.0.0') === -1) {
-                    $this->uninstall_plugin($file);
-                    break;
-                }
-                
-                $found = true;
-            }
-        }
-
-        if (!$found) {
-            ob_start();
-            $upgrader = new Plugin_Upgrader(new A2_Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
-            
-            if ($slug == 'w3-total-cache') {
-                $api->download_link = 'http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/w3-total-cache.zip';
-            }
-            
-            $upgrader->install($api->download_link);
-            ob_end_clean();
-            $this->plugin_list = get_plugins();
-        }
-
-        if ($activate) {
-            $plugins = $this->get_plugins();
-            foreach ($plugins as $file => $plugin) {
-                if ($plugin['Name'] == $api->name) {
-                    $this->activate_plugin($file);
-                }
-            }
-        }
-
-        $this->clear_w3_total_cache();
-    }
-
-    public function activate_plugin($file)
-    {
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        activate_plugin($file);
-        $this->clear_w3_total_cache();
-    }
-
-    public function clear_w3_total_cache()
-    {
-        if (is_plugin_active('w3-total-cache/w3-total-cache.php')) {
-            //TODO:  add clear cache
-        }
-    }
-
-    public function hit_the_w3tc_page()
-    {
-        $cookie = "";
-        foreach ($_COOKIE as $name => $val) {
-            $cookie .= "{$name}={$val};";
-        }
-        rtrim($cookie, ';');
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, get_admin_url() . 'admin.php?page=w3tc_general&nonce=' . wp_create_nonce('w3tc'));
-        curl_setopt($ch, CURLOPT_USERAGENT, "Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6");
-        curl_setopt($ch, CURLOPT_TIMEOUT, 60);
-        curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        curl_setopt($ch, CURLOPT_COOKIE, $cookie);
-        curl_setopt($ch, CURLOPT_REFERER, get_admin_url());
-        $result = curl_exec($ch);
-        curl_close($ch);
-    }
-
-    public function refresh_w3tc()
-    {
-        $this->hit_the_w3tc_page();
-    }
-
-    public function get_w3tc_config(){
-        if(class_exists('W3_ConfigData')){
-            $config_writer = new W3_ConfigWriter(0,false);
-            return W3_ConfigData::get_array_from_file($config_writer->get_config_filename());
-        }
-        else{
-            return false;
-        }
-    }
-
-    public function enable_w3tc_cache(){
-        $permalink_structure = get_option('permalink_structure');
-        $vars = array();
-        if($permalink_structure == ''){
-            $vars['pgcache.engine']='file';
-        }
-        else{
-            $vars['pgcache.engine']='file_generic';
-        }
-        $vars['dbcache.engine'] = 'file';
-        $vars['objectcache.engine'] = 'file';
-
-        $vars['objectcache.enabled'] = true;
-        $vars['dbcache.enabled'] = true;
-        $vars['pgcache.enabled'] = true;
-        $vars['browsercache.enabled'] = true;
-
-        $this->update_w3tc($vars);
-    }
-
-
-    public function enable_w3tc_page_cache(){
-        $permalink_structure = get_option('permalink_structure');
-        $vars = array();
-        if($permalink_structure == ''){
-            $vars['pgcache.engine']='file';
-        }
-        else{
-            $vars['pgcache.engine']='file_generic';
-        }
-
-        $vars['pgcache.enabled'] = true;
-        $this->update_w3tc($vars);
-    }
-
-    public function enable_w3tc_db_cache(){
-        $permalink_structure = get_option('permalink_structure');
-        $vars = array();
-        $vars['dbcache.engine'] = 'file';
-        $vars['dbcache.enabled'] = true;
-        $this->update_w3tc($vars);
-    }
-
-    public function enable_w3tc_object_cache(){
-        $permalink_structure = get_option('permalink_structure');
-        $vars = array();
-
-        $vars['objectcache.engine'] = 'file';
-        $vars['objectcache.enabled'] = true;
-
-        $this->update_w3tc($vars);
-    }
-
-    public function enable_w3tc_browser_cache(){
-        $permalink_structure = get_option('permalink_structure');
-        $vars = array();
-        $vars['browsercache.enabled'] = true;
-        $this->update_w3tc($vars);
-    }
-
-
-
-    public function update_w3tc($vars)
-    {
-        $vars = array_merge($this->get_w3tc_defaults(), $vars);
-
-        if (!class_exists('W3_ConfigData')) {
-            $this->enable_w3_total_cache();
-        }
-
-        $config_writer = new W3_ConfigWriter(0, false);
-        foreach ($vars as $name => $val) {
-            $config_writer->set($name, $val);
-        }
-        $config_writer->set('common.instance_id', mt_rand());
-        $config_writer->save();
-        $this->refresh_w3tc();
-
-    }
-
-    public function disable_w3tc_cache()
-    {
-        $this->update_w3tc(array(
-            'pgcache.enabled' => false,
-            'dbcache.enabled' => false,
-            'objectcache.enabled' => false,
-            'browsercache.enabled' => false,
-        ));
-    }
-
-
-    public function disable_w3tc_page_cache(){
-        $vars = array();
-        $vars['pgcache.enabled'] = false;
-        $this->update_w3tc($vars);
-    }
-
-    public function disable_w3tc_db_cache(){
-        $vars = array();
-        $vars['dbcache.enabled'] = false;
-        $this->update_w3tc($vars);
-    }
-
-    public function disable_w3tc_object_cache(){
-        $vars = array();
-        $vars['objectcache.enabled'] = false;
-        $this->update_w3tc($vars);
-    }
-
-    public function disable_w3tc_browser_cache(){
-        $vars = array();
-        $vars['browsercache.enabled'] = false;
-        $this->update_w3tc($vars);
-    }
-
-
-    public function disable_html_minify()
-    {
-        $this->update_w3tc(array(
-            'minify.html.enable' => false,
-            'minify.html.enabled' => false,
-            'minify.auto' => false
-        ));
-    }
-
-    public function enable_html_minify()
-    {
-        $this->update_w3tc(array(
-            'minify.html.enable' => true,
-            'minify.enabled' => true,
-            'minify.auto' => false,
-            'minify.engine' => 'file'
-        ));
-    }
-
-    public function curl_save_w3tc($cookie, $url)
-    {
-        $post = "w3tc_save_options=Save all settings&_wpnonce=" . wp_create_nonce('w3tc') . "&_wp_http_referer=%2Fwp-admin%2Fadmin.php%3Fpage%3Dw3tc_general%26&w3tc_note%3Dconfig_save";
-
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, get_admin_url() . $url);
-        curl_setopt($ch, CURLOPT_HEADER, TRUE);
-        curl_setopt($ch, CURLOPT_POST, 1);
-        curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
-        curl_setopt($ch, CURLOPT_COOKIE, $cookie);
-        curl_setopt($ch, CURLOPT_REFERER, get_admin_url() . $url);
-        //curl_setopt($ch, CURLOPT_NOBODY, TRUE); // remove body
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, TRUE);
-        $head = curl_exec($ch);
-        curl_close($ch);
-    }
-
-    public function get_optimizations()
-    {
-        return $this->optimizations;
-    }
-
-    /**
-     * Creates HTML for the Administration page to set options for this plugin.
-     * Override this method to create a customized page.
-     * @return void
-     */
-    public function settingsPage()
-    {
-        if (!current_user_can('manage_options')) {
-            wp_die(__('You do not have sufficient permissions to access A2 Optimized.', 'a2-optimized'));
-        }
-
-
-        $thisclass = $this;
-
-        $optimization_count = 0;
-        $this->get_plugin_status();
-
-
-        $thisdir = rtrim(__DIR__, "/");
-
-
-        wp_enqueue_style('bootstrap', plugins_url('/assets/bootstrap/css/bootstrap.css',__FILE__));
-        wp_enqueue_style('bootstrap-theme', plugins_url('/assets/bootstrap/css/bootstrap-theme.css',__FILE__));
-        wp_enqueue_script('bootstrap-theme', plugins_url('/assets/bootstrap/js/bootstrap.js',__FILE__), array('jquery'));
-
-
-
-        $image_dir = plugins_url('/assets/images',__FILE__);
-
-        do_action('a2_notices');
-
-
-        $ini_error_reporting = ini_get('error_reporting');
-        //ini_set('error_reporting',0);
-
-        $this->optimization_status = "";
-
-        $optionMetaData = $this->getOptionMetaData();
-
-
-        $optimization_status = "";
-
-
-        foreach ($this->advanced_optimizations as $shortname => &$item) {
-            $this->advanced_optimization_status .= $this->get_optimization_status($item);
-            if ($item['configured']) {
-                $this->advanced_optimization_count++;
-            }
-        }
-
-        $this->optimization_count = 0;
-
-
-        foreach ($this->optimizations as $shortname => &$item) {
-            $this->optimization_status .= $this->get_optimization_status($item);
-            if ($item['configured']) {
-                $this->optimization_count++;
-            }
-        }
-
-        if ($this->optimization_count == count($this->optimizations)) {
-            $optimization_alert = '<div  class="alert alert-success">Your site has been fully optimized!</div>';
-        } elseif (!$this->optimizations['page_cache']['configured']) {
-            $optimization_alert = '<div  class="alert alert-danger">Your site is NOT optimized!</div>';
-        } elseif ($this->optimization_count > 5) {
-            $optimization_alert = '<div  class="alert alert-success">Your site has been partially optimized!</div>';
-        } elseif ($this->optimization_count > 2) {
-            $optimization_alert = '<div  class="alert alert-danger">Your site is barely optimized!</div>';
-        } else {
-            $optimization_alert = '<div  class="alert alert-danger">Your site is NOT optimized!</div>';
-        }
-
-
-        $optimization_number = count($this->optimizations);
-
-        $optimization_circle = "";
-        if ($optimization_number > 0) {
-            $optimization_circle = <<<HTML
+	public $plugin_dir;
+	private $optimizations;
+	private $advanced_optimizations;
+	private $advanced_optimization_status;
+	private $optimization_count;
+	private $advanced_optimization_count;
+	private $plugin_list;
+	private $install_status;
+
+	public function set_w3tc_defaults() {
+		$vars = $this->get_w3tc_defaults();
+		if (!class_exists('W3_ConfigData')) {
+			$this->enable_w3_total_cache();
+		}
+
+		$config_writer = new W3_ConfigWriter(0, false);
+		foreach ($vars as $name => $val) {
+			$config_writer->set($name, $val);
+		}
+		$config_writer->set('common.instance_id', mt_rand());
+		$config_writer->save();
+		$this->refresh_w3tc();
+	}
+
+	public function get_w3tc_defaults() {
+		return array(
+			'pgcache.check.domain' => true,
+			'pgcache.prime.post.enabled' => true,
+			'pgcache.reject.logged' => true,
+			'pgcache.reject.request_head' => true,
+			'pgcache.purge.front_page' => true,
+			'pgcache.purge.home' => true,
+			'pgcache.purge.post' => true,
+			'pgcache.purge.comments' => true,
+			'pgcache.purge.author' => true,
+			'pgcache.purge.terms' => true,
+			'pgcache.purge.archive.daily' => true,
+			'pgcache.purge.archive.monthly' => true,
+			'pgcache.purge.archive.yearly' => true,
+			'pgcache.purge.feed.blog' => true,
+			'pgcache.purge.feed.comments' => true,
+			'pgcache.purge.feed.author' => true,
+			'pgcache.purge.feed.terms' => true,
+			'pgcache.cache.feed' => true,
+			'pgcache.debug' => false,
+			'pgcache.purge.postpages_limit' => 0,//purge all pages that list posts
+			'pgcache.purge.feed.types' => array(
+				0 => 'rdf',
+				1 => 'rss',
+				2 => 'rss2',
+				3 => 'atom'
+			),
+			'minify.debug' => false,
+			'dbcache.debug' => false,
+			'objectcache.debug' => false,
+
+			'mobile.enabled' => true,
+
+			'minify.auto' => false,
+			'minify.html.engine' => 'html',
+			'minify.html.inline.css' => true,
+			'minify.html.inline.js' => true,
+
+			'minify.js.engine' => 'js',
+			'minify.css.engine' => 'css',
+
+			'minify.js.header.embed_type' => 'nb-js',
+			'minify.js.body.embed_type' => 'nb-js',
+			'minify.js.footer.embed_type' => 'nb-js',
+
+			'minify.lifetime' => 14400,
+			'minify.file.gc' => 144000,
+
+			'dbcache.lifetime' => 3600,
+			'dbcache.file.gc' => 7200,
+
+			'objectcache.lifetime' => 3600,
+			'objectcache.file.gc' => 7200,
+
+			'browsercache.cssjs.last_modified' => true,
+			'browsercache.cssjs.compression' => true,
+			'browsercache.cssjs.expires' => true,
+			'browsercache.cssjs.lifetime' => 31536000,
+			'browsercache.cssjs.nocookies' => false,
+			'browsercache.cssjs.cache.control' => true,
+			'browsercache.cssjs.cache.policy' => 'cache_maxage',
+			'browsercache.cssjs.etag' => true,
+			'browsercache.cssjs.w3tc' => true,
+			'browsercache.cssjs.replace' => true,
+			'browsercache.html.compression' => true,
+			'browsercache.html.last_modified' => true,
+			'browsercache.html.expires' => true,
+			'browsercache.html.lifetime' => 30,
+			'browsercache.html.cache.control' => true,
+			'browsercache.html.cache.policy' => 'cache_maxage',
+			'browsercache.html.etag' => true,
+			'browsercache.html.w3tc' => true,
+			'browsercache.html.replace' => true,
+			'browsercache.other.last_modified' => true,
+			'browsercache.other.compression' => true,
+			'browsercache.other.expires' => true,
+			'browsercache.other.lifetime' => 31536000,
+			'browsercache.other.nocookies' => false,
+			'browsercache.other.cache.control' => true,
+			'browsercache.other.cache.policy' => 'cache_maxage',
+			'browsercache.other.etag' => true,
+			'browsercache.other.w3tc' => true,
+			'browsercache.other.replace' => true,
+
+			'config.check' => true,
+
+			'varnish.enabled' => false
+		);
+	}
+
+	public function enable_w3_total_cache() {
+		$file = 'w3-total-cache/w3-total-cache.php';
+		$slug = 'w3-total-cache';
+		$this->install_plugin($slug);
+		$this->activate_plugin($file);
+		$this->hit_the_w3tc_page();
+	}
+
+	public function get_plugins() {
+		if (isset($this->plugin_list)) {
+			return $this->plugin_list;
+		} else {
+			return get_plugins();
+		}
+	}
+
+	public function install_plugin($slug, $activate = false) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+		$api = plugins_api('plugin_information', array('slug' => $slug));
+
+		$found = false;
+
+		$plugins = $this->get_plugins();
+
+		foreach ($plugins as $file => $plugin) {
+			if ($plugin['Name'] == $api->name) {
+				if (version_compare($plugin['Version'], '162.0.0.0') === -1) {
+					$this->uninstall_plugin($file);
+					break;
+				}
+				
+				$found = true;
+			}
+		}
+
+		if (!$found) {
+			ob_start();
+			$upgrader = new Plugin_Upgrader(new A2_Plugin_Installer_Skin(compact('title', 'url', 'nonce', 'plugin', 'api')));
+			
+			if ($slug == 'w3-total-cache') {
+				$api->download_link = 'http://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/w3-total-cache.zip';
+			}
+			
+			$upgrader->install($api->download_link);
+			ob_end_clean();
+			$this->plugin_list = get_plugins();
+		}
+
+		if ($activate) {
+			$plugins = $this->get_plugins();
+			foreach ($plugins as $file => $plugin) {
+				if ($plugin['Name'] == $api->name) {
+					$this->activate_plugin($file);
+				}
+			}
+		}
+
+		$this->clear_w3_total_cache();
+	}
+
+	public function activate_plugin($file) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		activate_plugin($file);
+		$this->clear_w3_total_cache();
+	}
+
+	public function clear_w3_total_cache() {
+		if (is_plugin_active('w3-total-cache/w3-total-cache.php')) {
+			//TODO:  add clear cache
+		}
+	}
+
+	public function hit_the_w3tc_page() {
+		$cookie = '';
+		foreach ($_COOKIE as $name => $val) {
+			$cookie .= "{$name}={$val};";
+		}
+		rtrim($cookie, ';');
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, get_admin_url() . 'admin.php?page=w3tc_general&nonce=' . wp_create_nonce('w3tc'));
+		curl_setopt($ch, CURLOPT_USERAGENT, 'Mozilla/5.0 (Windows; U; Windows NT 5.1; en-US; rv:1.8.1.6) Gecko/20070725 Firefox/2.0.0.6');
+		curl_setopt($ch, CURLOPT_TIMEOUT, 60);
+		curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+		curl_setopt($ch, CURLOPT_REFERER, get_admin_url());
+		$result = curl_exec($ch);
+		curl_close($ch);
+	}
+
+	public function refresh_w3tc() {
+		$this->hit_the_w3tc_page();
+	}
+
+	public function get_w3tc_config() {
+		if (class_exists('W3_ConfigData')) {
+			$config_writer = new W3_ConfigWriter(0, false);
+
+			return W3_ConfigData::get_array_from_file($config_writer->get_config_filename());
+		} else {
+			return false;
+		}
+	}
+
+	public function enable_w3tc_cache() {
+		$permalink_structure = get_option('permalink_structure');
+		$vars = array();
+		if ($permalink_structure == '') {
+			$vars['pgcache.engine'] = 'file';
+		} else {
+			$vars['pgcache.engine'] = 'file_generic';
+		}
+		$vars['dbcache.engine'] = 'file';
+		$vars['objectcache.engine'] = 'file';
+
+		$vars['objectcache.enabled'] = true;
+		$vars['dbcache.enabled'] = true;
+		$vars['pgcache.enabled'] = true;
+		$vars['browsercache.enabled'] = true;
+
+		$this->update_w3tc($vars);
+	}
+
+	public function enable_w3tc_page_cache() {
+		$permalink_structure = get_option('permalink_structure');
+		$vars = array();
+		if ($permalink_structure == '') {
+			$vars['pgcache.engine'] = 'file';
+		} else {
+			$vars['pgcache.engine'] = 'file_generic';
+		}
+
+		$vars['pgcache.enabled'] = true;
+		$this->update_w3tc($vars);
+	}
+
+	public function enable_w3tc_db_cache() {
+		$permalink_structure = get_option('permalink_structure');
+		$vars = array();
+		$vars['dbcache.engine'] = 'file';
+		$vars['dbcache.enabled'] = true;
+		$this->update_w3tc($vars);
+	}
+
+	public function enable_w3tc_object_cache() {
+		$permalink_structure = get_option('permalink_structure');
+		$vars = array();
+
+		$vars['objectcache.engine'] = 'file';
+		$vars['objectcache.enabled'] = true;
+
+		$this->update_w3tc($vars);
+	}
+
+	public function enable_w3tc_browser_cache() {
+		$permalink_structure = get_option('permalink_structure');
+		$vars = array();
+		$vars['browsercache.enabled'] = true;
+		$this->update_w3tc($vars);
+	}
+
+	public function update_w3tc($vars) {
+		$vars = array_merge($this->get_w3tc_defaults(), $vars);
+
+		if (!class_exists('W3_ConfigData')) {
+			$this->enable_w3_total_cache();
+		}
+
+		$config_writer = new W3_ConfigWriter(0, false);
+		foreach ($vars as $name => $val) {
+			$config_writer->set($name, $val);
+		}
+		$config_writer->set('common.instance_id', mt_rand());
+		$config_writer->save();
+		$this->refresh_w3tc();
+	}
+
+	public function disable_w3tc_cache() {
+		$this->update_w3tc(array(
+			'pgcache.enabled' => false,
+			'dbcache.enabled' => false,
+			'objectcache.enabled' => false,
+			'browsercache.enabled' => false,
+		));
+	}
+
+	public function disable_w3tc_page_cache() {
+		$vars = array();
+		$vars['pgcache.enabled'] = false;
+		$this->update_w3tc($vars);
+	}
+
+	public function disable_w3tc_db_cache() {
+		$vars = array();
+		$vars['dbcache.enabled'] = false;
+		$this->update_w3tc($vars);
+	}
+
+	public function disable_w3tc_object_cache() {
+		$vars = array();
+		$vars['objectcache.enabled'] = false;
+		$this->update_w3tc($vars);
+	}
+
+	public function disable_w3tc_browser_cache() {
+		$vars = array();
+		$vars['browsercache.enabled'] = false;
+		$this->update_w3tc($vars);
+	}
+
+	public function disable_html_minify() {
+		$this->update_w3tc(array(
+			'minify.html.enable' => false,
+			'minify.html.enabled' => false,
+			'minify.auto' => false
+		));
+	}
+
+	public function enable_html_minify() {
+		$this->update_w3tc(array(
+			'minify.html.enable' => true,
+			'minify.enabled' => true,
+			'minify.auto' => false,
+			'minify.engine' => 'file'
+		));
+	}
+
+	public function curl_save_w3tc($cookie, $url) {
+		$post = 'w3tc_save_options=Save all settings&_wpnonce=' . wp_create_nonce('w3tc') . '&_wp_http_referer=%2Fwp-admin%2Fadmin.php%3Fpage%3Dw3tc_general%26&w3tc_note%3Dconfig_save';
+
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, get_admin_url() . $url);
+		curl_setopt($ch, CURLOPT_HEADER, true);
+		curl_setopt($ch, CURLOPT_POST, 1);
+		curl_setopt($ch, CURLOPT_POSTFIELDS, $post);
+		curl_setopt($ch, CURLOPT_COOKIE, $cookie);
+		curl_setopt($ch, CURLOPT_REFERER, get_admin_url() . $url);
+		//curl_setopt($ch, CURLOPT_NOBODY, TRUE); // remove body
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+		$head = curl_exec($ch);
+		curl_close($ch);
+	}
+
+	public function get_optimizations() {
+		return $this->optimizations;
+	}
+
+	/**
+	 * Creates HTML for the Administration page to set options for this plugin.
+	 * Override this method to create a customized page.
+	 * @return void
+	 */
+	public function settingsPage() {
+		if (!current_user_can('manage_options')) {
+			wp_die(__('You do not have sufficient permissions to access A2 Optimized.', 'a2-optimized'));
+		}
+
+		$thisclass = $this;
+
+		$optimization_count = 0;
+		$this->get_plugin_status();
+
+		$thisdir = rtrim(__DIR__, '/');
+
+		wp_enqueue_style('bootstrap', plugins_url('/assets/bootstrap/css/bootstrap.css', __FILE__));
+		wp_enqueue_style('bootstrap-theme', plugins_url('/assets/bootstrap/css/bootstrap-theme.css', __FILE__));
+		wp_enqueue_script('bootstrap-theme', plugins_url('/assets/bootstrap/js/bootstrap.js', __FILE__), array('jquery'));
+
+		$image_dir = plugins_url('/assets/images', __FILE__);
+
+		do_action('a2_notices');
+
+		$ini_error_reporting = ini_get('error_reporting');
+		//ini_set('error_reporting',0);
+
+		$this->optimization_status = '';
+
+		$optionMetaData = $this->getOptionMetaData();
+
+		$optimization_status = '';
+
+		foreach ($this->advanced_optimizations as $shortname => &$item) {
+			$this->advanced_optimization_status .= $this->get_optimization_status($item);
+			if ($item['configured']) {
+				$this->advanced_optimization_count++;
+			}
+		}
+
+		$this->optimization_count = 0;
+
+		foreach ($this->optimizations as $shortname => &$item) {
+			$this->optimization_status .= $this->get_optimization_status($item);
+			if ($item['configured']) {
+				$this->optimization_count++;
+			}
+		}
+
+		if ($this->optimization_count == count($this->optimizations)) {
+			$optimization_alert = '<div  class="alert alert-success">Your site has been fully optimized!</div>';
+		} elseif (!$this->optimizations['page_cache']['configured']) {
+			$optimization_alert = '<div  class="alert alert-danger">Your site is NOT optimized!</div>';
+		} elseif ($this->optimization_count > 5) {
+			$optimization_alert = '<div  class="alert alert-success">Your site has been partially optimized!</div>';
+		} elseif ($this->optimization_count > 2) {
+			$optimization_alert = '<div  class="alert alert-danger">Your site is barely optimized!</div>';
+		} else {
+			$optimization_alert = '<div  class="alert alert-danger">Your site is NOT optimized!</div>';
+		}
+
+		$optimization_number = count($this->optimizations);
+
+		$optimization_circle = '';
+		if ($optimization_number > 0) {
+			$optimization_circle = <<<HTML
 <span class="badge badge-success">{$this->optimization_count}/{$optimization_number}</span>
 HTML;
-        }
+		}
 
-
-        $kb_search_box = <<<HTML
+		$kb_search_box = <<<HTML
 <div class='big-search' style="margin-top:34px" >
 	<div class='kb-search' >
 		<form method="post" action="https://www.a2hosting.com/" target="_blank"  >
@@ -509,39 +471,35 @@ HTML;
 </div>
 HTML;
 
+		list($warnings, $num_warnings) = $this->warnings();
 
+		$advanced_circle = '';
 
-        list($warnings, $num_warnings) = $this->warnings();
-
-        $advanced_circle = "";
-
-        $warning_circle = "";
-        if ($num_warnings > 0) {
-            $warning_circle = <<<HTML
+		$warning_circle = '';
+		if ($num_warnings > 0) {
+			$warning_circle = <<<HTML
 <span class="badge badge-warning">{$num_warnings}</span>
 HTML;
-        }
+		}
 
-        $settingsGroup = get_class($this) . '-settings-group';
-        $description = $this->get_plugin_description();
+		$settingsGroup = get_class($this) . '-settings-group';
+		$description = $this->get_plugin_description();
 
-        if($this->is_a2()) {
-            $feedback = <<<HTML
+		if ($this->is_a2()) {
+			$feedback = <<<HTML
         <div  style="margin:10px 0;" class="alert alert-success">
             We want to hear from you! Please share your thoughts and feedback in our <a href="https://my.a2hosting.com/?m=a2_suggestionbox" target="_blank">Suggestion Box!</a>
         </div>
 HTML;
-        }
-        else {
-            $feedback = <<<HTML
+		} else {
+			$feedback = <<<HTML
         <div  style="margin:10px 0;" class="alert alert-success">
             We want to hear from you! Please share your thoughts and feedback in our wordpress.org <a href="https://wordpress.org/support/plugin/a2-optimized/" target="_blank">support forum!</a>
         </div>
 HTML;
-        }
+		}
 
-
-        echo <<<HTML
+		echo <<<HTML
 
 
 <section id="a2opt-content-general">
@@ -774,309 +732,289 @@ HTML;
 
 HTML;
 
+		ini_set('error_reporting', $ini_error_reporting);
+	}
 
-        ini_set('error_reporting', $ini_error_reporting);
+	public function get_plugin_status() {
+		$thisclass = $this;
 
+		$opts = new A2_Optimized_Optimizations($thisclass);
+		$this->advanced_optimizations = $opts->get_advanced();
+		$this->optimizations = $opts->get_optimizations();
+		$this->plugin_list = get_plugins();
 
-    }
+		if (isset($_GET['activate'])) {
+			foreach ($this->plugin_list as $file => $plugin) {
+				if ($_GET['activate'] == $plugin['Name']) {
+					$this->activate_plugin($file);
+				}
+			}
+		}
 
-    public function get_plugin_status()
-    {
-        $thisclass = $this;
+		if (isset($_GET['hide_login_url'])) {
+			$this->addOption('hide_login_url', true);
+		}
 
-        $opts = new A2_Optimized_Optimizations($thisclass);
-        $this->advanced_optimizations = $opts->get_advanced();
-        $this->optimizations = $opts->get_optimizations();
-        $this->plugin_list = get_plugins();
+		if (isset($_GET['deactivate'])) {
+			foreach ($this->plugin_list as $file => $plugin) {
+				if ($_GET['deactivate'] == $plugin['Name']) {
+					$this->deactivate_plugin($file);
+				}
+			}
+		}
 
-        if (isset($_GET['activate'])) {
-            foreach ($this->plugin_list as $file => $plugin) {
-                if ($_GET['activate'] == $plugin['Name']) {
-                    $this->activate_plugin($file);
-                }
-            }
-        }
+		if (isset($_GET['delete'])) {
+			foreach ($this->plugin_list as $file => $plugin) {
+				if ($_GET['delete'] == $plugin['Name']) {
+					$this->uninstall_plugin($file);
+				}
+			}
+		}
 
-        if (isset($_GET['hide_login_url'])) {
-            $this->addOption('hide_login_url', true);
-        }
+		if (isset($_GET['disable_optimization'])) {
+			$hash = '';
 
+			if (isset($this->optimizations[$_GET['disable_optimization']])) {
+				$this->optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
+			}
 
-        if (isset($_GET['deactivate'])) {
-            foreach ($this->plugin_list as $file => $plugin) {
-                if ($_GET['deactivate'] == $plugin['Name']) {
-                    $this->deactivate_plugin($file);
-                }
-            }
-        }
+			if (isset($this->advanced_optimizations[$_GET['disable_optimization']])) {
+				$this->advanced_optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
+				$hash = '#optimization-advanced-tab';
+			}
 
-        if (isset($_GET['delete'])) {
-            foreach ($this->plugin_list as $file => $plugin) {
-                if ($_GET['delete'] == $plugin['Name']) {
-                    $this->uninstall_plugin($file);
-                }
-            }
-        }
-
-        if (isset($_GET['disable_optimization'])) {
-            $hash = "";
-
-
-            if (isset($this->optimizations[$_GET['disable_optimization']])) {
-                $this->optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
-            }
-
-            if (isset($this->advanced_optimizations[$_GET['disable_optimization']])) {
-                $this->advanced_optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
-                $hash = "#optimization-advanced-tab";
-            }
-
-            echo <<<JAVASCRIPT
+			echo <<<JAVASCRIPT
 <script type="text/javascript">
 	window.location = 'admin.php?page=A2_Optimized_Plugin_admin{$hash}';
 </script>
 JAVASCRIPT;
-            exit();
-        }
+			exit();
+		}
 
-        if (isset($_GET['enable_optimization'])) {
-            $hash = "";
-            if (isset($this->optimizations[$_GET['enable_optimization']])) {
-                $this->optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
-            }
+		if (isset($_GET['enable_optimization'])) {
+			$hash = '';
+			if (isset($this->optimizations[$_GET['enable_optimization']])) {
+				$this->optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
+			}
 
-            if (isset($this->advanced_optimizations[$_GET['enable_optimization']])) {
-                $this->advanced_optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
-                $hash = "#optimization-advanced-tab";
-            }
+			if (isset($this->advanced_optimizations[$_GET['enable_optimization']])) {
+				$this->advanced_optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
+				$hash = '#optimization-advanced-tab';
+			}
 
-            echo <<<JAVASCRIPT
+			echo <<<JAVASCRIPT
 <script type="text/javascript">
 	window.location = 'admin.php?page=A2_Optimized_Plugin_admin{$hash}';
 </script>
 JAVASCRIPT;
-            exit();
-        }
+			exit();
+		}
 
+		ini_set('disable_functions', '');
 
-        ini_set('disable_functions', '');
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+		$plugins_url = plugins_url();
+		$plugins_url = explode('/', $plugins_url);
+		array_shift($plugins_url);
+		array_shift($plugins_url);
+		array_shift($plugins_url);
+		$this->plugin_dir = ABSPATH . implode('/', $plugins_url);
 
-        $plugins_url = plugins_url();
-        $plugins_url = explode('/', $plugins_url);
-        array_shift($plugins_url);
-        array_shift($plugins_url);
-        array_shift($plugins_url);
-        $this->plugin_dir = ABSPATH . implode('/', $plugins_url);
+		$this->plugins_url = plugins_url();
 
+		validate_active_plugins();
 
-        $this->plugins_url = plugins_url();
+		$this->set_install_status('plugins', $this->plugin_list);
+	}
 
+	/**
+	 * A wrapper function delegating to WP add_option() but it prefixes the input $optionName
+	 * to enforce "scoping" the options in the WP options table thereby avoiding name conflicts
+	 * @param  $optionName string defined in settings.php and set as keys of $this->optionMetaData
+	 * @param  $value mixed the new value
+	 * @return null from delegated call to delete_option()
+	 */
+	public function addOption($optionName, $value) {
+		$prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
+		return add_option($prefixedOptionName, $value);
+	}
 
-        validate_active_plugins();
+	/**
+	 * Get the prefixed version input $name suitable for storing in WP options
+	 * Idempotent: if $optionName is already prefixed, it is not prefixed again, it is returned without change
+	 * @param  $name string option name to prefix. Defined in settings.php and set as keys of $this->optionMetaData
+	 * @return string
+	 */
+	public function prefix($name) {
+		$optionNamePrefix = $this->getOptionNamePrefix();
+		if (strpos($name, $optionNamePrefix) === 0) { // 0 but not false
+			return $name; // already prefixed
+		}
 
-        $this->set_install_status('plugins', $this->plugin_list);
+		return $optionNamePrefix . $name;
+	}
 
+	public function getOptionNamePrefix() {
+		return get_class($this) . '_';
+	}
 
-    }
+	public function deactivate_plugin($file) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		if (is_plugin_active($file)) {
+			deactivate_plugins($file);
+			$this->clear_w3_total_cache();
+		}
+	}
 
-    /**
-     * A wrapper function delegating to WP add_option() but it prefixes the input $optionName
-     * to enforce "scoping" the options in the WP options table thereby avoiding name conflicts
-     * @param  $optionName string defined in settings.php and set as keys of $this->optionMetaData
-     * @param  $value mixed the new value
-     * @return null from delegated call to delete_option()
-     */
-    public function addOption($optionName, $value)
-    {
-        $prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
-        return add_option($prefixedOptionName, $value);
-    }
+	public function uninstall_plugin($file, $delete = true) {
+		require_once ABSPATH . 'wp-admin/includes/plugin.php';
+		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
 
-    /**
-     * Get the prefixed version input $name suitable for storing in WP options
-     * Idempotent: if $optionName is already prefixed, it is not prefixed again, it is returned without change
-     * @param  $name string option name to prefix. Defined in settings.php and set as keys of $this->optionMetaData
-     * @return string
-     */
-    public function prefix($name)
-    {
-        $optionNamePrefix = $this->getOptionNamePrefix();
-        if (strpos($name, $optionNamePrefix) === 0) { // 0 but not false
-            return $name; // already prefixed
-        }
-        return $optionNamePrefix . $name;
-    }
+		$this->deactivate_plugin($file);
+		uninstall_plugin($file);
+		if ($delete) {
+			delete_plugins(array($file));
+		}
+		unset($this->plugin_list[$file]);
+		$this->clear_w3_total_cache();
+	}
 
-    public function getOptionNamePrefix()
-    {
-        return get_class($this) . '_';
-    }
+	public function set_install_status($name, $value) {
+		if (!isset($this->install_status)) {
+			$this->install_status = new StdClass;
+		}
+		$this->install_status->{$name} = $value;
+	}
 
-    public function deactivate_plugin($file)
-    {
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        if (is_plugin_active($file)) {
-            deactivate_plugins($file);
-            $this->clear_w3_total_cache();
-        }
-    }
+	/**
+	 * Define your options meta data here as an array, where each element in the array
+	 * @return array of key=>display-name and/or key=>array(display-name, choice1, choice2, ...)
+	 * key: an option name for the key (this name will be given a prefix when stored in
+	 * the database to ensure it does not conflict with other plugin options)
+	 * value: can be one of two things:
+	 *   (1) string display name for displaying the name of the option to the user on a web page
+	 *   (2) array where the first element is a display name (as above) and the rest of
+	 *       the elements are choices of values that the user can select
+	 * e.g.
+	 * array(
+	 *   'item' => 'Item:',             // key => display-name
+	 *   'rating' => array(             // key => array ( display-name, choice1, choice2, ...)
+	 *       'CanDoOperationX' => array('Can do Operation X', 'Administrator', 'Editor', 'Author', 'Contributor', 'Subscriber'),
+	 *       'Rating:', 'Excellent', 'Good', 'Fair', 'Poor')
+	 */
+	public function getOptionMetaData() {
+		return array();
+	}
 
-    public function uninstall_plugin($file, $delete = true)
-    {
-        require_once ABSPATH . 'wp-admin/includes/plugin.php';
-        require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
+	private function curl($url) {
+		$ch = curl_init();
+		curl_setopt($ch, CURLOPT_URL, $url);
+		curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+		$content = curl_exec($ch);
+		curl_close($ch);
 
-        $this->deactivate_plugin($file);
-        uninstall_plugin($file);
-        if ($delete) {
-            delete_plugins(array($file));
-        }
-        unset($this->plugin_list[$file]);
-        $this->clear_w3_total_cache();
-    }
+		return $content;
+	}
 
-    public function set_install_status($name, $value)
-    {
-        if (!isset($this->install_status)) {
-            $this->install_status = new StdClass;
-        }
-        $this->install_status->{$name} = $value;
-    }
+	/*public function get_litespeed(){
+	  return get_option('a2_optimized_litespeed');
+	}*/
 
-    /**
-     * Define your options meta data here as an array, where each element in the array
-     * @return array of key=>display-name and/or key=>array(display-name, choice1, choice2, ...)
-     * key: an option name for the key (this name will be given a prefix when stored in
-     * the database to ensure it does not conflict with other plugin options)
-     * value: can be one of two things:
-     *   (1) string display name for displaying the name of the option to the user on a web page
-     *   (2) array where the first element is a display name (as above) and the rest of
-     *       the elements are choices of values that the user can select
-     * e.g.
-     * array(
-     *   'item' => 'Item:',             // key => display-name
-     *   'rating' => array(             // key => array ( display-name, choice1, choice2, ...)
-     *       'CanDoOperationX' => array('Can do Operation X', 'Administrator', 'Editor', 'Author', 'Contributor', 'Subscriber'),
-     *       'Rating:', 'Excellent', 'Good', 'Fair', 'Poor')
-     */
-    public function getOptionMetaData()
-    {
-        return array();
-    }
+	/*public function set_litespeed($litespeed = true){
+	  update_option('a2_optimized_litespeed',$litespeed);
+	}*/
 
-    private function curl($url)
-    {
-        $ch = curl_init();
-        curl_setopt($ch, CURLOPT_URL, $url);
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
-        $content = curl_exec($ch);
-        curl_close($ch);
-        return $content;
-    }
+	public function get_optimization_status(&$item) {
+		if ($item != null) {
+			$settings_slug = $this->getSettingsSlug();
 
-    /*public function get_litespeed(){
-      return get_option('a2_optimized_litespeed');
-    }*/
+			if (isset($item['is_configured'])) {
+				$item['is_configured']($item);
+			}
+			$active_color = 'danger';
+			$active_text = 'Not Activated';
+			$glyph = 'exclamation-sign';
+			$links = array();
 
-    /*public function set_litespeed($litespeed = true){
-      update_option('a2_optimized_litespeed',$litespeed);
-    }*/
+			if ($item['configured']) {
+				$active_color = 'success';
+				$active_text = 'Configured';
+				$glyph = 'ok';
 
-    function get_optimization_status(&$item)
-    {
-        if ($item != null) {
-            $settings_slug = $this->getSettingsSlug();
+				if (isset($item['disable'])) {
+					$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self');
+				}
+				if (isset($item['settings'])) {
+					$links[] = array("{$item['settings']}", 'Configure', '_self');
+				}
 
-            if (isset($item['is_configured'])) {
-                $item['is_configured']($item);
-            }
-            $active_color = 'danger';
-            $active_text = 'Not Activated';
-            $glyph = 'exclamation-sign';
-            $links = array();
+				if (isset($item['configured_links'])) {
+					foreach ($item['configured_links'] as $name => $link) {
+						if (gettype($link) == 'array') {
+							$links[] = array($link[0], $name, $link[1]);
+						} else {
+							$links[] = array($link, $name, '_self');
+						}
+					}
+				}
+			} elseif (isset($item['partially_configured']) && $item['partially_configured']) {
+				$active_color = 'warning';
+				$active_text = "Partially Configured. {$item['partially_configured_message']}";
+				$glyph = 'warning-sign';
 
+				if (isset($item['disable'])) {
+					$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self');
+				}
+				if (isset($item['settings'])) {
+					$links[] = array("{$item['settings']}", 'Configure', '_self');
+				}
 
-            if ($item['configured']) {
-                $active_color = 'success';
-                $active_text = 'Configured';
-                $glyph = 'ok';
+				if (isset($item['partially_configured_links'])) {
+					foreach ($item['partially_configured_links'] as $name => $link) {
+						if (gettype($link) == 'array') {
+							$links[] = array($link[0], $name, $link[1]);
+						} else {
+							$links[] = array($link, $name, '_self');
+						}
+					}
+				}
+			} else {
+				if (isset($item['enable'])) {
+					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", 'Enable', '_self');
+				}
 
-                if (isset($item['disable'])) {
-                    $links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", "Disable", "_self");
-                }
-                if (isset($item['settings'])) {
-                    $links[] = array("{$item['settings']}", "Configure", "_self");
-                }
-
-                if (isset($item['configured_links'])) {
-                    foreach ($item['configured_links'] as $name => $link) {
-                        if (gettype($link) == 'array') {
-                            $links[] = array($link[0], $name, $link[1]);
-                        } else {
-                            $links[] = array($link, $name, "_self");
-                        }
-                    }
-                }
-
-            } elseif (isset($item['partially_configured']) && $item['partially_configured']) {
-                $active_color = 'warning';
-                $active_text = "Partially Configured. {$item['partially_configured_message']}";
-                $glyph = 'warning-sign';
-
-                if (isset($item['disable'])) {
-                    $links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", "Disable", "_self");
-                }
-                if (isset($item['settings'])) {
-                    $links[] = array("{$item['settings']}", "Configure", "_self");
-                }
-
-                if (isset($item['partially_configured_links'])) {
-                    foreach ($item['partially_configured_links'] as $name => $link) {
-                        if (gettype($link) == 'array') {
-                            $links[] = array($link[0], $name, $link[1]);
-                        } else {
-                            $links[] = array($link, $name, "_self");
-                        }
-                    }
-                }
-            } else {
-                if (isset($item['enable'])) {
-                    $links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", "Enable", "_self");
-                }
-
-                if (isset($item['not_configured_links'])) {
-                    foreach ($item['not_configured_links'] as $name => $link) {
-                        if (gettype($link) == 'array') {
-                            $links[] = array($link[0], $name, $link[1]);
-                        } else {
-                            $links[] = array($link, $name, "_self");
-                        }
-                    }
-                }
-            }
-            if (isset($item['kb'])) {
-                $links[] = array($item['kb'], "Learn More", "_blank");
-            }
-            $link_html = '';
-            foreach ($links as $i => $link) {
-                if (isset($link[0]) && isset($link[1]) && isset($link[2])) {
-                    $link_html .= <<<HTML
+				if (isset($item['not_configured_links'])) {
+					foreach ($item['not_configured_links'] as $name => $link) {
+						if (gettype($link) == 'array') {
+							$links[] = array($link[0], $name, $link[1]);
+						} else {
+							$links[] = array($link, $name, '_self');
+						}
+					}
+				}
+			}
+			if (isset($item['kb'])) {
+				$links[] = array($item['kb'], 'Learn More', '_blank');
+			}
+			$link_html = '';
+			foreach ($links as $i => $link) {
+				if (isset($link[0]) && isset($link[1]) && isset($link[2])) {
+					$link_html .= <<<HTML
 	 <a href="{$link[0]}" target="{$link[2]}">{$link[1]}</a> |
 HTML;
-                }
-            }
+				}
+			}
 
-            $premium = "";
-            if (isset($item['premium'])) {
-                $premium = '<div style="float:right;padding-right:10px"><a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank" class="a2-exclusive"></a></div>';
-            }
+			$premium = '';
+			if (isset($item['premium'])) {
+				$premium = '<div style="float:right;padding-right:10px"><a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank" class="a2-exclusive"></a></div>';
+			}
 
-            $link_html = rtrim($link_html, "|");
+			$link_html = rtrim($link_html, '|');
 
-            return <<<HTML
+			return <<<HTML
 <div class="optimization-item">
 	<div class="optimization-item-one" >
 		<span class="glyphicon glyphicon-{$glyph}"></span>
@@ -1094,114 +1032,107 @@ HTML;
 	</div>
 </div>
 HTML;
-        }
-        return true;
-    }
+		}
 
-    private function warnings()
-    {
+		return true;
+	}
 
-        $num_warnings = 0;
+	private function warnings() {
+		$num_warnings = 0;
 
-        $opts = new A2_Optimized_Optimizations($this);
-        $warnings = $opts->get_warnings();
+		$opts = new A2_Optimized_Optimizations($this);
+		$warnings = $opts->get_warnings();
 
-        $warning_html = "";
+		$warning_html = '';
 
-        foreach ($warnings as $type => $warning_set) {
-            switch ($type) {
-                case 'Bad WP Options':
-                    foreach ($warning_set as $option_name => $warning) {
-                        $warn = false;
-                        $value = get_option($option_name);
-                        switch ($warning['type']) {
-                            case 'numeric':
-                                switch ($warning['threshold_type']) {
-                                    case '>':
-                                        if ($value > $warning['threshold']) {
-                                            $warning_html .= $this->warning_display($warning);
-                                            $num_warnings++;
-                                        }
-                                        break;
-                                    case '<':
-                                        if ($value < $warning['threshold']) {
-                                            $warning_html .= $this->warning_display($warning);
-                                            $num_warnings++;
-                                        }
-                                        break;
-                                    case '=':
-                                        if ($value == $warning['threshold']) {
-                                            $warning_html .= $this->warning_display($warning);
-                                            $num_warnings++;
-                                        }
-                                        break;
-                                }
-                                break;
-                            case 'text':
-                                switch ($warning['threshold_type']) {
-                                    case '=':
-                                        if ($value == $warning['threshold']) {
-                                            $warning_html .= $this->warning_display($warning);
-                                            $num_warnings++;
-                                        }
-                                        break;
-                                    case '!=':
-                                        if ($value != $warning['threshold']) {
-                                            $warning_html .= $this->warning_display($warning);
-                                            $num_warnings++;
-                                        }
-                                        break;
-                                }
-                                break;
-                            case 'array_count':
-                                switch ($warning['threshold_type']) {
-                                    case '>':
-                                        if (is_array($value) && count($value) > $warning['threshold']) {
-                                            $warning_html .= $this->warning_display($warning);
-                                            $num_warnings++;
-                                        }
-                                        break;
+		foreach ($warnings as $type => $warning_set) {
+			switch ($type) {
+				case 'Bad WP Options':
+					foreach ($warning_set as $option_name => $warning) {
+						$warn = false;
+						$value = get_option($option_name);
+						switch ($warning['type']) {
+							case 'numeric':
+								switch ($warning['threshold_type']) {
+									case '>':
+										if ($value > $warning['threshold']) {
+											$warning_html .= $this->warning_display($warning);
+											$num_warnings++;
+										}
+										break;
+									case '<':
+										if ($value < $warning['threshold']) {
+											$warning_html .= $this->warning_display($warning);
+											$num_warnings++;
+										}
+										break;
+									case '=':
+										if ($value == $warning['threshold']) {
+											$warning_html .= $this->warning_display($warning);
+											$num_warnings++;
+										}
+										break;
+								}
+								break;
+							case 'text':
+								switch ($warning['threshold_type']) {
+									case '=':
+										if ($value == $warning['threshold']) {
+											$warning_html .= $this->warning_display($warning);
+											$num_warnings++;
+										}
+										break;
+									case '!=':
+										if ($value != $warning['threshold']) {
+											$warning_html .= $this->warning_display($warning);
+											$num_warnings++;
+										}
+										break;
+								}
+								break;
+							case 'array_count':
+								switch ($warning['threshold_type']) {
+									case '>':
+										if (is_array($value) && count($value) > $warning['threshold']) {
+											$warning_html .= $this->warning_display($warning);
+											$num_warnings++;
+										}
+										break;
+								}
+								break;
+						}
+					}
+					break;
+				case 'Advanced Warnings':
+					foreach ($warning_set as $name => $warning) {
+						if ($warning['is_warning']()) {
+							$warning_html .= $this->warning_display($warning);
+							$num_warnings++;
+						}
+					}
+					break;
+				case 'Bad Plugins':
+					foreach ($warning_set as $plugin_folder => $warning) {
+						$warn = false;
+					}
+			}
+		}
 
-                                }
-                                break;
-                        }
-                    }
-                    break;
-                case 'Advanced Warnings':
-                    foreach ($warning_set as $name => $warning) {
-                        if ($warning['is_warning']()) {
-                            $warning_html .= $this->warning_display($warning);
-                            $num_warnings++;
-                        }
-                    }
-                    break;
-                case 'Bad Plugins':
-                    foreach ($warning_set as $plugin_folder => $warning) {
-                        $warn = false;
-                    }
-            }
+		$warn = false;
+		$plugins = $this->get_plugins();
+		foreach ($plugins as $file => $plugin) {
+			if (!is_plugin_active($file)) {
+				$plugin['file'] = $file;
+				$warning_html .= $this->plugin_not_active_warning($plugin);
+				$num_warnings++;
+			}
+		}
 
+		return array($warning_html, $num_warnings);
+	}
 
-        }
-
-
-        $warn = false;
-        $plugins = $this->get_plugins();
-        foreach ($plugins as $file => $plugin) {
-            if (!is_plugin_active($file)) {
-                $plugin['file'] = $file;
-                $warning_html .= $this->plugin_not_active_warning($plugin);
-                $num_warnings++;
-            }
-        }
-
-
-        return array($warning_html, $num_warnings);
-    }
-
-    private function warning_display($warning)
-    {
-        return <<<HTML
+	private function warning_display($warning) {
+		return <<<HTML
 <div class="optimization-item">
 	<div style="float:left;width:44px;font-size:36px">
 		<span class="glyphicon glyphicon-exclamation-sign"></span>
@@ -1217,41 +1148,41 @@ HTML;
 	</div>
 </div>
 HTML;
-    }
+	}
 
-    /*
-    public function plugin_list(){
-        //Name,PluginURI,Version,Description,Author,AuthorURI,TextDomain,DomainPath,Network,Title,AuthorName
+	/*
+	public function plugin_list(){
+		//Name,PluginURI,Version,Description,Author,AuthorURI,TextDomain,DomainPath,Network,Title,AuthorName
 
-        $string = "";
-        include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		$string = "";
+		include_once( ABSPATH . 'wp-admin/includes/plugin.php' );
 
-        $plugins = $this->get_plugins();
-        foreach($plugins as $filename=>$plugin){
-            $name = $plugin['Name'];
-            $title = $plugin['Title'];
-            $checked = "";
-            if(is_plugin_active($filename)){
-                $checked = "checked='checked'";
-            }
-            ob_start();
-            $dump = ob_get_contents();
-            ob_end_clean();
-            $string .=<<<HTML
-            <div class="wrap">
-                <span style="font-size:16pt"><input type="checkbox" $checked> $title</span> <a href="">delete</a>
-                {$dump}
-            </div>
+		$plugins = $this->get_plugins();
+		foreach($plugins as $filename=>$plugin){
+			$name = $plugin['Name'];
+			$title = $plugin['Title'];
+			$checked = "";
+			if(is_plugin_active($filename)){
+				$checked = "checked='checked'";
+			}
+			ob_start();
+			$dump = ob_get_contents();
+			ob_end_clean();
+			$string .=<<<HTML
+			<div class="wrap">
+				<span style="font-size:16pt"><input type="checkbox" $checked> $title</span> <a href="">delete</a>
+				{$dump}
+			</div>
 HTML;
 
-        }
-        return $string;
-    }*/
+		}
+		return $string;
+	}*/
 
-    private function plugin_not_active_warning($plugin)
-    {
-        $manage = "plugins.php?plugin_status=inactive";
-        return <<<HTML
+	private function plugin_not_active_warning($plugin) {
+		$manage = 'plugins.php?plugin_status=inactive';
+
+		return <<<HTML
 <div class="optimization-item">
 	<div style="float:left;width:44px;font-size:36px">
 		<span class="glyphicon glyphicon-exclamation-sign"></span>
@@ -1268,119 +1199,96 @@ HTML;
 	</div>
 </div>
 HTML;
-    }
+	}
 
-    public function get_advanced_optimizations()
-    {
-        return $this->advanced_optimizations;
-    }
+	public function get_advanced_optimizations() {
+		return $this->advanced_optimizations;
+	}
 
-    public function set_lockdown($lockdown = true)
-    {
-        update_option('a2_optimized_lockdown', $lockdown);
-    }
+	public function set_lockdown($lockdown = true) {
+		update_option('a2_optimized_lockdown', $lockdown);
+	}
 
-    public function set_nomods($lockdown = true)
-    {
-        update_option('a2_optimized_nomods', $lockdown);
-    }
+	public function set_nomods($lockdown = true) {
+		update_option('a2_optimized_nomods', $lockdown);
+	}
 
-    public function set_deny_direct($deny = true)
-    {
-        update_option('a2_optimized_deny_direct', $deny);
-    }
+	public function set_deny_direct($deny = true) {
+		update_option('a2_optimized_deny_direct', $deny);
+	}
 
-    public function write_wp_config()
-    {
+	public function write_wp_config() {
+		$lockdown = $this->get_lockdown();
 
-        $lockdown = $this->get_lockdown();
+		$nomods = $this->get_nomods();
 
+		touch(ABSPATH . 'wp-config.php');
+		copy(ABSPATH . 'wp-config.php', ABSPATH . 'wp-config.php.bak.a2');
 
-        $nomods = $this->get_nomods();
-
-        touch(ABSPATH . 'wp-config.php');
-        copy(ABSPATH . 'wp-config.php', ABSPATH . 'wp-config.php.bak.a2');
-
-
-        $a2_config = "";
-        if ($lockdown) {
-            $a2_config = <<<PHP
+		$a2_config = '';
+		if ($lockdown) {
+			$a2_config = <<<PHP
 
 // BEGIN A2 CONFIG
 define('DISALLOW_FILE_EDIT', true);
 // END A2 CONFIG
 PHP;
-        }
+		}
 
-        if ($nomods) {
-            $a2_config .= <<<PHP
+		if ($nomods) {
+			$a2_config .= <<<PHP
 
 define('DISALLOW_FILE_MODS', true);
 
 PHP;
-        }
+		}
 
+		$wpconfig = file_get_contents(ABSPATH . 'wp-config.php');
+		$pattern = "/[\r\n]*[\/][\/] BEGIN A2 CONFIG.*[\/][\/] END A2 CONFIG[\r\n]*/msU";
+		$wpconfig = preg_replace($pattern, '', $wpconfig);
 
+		$wpconfig = str_replace('<?php', "<?php{$a2_config}", $wpconfig);
 
+		//Write the rules to .htaccess
+		$fh = fopen(ABSPATH . 'wp-config.php', 'w+');
+		fwrite($fh, $wpconfig);
+		fclose($fh);
+	}
 
+	public function get_lockdown() {
+		return get_option('a2_optimized_lockdown');
+	}
 
+	public function get_nomods() {
+		return get_option('a2_optimized_nomods');
+	}
 
+	public function write_htaccess() {
+		//make sure .htaccess exists
+		touch(ABSPATH . '.htaccess');
+		touch(ABSPATH . '404.shtml');
+		touch(ABSPATH . '403.shtml');
 
-        $wpconfig = file_get_contents(ABSPATH . 'wp-config.php');
-        $pattern = "/[\r\n]*[\/][\/] BEGIN A2 CONFIG.*[\/][\/] END A2 CONFIG[\r\n]*/msU";
-        $wpconfig = preg_replace($pattern, '', $wpconfig);
+		//make sure it is writable by owner and readable by everybody
+		chmod(ABSPATH . '.htaccess', 0644);
 
-        $wpconfig = str_replace("<?php", "<?php{$a2_config}", $wpconfig);
+		$home_path = explode('/', str_replace(array('http://', 'https://'), '', home_url()), 2);
 
-        //Write the rules to .htaccess
-        $fh = fopen(ABSPATH . 'wp-config.php', 'w+');
-        fwrite($fh, $wpconfig);
-        fclose($fh);
+		if (!isset($home_path[1]) || $home_path[1] == '') {
+			$home_path = '/';
+		} else {
+			$home_path = "/{$home_path[1]}/";
+		}
 
-    }
+		$a2hardening = '';
 
-    public function get_lockdown()
-    {
-        return get_option('a2_optimized_lockdown');
-    }
+		if ($this->get_deny_direct()) {
+			//Append the new rules to .htaccess
 
-    public function get_nomods()
-    {
-        return get_option('a2_optimized_nomods');
-    }
+			//get the path to the WordPress install - nvm
+			//$rewrite_base = "/".trim(explode('/',str_replace(array('https://','http://'),'',site_url()),2)[1],"/")."/";
 
-    public function write_htaccess()
-    {
-
-
-        //make sure .htaccess exists
-        touch(ABSPATH . '.htaccess');
-        touch(ABSPATH . "404.shtml");
-        touch(ABSPATH . "403.shtml");
-
-        //make sure it is writable by owner and readable by everybody
-        chmod(ABSPATH . '.htaccess', 0644);
-
-
-        $home_path = explode("/", str_replace(array("http://", "https://"), "", home_url()), 2);
-
-        if (!isset($home_path[1]) || $home_path[1] == "") {
-            $home_path = "/";
-        } else {
-            $home_path = "/{$home_path[1]}/";
-        }
-
-        $a2hardening = "";
-
-
-        if ($this->get_deny_direct()) {
-            //Append the new rules to .htaccess
-
-            //get the path to the WordPress install - nvm
-            //$rewrite_base = "/".trim(explode('/',str_replace(array('https://','http://'),'',site_url()),2)[1],"/")."/";
-
-
-            $a2hardening = <<<APACHE
+			$a2hardening = <<<APACHE
 
 # BEGIN WordPress Hardening
 <FilesMatch "^.*(error_log|wp-config\.php|php.ini|\.[hH][tT][aApP].*)$">
@@ -1405,202 +1313,184 @@ Deny from all
 </IfModule>
 # END WordPress Hardening
 APACHE;
+		}
 
-        }
+		$litespeed = '';
 
-        $litespeed = "";
+		$htaccess = file_get_contents(ABSPATH . '.htaccess');
 
+		$pattern = "/[\r\n]*# BEGIN WordPress Hardening.*# END WordPress Hardening[\r\n]*/msiU";
+		$htaccess = preg_replace($pattern, '', $htaccess);
 
-        $htaccess = file_get_contents(ABSPATH . '.htaccess');
-
-        $pattern = "/[\r\n]*# BEGIN WordPress Hardening.*# END WordPress Hardening[\r\n]*/msiU";
-        $htaccess = preg_replace($pattern, '', $htaccess);
-
-        $htaccess = <<<HTACCESS
+		$htaccess = <<<HTACCESS
 $litespeed
 $a2hardening
 $htaccess
 HTACCESS;
 
-        //Write the rules to .htaccess
-        $fp = fopen(ABSPATH . '.htaccess', "c");
+		//Write the rules to .htaccess
+		$fp = fopen(ABSPATH . '.htaccess', 'c');
 
-        if (flock($fp, LOCK_EX)) {
-            ftruncate($fp, 0);      // truncate file
-            fwrite($fp, $htaccess);
-            fflush($fp);            // flush output before releasing the lock
-            flock($fp, LOCK_UN);    // release the lock
-        } else {
-            //no file lock :(
-        }
+		if (flock($fp, LOCK_EX)) {
+			ftruncate($fp, 0);      // truncate file
+			fwrite($fp, $htaccess);
+			fflush($fp);            // flush output before releasing the lock
+			flock($fp, LOCK_UN);    // release the lock
+		} else {
+			//no file lock :(
+		}
+	}
 
-    }
+	public function get_deny_direct() {
+		return get_option('a2_optimized_deny_direct');
+	}
 
-    public function get_deny_direct()
-    {
-        return get_option('a2_optimized_deny_direct');
-    }
+	/**
+	 * A wrapper function delegating to WP delete_option() but it prefixes the input $optionName
+	 * to enforce "scoping" the options in the WP options table thereby avoiding name conflicts
+	 * @param  $optionName string defined in settings.php and set as keys of $this->optionMetaData
+	 * @return bool from delegated call to delete_option()
+	 */
+	public function deleteOption($optionName) {
+		$prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
+		return delete_option($prefixedOptionName);
+	}
 
+	/**
+	 * A wrapper function delegating to WP add_option() but it prefixes the input $optionName
+	 * to enforce "scoping" the options in the WP options table thereby avoiding name conflicts
+	 * @param  $optionName string defined in settings.php and set as keys of $this->optionMetaData
+	 * @param  $value mixed the new value
+	 * @return null from delegated call to delete_option()
+	 */
+	public function updateOption($optionName, $value) {
+		$prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
+		return update_option($prefixedOptionName, $value);
+	}
 
-    /**
-     * A wrapper function delegating to WP delete_option() but it prefixes the input $optionName
-     * to enforce "scoping" the options in the WP options table thereby avoiding name conflicts
-     * @param  $optionName string defined in settings.php and set as keys of $this->optionMetaData
-     * @return bool from delegated call to delete_option()
-     */
-    public function deleteOption($optionName)
-    {
-        $prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
-        return delete_option($prefixedOptionName);
-    }
+	/**
+	 * Checks if a particular user has a role.
+	 * Returns true if a match was found.
+	 *
+	 * @param string $role Role name.
+	 * @param int $user_id (Optional) The ID of a user. Defaults to the current user.
+	 * @return bool
+	 */
+	public function checkUserRole($role, $user_id = null) {
+		if (is_numeric($user_id)) {
+			$user = get_userdata($user_id);
+		} else {
+			$user = wp_get_current_user();
+		}
 
-    /**
-     * A wrapper function delegating to WP add_option() but it prefixes the input $optionName
-     * to enforce "scoping" the options in the WP options table thereby avoiding name conflicts
-     * @param  $optionName string defined in settings.php and set as keys of $this->optionMetaData
-     * @param  $value mixed the new value
-     * @return null from delegated call to delete_option()
-     */
-    public function updateOption($optionName, $value)
-    {
-        $prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
-        return update_option($prefixedOptionName, $value);
-    }
+		return empty($user) ? false : in_array($role, (array)$user->roles);
+	}
 
-    /**
-     * Checks if a particular user has a role.
-     * Returns true if a match was found.
-     *
-     * @param string $role Role name.
-     * @param int $user_id (Optional) The ID of a user. Defaults to the current user.
-     * @return bool
-     */
-    function checkUserRole($role, $user_id = null)
-    {
-        if (is_numeric($user_id)) {
-            $user = get_userdata($user_id);
-        } else {
-            $user = wp_get_current_user();
-        }
+	/**
+	 * A wrapper function delegating to WP get_option() but it prefixes the input $optionName
+	 * to enforce "scoping" the options in the WP options table thereby avoiding name conflicts
+	 * @param $optionName string defined in settings.php and set as keys of $this->optionMetaData
+	 * @param $default string default value to return if the option is not set
+	 * @return string the value from delegated call to get_option(), or optional default value
+	 * if option is not set.
+	 */
+	public function getOption($optionName, $default = null) {
+		$prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
+		$retVal = get_option($prefixedOptionName);
+		if (!$retVal && $default) {
+			$retVal = $default;
+		}
 
-        return empty($user) ? false : in_array($role, (array)$user->roles);
-    }
+		return $retVal;
+	}
 
+	/**
+	 * @param $roleName string a standard WP role name like 'Administrator'
+	 * @return bool
+	 */
+	public function isUserRoleEqualOrBetterThan($roleName) {
+		if ('Anyone' == $roleName) {
+			return true;
+		}
+		$capability = $this->roleToCapability($roleName);
 
+		return $this->checkUserCapability($capability);
+	}
 
-    /**
-     * A wrapper function delegating to WP get_option() but it prefixes the input $optionName
-     * to enforce "scoping" the options in the WP options table thereby avoiding name conflicts
-     * @param $optionName string defined in settings.php and set as keys of $this->optionMetaData
-     * @param $default string default value to return if the option is not set
-     * @return string the value from delegated call to get_option(), or optional default value
-     * if option is not set.
-     */
-    public function getOption($optionName, $default = null)
-    {
-        $prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
-        $retVal = get_option($prefixedOptionName);
-        if (!$retVal && $default) {
-            $retVal = $default;
-        }
-        return $retVal;
-    }
+	/**
+	 * Given a WP role name, return a WP capability which only that role and roles above it have
+	 * http://codex.wordpress.org/Roles_and_Capabilities
+	 * @param  $roleName
+	 * @return string a WP capability or '' if unknown input role
+	 */
+	protected function roleToCapability($roleName) {
+		switch ($roleName) {
+			case 'Super Admin':
+				return 'manage_options';
+			case 'Administrator':
+				return 'manage_options';
+			case 'Editor':
+				return 'publish_pages';
+			case 'Author':
+				return 'publish_posts';
+			case 'Contributor':
+				return 'edit_posts';
+			case 'Subscriber':
+				return 'read';
+			case 'Anyone':
+				return 'read';
+		}
 
-    /**
-     * @param $roleName string a standard WP role name like 'Administrator'
-     * @return bool
-     */
-    public function isUserRoleEqualOrBetterThan($roleName)
-    {
-        if ('Anyone' == $roleName) {
-            return true;
-        }
-        $capability = $this->roleToCapability($roleName);
-        return $this->checkUserCapability($capability);
-    }
+		return '';
+	}
 
-    /**
-     * Given a WP role name, return a WP capability which only that role and roles above it have
-     * http://codex.wordpress.org/Roles_and_Capabilities
-     * @param  $roleName
-     * @return string a WP capability or '' if unknown input role
-     */
-    protected function roleToCapability($roleName)
-    {
-        switch ($roleName) {
-            case 'Super Admin':
-                return 'manage_options';
-            case 'Administrator':
-                return 'manage_options';
-            case 'Editor':
-                return 'publish_pages';
-            case 'Author':
-                return 'publish_posts';
-            case 'Contributor':
-                return 'edit_posts';
-            case 'Subscriber':
-                return 'read';
-            case 'Anyone':
-                return 'read';
-        }
-        return '';
-    }
+	/**
+	 * Checks if a particular user has a given capability without calling current_user_can.
+	 * Returns true if a match was found.
+	 *
+	 * @param string $capability Capability name.
+	 * @param int $user_id (Optional) The ID of a user. Defaults to the current user.
+	 * @return bool
+	 */
+	public function checkUserCapability($capability, $user_id = null) {
+		if (!is_numeric($user_id)) {
+			$user_id = wp_get_current_user();
+		}
+		if (is_numeric($user_id)) {
+			$user = get_userdata($user_id);
+		} else {
+			return false;
+		}
+		$capabilities = (array)$user->allcaps;
 
-    /**
-     * Checks if a particular user has a given capability without calling current_user_can.
-     * Returns true if a match was found.
-     *
-     * @param string $capability Capability name.
-     * @param int $user_id (Optional) The ID of a user. Defaults to the current user.
-     * @return bool
-     */
-    function checkUserCapability($capability, $user_id = null)
-    {
-        if (!is_numeric($user_id)) {
-            $user_id = wp_get_current_user();
-        }
-        if (is_numeric($user_id)) {
-            $user = get_userdata($user_id);
-        } else {
-            return false;
-        }
-        $capabilities = (array)$user->allcaps;
-        return empty($user) ? false : isset($capabilities["{$capability}"]) ? $capabilities["{$capability}"] : false;
-    }
+		return empty($user) ? false : isset($capabilities["{$capability}"]) ? $capabilities["{$capability}"] : false;
+	}
 
+	private function plugin_display($plugin) {
+		$links['Delete'] = admin_url() . 'admin.php?page=' . $this->getSettingsSlug() . "&delete={$plugin['Name']}";
 
+		$glyph = 'warning-sign';
+		if (!$plugin['active']) {
+			$glyph = 'exclamation-sign';
+			$links['Activate'] = admin_url() . 'admin.php?page=' . $this->getSettingsSlug() . "&activate={$plugin['Name']}";
+		} else {
+			$glyph = 'ok';
+			$links['Deactivate'] = admin_url() . 'admin.php?page=' . $this->getSettingsSlug() . "&deactivate={$plugin['Name']}";
+			if (isset($plugin['config_url'])) {
+				$links['Configure'] = $plugin['config_url'];
+			}
+		}
 
-
-    private function plugin_display($plugin)
-    {
-
-
-        $links['Delete'] = admin_url() . "admin.php?page=" . $this->getSettingsSlug() . "&delete={$plugin['Name']}";
-
-        $glyph = 'warning-sign';
-        if (!$plugin['active']) {
-            $glyph = 'exclamation-sign';
-            $links['Activate'] = admin_url() . "admin.php?page=" . $this->getSettingsSlug() . "&activate={$plugin['Name']}";
-        } else {
-            $glyph = 'ok';
-            $links['Deactivate'] = admin_url() . "admin.php?page=" . $this->getSettingsSlug() . "&deactivate={$plugin['Name']}";
-            if (isset($plugin['config_url'])) {
-                $links['Configure'] = $plugin['config_url'];
-            }
-        }
-
-
-        $link_html = "";
-        foreach ($links as $name => $href) {
-            $link_html .= <<<HTML
+		$link_html = '';
+		foreach ($links as $name => $href) {
+			$link_html .= <<<HTML
 <a href="{$href}">$name</a> |
 HTML;
-        }
+		}
 
-        $link_html = trim($link_html, " |");
+		$link_html = trim($link_html, ' |');
 
-
-        return <<<HTML
+		return <<<HTML
 <div class="optimization-item">
 	<div style="float:left;width:44px;font-size:36px">
 		<span class="glyphicon glyphicon-{$glyph}"></span>
@@ -1616,25 +1506,21 @@ HTML;
 	</div>
 </div>
 HTML;
+	}
 
-    }
+	protected function is_a2() {
+		if ( is_dir('/opt/a2-optimized') ) {
+			return true;
+		}
 
+		return false;
+	}
 
-    protected function is_a2(){
-        if( is_dir("/opt/a2-optimized") ){
-            return true;
-        }
-        return false;
-    }
-
-    function get_plugin_description()
-    {
-
-            $description = <<<HTML
+	public function get_plugin_description() {
+		$description = <<<HTML
 
 HTML;
 
-
-        return $description;
-    }
+		return $description;
+	}
 }
