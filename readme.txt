@@ -137,7 +137,6 @@ W3 Total Cache is the only plugin that handles all types of caching.  It caches 
 Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hosting provides a few more tools for speeding up your site when hosted on an A2 Hosting server.
 
 
-
 == Changelog ==
 
 = 2.0.10.9.6 =
