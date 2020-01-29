@@ -1272,6 +1272,8 @@ HTML;
 		<div class="tab-content">
 			<h3>reCaptcha Settings</h3>
 			<div>
+				<p>You may enter your own Google reCaptcha keys below.</p>
+				<p>You can get complete instructions for generating keys from the following KB article: <a href="https://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/obtaining-google-recaptcha-site-key-and-secret-key" target="_blank">How to get a site key and secret key</a></p>
 				<form action="{$admin_url}" method="POST">
 					<div class="form-group">
 					    <label>
