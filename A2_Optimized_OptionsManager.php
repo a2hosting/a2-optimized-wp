@@ -7,7 +7,9 @@
 */
 
 // Prevent direct access to this file
-if ( ! defined( 'WPINC' ) )  die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 if (is_admin()) {
 	require_once ABSPATH . 'wp-admin/includes/class-wp-upgrader.php';
@@ -433,85 +435,79 @@ class A2_Optimized_OptionsManager {
 		delete_option('a2_block_xmlrpc');
 	}
 
-
 	/**
 	*  Regenerate wp-config.php salts
 	*
 	*/
 	public function regenerate_wpconfig_salts() {
 		$this->salts_array = array(
-            "define('AUTH_KEY',",
-            "SECURE_AUTH_KEY",
-            "LOGGED_IN_KEY",
-            "NONCE_KEY",
-            "define('AUTH_SALT',",
-            "SECURE_AUTH_SALT",
-            "LOGGED_IN_SALT",
-            "NONCE_SALT",
-        );
+			"define('AUTH_KEY',",
+			'SECURE_AUTH_KEY',
+			'LOGGED_IN_KEY',
+			'NONCE_KEY',
+			"define('AUTH_SALT',",
+			'SECURE_AUTH_SALT',
+			'LOGGED_IN_SALT',
+			'NONCE_SALT',
+		);
 
-        $returned_salts = file_get_contents("https://api.wordpress.org/secret-key/1.1/salt/");
-        $this->new_salts = explode("\n", $returned_salts);
+		$returned_salts = file_get_contents('https://api.wordpress.org/secret-key/1.1/salt/');
+		$this->new_salts = explode("\n", $returned_salts);
 
 		update_option('a2_updated_regenerate-salts', date('F jS, Y'));
 
-        return $this->writeSalts($this->salts_array, $this->new_salts);
+		return $this->writeSalts($this->salts_array, $this->new_salts);
 	}
 
 	public function regenerate_wpconfig_desc() {
-		$output = '<p>Generate new salt values for wp-config.php<br /><strong>This will log out all users including yourself</strong><br />Last regenerated:</p>'; 
+		$output = '<p>Generate new salt values for wp-config.php<br /><strong>This will log out all users including yourself</strong><br />Last regenerated:</p>';
 		
 		return $output;
 	}
 
-    private function writeSalts($salts_array, $new_salts){
+	private function writeSalts($salts_array, $new_salts) {
+		$config_file = $this->config_file_path();
 
-        $config_file = $this->config_file_path();
+		$tmp_config_file = ABSPATH . 'wp-config-tmp.php';
 
-        $tmp_config_file = ABSPATH . 'wp-config-tmp.php';
+		foreach ($salts_array as $salt_key => $salt_value) {
+			$readin_config = fopen($config_file, 'r');
+			$writing_config = fopen($tmp_config_file, 'w');
 
-        foreach ($salts_array as $salt_key => $salt_value) {
+			$replaced = false;
+			while (!feof($readin_config)) {
+				$line = fgets($readin_config);
+				if (stristr($line, $salt_value)) {
+					$line = $new_salts[$salt_key] . "\n";
+					$replaced = true;
+				}
+				fputs($writing_config, $line);
+			}
 
-            $readin_config = fopen($config_file, 'r');
-            $writing_config = fopen($tmp_config_file, 'w');
+			fclose($readin_config);
+			fclose($writing_config);
 
-            $replaced = false;
-            while (!feof($readin_config)) {
-                $line = fgets($readin_config);
-                if (stristr($line, $salt_value)) {
-                    $line = $new_salts[$salt_key] . "\n";
-                    $replaced = true;
-                }
-                fputs($writing_config, $line);
-            }
+			if ($replaced) {
+				rename($tmp_config_file, $config_file);
+			} else {
+				unlink($tmp_config_file);
+			}
+		}
+	}
+	
+	private function config_file_path() {
+		$salts_file_name = 'wp-config';
+		$config_file = ABSPATH . $salts_file_name . '.php';
+		$config_file_up = ABSPATH . '../' . $salts_file_name . '.php';
 
-            fclose($readin_config);
-            fclose($writing_config);
+		if (file_exists($config_file) && is_writable($config_file)) {
+			return $config_file;
+		} elseif (file_exists($config_file_up) && is_writable($config_file_up) && !file_exists(dirname(ABSPATH) . '/wp-settings.php')) {
+			return $config_file_up;
+		}
 
-            if ($replaced) {
-                rename($tmp_config_file, $config_file);
-            } else {
-                unlink($tmp_config_file);
-            }
-        }
-    }
-    
-    private function config_file_path(){
-
-        $salts_file_name = 'wp-config';
-        $config_file = ABSPATH . $salts_file_name . '.php';
-        $config_file_up = ABSPATH . '../' . $salts_file_name . '.php';
-
-        if (file_exists($config_file) && is_writable($config_file)) {
-            return $config_file;
-        } elseif (file_exists($config_file_up) && is_writable($config_file_up) && !file_exists(dirname(ABSPATH) . '/wp-settings.php')) {
-            return $config_file_up;
-        }
-
-        return false;
-    }
-
-
+		return false;
+	}
 
 	/**
 	 * Update w3tc plugin
@@ -1631,9 +1627,9 @@ JAVASCRIPT;
 				$active_text = 'Optional';
 				$glyph = 'warning-sign';
 				if (isset($item['enable']) && $active_class == '') {
-					$action_text = "Enable";
-					if(isset($item['update'])){
-						$action_text = "Update Now";	
+					$action_text = 'Enable';
+					if (isset($item['update'])) {
+						$action_text = 'Update Now';
 					}
 					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", $action_text, '_self');
 				}
@@ -1680,9 +1676,9 @@ HTML;
 			}
 
 			$description = $item['description'];
-			if(isset($item['last_updated']) && $item['last_updated']){
+			if (isset($item['last_updated']) && $item['last_updated']) {
 				$description .= 'Last Updated: ';
-				if(get_option('a2_updated_' . $item['slug'])){
+				if (get_option('a2_updated_' . $item['slug'])) {
 					$description .= get_option('a2_updated_' . $item['slug']);
 				} else {
 					$description .= 'Never';
