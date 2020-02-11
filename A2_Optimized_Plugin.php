@@ -7,7 +7,9 @@
 */
 
 // Prevent direct access to this file
-if ( ! defined( 'WPINC' ) )  die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 include_once('A2_Optimized_OptionsManager.php');
 
@@ -158,7 +160,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 	}
 
 	public function upgrade() {
-		if(file_exists(ABSPATH . 'wp-config.php.bak.a2')){
+		if (file_exists(ABSPATH . 'wp-config.php.bak.a2')) {
 			unlink(ABSPATH . 'wp-config.php.bak.a2');
 		}
 	}
@@ -506,10 +508,10 @@ HTML;
 			add_action('admin_notices', array(&$this, 'config_page_notice'));
 		}
 
-		if(get_template() == "Divi"){
+		if (get_template() == 'Divi') {
 			$w3tc = $this->get_w3tc_config();
 			
-			if($w3tc['minify.html.enable'] || $w3tc['minify.css.enable'] || $w3tc['minify.js.enable']){
+			if ($w3tc['minify.html.enable'] || $w3tc['minify.css.enable'] || $w3tc['minify.js.enable']) {
 				add_action('admin_notices', array(&$this, 'divi_notice'));
 			}
 		}
@@ -730,12 +732,12 @@ HTML;
 	*/
 	public function client_is_automattic() {
 		//check for jetpack / akismet / vaultpress
-		if(
+		if (
 			!is_plugin_active('jetpack/jetpack.php')
 			&& !is_plugin_active('akismet/akismet.php')
-			&& !is_plugin_active('vaultpress/vaultpress.php')){
-				return false;
-			};
+			&& !is_plugin_active('vaultpress/vaultpress.php')) {
+			return false;
+		}
 		
 		$ip_address = $_SERVER['REMOTE_ADDR'];
 		if ($this->is_ip_in_range(
