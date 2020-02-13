@@ -7,7 +7,9 @@
 */
 
 // Prevent direct access to this file
-if ( ! defined( 'WPINC' ) )  die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 include_once('A2_Optimized_OptionsManager.php');
 
@@ -158,7 +160,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 	}
 
 	public function upgrade() {
-		if(file_exists(ABSPATH . 'wp-config.php.bak.a2')){
+		if (file_exists(ABSPATH . 'wp-config.php.bak.a2')) {
 			unlink(ABSPATH . 'wp-config.php.bak.a2');
 		}
 	}
@@ -443,6 +445,17 @@ HTML;
 HTML;
 	}
 
+	public function divi_notice() {
+		$current_theme = get_template();
+		
+		echo <<<HTML
+<div id="divi-minify-notice" class="notice notice-error" >
+     <p><strong style="color:red">Your theme, {$current_theme}, currently provides HTML/JS/CSS minification. This feature is also enabled by A2 Optimized. This may cause issues with some functionality of your theme.</strong></p>
+     <p>You can disable HTML/JS/CSS either in your theme options or within the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized Configuration page</a></p>
+</div>
+HTML;
+	}
+
 	public function rwl_notice() {
 		$rwl_page = get_option('wpseh_l01gnhdlwp');
 		$home_page = get_home_url();
@@ -493,6 +506,14 @@ HTML;
 
 		if (isset($_GET['page']) && in_array($_GET['page'], $this->config_pages)) {
 			add_action('admin_notices', array(&$this, 'config_page_notice'));
+		}
+
+		if (get_template() == 'Divi') {
+			$w3tc = $this->get_w3tc_config();
+			
+			if ($w3tc['minify.html.enable'] || $w3tc['minify.css.enable'] || $w3tc['minify.js.enable']) {
+				add_action('admin_notices', array(&$this, 'divi_notice'));
+			}
 		}
 
 		foreach ($active_plugins as $active_plugin) {
@@ -711,12 +732,12 @@ HTML;
 	*/
 	public function client_is_automattic() {
 		//check for jetpack / akismet / vaultpress
-		if(
+		if (
 			!is_plugin_active('jetpack/jetpack.php')
 			&& !is_plugin_active('akismet/akismet.php')
-			&& !is_plugin_active('vaultpress/vaultpress.php')){
-				return false;
-			};
+			&& !is_plugin_active('vaultpress/vaultpress.php')) {
+			return false;
+		}
 		
 		$ip_address = $_SERVER['REMOTE_ADDR'];
 		if ($this->is_ip_in_range(
