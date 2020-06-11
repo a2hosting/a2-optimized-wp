@@ -93,7 +93,7 @@ class A2_Optimized_OptionsManager {
 				2 => 'rss2',
 				3 => 'atom'
 			),
-			'pgcache.compatibility' => true;
+			'pgcache.compatibility' => true,
 			'minify.debug' => false,
 			'dbcache.debug' => false,
 			'objectcache.debug' => false,
