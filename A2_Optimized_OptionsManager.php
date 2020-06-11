@@ -93,6 +93,7 @@ class A2_Optimized_OptionsManager {
 				2 => 'rss2',
 				3 => 'atom'
 			),
+			'pgcache.compatibility' => true;
 			'minify.debug' => false,
 			'dbcache.debug' => false,
 			'objectcache.debug' => false,
@@ -308,6 +309,7 @@ class A2_Optimized_OptionsManager {
 		$vars['objectcache.enabled'] = true;
 		$vars['dbcache.enabled'] = true;
 		$vars['pgcache.enabled'] = true;
+		$vars['pgcache.compatibility'] = true;
 		$vars['pgcache.cache.ssl'] = true;
 		$vars['browsercache.enabled'] = true;
 
@@ -329,6 +331,7 @@ class A2_Optimized_OptionsManager {
 
 		$vars['pgcache.enabled'] = true;
 		$vars['pgcache.cache.ssl'] = true;
+		$vars['pgcache.compatibility'] = true;
 
 		$this->update_w3tc($vars);
 	}
