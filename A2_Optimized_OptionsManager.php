@@ -678,6 +678,26 @@ class A2_Optimized_OptionsManager {
 				$this->recaptcha_settings_save();
 				$this->settings_page_html();
 			}
+			if ($_GET['a2-page'] == 'dismiss_notice') {
+				$allowed_notices = array(
+					'a2_login_bookmarked',
+					'a2_notice_incompatible_plugins',
+					'a2_notice_w3totalcache',
+					'a2_notice_editinglocked',
+					'a2_notice_editingnotlocked',
+					'a2_notice_wordfence_waf',
+					'a2_notice_configpage',
+					'a2_notice_diviminify',
+				);
+				if (isset($_GET['a2-option']) && in_array($_GET['a2-option'], $allowed_notices)) {
+					if ($_GET['a2-option'] == 'a2_login_bookmarked') {
+						update_option($_GET['a2-option'], get_option('a2_login_page'));
+					} else {
+						update_option($_GET['a2-option'], '1');
+					}
+				}
+				$this->settings_page_html();
+			}
 			if ($_GET['a2-page'] == 'enable-rwl') {
 				if ($_GET['enable'] == '1') {
 					if (!isset($this->plugin_list['easy-hide-login/wp-hide-login.php'])) {

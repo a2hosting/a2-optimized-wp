@@ -418,40 +418,37 @@ HTML;
 	}
 
 	public function locked_files_notice() {
+		$dismiss_url = admin_url('admin.php?a2-page=dismiss_notice&a2-option=a2_notice_editinglocked&page=A2_Optimized_Plugin_admin');
 		echo <<<HTML
 <div id="editing-locked" class="notice notice-success" >
      <p ><b style="color:#00CC00">Editing of plugin and theme files</b> in the wp-admin is <b style="color:#00CC00">disabled</b> by A2 Optimized<br>
      <b style="color:#00CC00">This is recommended for security reasons</b>. You can modify this setting on the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized Configuration page</a></p>
-</div>
-HTML;
-	}
-
-	public function recaptcha_installed_notice() {
-		echo <<<HTML
-<div id="recaptcha-installed" class="notice notice-error" >
-     <p ><b style="color:#00CC00">A ReCaptacha plugin is installed.</b><br>
-     Disable and delete any plugins using reCaptcha to use the reCaptcha functionality built into A2 Optimized.
-     <br> </p>
+	<p><a href="{$dismiss_url}" class="button-primary">Don't show this again</a></p>
 </div>
 HTML;
 	}
 
 	public function not_locked_files_notice() {
+		$dismiss_url = admin_url('admin.php?a2-page=dismiss_notice&a2-option=a2_notice_editingnotlocked&page=A2_Optimized_Plugin_admin');
 		echo <<<HTML
 <div id="editing-locked" class="notice notice-error" >
      <p ><b style="color:red">Editing of plugin and theme files</b> in the wp-admin is <b style="color:red">enabled</b><br>
      <b style="color:red">This is not recommended for security reasons</b>. You can modify this setting on the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized Configuration page</a></p>
+	<p><a href="{$dismiss_url}" class="button-primary">Don't show this again</a></p>
 </div>
 HTML;
 	}
 
 	public function divi_notice() {
 		$current_theme = get_template();
+		$dismiss_url = admin_url('admin.php?a2-page=dismiss_notice&a2-option=a2_notice_diviminify&page=A2_Optimized_Plugin_admin');
 		
 		echo <<<HTML
 <div id="divi-minify-notice" class="notice notice-error" >
      <p><strong style="color:red">Your theme, {$current_theme}, currently provides HTML/JS/CSS minification. This feature is also enabled by A2 Optimized. This may cause issues with some functionality of your theme.</strong></p>
      <p>You can disable HTML/JS/CSS either in your theme options or within the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized Configuration page</a></p>
+	<p><a href="{$dismiss_url}" class="button-primary">Don't show this again</a></p>
+
 </div>
 HTML;
 	}
@@ -471,10 +468,12 @@ HTML;
 
 		$link = get_home_url() . '?' . $rwl_page;
 
-		if (!(strpos(get_option('a2_login_bookmarked', ''), $link) === 0)) {
+		if (!(strpos(get_option('a2_login_bookmarked', ''), $rwl_page) === 0)) {
+			$dismiss_url = admin_url('admin.php?a2-page=dismiss_notice&a2-option=a2_login_bookmark&page=A2_Optimized_Plugin_admin');
 			echo <<<HTML
 <div id="bookmark-login" class="updated" >
   <p>Your login page is now here: <a href="{$link}" >{$link}</a>. Bookmark this page!</p>
+  <p><a href="{$dismiss_url}" class="button-primary">Don't show this again</a></p>
 </div>
 HTML;
 		}
@@ -504,7 +503,7 @@ HTML;
 			wp_enqueue_script('a2_functions', plugins_url('/assets/js/functions.js', __FILE__), array('jquery'));
 		}
 
-		if (isset($_GET['page']) && in_array($_GET['page'], $this->config_pages)) {
+		if (isset($_GET['page']) && in_array($_GET['page'], $this->config_pages) && get_option('a2_notice_configpage') != '1') {
 			add_action('admin_notices', array(&$this, 'config_page_notice'));
 		}
 
@@ -512,34 +511,35 @@ HTML;
 			$w3tc = $this->get_w3tc_config();
 			
 			if ($w3tc['minify.html.enable'] || $w3tc['minify.css.enable'] || $w3tc['minify.js.enable']) {
-				add_action('admin_notices', array(&$this, 'divi_notice'));
+				if (get_option('a2_notice_diviminify') != '1') {
+					add_action('admin_notices', array(&$this, 'divi_notice'));
+				}
 			}
 		}
 
 		foreach ($active_plugins as $active_plugin) {
 			$plugin_folder = explode('/', $active_plugin);
-			if (in_array($plugin_folder[0], $this->incompatible_plugins)) {
+			if (in_array($plugin_folder[0], $this->incompatible_plugins) && get_option('a2_notice_incompatible_plugins') != '1') {
 				add_action('admin_notices', array(&$this, 'incompatible_plugin_notice'));
 			}
 			// Check for W3 Total Cache and show upgrade notice
-			if ($plugin_folder[0] == 'w3-total-cache' && !$_GET['a2-page']) {
+			if ($plugin_folder[0] == 'w3-total-cache' && !$_GET['a2-page'] && get_option('a2_notice_w3totalcache') != '1') {
 				add_action('admin_notices', array(&$this, 'w3totalcache_plugin_notice'));
 			}
 			// Check for Wordfence and if WAF rules are setup correctly, show notice if not
-			if ($plugin_folder[0] == 'wordfence' && $this->wordfence_waf_check() === false) {
+			if ($plugin_folder[0] == 'wordfence' && $this->wordfence_waf_check() === false && get_option['a2_notice_wordfence_waf'] != '1') {
 				add_action('admin_notices', array(&$this, 'wordfence_plugin_notice'));
 			}
 		}
 
-		//we don't need this function anymore since the new reCaptcha is now compatible with other recaptcha plugins
-		//if(function_exists('recaptcha_get_html')){
-		//add_action( 'admin_notices', array(&$this,'recaptcha_installed_notice'));
-		//}
-
 		if (!(strpos($_SERVER['SCRIPT_FILENAME'], 'plugins.php') === false) && defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT) {
-			add_action('admin_notices', array(&$this, 'locked_files_notice'));
+			if (get_option('a2_notice_editinglocked') != '1') {
+				add_action('admin_notices', array(&$this, 'locked_files_notice'));
+			}
 		} elseif (!(strpos($_SERVER['SCRIPT_FILENAME'], 'plugins.php') === false)) {
-			add_action('admin_notices', array(&$this, 'not_locked_files_notice'));
+			if (get_option('a2_notice_editingnotlocked') != '1') {
+				add_action('admin_notices', array(&$this, 'not_locked_files_notice'));
+			}
 		}
 	}
 
@@ -669,10 +669,12 @@ HTML;
 		} else {
 			$plugin_output = $plugins_arr[0];
 		}
+		$dismiss_url = admin_url('admin.php?a2-page=dismiss_notice&a2-option=a2_notice_incompatible_plugins&page=A2_Optimized_Plugin_admin');
 
 		echo <<<HTML
     <div class="notice notice-warning">
         <p class="danger">Proceed with caution: A currently active plugin, {$plugin_output} may be incompatible with A2 Optimized.</p>
+		<p><a href="{$dismiss_url}" class="button-primary">Don't show this again</a></p>
     </div>
 HTML;
 	}
@@ -791,28 +793,34 @@ HTML;
 	}
 	
 	public function wordfence_plugin_notice() {
+		$dismiss_url = admin_url('admin.php?a2-page=dismiss_notice&a2-option=a2_notice_wordfence_waf&page=A2_Optimized_Plugin_admin');
 		echo <<<HTML
     <div class="notice notice-warning">
         <p class="danger">Wordfence is not properly configured to work with A2 Optimized. Please review the Wordfence help document below to update your Wordfence settings.</p>
         <p><a href="https://www.wordfence.com/help/firewall/optimizing-the-firewall/" class="button-primary" target="_blank">Optimizing The Wordfence Firewall</a></p>
+		<p><a href="{$dismiss_url}" class="button-primary">Don't show this again</a></p>
     </div>
 HTML;
 	}
 
 	public function w3totalcache_plugin_notice() {
 		$admin_url = admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin');
+		$dismiss_url = admin_url('admin.php?a2-page=dismiss_notice&a2-option=a2_notice_w3totalcache&page=A2_Optimized_Plugin_admin');
 		echo <<<HTML
     <div class="notice notice-warning">
         <p class="danger">We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we can help you disable this W3 Total Cache plugin version and install a A2 Hosting supported version of W3 Total Cache in its place.</p>
         <p><a href="{$admin_url}" class="button-primary">Disable W3 Total Cache</a></p>
+		<p><a href="{$dismiss_url}" class="button-primary">Don't show this again</a></p>
     </div>
 HTML;
 	}
 
 	public function config_page_notice() {
+		$dismiss_url = admin_url('admin.php?a2-page=dismiss_notice&a2-option=a2_notice_configpage&page=A2_Optimized_Plugin_admin');
 		echo <<<HTML
     <div class="notice notice-info">
         <p>This site has been configured using the A2 Optimized plugin.  We, at A2 Hosting, have spent quite a bit of time figuring out the best set of options for this plugin; however, if you think you need to customize configuration: by all means... Continue.  If you have arrived here by mistake, you may use the <a href="admin.php?page=A2_Optimized_Plugin_admin">A2 Optimized administration page to configure this plugin</a>.</p>
+		<p><a href="{$dismiss_url}" class="button-primary">Don't show this again</a></p>
     </div>
 HTML;
 	}
