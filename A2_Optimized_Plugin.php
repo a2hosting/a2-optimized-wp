@@ -16,7 +16,7 @@ include_once('A2_Optimized_OptionsManager.php');
 class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 	const optionInstalled = '_installed';
 	const optionVersion = '_version';
-	private $config_pages = array(
+	private $config_pages = [
 		'w3tc_dashboard',
 		'w3tc_general',
 		'w3tc_pgcache',
@@ -33,15 +33,15 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 		'w3tc_install',
 		'w3tc_about',
 		'w3tc_faq'
-	);
+	];
 
 	//list of plugins that may conflict, displays a notice on installation of these plugins
-	private $incompatible_plugins = array(
+	private $incompatible_plugins = [
 		'wp-super-cache',
 		'wp-fastest-cache',
 		'wp-file-cache',
 		'better-wp-security',
-	);
+	];
 
 	public function install() {
 		// Initialize Plugin Options
@@ -73,13 +73,13 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 
 	public function getOptionMetaData() {
 		//  http://plugin.michael-simpson.com/?page_id=31
-		return array(
+		return [
 			//'_version' => array('Installed Version'), // Leave this one commented-out. Uncomment to test upgrades.
-			'recaptcha' => array('reCaptcha'),
+			'recaptcha' => ['reCaptcha'],
 			//'ATextInput' => array(__('Enter in some text', 'my-awesome-plugin')),
 			//'CanSeeSubmitData' => array(__('Can See Submission data', 'my-awesome-plugin'),
 			//                            'Administrator', 'Editor', 'Author', 'Contributor', 'Subscriber', 'Anyone')
-		);
+		];
 	}
 
 	protected function installDatabaseTables() {
@@ -104,7 +104,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 	public function getPluginHeaderValue($key) {
 		// Read the string from the comment header of the main plugin file
 		$data = file_get_contents($this->getPluginDir() . DIRECTORY_SEPARATOR . $this->getMainPluginFileName());
-		$match = array();
+		$match = [];
 		preg_match('/' . $key . ':\s*(\S+)/', $data, $match);
 		if (count($match) >= 1) {
 			return $match[1];
@@ -279,11 +279,11 @@ HTML;
 	}
 	
 	public function addActionsAndFilters() {
-		add_action('permalink_structure_changed', array(&$this, 'permalink_changed'));
+		add_action('permalink_structure_changed', [&$this, 'permalink_changed']);
 
 		$date = date('Y-m-d');
 		if (strpos($_SERVER['REQUEST_URI'], "login-{$date}") > 0) {
-			add_action('template_redirect', array(&$this, 'get_moved_login'));
+			add_action('template_redirect', [&$this, 'get_moved_login']);
 		}
 
 		add_filter( 'allow_minor_auto_core_updates', '__return_true' );
@@ -296,28 +296,28 @@ HTML;
 		*/
 
 		if (is_admin()) {
-			add_filter('admin_init', array(&$this, 'admin_init'));
-			add_action('admin_bar_menu', array(&$this, 'addAdminBar'), 8374);
-			add_action('admin_menu', array(&$this, 'addSettingsSubMenuPage'));
+			add_filter('admin_init', [&$this, 'admin_init']);
+			add_action('admin_bar_menu', [&$this, 'addAdminBar'], 8374);
+			add_action('admin_menu', [&$this, 'addSettingsSubMenuPage']);
 			if (defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT) {
-				add_action('admin_menu', array(&$this, 'addLockedEditor'), 100, 100);
+				add_action('admin_menu', [&$this, 'addLockedEditor'], 100, 100);
 			}
-			add_action('admin_print_styles', array(&$this, 'myStyleSheet'));
-			add_action('wp_dashboard_setup', array(&$this, 'dashboard_widget'));
+			add_action('admin_print_styles', [&$this, 'myStyleSheet']);
+			add_action('wp_dashboard_setup', [&$this, 'dashboard_widget']);
 			$a2_plugin_basename = plugin_basename($GLOBALS['A2_Plugin_Dir'] . '/a2-optimized.php');
-			add_filter("plugin_action_links_{$a2_plugin_basename}", array(&$this, 'plugin_settings_link'));
+			add_filter("plugin_action_links_{$a2_plugin_basename}", [&$this, 'plugin_settings_link']);
 		}
 
 		if (get_option('A2_Optimized_Plugin_recaptcha', 0) == 1 && !is_admin()) {
-			add_action('woocommerce_login_form', array(&$this, 'login_captcha'));
-			add_action('login_form', array(&$this, 'login_captcha'));
-			add_filter('authenticate', array(&$this, 'captcha_authenticate'), 1, 3);
-			add_action('comment_form_after_fields', array(&$this, 'comment_captcha'));
-			add_filter('preprocess_comment', array(&$this, 'captcha_comment_authenticate'), 1, 3);
+			add_action('woocommerce_login_form', [&$this, 'login_captcha']);
+			add_action('login_form', [&$this, 'login_captcha']);
+			add_filter('authenticate', [&$this, 'captcha_authenticate'], 1, 3);
+			add_action('comment_form_after_fields', [&$this, 'comment_captcha']);
+			add_filter('preprocess_comment', [&$this, 'captcha_comment_authenticate'], 1, 3);
 		}
 		if ($this->is_xmlrpc_request() && get_option('a2_block_xmlrpc')) {
 			$this->block_xmlrpc_request();
-			add_filter('xmlrpc_methods', array(&$this, 'remove_xmlrpc_methods'));
+			add_filter('xmlrpc_methods', [&$this, 'remove_xmlrpc_methods']);
 		}
 	}
 
@@ -348,13 +348,13 @@ HTML;
 		wp_add_dashboard_widget(
 			'a2_optimized',		 // Widget slug.
 			"<a href=\"admin.php?page=A2_Optimized_Plugin_admin\"><img src=\"{$logo_url}\" /></a>",		 // Title.
-			array(&$this, 'a2_dashboard_widget') // Display function.
+			[&$this, 'a2_dashboard_widget'] // Display function.
 		);
 
 		wp_add_dashboard_widget(
 			'a2_optimized_kb',		 // Widget slug.
 			'Have any questions? Search the A2 Hosting Knowledge Base for answers.',		 // Title.
-			array(&$this, 'kb_dashboard_widget') // Display function.
+			[&$this, 'kb_dashboard_widget'] // Display function.
 		);
 
 		//force the widget to the top of the dashboard
@@ -368,7 +368,7 @@ HTML;
 
 		$normal_dashboard = $wp_meta_boxes['dashboard']['normal']['core'];
 		// Backup and delete our new dashboard widget from the end of the array
-		$example_widget_backup = array('a2_optimized' => $normal_dashboard['a2_optimized'], 'a2_optimized_kb' => $normal_dashboard['a2_optimized_kb']);
+		$example_widget_backup = ['a2_optimized' => $normal_dashboard['a2_optimized'], 'a2_optimized_kb' => $normal_dashboard['a2_optimized_kb']];
 
 		// Merge the two arrays together so our widget is at the beginning
 		$sorted_dashboard = array_merge($example_widget_backup, $normal_dashboard);
@@ -468,7 +468,7 @@ HTML;
 
 		$link = get_home_url() . '?' . $rwl_page;
 
-		if (!(strpos(get_option('a2_login_bookmarked', ''), $rwl_page) === 0)) {
+		if (!(strpos(get_option('a2_login_bookmark', ''), $rwl_page) === 0)) {
 			$dismiss_url = admin_url('admin.php?a2-page=dismiss_notice&a2-option=a2_login_bookmark&page=A2_Optimized_Plugin_admin');
 			echo <<<HTML
 <div id="bookmark-login" class="updated" >
@@ -488,7 +488,7 @@ HTML;
 		if (in_array('easy-hide-login/wp-hide-login.php', $active_plugins)) {
 			if ($rwl_page = get_option('wpseh_l01gnhdlwp')) {
 				if ($rwl_page != '') {
-					add_action('admin_notices', array(&$this, 'rwl_notice'));
+					add_action('admin_notices', [&$this, 'rwl_notice']);
 					if ($a2_login_page = get_option('a2_login_page')) {
 						if ($a2_login_page != $rwl_page) {
 							update_option('a2_login_page', $rwl_page);
@@ -500,11 +500,11 @@ HTML;
 			}
 		}
 		if (in_array('a2-w3-total-cache/a2-w3-total-cache.php', $active_plugins)) {
-			wp_enqueue_script('a2_functions', plugins_url('/assets/js/functions.js', __FILE__), array('jquery'));
+			wp_enqueue_script('a2_functions', plugins_url('/assets/js/functions.js', __FILE__), ['jquery']);
 		}
 
 		if (isset($_GET['page']) && in_array($_GET['page'], $this->config_pages) && get_option('a2_notice_configpage') != '1') {
-			add_action('admin_notices', array(&$this, 'config_page_notice'));
+			add_action('admin_notices', [&$this, 'config_page_notice']);
 		}
 
 		if (get_template() == 'Divi') {
@@ -512,7 +512,7 @@ HTML;
 			
 			if ($w3tc['minify.html.enable'] || $w3tc['minify.css.enable'] || $w3tc['minify.js.enable']) {
 				if (get_option('a2_notice_diviminify') != '1') {
-					add_action('admin_notices', array(&$this, 'divi_notice'));
+					add_action('admin_notices', [&$this, 'divi_notice']);
 				}
 			}
 		}
@@ -520,25 +520,25 @@ HTML;
 		foreach ($active_plugins as $active_plugin) {
 			$plugin_folder = explode('/', $active_plugin);
 			if (in_array($plugin_folder[0], $this->incompatible_plugins) && get_option('a2_notice_incompatible_plugins') != '1') {
-				add_action('admin_notices', array(&$this, 'incompatible_plugin_notice'));
+				add_action('admin_notices', [&$this, 'incompatible_plugin_notice']);
 			}
 			// Check for W3 Total Cache and show upgrade notice
 			if ($plugin_folder[0] == 'w3-total-cache' && !$_GET['a2-page'] && get_option('a2_notice_w3totalcache') != '1') {
-				add_action('admin_notices', array(&$this, 'w3totalcache_plugin_notice'));
+				add_action('admin_notices', [&$this, 'w3totalcache_plugin_notice']);
 			}
 			// Check for Wordfence and if WAF rules are setup correctly, show notice if not
 			if ($plugin_folder[0] == 'wordfence' && $this->wordfence_waf_check() === false && get_option['a2_notice_wordfence_waf'] != '1') {
-				add_action('admin_notices', array(&$this, 'wordfence_plugin_notice'));
+				add_action('admin_notices', [&$this, 'wordfence_plugin_notice']);
 			}
 		}
 
 		if (!(strpos($_SERVER['SCRIPT_FILENAME'], 'plugins.php') === false) && defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT) {
 			if (get_option('a2_notice_editinglocked') != '1') {
-				add_action('admin_notices', array(&$this, 'locked_files_notice'));
+				add_action('admin_notices', [&$this, 'locked_files_notice']);
 			}
 		} elseif (!(strpos($_SERVER['SCRIPT_FILENAME'], 'plugins.php') === false)) {
 			if (get_option('a2_notice_editingnotlocked') != '1') {
-				add_action('admin_notices', array(&$this, 'not_locked_files_notice'));
+				add_action('admin_notices', [&$this, 'not_locked_files_notice']);
 			}
 		}
 	}
@@ -561,7 +561,7 @@ HTML;
 			$displayName,
 			'manage_options',
 			$this->getSettingsSlug(),
-			array(&$this, 'settingsPage'),
+			[&$this, 'settingsPage'],
 			null,
 			3
 		);
@@ -585,17 +585,17 @@ HTML;
 		global $wp_admin_bar;
 
 		if (current_user_can('manage_options')) {
-			$wp_admin_bar->add_node(array(
+			$wp_admin_bar->add_node([
 				'id' => 'a2-optimized-admin-bar',
 				'title' => 'A2 Optimized',
 				'href' => admin_url('admin.php?page=' . $this->getSettingsSlug())
-			));
+			]);
 		}
 	}
 
 	public function addLockedEditor() {
 		$this->requireExtraPluginFiles();
-		add_theme_page('<span style="color:red !important">Editor Locked</span>', '<span style="color:red !important">Editor Locked</span>', 'manage_options', 'editor-locked', array(&$this, 'settingsPage'));
+		add_theme_page('<span style="color:red !important">Editor Locked</span>', '<span style="color:red !important">Editor Locked</span>', 'manage_options', 'editor-locked', [&$this, 'settingsPage']);
 	}
 
 	/**
@@ -625,7 +625,7 @@ HTML;
 			$displayName,
 			'manage_options',
 			$this->getSettingsSlug(),
-			array(&$this, 'settingsPage')
+			[&$this, 'settingsPage']
 		);
 	}
 
@@ -637,7 +637,7 @@ HTML;
 			$displayName,
 			'manage_options',
 			$this->getSettingsSlug(),
-			array(&$this, 'settingsPage')
+			[&$this, 'settingsPage']
 		);
 	}
 
@@ -649,13 +649,13 @@ HTML;
 			$displayName,
 			'manage_options',
 			$this->getSettingsSlug(),
-			array(&$this, 'settingsPage')
+			[&$this, 'settingsPage']
 		);
 	}
 
 	public function incompatible_plugin_notice() {
 		$active_plugins = get_option('active_plugins');
-		$plugins_arr = array();
+		$plugins_arr = [];
 		foreach ($active_plugins as $active_plugin) {
 			$plugin_folder = explode('/', $active_plugin);
 			if (in_array($plugin_folder[0], $this->incompatible_plugins)) {
@@ -744,16 +744,16 @@ HTML;
 		$ip_address = $_SERVER['REMOTE_ADDR'];
 		if ($this->is_ip_in_range(
 			$ip_address,
-			array(
+			[
 				'122.248.245.244', // Jetpack
 				'54.217.201.243', // Jetpack
 				'54.232.116.4', // Jetpack
-				array('195.234.108.0', '195.234.111.255'), // Jetpack
-				array('192.0.64.1', '192.0.127.255'), // VaultPress range
+				['195.234.108.0', '195.234.111.255'], // Jetpack
+				['192.0.64.1', '192.0.127.255'], // VaultPress range
 				//array('192.0.80.0', '192.0.95.255'), // Akismet (covered by VaultPress range)
 				//array('192.0.96.0', '192.0.111.255'), // Akismet
 				//array('192.0.112.0', '192.0.127.255'), // Akismet
-			)
+			]
 		)) {
 			return true;
 		}
