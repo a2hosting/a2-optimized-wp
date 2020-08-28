@@ -2,7 +2,7 @@
 /*
 	Plugin Name: A2 Optimized WP
 	Plugin URI: https://wordpress.org/plugins/a2-optimized/
-	Version: 2.0.11
+	Version: 2.0.11.1
 	Author: A2 Hosting
 	Author URI: https://www.a2hosting.com/
 	Description: A2 Optimized - WordPress Optimization Plugin
@@ -28,7 +28,7 @@ class A2_Optimized {
 		$A2_Optimized_minimalRequiredPhpVersion = '5.3.0';
 
 		if (version_compare(PHP_VERSION, $A2_Optimized_minimalRequiredPhpVersion) < 0) {
-			add_action('admin_notices', array(&$this,'A2_Optimized_noticePhpVersionWrong'));
+			add_action('admin_notices', [&$this,'A2_Optimized_noticePhpVersionWrong']);
 
 			return;
 		}
@@ -49,10 +49,10 @@ class A2_Optimized {
 		$a2Plugin->addActionsAndFilters();
 
 		// Register the Plugin Activation Hook
-		register_activation_hook(__FILE__, array(&$a2Plugin, 'activate'));
+		register_activation_hook(__FILE__, [&$a2Plugin, 'activate']);
 
 		// Register the Plugin Deactivation Hook
-		register_deactivation_hook(__FILE__, array(&$a2Plugin, 'deactivate'));
+		register_deactivation_hook(__FILE__, [&$a2Plugin, 'deactivate']);
 	}
 
 	public function A2_Optimized_noticePhpVersionWrong() {
@@ -72,7 +72,7 @@ class A2_Optimized {
 		if (!$upgrade_notices) {
 			$response = wp_remote_get( 'https://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice?notice_plugin=2' );
 			if ( is_array( $response ) ) {
-				$upgrade_notices = array();
+				$upgrade_notices = [];
 				$body = json_decode($response['body']); // use the content
 				foreach ($body as $item) {
 					$upgrade_notices[$item->title->rendered] = 'Version ' . $item->title->rendered . ': ' . strip_tags($item->content->rendered);
@@ -101,6 +101,6 @@ class A2_Optimized {
 }
 
 $a2opt_class = new A2_Optimized();
-add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', array( 'A2_Optimized','showUpgradeNotification'), 10, 2);
+add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', [ 'A2_Optimized','showUpgradeNotification'], 10, 2);
 
-add_action( 'wp_enqueue_scripts', array('A2_Optimized', 'dequeue_woocommerce_cart_fragments'), 11, 2);
+add_action( 'wp_enqueue_scripts', ['A2_Optimized', 'dequeue_woocommerce_cart_fragments'], 11, 2);
