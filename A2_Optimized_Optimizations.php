@@ -7,7 +7,9 @@
 */
 
 // Prevent direct access to this file
-if ( ! defined( 'WPINC' ) )  die;
+if (! defined('WPINC')) {
+	die;
+}
 
 require_once 'A2_Optimized_Server_Info.php';
 
@@ -50,7 +52,7 @@ class A2_Optimized_Optimizations {
 		$thisclass = $this->thisclass;
 		$thisclass->server_info = $this->server_info;
 
-		return array(
+		$optimizations = array(
 			'page_cache' => array(
 				'slug' => 'page_cache',
 				'name' => 'Page Caching with W3 Total Cache',
@@ -183,6 +185,7 @@ class A2_Optimized_Optimizations {
 				'name' => 'Minify HTML Pages',
 				'slug' => 'minify',
 				'plugin' => 'W3 Total Cache',
+				'optional' => false,
 				'configured' => false,
 				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
 				'description' => 'Removes extra spaces,tabs and line breaks in the HTML to reduce the size of the files sent to the user.',
@@ -344,7 +347,7 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function (&$item) use (&$thisclass) {
 					if (get_option('a2_updated_regenerate-salts')) {
 						$last_updated = strtotime(get_option('a2_updated_regenerate-salts'));
-						if($last_updated > strtotime('-3 Months')){
+						if ($last_updated > strtotime('-3 Months')) {
 							$item['configured'] = true;
 						}
 					}
@@ -494,6 +497,14 @@ class A2_Optimized_Optimizations {
 				}
 			)
 		);
+
+		if (get_template() == 'Divi') {
+			$optimizations['minify']['optional'] = true;
+			$optimizations['css_minify']['optional'] = true;
+			$optimizations['js_minify']['optional'] = true;
+		}
+
+		return $optimizations;
 	}
 
 	protected function get_private_optimizations() {

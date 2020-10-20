@@ -7,7 +7,7 @@
 */
 
 // Prevent direct access to this file
-if ( ! defined( 'WPINC' ) ) {
+if (! defined('WPINC')) {
 	die;
 }
 
@@ -171,7 +171,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
     <div class="updated">
         <p>
 HTML;
-		_e( "A2 Optimized has been Updated from {$saved_version} to {$code_version} !", 'a2-text-domain' );
+		_e("A2 Optimized has been Updated from {$saved_version} to {$code_version} !", 'a2-text-domain');
 		echo<<<HTML
         </p>
     </div>
@@ -201,7 +201,7 @@ HTML;
 	}
 
 	public function comment_captcha() {
-		if (!$this->checkUserCapability('moderate_comments', get_current_user_id() )) {
+		if (!$this->checkUserCapability('moderate_comments', get_current_user_id())) {
 			if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')) {
 				include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
 
@@ -286,7 +286,7 @@ HTML;
 			add_action('template_redirect', array(&$this, 'get_moved_login'));
 		}
 
-		add_filter( 'allow_minor_auto_core_updates', '__return_true' );
+		add_filter('allow_minor_auto_core_updates', '__return_true');
 		add_filter('auto_update_translation', '__return_true');
 		/*add_filter( 'allow_major_auto_core_updates', '__return_true' );
 		add_filter( 'allow_minor_auto_core_updates', '__return_true' );
