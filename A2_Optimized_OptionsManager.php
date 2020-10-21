@@ -7,7 +7,7 @@
 */
 
 // Prevent direct access to this file
-if ( ! defined( 'WPINC' ) ) {
+if (! defined('WPINC')) {
 	die;
 }
 
@@ -46,8 +46,8 @@ class A2_Optimized_OptionsManager {
 	private function get_current_w3tc_version() {
 		$version = get_transient('a2_w3tc_current_version');
 		if (!$version) {
-			$response = wp_remote_get( 'https://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice?notice_plugin=3&per_page=1' );
-			if ( is_array( $response ) ) {
+			$response = wp_remote_get('https://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice?notice_plugin=3&per_page=1');
+			if (is_array($response)) {
 				$body = json_decode($response['body']); // use the content
 				foreach ($body as $item) {
 					$version = $item->title->rendered;
@@ -668,7 +668,7 @@ class A2_Optimized_OptionsManager {
 				$this->upgrade_wizard_html($step);
 			}
 			if ($_GET['a2-page'] == 'w3tcfixed_confirm') {
-				update_option( 'a2opt_w3tcfixed_confirm', true);
+				update_option('a2opt_w3tcfixed_confirm', true);
 				$this->settings_page_html();
 			}
 			if ($_GET['a2-page'] == 'recaptcha_settings') {
@@ -756,6 +756,11 @@ class A2_Optimized_OptionsManager {
 			}
 		}
 
+		$this->divi_extra_info = '';
+		if (get_template() == 'Divi' && ($w3tc['minify.html.enable'] || $w3tc['minify.css.enable'] || $w3tc['minify.js.enable'])) {
+			$this->divi_extra_info = "<div class='alert alert-info'><p>We see that this site has the Divi theme activated. The following button will apply our recommended settings.</p><p><a href='" . admin_url('admin.php?page=A2_Optimized_Plugin_admin&apply_divi_settings=true') . "' class='button-secondary'>Optimize for Divi</a></p></div>";
+		}
+
 		$this->optimization_alert = '';
 
 		if (is_plugin_active('w3-total-cache/w3-total-cache.php')) {
@@ -801,10 +806,8 @@ class A2_Optimized_OptionsManager {
 			$optimization_alert = '<div class="alert alert-success">Your site has been fully optimized!</div>';
 		} elseif (!$this->optimizations['page_cache']['configured']) {
 			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
-		} elseif ($this->optimization_count > 5) {
-			$optimization_alert = '<div class="alert alert-success">Your site has been partially optimized!</div>';
 		} elseif ($this->optimization_count > 2) {
-			$optimization_alert = '<div class="alert alert-danger">Your site is barely optimized!</div>';
+			$optimization_alert = '<div class="alert alert-success">Your site has been partially optimized!</div>';
 		} else {
 			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		}
@@ -895,6 +898,7 @@ HTML;
 			<div role="tabpanel" aria-labelledby="li-optimization-status" id="optimization-status" class="tab-pane">
 				<h3>Optimization Status</h3>
 				{$this->optimization_alert}
+				{$this->divi_extra_info}
 				<div >
 					{$this->optimization_status}
 				</div>
@@ -1431,6 +1435,19 @@ JAVASCRIPT;
 			echo <<<JAVASCRIPT
 <script type="text/javascript">
 	window.location = 'admin.php?page=A2_Optimized_Plugin_admin{$hash}';
+</script>
+JAVASCRIPT;
+			exit();
+		}
+		
+		if (isset($_GET['apply_divi_settings'])) {
+			$this->optimizations['minify']['disable']('minify');
+			$this->optimizations['css_minify']['disable']('css_minify');
+			$this->optimizations['js_minify']['disable']('js_minify');
+
+			echo <<<JAVASCRIPT
+<script type="text/javascript">
+	window.location = 'admin.php?page=A2_Optimized_Plugin_admin';
 </script>
 JAVASCRIPT;
 			exit();
@@ -2271,7 +2288,7 @@ HTML;
 	 * @return boolean true|false
 	 */
 	protected function is_a2() {
-		if ( is_dir('/opt/a2-optimized') ) {
+		if (is_dir('/opt/a2-optimized')) {
 			return true;
 		}
 
