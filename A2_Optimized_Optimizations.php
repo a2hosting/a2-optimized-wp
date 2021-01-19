@@ -672,8 +672,15 @@ class A2_Optimized_Optimizations {
 			'Advanced Warnings' => array(
 				'themes' => array(
 					'is_warning' => function () {
+						$theme_count = 0;
 						$themes = wp_get_themes();
-						switch (count($themes)) {
+						foreach ($themes as $theme_name => $theme) {
+							if (substr($theme_name, 0, 6) != 'twenty') {
+								// We don't want default themes to count towards our warning total
+								$theme_count++;
+							}
+						}
+						switch ($theme_count) {
 							case 1:
 								return false;
 							case 2:
@@ -686,7 +693,7 @@ class A2_Optimized_Optimizations {
 						return true;
 					},
 					'title' => 'Unused Themes',
-					'description' => 'One or more unused themes are installed. Unused themes should be deleted.  For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping#Theme_Housekeeping">WordPress Housekeeping</a>',
+					'description' => 'One or more unused non-default themes are installed. Unused non-default themes should be deleted.  For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping#Theme_Housekeeping">WordPress Housekeeping</a>',
 					'config_url' => admin_url() . 'themes.php'
 				),
 				'a2_hosting' => array(
