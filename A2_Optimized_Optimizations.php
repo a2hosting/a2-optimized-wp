@@ -34,8 +34,10 @@ class A2_Optimized_Optimizations {
 			$w3tc = $this->thisclass->get_w3tc_config();
 			$previous_setting = $w3tc['browsercache.html.compression'];
 			$this->thisclass->disable_w3tc_gzip();
-			if ($previous_setting && (!$this->server_info->gzip || !$this->server_info->cf || !$this->server_info->br)) {
-				$this->thisclass->enable_w3tc_gzip();
+			if ($previous_setting && is_object($this->server_info)) {
+				if (!$this->server_info->gzip || !$this->server_info->cf || !$this->server_info->br) {
+					$this->thisclass->enable_w3tc_gzip();
+				}
 			}
 			set_transient('a2_checked_gzip', true, WEEK_IN_SECONDS);
 		}
@@ -52,8 +54,8 @@ class A2_Optimized_Optimizations {
 		$thisclass = $this->thisclass;
 		$thisclass->server_info = $this->server_info;
 
-		$optimizations = array(
-			'page_cache' => array(
+		$optimizations = [
+			'page_cache' => [
 				'slug' => 'page_cache',
 				'name' => 'Page Caching with W3 Total Cache',
 				'plugin' => 'W3 Total Cache',
@@ -64,7 +66,7 @@ class A2_Optimized_Optimizations {
 					if ($w3tc['pgcache.enabled']) {
 						$item['configured'] = true;
 						$permalink_structure = get_option('permalink_structure');
-						$vars = array();
+						$vars = [];
 						if ($w3tc['pgcache.engine'] == 'apc') {
 							if ($permalink_structure == '') {
 								$vars['pgcache.engine'] = 'file';
@@ -95,8 +97,8 @@ class A2_Optimized_Optimizations {
 				'enable' => function () use (&$thisclass) {
 					$thisclass->enable_w3tc_page_cache();
 				}
-			),
-			'db_cache' => array(
+			],
+			'db_cache' => [
 				'slug' => 'db_cache',
 				'name' => 'DB Caching with W3 Total Cache',
 				'plugin' => 'W3 Total Cache',
@@ -105,7 +107,7 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function (&$item) use (&$thisclass) {
 					$w3tc = $thisclass->get_w3tc_config();
 					if ($w3tc['dbcache.enabled']) {
-						$vars = array();
+						$vars = [];
 						$item['configured'] = true;
 						if (class_exists('W3_Config')) {
 							if (class_exists('WooCommerce')) {
@@ -131,9 +133,9 @@ class A2_Optimized_Optimizations {
 				'enable' => function () use (&$thisclass) {
 					$thisclass->enable_w3tc_db_cache();
 				}
-			),
+			],
 
-			'object_cache' => array(
+			'object_cache' => [
 				'slug' => 'object_cache',
 				'name' => 'Object Caching with W3 Total Cache',
 				'plugin' => 'W3 Total Cache',
@@ -155,9 +157,9 @@ class A2_Optimized_Optimizations {
 				'enable' => function () use (&$thisclass) {
 					$thisclass->enable_w3tc_object_cache();
 				}
-			),
+			],
 
-			'browser_cache' => array(
+			'browser_cache' => [
 				'slug' => 'browser_cache',
 				'name' => 'Browser Caching with W3 Total Cache',
 				'plugin' => 'W3 Total Cache',
@@ -179,9 +181,9 @@ class A2_Optimized_Optimizations {
 				'enable' => function () use (&$thisclass) {
 					$thisclass->enable_w3tc_browser_cache();
 				}
-			),
+			],
 
-			'minify' => array(
+			'minify' => [
 				'name' => 'Minify HTML Pages',
 				'slug' => 'minify',
 				'plugin' => 'W3 Total Cache',
@@ -204,8 +206,8 @@ class A2_Optimized_Optimizations {
 				'disable' => function () use (&$thisclass) {
 					$thisclass->disable_html_minify();
 				}
-			),
-			'css_minify' => array(
+			],
+			'css_minify' => [
 				'name' => 'Minify CSS Files',
 				'slug' => 'css_minify',
 				'plugin' => 'W3 Total Cache',
@@ -222,21 +224,21 @@ class A2_Optimized_Optimizations {
 					}
 				},
 				'enable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
+					$thisclass->update_w3tc([
 						'minify.css.enable' => true,
 						'minify.enabled' => true,
 						'minify.auto' => 0,
 						'minify.engine' => 'file'
-					));
+					]);
 				},
 				'disable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
+					$thisclass->update_w3tc([
 						'minify.css.enable' => false,
 						'minify.auto' => 0
-					));
+					]);
 				}
-			),
-			'js_minify' => array(
+			],
+			'js_minify' => [
 				'name' => 'Minify JS Files',
 				'slug' => 'js_minify',
 				'plugin' => 'W3 Total Cache',
@@ -253,21 +255,21 @@ class A2_Optimized_Optimizations {
 					}
 				},
 				'enable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
+					$thisclass->update_w3tc([
 						'minify.js.enable' => true,
 						'minify.enabled' => true,
 						'minify.auto' => 0,
 						'minify.engine' => 'file'
-					));
+					]);
 				},
 				'disable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
+					$thisclass->update_w3tc([
 						'minify.js.enable' => false,
 						'minify.auto' => 0
-					));
+					]);
 				}
-			),
-			'gzip' => array(
+			],
+			'gzip' => [
 				'name' => 'Gzip Compression Enabled',
 				'slug' => 'gzip',
 				'plugin' => 'W3 Total Cache',
@@ -289,8 +291,8 @@ class A2_Optimized_Optimizations {
 					$thisclass->disable_w3tc_gzip();
 				},
 				'remove_link' => true
-			),
-			'woo-cart-fragments' => array(
+			],
+			'woo-cart-fragments' => [
 				'name' => 'Dequeue WooCommerce Cart Fragments AJAX calls',
 				'slug' => 'woo-cart-fragments',
 				'plugin' => 'A2 Optimized',
@@ -313,8 +315,8 @@ class A2_Optimized_Optimizations {
 				'disable' => function () use (&$thisclass) {
 					$thisclass->disable_woo_cart_fragments();
 				},
-			),
-			'xmlrpc-requests' => array(
+			],
+			'xmlrpc-requests' => [
 				'name' => 'Block Unauthorized XML-RPC Requests',
 				'slug' => 'xmlrpc-requests',
 				'plugin' => 'A2 Optimized',
@@ -337,8 +339,8 @@ class A2_Optimized_Optimizations {
 				'disable' => function () use (&$thisclass) {
 					$thisclass->disable_xmlrpc_requests();
 				},
-			),
-			'regenerate-salts' => array(
+			],
+			'regenerate-salts' => [
 				'name' => 'Regenerate wp-config salts',
 				'slug' => 'regenerate-salts',
 				'plugin' => 'A2 Optimized',
@@ -360,8 +362,8 @@ class A2_Optimized_Optimizations {
 				'enable' => function () use (&$thisclass) {
 					$thisclass->regenerate_wpconfig_salts();
 				},
-			),
-			'htaccess' => array(
+			],
+			'htaccess' => [
 				'name' => 'Deny Direct Access to Configuration Files and Comment Form',
 				'slug' => 'htaccess',
 				'plugin' => 'A2 Optimized',
@@ -393,8 +395,8 @@ class A2_Optimized_Optimizations {
 					$thisclass->set_deny_direct(false);
 					$thisclass->write_htaccess();
 				}
-			),
-			'lock' => array(
+			],
+			'lock' => [
 				'name' => 'Lock Editing of Plugins and Themes from the WP Admin',
 				'slug' => 'lock',
 				'plugin' => 'A2 Optimized',
@@ -424,8 +426,8 @@ class A2_Optimized_Optimizations {
 					$thisclass->set_lockdown(false);
 					$thisclass->write_wp_config();
 				}
-			),
-			'wp-login' => array(
+			],
+			'wp-login' => [
 				'name' => 'Login URL Change',
 				'slug' => 'wp-login',
 				'premium' => true,
@@ -438,8 +440,8 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				}
-			),
-			'captcha' => array(
+			],
+			'captcha' => [
 				'name' => 'reCAPTCHA on comments and login',
 				'plugin' => 'reCAPTCHA',
 				'slug' => 'captcha',
@@ -449,8 +451,8 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				}
-			),
-			'images' => array(
+			],
+			'images' => [
 				'name' => 'Compress Images on Upload',
 				'plugin' => 'EWWW Image Optimizer',
 				'slug' => 'images',
@@ -460,8 +462,8 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				}
-			),
-			'turbo' => array(
+			],
+			'turbo' => [
 				'name' => 'Turbo Web Hosting',
 				'slug' => 'turbo',
 				'configured' => false,
@@ -478,8 +480,8 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				}
-			),
-			'memcached' => array(
+			],
+			'memcached' => [
 				'name' => 'Memcached Database and Object Cache',
 				'slug' => 'memcached',
 				'configured' => false,
@@ -495,8 +497,8 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				}
-			)
-		);
+			]
+		];
 
 		if (get_template() == 'Divi') {
 			$optimizations['minify']['optional'] = true;
@@ -513,7 +515,7 @@ class A2_Optimized_Optimizations {
 
 			return $a2opt_priv->get_optimizations($this->thisclass);
 		} else {
-			return array();
+			return [];
 		}
 	}
 
@@ -527,8 +529,8 @@ class A2_Optimized_Optimizations {
 	protected function get_public_advanced() {
 		$thisclass = $this->thisclass;
 
-		return array(
-			'gtmetrix' => array(
+		return [
+			'gtmetrix' => [
 				'slug' => 'gtmetrix',
 				'name' => 'GTmetrix',
 				'plugin' => 'GTmetrix',
@@ -536,7 +538,7 @@ class A2_Optimized_Optimizations {
 				'file' => 'gtmetrix-for-wordpress/gtmetrix-for-wordpress.php',
 				'configured' => false,
 				'partially_configured' => false,
-				'required_options' => array('gfw_options' => array('authorized')),
+				'required_options' => ['gfw_options' => ['authorized']],
 				'description' => '
       			<p>
 					Plugin that actively keeps track of your WP install and sends you alerts if your site falls below certain criteria.
@@ -546,15 +548,15 @@ class A2_Optimized_Optimizations {
       				<b>Use this plugin only if your site is experiencing issues with slow load times.</b><br><b style="color:red">The GTMetrix plugin will slow down your site.</b>
       			</p>
       			',
-				'not_configured_links' => array(),
-				'configured_links' => array(
+				'not_configured_links' => [],
+				'configured_links' => [
 					'Configure GTmetrix' => 'admin.php?page=gfw_settings',
 					'GTmetrix Tests' => 'admin.php?page=gfw_tests',
-				),
-				'partially_configured_links' => array(
+				],
+				'partially_configured_links' => [
 					'Configure GTmetrix' => 'admin.php?page=gfw_settings',
 					'GTmetrix Tests' => 'admin.php?page=gfw_tests',
-				),
+				],
 				'partially_configured_message' => 'Click &quot;Configure GTmetrix&quot; to enter your GTmetrix Account Email and GTmetrix API Key.',
 				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
 				'is_configured' => function (&$item) use (&$thisclass) {
@@ -583,8 +585,8 @@ class A2_Optimized_Optimizations {
 					$item = $item[$slug];
 					$thisclass->deactivate_plugin($item['file']);
 				}
-			),
-			'cloudflare' => array(
+			],
+			'cloudflare' => [
 				'slug' => 'cloudflare',
 				'name' => 'CloudFlare',
 				'premium' => true,
@@ -611,9 +613,9 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				},
-				'not_configured_links' => array('Host with A2' => 'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized')
-			)
-		);
+				'not_configured_links' => ['Host with A2' => 'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized']
+			]
+		];
 	}
 
 	protected function get_private_advanced() {
@@ -622,7 +624,7 @@ class A2_Optimized_Optimizations {
 
 			return $a2opt_priv->get_advanced($this->thisclass);
 		} else {
-			return array();
+			return [];
 		}
 	}
 
@@ -634,43 +636,43 @@ class A2_Optimized_Optimizations {
 	}
 
 	protected function get_public_warnings() {
-		return array(
-			'Bad WP Options' => array(
-				'posts_per_page' => array(
+		return [
+			'Bad WP Options' => [
+				'posts_per_page' => [
 					'title' => 'Recent Post Limit',
 					'description' => 'The number of recent posts per page is set greater than five. This could be slowing down page loads.',
 					'type' => 'numeric',
 					'threshold_type' => '>',
 					'threshold' => 5,
 					'config_url' => admin_url() . 'options-reading.php'
-				),
-				'posts_per_rss' => array(
+				],
+				'posts_per_rss' => [
 					'title' => 'RSS Post Limit',
 					'description' => 'The number of posts from external feeds is set greater than 5. This could be slowing down page loads.',
 					'type' => 'numeric',
 					'threshold_type' => '>',
 					'threshold' => 5,
 					'config_url' => admin_url() . 'options-reading.php'
-				),
-				'show_on_front' => array(
+				],
+				'show_on_front' => [
 					'title' => 'Recent Posts showing on home page',
 					'description' => 'Speed up your home page by selecting a static page to display.',
 					'type' => 'text',
 					'threshold_type' => '=',
 					'threshold' => 'posts',
 					'config_url' => admin_url() . 'options-reading.php'
-				),
-				'permalink_structure' => array(
+				],
+				'permalink_structure' => [
 					'title' => 'Permalink Structure',
 					'description' => 'To fully optimize page caching with "Disk Enhanced" mode:<br>you must set a permalink structure other than "Default".',
 					'type' => 'text',
 					'threshold_type' => '=',
 					'threshold' => '',
 					'config_url' => admin_url() . 'options-permalink.php'
-				)
-			),
-			'Advanced Warnings' => array(
-				'themes' => array(
+				]
+			],
+			'Advanced Warnings' => [
+				'themes' => [
 					'is_warning' => function () {
 						$theme_count = 0;
 						$themes = wp_get_themes();
@@ -695,8 +697,8 @@ class A2_Optimized_Optimizations {
 					'title' => 'Unused Themes',
 					'description' => 'One or more unused non-default themes are installed. Unused non-default themes should be deleted.  For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping#Theme_Housekeeping">WordPress Housekeeping</a>',
 					'config_url' => admin_url() . 'themes.php'
-				),
-				'a2_hosting' => array(
+				],
+				'a2_hosting' => [
 					'title' => 'Not Hosted with A2 Hosting',
 					'description' => 'Get faster page load times and more optimizations when you <a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank">host with A2 Hosting</a>.',
 					'is_warning' => function () {
@@ -707,14 +709,14 @@ class A2_Optimized_Optimizations {
 						return true;
 					},
 					'config_url' => 'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized'
-				)
-			),
-			'Bad Plugins' => array(
+				]
+			],
+			'Bad Plugins' => [
 				'wp-super-cache',
 				'wp-file-cache',
 				'wp-db-backup',
-			)
-		);
+			]
+		];
 	}
 
 	protected function get_private_warnings() {
@@ -723,7 +725,7 @@ class A2_Optimized_Optimizations {
 
 			return $a2opt_priv->get_warnings($this->thisclass);
 		} else {
-			return array();
+			return [];
 		}
 	}
 }

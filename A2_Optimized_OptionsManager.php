@@ -68,7 +68,7 @@ class A2_Optimized_OptionsManager {
 	 * @return array
 	 */
 	public function get_w3tc_defaults() {
-		return array(
+		return [
 			'pgcache.check.domain' => true,
 			'pgcache.prime.post.enabled' => true,
 			'pgcache.reject.logged' => true,
@@ -89,12 +89,12 @@ class A2_Optimized_OptionsManager {
 			'pgcache.cache.feed' => true,
 			'pgcache.debug' => false,
 			'pgcache.purge.postpages_limit' => 0,//purge all pages that list posts
-			'pgcache.purge.feed.types' => array(
+			'pgcache.purge.feed.types' => [
 				0 => 'rdf',
 				1 => 'rss',
 				2 => 'rss2',
 				3 => 'atom'
-			),
+			],
 			'pgcache.compatibility' => true,
 			'minify.debug' => false,
 			'dbcache.debug' => false,
@@ -153,7 +153,7 @@ class A2_Optimized_OptionsManager {
 			'config.check' => true,
 
 			'varnish.enabled' => false
-		);
+		];
 	}
 
 	/**
@@ -190,7 +190,7 @@ class A2_Optimized_OptionsManager {
 	public function install_plugin($slug, $activate = false) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		$api = plugins_api('plugin_information', array('slug' => $slug));
+		$api = plugins_api('plugin_information', ['slug' => $slug]);
 		$response = true;
 
 		$found = false;
@@ -251,9 +251,9 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function hit_the_w3tc_page() {
-		$disregarded_cookies = array(
+		$disregarded_cookies = [
 			'PHPSESSID',
-			);
+			];
 
 		$cookie = '';
 		foreach ($_COOKIE as $name => $val) {
@@ -299,7 +299,7 @@ class A2_Optimized_OptionsManager {
 	 */
 	public function enable_w3tc_cache() {
 		$permalink_structure = get_option('permalink_structure');
-		$vars = array();
+		$vars = [];
 		if ($permalink_structure == '') {
 			$vars['pgcache.engine'] = 'file';
 		} else {
@@ -324,7 +324,7 @@ class A2_Optimized_OptionsManager {
 	 */
 	public function enable_w3tc_page_cache() {
 		$permalink_structure = get_option('permalink_structure');
-		$vars = array();
+		$vars = [];
 		if ($permalink_structure == '') {
 			$vars['pgcache.engine'] = 'file';
 		} else {
@@ -343,7 +343,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_db_cache() {
-		$vars = array();
+		$vars = [];
 
 		$vars['dbcache.engine'] = 'file';
 		$vars['dbcache.enabled'] = true;
@@ -356,7 +356,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_object_cache() {
-		$vars = array();
+		$vars = [];
 
 		$vars['objectcache.engine'] = 'file';
 		$vars['objectcache.enabled'] = true;
@@ -369,7 +369,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_browser_cache() {
-		$vars = array();
+		$vars = [];
 
 		$vars['browsercache.enabled'] = true;
 
@@ -381,7 +381,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_gzip() {
-		$vars = array();
+		$vars = [];
 
 		$vars['browsercache.other.compression'] = true;
 		$vars['browsercache.html.compression'] = true;
@@ -395,7 +395,7 @@ class A2_Optimized_OptionsManager {
 	*
 	*/
 	public function disable_w3tc_gzip() {
-		$vars = array();
+		$vars = [];
 
 		$vars['browsercache.other.compression'] = false;
 		$vars['browsercache.html.compression'] = false;
@@ -443,7 +443,7 @@ class A2_Optimized_OptionsManager {
 	*
 	*/
 	public function regenerate_wpconfig_salts() {
-		$this->salts_array = array(
+		$this->salts_array = [
 			"define('AUTH_KEY',",
 			'SECURE_AUTH_KEY',
 			'LOGGED_IN_KEY',
@@ -452,7 +452,7 @@ class A2_Optimized_OptionsManager {
 			'SECURE_AUTH_SALT',
 			'LOGGED_IN_SALT',
 			'NONCE_SALT',
-		);
+		];
 
 		$returned_salts = file_get_contents('https://api.wordpress.org/secret-key/1.1/salt/');
 		$this->new_salts = explode("\n", $returned_salts);
@@ -537,12 +537,12 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_cache() {
-		$this->update_w3tc(array(
+		$this->update_w3tc([
 			'pgcache.enabled' => false,
 			'dbcache.enabled' => false,
 			'objectcache.enabled' => false,
 			'browsercache.enabled' => false,
-		));
+		]);
 	}
 
 	/**
@@ -550,7 +550,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_page_cache() {
-		$vars = array();
+		$vars = [];
 		$vars['pgcache.enabled'] = false;
 		$this->update_w3tc($vars);
 	}
@@ -560,7 +560,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_db_cache() {
-		$vars = array();
+		$vars = [];
 		$vars['dbcache.enabled'] = false;
 		$this->update_w3tc($vars);
 	}
@@ -570,7 +570,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_object_cache() {
-		$vars = array();
+		$vars = [];
 		$vars['objectcache.enabled'] = false;
 		$this->update_w3tc($vars);
 	}
@@ -580,7 +580,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_browser_cache() {
-		$vars = array();
+		$vars = [];
 		$vars['browsercache.enabled'] = false;
 		$this->update_w3tc($vars);
 	}
@@ -590,11 +590,11 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_html_minify() {
-		$this->update_w3tc(array(
+		$this->update_w3tc([
 			'minify.html.enable' => false,
 			'minify.html.enabled' => false,
 			'minify.auto' => false
-		));
+		]);
 	}
 
 	/**
@@ -602,12 +602,12 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_html_minify() {
-		$this->update_w3tc(array(
+		$this->update_w3tc([
 			'minify.html.enable' => true,
 			'minify.enabled' => true,
 			'minify.auto' => false,
 			'minify.engine' => 'file'
-		));
+		]);
 	}
 
 	public function curl_save_w3tc($cookie, $url) {
@@ -646,7 +646,7 @@ class A2_Optimized_OptionsManager {
 
 		wp_enqueue_style('bootstrap', plugins_url('/assets/bootstrap/css/bootstrap.css', __FILE__), '', $thisclass->getVersion());
 		wp_enqueue_style('bootstrap-theme', plugins_url('/assets/bootstrap/css/bootstrap-theme.css', __FILE__), '', $thisclass->getVersion());
-		wp_enqueue_script('bootstrap-theme', plugins_url('/assets/bootstrap/js/bootstrap.js', __FILE__), array('jquery'), $thisclass->getVersion());
+		wp_enqueue_script('bootstrap-theme', plugins_url('/assets/bootstrap/js/bootstrap.js', __FILE__), ['jquery'], $thisclass->getVersion());
 
 		$image_dir = plugins_url('/assets/images', __FILE__);
 
@@ -679,7 +679,7 @@ class A2_Optimized_OptionsManager {
 				$this->settings_page_html();
 			}
 			if ($_GET['a2-page'] == 'dismiss_notice') {
-				$allowed_notices = array(
+				$allowed_notices = [
 					'a2_login_bookmark',
 					'a2_notice_incompatible_plugins',
 					'a2_notice_w3totalcache',
@@ -688,7 +688,7 @@ class A2_Optimized_OptionsManager {
 					'a2_notice_wordfence_waf',
 					'a2_notice_configpage',
 					'a2_notice_diviminify',
-				);
+				];
 				if (isset($_GET['a2-option']) && in_array($_GET['a2-option'], $allowed_notices)) {
 					if ($_GET['a2-option'] == 'a2_login_bookmark') {
 						update_option($_GET['a2-option'], get_option('a2_login_page'));
@@ -1529,7 +1529,7 @@ JAVASCRIPT;
 		$this->deactivate_plugin($file);
 		uninstall_plugin($file);
 		if ($delete) {
-			delete_plugins(array($file));
+			delete_plugins([$file]);
 		}
 		unset($this->plugin_list[$file]);
 		$this->clear_w3_total_cache();
@@ -1565,7 +1565,7 @@ JAVASCRIPT;
 	 *       'Rating:', 'Excellent', 'Good', 'Fair', 'Poor')
 	 */
 	public function getOptionMetaData() {
-		return array();
+		return [];
 	}
 
 	private function curl($url) {
@@ -1600,7 +1600,7 @@ JAVASCRIPT;
 			$active_color = 'danger';
 			$active_text = 'Not Activated';
 			$glyph = 'exclamation-sign';
-			$links = array();
+			$links = [];
 
 			$active_class = '';
 			if (
@@ -1623,40 +1623,43 @@ JAVASCRIPT;
 						// skip adding "disable" link if 'remove_link' key is set and site is behind cloudflare
 						// used for Gzip options
 					} else {
-						$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self');
+						$links[] = ["?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self'];
 					}
 				}
 				if (isset($item['settings'])) {
-					$links[] = array("{$item['settings']}", 'Configure', '_self');
+					$links[] = ["{$item['settings']}", 'Configure', '_self'];
 				}
 
 				if (isset($item['configured_links'])) {
 					foreach ($item['configured_links'] as $name => $link) {
 						if (gettype($link) == 'array') {
-							$links[] = array($link[0], $name, $link[1]);
+							$links[] = [$link[0], $name, $link[1]];
 						} else {
-							$links[] = array($link, $name, '_self');
+							$links[] = [$link, $name, '_self'];
 						}
 					}
 				}
 			} elseif (isset($item['partially_configured']) && $item['partially_configured']) {
 				$active_color = 'warning';
-				$active_text = "Partially Configured. {$item['partially_configured_message']}";
+				$active_text = 'Partially Configured.';
+				if (isset($item['partially_configured_message'])) {
+					$active_text .= " {$item['partially_configured_message']}";
+				}
 				$glyph = 'warning-sign';
 
 				if (isset($item['disable'])) {
-					$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self');
+					$links[] = ["?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self'];
 				}
 				if (isset($item['settings'])) {
-					$links[] = array("{$item['settings']}", 'Configure', '_self');
+					$links[] = ["{$item['settings']}", 'Configure', '_self'];
 				}
 
 				if (isset($item['partially_configured_links'])) {
 					foreach ($item['partially_configured_links'] as $name => $link) {
 						if (gettype($link) == 'array') {
-							$links[] = array($link[0], $name, $link[1]);
+							$links[] = [$link[0], $name, $link[1]];
 						} else {
-							$links[] = array($link, $name, '_self');
+							$links[] = [$link, $name, '_self'];
 						}
 					}
 				}
@@ -1669,35 +1672,35 @@ JAVASCRIPT;
 					if (isset($item['update'])) {
 						$action_text = 'Update Now';
 					}
-					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", $action_text, '_self');
+					$links[] = ["?page=$settings_slug&amp;enable_optimization={$item['slug']}", $action_text, '_self'];
 				}
 
 				if (isset($item['not_configured_links'])) {
 					foreach ($item['not_configured_links'] as $name => $link) {
 						if (gettype($link) == 'array') {
-							$links[] = array($link[0], $name, $link[1]);
+							$links[] = [$link[0], $name, $link[1]];
 						} else {
-							$links[] = array($link, $name, '_self');
+							$links[] = [$link, $name, '_self'];
 						}
 					}
 				}
 			} else {
 				if (isset($item['enable']) && $active_class == '') {
-					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", 'Enable', '_self');
+					$links[] = ["?page=$settings_slug&amp;enable_optimization={$item['slug']}", 'Enable', '_self'];
 				}
 
 				if (isset($item['not_configured_links'])) {
 					foreach ($item['not_configured_links'] as $name => $link) {
 						if (gettype($link) == 'array') {
-							$links[] = array($link[0], $name, $link[1]);
+							$links[] = [$link[0], $name, $link[1]];
 						} else {
-							$links[] = array($link, $name, '_self');
+							$links[] = [$link, $name, '_self'];
 						}
 					}
 				}
 			}
 			if (isset($item['kb'])) {
-				$links[] = array($item['kb'], 'Learn More', '_blank');
+				$links[] = [$item['kb'], 'Learn More', '_blank'];
 			}
 			$link_html = '';
 			foreach ($links as $i => $link) {
@@ -1845,7 +1848,7 @@ HTML;
 			}
 		}
 
-		return array($warning_html, $num_warnings);
+		return [$warning_html, $num_warnings];
 	}
 
 	/**
@@ -2034,7 +2037,7 @@ PHP;
 		//make sure it is writable by owner and readable by everybody
 		chmod(ABSPATH . '.htaccess', 0644);
 
-		$home_path = explode('/', str_replace(array('http://', 'https://'), '', home_url()), 2);
+		$home_path = explode('/', str_replace(['http://', 'https://'], '', home_url()), 2);
 
 		if (!isset($home_path[1]) || $home_path[1] == '') {
 			$home_path = '/';
@@ -2353,7 +2356,7 @@ HTML;
 	public function getPluginHeaderValue($key) {
 		// Read the string from the comment header of the main plugin file
 		$data = file_get_contents($this->getPluginDir() . DIRECTORY_SEPARATOR . $this->getMainPluginFileName());
-		$match = array();
+		$match = [];
 		preg_match('/' . $key . ':\s*(\S+)/', $data, $match);
 		if (count($match) >= 1) {
 			return $match[1];
