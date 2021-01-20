@@ -1641,7 +1641,10 @@ JAVASCRIPT;
 				}
 			} elseif (isset($item['partially_configured']) && $item['partially_configured']) {
 				$active_color = 'warning';
-				$active_text = "Partially Configured. {$item['partially_configured_message']}";
+				$active_text = 'Partially Configured.';
+				if (isset($item['partially_configured_message'])) {
+					$active_text .= " {$item['partially_configured_message']}";
+				}
 				$glyph = 'warning-sign';
 
 				if (isset($item['disable'])) {

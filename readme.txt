@@ -2,8 +2,8 @@
 Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
 Requires at least: 3.8
-Tested up to: 5.5
-Stable tag: 2.0.11.1.1
+Tested up to: 5.6
+Stable tag: 2.0.11.1.2
 Requires PHP: 5.3
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -138,6 +138,9 @@ Yes.  A2 Optimized works on any host that supports WordPress.  Yes.  A2 Optimize
 
 
 == Changelog ==
+
+= 2.0.11.1.2 =
+* No longer count default themes on Warnings tab
 
 = 2.0.11.1.1 =
 * Added Divi specific optimizations

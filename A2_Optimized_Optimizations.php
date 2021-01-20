@@ -34,8 +34,10 @@ class A2_Optimized_Optimizations {
 			$w3tc = $this->thisclass->get_w3tc_config();
 			$previous_setting = $w3tc['browsercache.html.compression'];
 			$this->thisclass->disable_w3tc_gzip();
-			if ($previous_setting && (!$this->server_info->gzip || !$this->server_info->cf || !$this->server_info->br)) {
-				$this->thisclass->enable_w3tc_gzip();
+			if ($previous_setting && is_object($this->server_info)) {
+				if (!$this->server_info->gzip || !$this->server_info->cf || !$this->server_info->br) {
+					$this->thisclass->enable_w3tc_gzip();
+				}
 			}
 			set_transient('a2_checked_gzip', true, WEEK_IN_SECONDS);
 		}
