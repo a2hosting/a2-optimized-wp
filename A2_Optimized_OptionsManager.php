@@ -405,6 +405,118 @@ class A2_Optimized_OptionsManager {
 	}
 	
 	/**
+	 * Enable built-in page cache
+	 *
+	 */
+	public function enable_a2_page_cache() {
+		A2_Optimized_Cache_Disk::setup();
+		
+		update_option('a2_cache_enabled', 1);
+	}
+	
+	/**
+	 * Disable built-in page cache
+	 *
+	 */
+	public function disable_a2_page_cache() {
+		A2_Optimized_Cache_Disk::clean();
+		
+		update_option('a2_cache_enabled', 0);
+	}
+	
+	/**
+	 * Enable built-in page cache gzip
+	 *
+	 */
+	public function enable_a2_page_cache_gzip() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['compress_cache'] = 1;
+
+		update_option('a2_optimized_cache', $cache_settings);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache::get_settings();
+	}
+	
+	/**
+	 * Disable built-in page cache gzip
+	 *
+	 */
+	public function disable_a2_page_cache_gzip() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['compress_cache'] = 0;
+
+		update_option('a2_optimized_cache', $cache_settings);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache::get_settings();
+	}
+
+	/**
+	 * Enable built-in page cache html minification
+	 *
+	 */
+	public function enable_a2_page_cache_minify_html() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['minify_html'] = 1;
+
+		update_option('a2_optimized_cache', $cache_settings);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache::get_settings();
+	}
+	
+	/**
+	 * Disable built-in page cache html minification
+	 *
+	 */
+	public function disable_a2_page_cache_minify_html() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['minify_html'] = 0;
+		$cache_settings['minify_inline_css_js'] = 0; // Need to disable css/js as well
+
+		update_option('a2_optimized_cache', $cache_settings);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache::get_settings();
+	}
+
+	/**
+	 * Enable built-in page cache css/js minification
+	 *
+	 */
+	public function enable_a2_page_cache_minify_jscss() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['minify_html'] = 1; // need html to be enabled as well
+		$cache_settings['minify_inline_css_js'] = 1;
+
+		update_option('a2_optimized_cache', $cache_settings);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache::get_settings();
+	}
+	
+	/**
+	 * Disable built-in page cache css/js minification
+	 *
+	 */
+	public function disable_a2_page_cache_minify_jscss() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['minify_inline_css_js'] = 0;
+
+		update_option('a2_optimized_cache', $cache_settings);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache::get_settings();
+	}
+	
+	/**
 	*  Enable WooCommerce Cart Fragment Dequeuing
 	*
 	*/
@@ -678,6 +790,13 @@ class A2_Optimized_OptionsManager {
 				$this->recaptcha_settings_save();
 				$this->settings_page_html();
 			}
+			if ($_GET['a2-page'] == 'cache_settings') {
+				$this->cache_settings_html();
+			}
+			if ($_GET['a2-page'] == 'cache_settings_save') {
+				$this->cache_settings_save();
+				$this->settings_page_html();
+			}
 			if ($_GET['a2-page'] == 'dismiss_notice') {
 				$allowed_notices = array(
 					'a2_login_bookmark',
@@ -783,28 +902,27 @@ class A2_Optimized_OptionsManager {
 				$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=w3tcfixed_confirm&page=A2_Optimized_Plugin_admin') . "' class='btn btn-warning'>I accept the risks</a></p>";
 				$this->optimization_alert .= '</div>';
 			}
-		} elseif (
-			$this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php') === false
-				|| is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php') === false
-		) {
-			$this->optimization_alert = "<div class='alert alert-info'>";
-			$this->optimization_alert .= '<p>Thank you for installing A2 Optimized for WordPress. Some features below require an additional plugin. We will walk you through the process of installing our supported version of W3 Total Cache that will enable the rest of the options below.</p>';
-			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Begin Installation</a></p>";
-			$this->optimization_alert .= '</div>';
 		}
 
 		$this->optimization_count = 0;
+		$optimization_number = count($this->optimizations);
+		$optimization_circle = '';
+
+		$a2_cache_enabled = get_option('a2_cache_enabled');
 
 		foreach ($this->optimizations as $shortname => &$item) {
 			$this->optimization_status .= $this->get_optimization_status($item, $opts->server_info);
 			if ($item['configured']) {
 				$this->optimization_count++;
 			}
+			if ($item['plugin'] == 'W3 Total Cache') {
+				// W3 Total Cache items don't count anymore
+				$optimization_number = $optimization_number - 1;
+			}
 		}
-
-		if ($this->optimization_count == count($this->optimizations)) {
+		if ($this->optimization_count == $optimization_number) {
 			$optimization_alert = '<div class="alert alert-success">Your site has been fully optimized!</div>';
-		} elseif (!$this->optimizations['page_cache']['configured']) {
+		} elseif (!$this->optimizations['a2_page_cache']['configured']) {
 			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		} elseif ($this->optimization_count > 2) {
 			$optimization_alert = '<div class="alert alert-success">Your site has been partially optimized!</div>';
@@ -812,9 +930,6 @@ class A2_Optimized_OptionsManager {
 			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		}
 
-		$optimization_number = count($this->optimizations);
-
-		$optimization_circle = '';
 		if ($optimization_number > 0) {
 			$optimization_circle = <<<HTML
 <span class="badge badge-success">{$this->optimization_count}/{$optimization_number}</span>
@@ -1339,6 +1454,195 @@ HTML;
 		update_option('a2_recaptcha_secretkey', sanitize_text_field($_POST['a2_recaptcha_secretkey']));
 		update_option('a2_recaptcha_theme', sanitize_text_field($_POST['a2_recaptcha_theme']));
 	}
+	
+	/**
+	 * Cache Settings Page
+	 *
+	 */
+	private function cache_settings_html() {
+		$image_dir = plugins_url('/assets/images', __FILE__);
+		$kb_search_box = $this->kb_searchbox_html();
+		$admin_url = admin_url('admin.php?a2-page=cache_settings_save&page=A2_Optimized_Plugin_admin&save_settings=1'); ?>
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="<?php echo $image_dir; ?>/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						<?php echo $kb_search_box; ?>
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<?php if ($_GET['save_settings'] == 1) { ?>
+			<div class="notice notice-success is-dismissible"><p>Settings Saved</p></div>
+			<?php } ?>
+			<h3>Advanced Cache Settings</h3>
+			<div>
+				<form method="post" action="<?php echo $admin_url; ?>">
+                <?php settings_fields( 'a2opt-cache' ); ?>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">
+                            <?php esc_html_e( 'Cache Behavior', 'a2-optimized-wp' ); ?>
+                        </th>
+                        <td>
+                            <fieldset>
+                                <p class="subheading"><?php esc_html_e( 'Expiration', 'a2opt-cache' ); ?></p>
+                                <label for="cache_expires" class="checkbox--form-control">
+                                    <input name="a2opt-cache[cache_expires]" type="checkbox" id="cache_expires" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['cache_expires'] ); ?> />
+                                </label>
+                                <label for="cache_expiry_time">
+                                    <?php
+									printf(
+										// translators: %s: Number of hours.
+										esc_html__( 'Cached pages expire %s hours after being created.', 'a2-optimized-wp' ),
+	'<input name="a2opt-cache[cache_expiry_time]" type="number" id="cache_expiry_time" value="' . A2_Optimized_Cache_Engine::$settings['cache_expiry_time'] . '" class="small-text">'
+); ?>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Clearing', 'a2-optimized-wp' ); ?></p>
+                                <label for="clear_site_cache_on_saved_post">
+                                    <input name="a2opt-cache[clear_site_cache_on_saved_post]" type="checkbox" id="clear_site_cache_on_saved_post" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['clear_site_cache_on_saved_post'] ); ?> />
+                                    <?php esc_html_e( 'Clear the site cache if any post type has been published, updated, or trashed (instead of only the page and/or associated cache).', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+                                <label for="clear_site_cache_on_saved_comment">
+                                    <input name="a2opt-cache[clear_site_cache_on_saved_comment]" type="checkbox" id="clear_site_cache_on_saved_comment" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['clear_site_cache_on_saved_comment'] ); ?> />
+                                    <?php esc_html_e( 'Clear the site cache if a comment has been posted, updated, spammed, or trashed (instead of only the page cache).', 'a2-optimzied-wp' ); ?>
+                                </label>
+
+                                <br />
+
+                                <label for="clear_site_cache_on_changed_plugin">
+                                    <input name="a2opt-cache[clear_site_cache_on_changed_plugin]" type="checkbox" id="clear_site_cache_on_changed_plugin" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['clear_site_cache_on_changed_plugin'] ); ?> />
+                                    <?php esc_html_e( 'Clear the site cache if a plugin has been activated, updated, or deactivated.', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Variants', 'a2-optimized-wp' ); ?></p>
+
+                                <label for="compress_cache">
+                                    <input name="a2opt-cache[compress_cache]" type="checkbox" id="compress_cache" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['compress_cache'] ); ?> />
+                                    <?php esc_html_e( 'Pre-compress cached pages with Gzip.', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Minification', 'a2-optimized-wp' ); ?></p>
+                                <label for="minify_html" class="checkbox--form-control">
+                                    <input name="a2opt-cache[minify_html]" type="checkbox" id="minify_html" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['minify_html'] ); ?> />
+                                </label>
+                                <label for="minify_inline_css_js">
+                                    <?php
+									$minify_inline_css_js_options = array(
+										esc_html__( 'excluding', 'a2-optimized-wp' ) => 0,
+										esc_html__( 'including', 'a2-optimized-wp' ) => 1,
+									);
+		$minify_inline_css_js = '<select name="a2opt-cache[minify_inline_css_js]" id="minify_inline_css_js">';
+		foreach ( $minify_inline_css_js_options as $key => $value ) {
+			$minify_inline_css_js .= '<option value="' . esc_attr( $value ) . '"' . selected( $value, A2_Optimized_Cache_Engine::$settings['minify_inline_css_js'], false ) . '>' . $key . '</option>';
+		}
+		$minify_inline_css_js .= '</select>';
+		printf(
+										// translators: %s: Form field control for 'excluding' or 'including' inline CSS and JavaScript during HTML minification.
+										esc_html__( 'Minify HTML in cached pages %s inline CSS and JavaScript.', 'a2-optimized-wp' ),
+										$minify_inline_css_js
+									); ?>
+                                </label>
+                            </fieldset>
+                        </td>
+                    </tr>
+
+                    <tr valign="top">
+                        <th scope="row">
+                            <?php esc_html_e( 'Cache Exclusions', 'a2-optimized-wp' ); ?>
+                        </th>
+                        <td>
+                            <fieldset>
+                                <p class="subheading"><?php esc_html_e( 'Post IDs', 'a2-optimized-wp' ); ?></p>
+                                <label for="excluded_post_ids">
+                                    <input name="a2opt-cache[excluded_post_ids]" type="text" id="excluded_post_ids" value="<?php echo esc_attr( A2_Optimized_Cache_Engine::$settings['excluded_post_ids'] ) ?>" class="regular-text" />
+                                    <p class="description">
+                                    <?php
+									// translators: %s: ,
+									printf( esc_html__( 'Post IDs separated by a %s that should bypass the cache.', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
+                                    </p>
+                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">7,33,42</code></p>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Page Paths', 'a2-optimized-wp' ); ?></p>
+                                <label for="excluded_page_paths">
+                                    <input name="a2opt-cache[excluded_page_paths]" type="text" id="excluded_page_paths" value="<?php echo esc_attr( A2_Optimized_Cache_Engine::$settings['excluded_page_paths'] ) ?>" class="regular-text code" />
+                                    <p class="description"><?php esc_html_e( 'A regex matching page paths that should bypass the cache.', 'a2-optimized-wp' ); ?></p>
+                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^(\/|\/forums\/)$/</code></p>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Query Strings', 'a2-optimized-wp' ); ?></p>
+                                <label for="excluded_query_strings">
+                                    <input name="a2opt-cache[excluded_query_strings]" type="text" id="excluded_query_strings" value="<?php echo esc_attr( A2_Optimized_Cache_Engine::$settings['excluded_query_strings'] ) ?>" class="regular-text code" />
+                                    <p class="description"><?php esc_html_e( 'A regex matching query strings that should bypass the cache.', 'a2-optimized-wp' ); ?></p>
+                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^nocache$/</code></p>
+                                    <p><?php esc_html_e( 'Default if unset:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^(?!(fbclid|ref|mc_(cid|eid)|utm_(source|medium|campaign|term|content|expid)|gclid|fb_(action_ids|action_types|source)|age-verified|usqp|cn-reloaded|_ga|_ke)).+$/</code></p>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Cookies', 'a2-optimized-wp' ); ?></p>
+                                <label for="excluded_cookies">
+                                    <input name="a2opt-cache[excluded_cookies]" type="text" id="excluded_cookies" value="<?php echo esc_attr( A2_Optimized_Cache_Engine::$settings['excluded_cookies'] ) ?>" class="regular-text code" />
+                                    <p class="description"><?php esc_html_e( 'A regex matching cookies that should bypass the cache.', 'a2-optimized-wp' ); ?></p>
+                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^(comment_author|woocommerce_items_in_cart|wp_woocommerce_session)_?/</code></p>
+                                    <p><?php esc_html_e( 'Default if unset:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^(wp-postpass|wordpress_logged_in|comment_author)_/</code></p>
+                                </label>
+                            </fieldset>
+                        </td>
+                    </tr>
+                </table>
+
+                <p class="submit">
+					<?php wp_nonce_field( 'a2opt-cache-save', 'a2opt-cache-nonce' ); ?>
+					<input type="submit" class="button-secondary" value="<?php esc_html_e( 'Save Changes', 'a2-optimized-wp' ); ?>" />
+					<input name="a2opt-cache[clear_site_cache_on_saved_settings]" type="submit" class="button-primary" value="<?php esc_html_e( 'Save Changes and Clear Site Cache', 'a2-optimized-wp' ); ?>" />
+                </p>
+            </form>
+			</div>
+		</div>
+
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+									<?php
+	}
+
+	/**
+	 * Save reCaptcha Settings
+	 *
+	 */
+	private function cache_settings_save() {
+		if (!current_user_can('manage_options')) {
+			die('Cheating eh?');
+		}
+
+		if (check_admin_referer('a2opt-cache-save', 'a2opt-cache-nonce')) {
+			update_option('a2opt-cache', $_REQUEST['a2opt-cache']);
+		}
+	}
 
 	/**
 	 * Knowledge Base Searchbox HMTL
@@ -1611,6 +1915,9 @@ JAVASCRIPT;
 				)
 			) {
 				$active_class = 'inactive';
+				// Disable W3 Total Cache items.
+				// TODO: Handle existing users that want to keep using
+				return;
 			}
 
 			if ($item['configured']) {
