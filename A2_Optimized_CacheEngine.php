@@ -15,6 +15,8 @@ final class A2_Optimized_Cache_Engine {
 	 */
 
 	public static function start() {
+		//echo "starting cache engine...";
+
 		if ( self::should_start() ) {
 			new self();
 		}
