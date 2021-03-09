@@ -896,7 +896,7 @@ HTML;
 
 		<div class="tab-content">
 			<div role="tabpanel" aria-labelledby="li-optimization-status" id="optimization-status" class="tab-pane">
-				<h3>Optimization Status</h3>
+				<h1>Optimization Status</h1>
 				{$this->optimization_alert}
 				{$this->divi_extra_info}
 				<div >
@@ -904,61 +904,38 @@ HTML;
 				</div>
 			</div>
 			<div role="tabpanel" aria-labelledby="li-optimization-warnings" id="optimization-warnings" class="tab-pane">
-				<h3>Warnings</h3>
+				<h1>Warnings</h1>
 				{$warnings}
 			</div>
 
 			<div role="tabpanel" aria-labelledby="li-optimization-advanced" id="optimization-advanced" class="tab-pane">
-				<h3>Advanced Optimizations</h3>
+				<h1>Advanced Optimizations</h1>
 					{$this->advanced_optimization_status}
 			</div>
 
             <div role="tabpanel" aria-labelledby="li-optimization-about" id="optimization-about" class="tab-pane">
 				<div style="margin:20px 0;">
-				    <h3>About A2 Optimized</h3>
+				    <h2>About A2 Optimized</h2>
                     <p>A2 Optimized was developed by A2 Hosting to make it faster and easier to configure the caching of all aspects of a WordPress site.</p>
                     <p>This free plugin comes with many of the popular Optimizations that come with WordPress hosted at A2 Hosting.</p>
                     <p>To get the full advantage of A2 Optimized, host your site at <a href='https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized' target='_blank'>A2 Hosting</a></p>
 
 				</div>
 				<div style="margin:20px 0;">
-					<h3>Additional Plugins Installed on A2 Hosting</h3>
-					<p><strong>A2 Total Cache</strong><br />
-					A community supported fork of W3 Total Cache</p>
+					<h2>Additional Plugins Installed on A2 Hosting</h2>
 					<p><strong>Easy Hide Login</strong><br />
 					Changes the location of the WordPress login page</p>
 					<p><strong>EWWW Image Optimizer</strong><br />
 					Compress and optimize images on upload</p>
 				</div>
 				<div style="margin:20px 0;">
-				    <h3>Free Optimizations</h3>
-				    <dt>Page Caching with W3 Total Cache</dt>
+				    <h2>Free Optimizations</h2>
+				    <dt>Page Caching</dt>
                     <dd>
                         <ul>
                             <li>Page Caching stores full copies of pages on the disk so that PHP code and database queries can be skipped by the web server.</li>
                         </ul>
                     </dd>
-                    <dt>DB Caching with W3 Total Cache</dt>
-                    <dd>
-                        <ul>
-                            <li>Database cache stores copies of common database queries on disk or in memory to speed up page rendering.</li>
-                        </ul>
-                    </dd>
-                    <dt>Object Caching with W3 Total Cache</dt>
-                    <dd>
-                        <ul>
-                            <li>Object Caching stores commonly used elements such as menus, widgets and forms on disk or in memory to speed up page rendering.</li>
-                        </ul>
-                    </dd>
-
-                    <dt>Browser Caching with W3 Total Cache</dt>
-                    <dd>
-                        <ul>
-                            <li>Add Rules to the web server to tell the visitor's browser to store a copy of static files to reduce the load time for pages requested after the first page is loaded.</li>
-                        </ul>
-                    </dd>
-
-
 
                     <dt>Minify HTML Pages</dt>
                     <dd>
@@ -967,26 +944,22 @@ HTML;
                             <li>Smaller html pages download faster.</li>
                         </ul>
                     </dd>
-                    <dt>Minify CSS Files</dt>
+                    <dt>Minify inline CSS rules</dt>
                     <dd>
                         <ul>
-                            <li>Auto Configure W3 Total Cache to condense CSS files.</li>
-                            <li>Combines multiple css files into a single download.</li>
                             <li>Can provide significant speed imporvements for page loads.</li>
                         </ul>
                     </dd>
-                    <dt>Minify JS Files</dt>
+                    <dt>Minify inline JS</dt>
                     <dd>
                         <ul>
-                            <li>Auto Configure W3 Total Cache to condense JavaScript files into non human-readable compressed files.</li>
-                            <li>Combines multiple js files into a single download.</li>
                             <li>Can provide significant speed improvements for page loads.</li>
                         </ul>
                     </dd>
                     <dt>Gzip Compression Enabled</dt>
                     <dd>
                         <ul>
-                            <li>Turns on gzip compression using W3 Total Cache.</li>
+                            <li>Turns on gzip compression.</li>
                             <li>Ensures that files are compressed before sending them to the visitor's browser.</li>
                             <li>Can provide significant speed improvements for page loads.</li>
                             <li>Reduces bandwidth required to serve web pages.</li>
@@ -1009,7 +982,7 @@ HTML;
                     </dd>
 				</div>
 				<div style="margin:20px 0;">
-				    <h3>A2 Hosting Exclusive Optimizations</h3>
+				    <h2>A2 Hosting Exclusive Optimizations</h2>
 				    <p>
 				        These one-click optimizations are only available while hosted at A2 Hosting.
                     </p>
