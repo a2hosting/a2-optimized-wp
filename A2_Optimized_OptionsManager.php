@@ -651,7 +651,6 @@ class A2_Optimized_OptionsManager {
 		$image_dir = plugins_url('/assets/images', __FILE__);
 
 		$ini_error_reporting = ini_get('error_reporting');
-		//ini_set('error_reporting',0);
 
 		if (isset($_GET['a2-page'])) {
 			if (isset($_GET['step'])) {
@@ -1266,7 +1265,7 @@ HTML;
 			</div>
 		</div>
 		<div class="tab-content">
-			<h3>reCaptcha Settings</h3>
+			<h1>reCaptcha Settings</h1>
 			<div>
 				<form action="{$admin_url}" method="POST">
 					<div class="form-group">

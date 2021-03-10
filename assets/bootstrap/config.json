@@ -370,6 +370,7 @@
     "@hr-border": "@gray-lighter"
   },
   "css": [
+    "forms.less",
     "buttons.less",
     "responsive-utilities.less",
     "glyphicons.less",
