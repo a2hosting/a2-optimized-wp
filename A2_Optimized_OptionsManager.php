@@ -914,7 +914,7 @@ class A2_Optimized_OptionsManager {
 			if ($item['configured']) {
 				$this->optimization_count++;
 			}
-			if ($item['plugin'] == 'W3 Total Cache') {
+			if (array_key_exists('plugin', $item) && $item['plugin'] == 'W3 Total Cache') {
 				// W3 Total Cache items don't count anymore
 				$optimization_number = $optimization_number - 1;
 			}
@@ -1451,7 +1451,7 @@ HTML;
 			</div>
 		</div>
 		<div class="tab-content">
-			<?php if ($_GET['save_settings'] == 1) { ?>
+			<?php if (isset($_GET['save_settings']) && $_GET['save_settings'] == 1) { ?>
 			<div class="notice notice-success is-dismissible"><p>Settings Saved</p></div>
 			<?php } ?>
 			<h3>Advanced Cache Settings</h3>
@@ -1474,8 +1474,8 @@ HTML;
 									printf(
 										// translators: %s: Number of hours.
 										esc_html__( 'Cached pages expire %s hours after being created.', 'a2-optimized-wp' ),
-	'<input name="a2opt-cache[cache_expiry_time]" type="number" id="cache_expiry_time" value="' . A2_Optimized_Cache_Engine::$settings['cache_expiry_time'] . '" class="small-text">'
-); ?>
+			'<input name="a2opt-cache[cache_expiry_time]" type="number" id="cache_expiry_time" value="' . A2_Optimized_Cache_Engine::$settings['cache_expiry_time'] . '" class="small-text">'
+		); ?>
                                 </label>
 
                                 <br />
@@ -1529,8 +1529,8 @@ HTML;
 		printf(
 										// translators: %s: Form field control for 'excluding' or 'including' inline CSS and JavaScript during HTML minification.
 										esc_html__( 'Minify HTML in cached pages %s inline CSS and JavaScript.', 'a2-optimized-wp' ),
-										$minify_inline_css_js
-									); ?>
+			$minify_inline_css_js
+		); ?>
                                 </label>
                             </fieldset>
                         </td>
