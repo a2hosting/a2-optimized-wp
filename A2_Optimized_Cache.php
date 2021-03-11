@@ -1006,7 +1006,7 @@ final class A2_Optimized_Cache {
 				'<div class="notice notice-warning"><p>%s</p></div>',
 				sprintf(
 					// translators: 1. A2 Optimized 2. advanced-cache.php 3. wp-content/plugins/a2-optimized-wp 4. wp-content
-					esc_html__( '%1$s requires the %2$s drop-in. Please deactivate and then activate the plugin to automatically copy this file or manually copy it from the %3$s directory to the %4$s directory.', 'a2-optimized-wp' ),
+					esc_html__( '%1$s requires the %2$s drop-in. Please disable and then re-enable the "Page Caching" setting in A2 Optimized to automatically copy this file or manually copy it from the %3$s directory to the %4$s directory.', 'a2-optimized-wp' ),
 					'<strong>A2 Optimized</strong>',
 					'<code>advanced-cache.php</code>',
 					'<code>wp-content/plugins/a2-optimized-wp</code>',
