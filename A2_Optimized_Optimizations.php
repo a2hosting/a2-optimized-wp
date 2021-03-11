@@ -55,6 +55,98 @@ class A2_Optimized_Optimizations {
 		$thisclass->server_info = $this->server_info;
 
 		$optimizations = array(
+			'a2_page_cache' => array(
+				'slug' => 'a2_page_cache',
+				'name' => 'Page Caching',
+				'plugin' => 'A2 Optimized',
+				'configured' => false,
+				'description' => 'Enable Disk Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.<br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Advanced Settings</a>',
+				'is_configured' => function (&$item) use (&$thisclass) {
+					if (get_option('a2_cache_enabled') == 1) {
+						$item['configured'] = true;
+
+						$thisclass->set_install_status('a2_page_cache', true);
+					} else {
+						$thisclass->set_install_status('a2_page_cache', false);
+					}
+				},
+				'disable' => function () use (&$thisclass) {
+					$thisclass->disable_a2_page_cache();
+				},
+				'enable' => function () use (&$thisclass) {
+					$thisclass->enable_a2_page_cache();
+				}
+			),
+			'a2_page_cache_gzip' => array(
+				'slug' => 'a2_page_cache_gzip',
+				'name' => 'Gzip Compression Enabled',
+				'plugin' => 'A2 Optimized',
+				'configured' => false,
+				'description' => 'Makes your site significantly faster by compressing all text files to make them smaller.',
+				'is_configured' => function (&$item) use (&$thisclass) {
+					if (A2_Optimized_Cache_Engine::$settings['compress_cache']) {
+						$item['configured'] = true;
+
+						$thisclass->set_install_status('a2_page_cache_gzip', true);
+					} else {
+						$thisclass->set_install_status('a2_page_cache_gzip', false);
+					}
+				},
+				'disable' => function () use (&$thisclass) {
+					$thisclass->disable_a2_page_cache_gzip();
+				},
+				'enable' => function () use (&$thisclass) {
+					$thisclass->enable_a2_page_cache_gzip();
+				},
+				'remove_link' => true
+			),
+			'a2_page_cache_minify_html' => array(
+				'slug' => 'a2_page_cache_minify_html',
+				'name' => 'Minify HTML Pages',
+				'plugin' => 'A2 Optimized',
+				'configured' => false,
+				'description' => 'Removes extra spaces, tabs and line breaks in the HTML to reduce the size of the files sent to the user.',
+				'is_configured' => function (&$item) use (&$thisclass) {
+					if (A2_Optimized_Cache_Engine::$settings['minify_html']) {
+						$item['configured'] = true;
+
+						$thisclass->set_install_status('a2_page_cache_minify_html', true);
+					} else {
+						$thisclass->set_install_status('a2_page_cache_minify_html', false);
+					}
+				},
+				'disable' => function () use (&$thisclass) {
+					$thisclass->disable_a2_page_cache_minify_html();
+				},
+				'enable' => function () use (&$thisclass) {
+					$thisclass->enable_a2_page_cache_minify_html();
+				},
+				'remove_link' => true
+			),
+			'a2_page_cache_minify_jscss' => array(
+				'slug' => 'a2_page_cache_minify_jscss',
+				'name' => 'Minify Inline CSS and Javascript',
+				'plugin' => 'A2 Optimized',
+				'configured' => false,
+				'optional' => true,
+				'description' => 'Removes extra spaces, tabs and line breaks in inline CSS and Javascript to reduce the size of the files sent to the user. <strong>Note:</strong> This may cause issues with some page builders or other Javascript heavy front end plugins/themes.',
+				'is_configured' => function (&$item) use (&$thisclass) {
+					if (A2_Optimized_Cache_Engine::$settings['minify_inline_css_js']) {
+						$item['configured'] = true;
+
+						$thisclass->set_install_status('a2_page_cache_minify_jscss', true);
+					} else {
+						$thisclass->set_install_status('a2_page_cache_minify_jscss', false);
+					}
+				},
+				'disable' => function () use (&$thisclass) {
+					$thisclass->disable_a2_page_cache_minify_jscss();
+				},
+				'enable' => function () use (&$thisclass) {
+					$thisclass->enable_a2_page_cache_minify_jscss();
+				},
+				'remove_link' => true
+			),
 			'page_cache' => array(
 				'slug' => 'page_cache',
 				'name' => 'Page Caching with W3 Total Cache',
@@ -298,9 +390,7 @@ class A2_Optimized_Optimizations {
 				'plugin' => 'A2 Optimized',
 				'optional' => true,
 				'configured' => false,
-				'description' => '
-                    <p>Disable WooCommerce Cart Fragments on your homepage. Also enables "redirect to cart page" option in WooCommerce</p>
-				',
+				'description' => 'Disable WooCommerce Cart Fragments on your homepage. Also enables "redirect to cart page" option in WooCommerce',
 				'is_configured' => function (&$item) use (&$thisclass) {
 					if (get_option('a2_wc_cart_fragments')) {
 						$item['configured'] = true;

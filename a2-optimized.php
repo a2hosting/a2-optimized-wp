@@ -108,8 +108,9 @@ class A2_Optimized {
 	}
 }
 
-add_action( 'plugins_loaded', array( 'A2_Optimized_Cache', 'init' ) );
-register_activation_hook( __FILE__, array( 'A2_Optimized_Cache', 'on_activation' ) );
+if (get_option('a2_cache_enabled') == 1) {
+	add_action( 'plugins_loaded', array( 'A2_Optimized_Cache', 'init' ) );
+}
 register_deactivation_hook( __FILE__, array( 'A2_Optimized_Cache', 'on_deactivation' ) );
 register_uninstall_hook( __FILE__, array( 'A2_Optimized_Cache', 'on_uninstall' ) );
 

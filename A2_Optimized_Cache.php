@@ -138,14 +138,16 @@ final class A2_Optimized_Cache {
 	 */
 
 	public static function on_a2opt_update() {
-		// clean system files
-		self::each_site( is_multisite(), 'A2_Optimized_Cache_Disk::clean' );
+		if (get_option('a2_cache_enabled') == 1) {
+			// clean system files
+			self::each_site( is_multisite(), 'A2_Optimized_Cache_Disk::clean' );
 
-		// configure system files
-		A2_Optimized_Cache_Disk::setup();
+			// configure system files
+			A2_Optimized_Cache_Disk::setup();
 
-		// clear complete cache
-		self::clear_complete_cache();
+			// clear complete cache
+			self::clear_complete_cache();
+		}
 	}
 
 	/**
@@ -463,16 +465,16 @@ final class A2_Optimized_Cache {
 		$user_default_settings = array(
 			'cache_expires' => 0,
 			'cache_expiry_time' => 0,
-			'clear_site_cache_on_saved_post' => 0,
-			'clear_site_cache_on_saved_comment' => 0,
-			'clear_site_cache_on_changed_plugin' => 0,
+			'clear_site_cache_on_saved_post' => 1,
+			'clear_site_cache_on_saved_comment' => 1,
+			'clear_site_cache_on_changed_plugin' => 1,
 			'compress_cache' => 0,
 			'convert_image_urls_to_webp' => 0,
 			'excluded_post_ids' => '',
 			'excluded_page_paths' => '',
 			'excluded_query_strings' => '',
 			'excluded_cookies' => '',
-			'minify_html' => 0,
+			'minify_html' => 1,
 			'minify_inline_css_js' => 0,
 		);
 
@@ -1150,190 +1152,5 @@ final class A2_Optimized_Cache {
 		}
 
 		return $validated_settings;
-	}
-
-	public static function settings_page() {
-		?>
-
-        <div id="cache_enabler_settings" class="wrap">
-            <h2>
-                <?php esc_html_e( 'Cache Enabler Settings', 'cache-enabler' ); ?>
-            </h2>
-
-            <?php
-			if ( defined( 'WP_CACHE' ) && ! WP_CACHE ) {
-				printf(
-					'<div class="notice notice-warning"><p>%s</p></div>',
-					sprintf(
-						// translators: 1. Cache Enabler 2. define( 'WP_CACHE', true ); 3. wp-config.php 4. require_once ABSPATH . 'wp-settings.php';
-						esc_html__( '%1$s requires %2$s to be set. Please set this in the %3$s file (must be before %4$s).', 'cache-enabler' ),
-						'<strong>Cache Enabler</strong>',
-						"<code>define( 'WP_CACHE', true );</code>",
-						'<code>wp-config.php</code>',
-						"<code>require_once ABSPATH . 'wp-settings.php';</code>"
-					)
-				);
-			} ?>
-
-            <div class="notice notice-info">
-                <p>
-                <?php
-				printf(
-					// translators: %s: KeyCDN
-					esc_html__( 'Combine %s with Cache Enabler for even better WordPress performance and achieve the next level of caching with a CDN.', 'cache-enabler' ),
-				'<strong><a href="https://www.keycdn.com?utm_source=wp-admin&utm_medium=plugins&utm_campaign=cache-enabler">KeyCDN</a></strong>'
-			); ?>
-                </p>
-            </div>
-
-            <form method="post" action="options.php">
-                <?php settings_fields( 'cache_enabler' ); ?>
-                <table class="form-table">
-                    <tr valign="top">
-                        <th scope="row">
-                            <?php esc_html_e( 'Cache Behavior', 'cache-enabler' ); ?>
-                        </th>
-                        <td>
-                            <fieldset>
-                                <p class="subheading"><?php esc_html_e( 'Expiration', 'cache-enabler' ); ?></p>
-                                <label for="cache_expires" class="checkbox--form-control">
-                                    <input name="cache_enabler[cache_expires]" type="checkbox" id="cache_expires" value="1" <?php checked( '1', Cache_Enabler_Engine::$settings['cache_expires'] ); ?> />
-                                </label>
-                                <label for="cache_expiry_time">
-                                    <?php
-									printf(
-										// translators: %s: Number of hours.
-										esc_html__( 'Cached pages expire %s hours after being created.', 'cache-enabler' ),
-					'<input name="cache_enabler[cache_expiry_time]" type="number" id="cache_expiry_time" value="' . Cache_Enabler_Engine::$settings['cache_expiry_time'] . '" class="small-text">'
-				); ?>
-                                </label>
-
-                                <br />
-
-                                <p class="subheading"><?php esc_html_e( 'Clearing', 'cache-enabler' ); ?></p>
-                                <label for="clear_site_cache_on_saved_post">
-                                    <input name="cache_enabler[clear_site_cache_on_saved_post]" type="checkbox" id="clear_site_cache_on_saved_post" value="1" <?php checked( '1', Cache_Enabler_Engine::$settings['clear_site_cache_on_saved_post'] ); ?> />
-                                    <?php esc_html_e( 'Clear the site cache if any post type has been published, updated, or trashed (instead of only the page and/or associated cache).', 'cache-enabler' ); ?>
-                                </label>
-
-                                <br />
-
-                                <label for="clear_site_cache_on_saved_comment">
-                                    <input name="cache_enabler[clear_site_cache_on_saved_comment]" type="checkbox" id="clear_site_cache_on_saved_comment" value="1" <?php checked( '1', Cache_Enabler_Engine::$settings['clear_site_cache_on_saved_comment'] ); ?> />
-                                    <?php esc_html_e( 'Clear the site cache if a comment has been posted, updated, spammed, or trashed (instead of only the page cache).', 'cache-enabler' ); ?>
-                                </label>
-
-                                <br />
-
-                                <label for="clear_site_cache_on_changed_plugin">
-                                    <input name="cache_enabler[clear_site_cache_on_changed_plugin]" type="checkbox" id="clear_site_cache_on_changed_plugin" value="1" <?php checked( '1', Cache_Enabler_Engine::$settings['clear_site_cache_on_changed_plugin'] ); ?> />
-                                    <?php esc_html_e( 'Clear the site cache if a plugin has been activated, updated, or deactivated.', 'cache-enabler' ); ?>
-                                </label>
-
-                                <br />
-
-                                <p class="subheading"><?php esc_html_e( 'Variants', 'cache-enabler' ); ?></p>
-                                <label for="convert_image_urls_to_webp">
-                                    <input name="cache_enabler[convert_image_urls_to_webp]" type="checkbox" id="convert_image_urls_to_webp" value="1" <?php checked( '1', Cache_Enabler_Engine::$settings['convert_image_urls_to_webp'] ); ?> />
-                                    <?php
-									printf(
-										// translators: %s: Optimus
-										esc_html__( 'Create an additional cached version for WebP image support. Convert your images to WebP with %s.', 'cache-enabler' ),
-										'<a href="https://optimus.io" target="_blank" rel="nofollow noopener">Optimus</a>'
-									); ?>
-                                </label>
-
-                                <br />
-
-                                <label for="compress_cache">
-                                    <input name="cache_enabler[compress_cache]" type="checkbox" id="compress_cache" value="1" <?php checked( '1', Cache_Enabler_Engine::$settings['compress_cache'] ); ?> />
-                                    <?php esc_html_e( 'Pre-compress cached pages with Gzip.', 'cache-enabler' ); ?>
-                                </label>
-
-                                <br />
-
-                                <p class="subheading"><?php esc_html_e( 'Minification', 'cache-enabler' ); ?></p>
-                                <label for="minify_html" class="checkbox--form-control">
-                                    <input name="cache_enabler[minify_html]" type="checkbox" id="minify_html" value="1" <?php checked( '1', Cache_Enabler_Engine::$settings['minify_html'] ); ?> />
-                                </label>
-                                <label for="minify_inline_css_js">
-                                    <?php
-									$minify_inline_css_js_options = array(
-										esc_html__( 'excluding', 'cache-enabler' ) => 0,
-										esc_html__( 'including', 'cache-enabler' ) => 1,
-									);
-		$minify_inline_css_js = '<select name="cache_enabler[minify_inline_css_js]" id="minify_inline_css_js">';
-		foreach ( $minify_inline_css_js_options as $key => $value ) {
-			$minify_inline_css_js .= '<option value="' . esc_attr( $value ) . '"' . selected( $value, Cache_Enabler_Engine::$settings['minify_inline_css_js'], false ) . '>' . $key . '</option>';
-		}
-		$minify_inline_css_js .= '</select>';
-		printf(
-										// translators: %s: Form field control for 'excluding' or 'including' inline CSS and JavaScript during HTML minification.
-										esc_html__( 'Minify HTML in cached pages %s inline CSS and JavaScript.', 'cache-enabler' ),
-										$minify_inline_css_js
-									); ?>
-                                </label>
-                            </fieldset>
-                        </td>
-                    </tr>
-
-                    <tr valign="top">
-                        <th scope="row">
-                            <?php esc_html_e( 'Cache Exclusions', 'cache-enabler' ); ?>
-                        </th>
-                        <td>
-                            <fieldset>
-                                <p class="subheading"><?php esc_html_e( 'Post IDs', 'cache-enabler' ); ?></p>
-                                <label for="excluded_post_ids">
-                                    <input name="cache_enabler[excluded_post_ids]" type="text" id="excluded_post_ids" value="<?php echo esc_attr( Cache_Enabler_Engine::$settings['excluded_post_ids'] ) ?>" class="regular-text" />
-                                    <p class="description">
-                                    <?php
-									// translators: %s: ,
-									printf( esc_html__( 'Post IDs separated by a %s that should bypass the cache.', 'cache-enabler' ), '<code class="code--form-control">,</code>' ); ?>
-                                    </p>
-                                    <p><?php esc_html_e( 'Example:', 'cache-enabler' ); ?> <code class="code--form-control">2,43,65</code></p>
-                                </label>
-
-                                <br />
-
-                                <p class="subheading"><?php esc_html_e( 'Page Paths', 'cache-enabler' ); ?></p>
-                                <label for="excluded_page_paths">
-                                    <input name="cache_enabler[excluded_page_paths]" type="text" id="excluded_page_paths" value="<?php echo esc_attr( Cache_Enabler_Engine::$settings['excluded_page_paths'] ) ?>" class="regular-text code" />
-                                    <p class="description"><?php esc_html_e( 'A regex matching page paths that should bypass the cache.', 'cache-enabler' ); ?></p>
-                                    <p><?php esc_html_e( 'Example:', 'cache-enabler' ); ?> <code class="code--form-control">/^(\/|\/forums\/)$/</code></p>
-                                </label>
-
-                                <br />
-
-                                <p class="subheading"><?php esc_html_e( 'Query Strings', 'cache-enabler' ); ?></p>
-                                <label for="excluded_query_strings">
-                                    <input name="cache_enabler[excluded_query_strings]" type="text" id="excluded_query_strings" value="<?php echo esc_attr( Cache_Enabler_Engine::$settings['excluded_query_strings'] ) ?>" class="regular-text code" />
-                                    <p class="description"><?php esc_html_e( 'A regex matching query strings that should bypass the cache.', 'cache-enabler' ); ?></p>
-                                    <p><?php esc_html_e( 'Example:', 'cache-enabler' ); ?> <code class="code--form-control">/^nocache$/</code></p>
-                                    <p><?php esc_html_e( 'Default if unset:', 'cache-enabler' ); ?> <code class="code--form-control">/^(?!(fbclid|ref|mc_(cid|eid)|utm_(source|medium|campaign|term|content|expid)|gclid|fb_(action_ids|action_types|source)|age-verified|usqp|cn-reloaded|_ga|_ke)).+$/</code></p>
-                                </label>
-
-                                <br />
-
-                                <p class="subheading"><?php esc_html_e( 'Cookies', 'cache-enabler' ); ?></p>
-                                <label for="excluded_cookies">
-                                    <input name="cache_enabler[excluded_cookies]" type="text" id="excluded_cookies" value="<?php echo esc_attr( Cache_Enabler_Engine::$settings['excluded_cookies'] ) ?>" class="regular-text code" />
-                                    <p class="description"><?php esc_html_e( 'A regex matching cookies that should bypass the cache.', 'cache-enabler' ); ?></p>
-                                    <p><?php esc_html_e( 'Example:', 'cache-enabler' ); ?> <code class="code--form-control">/^(comment_author|woocommerce_items_in_cart|wp_woocommerce_session)_?/</code></p>
-                                    <p><?php esc_html_e( 'Default if unset:', 'cache-enabler' ); ?> <code class="code--form-control">/^(wp-postpass|wordpress_logged_in|comment_author)_/</code></p>
-                                </label>
-                            </fieldset>
-                        </td>
-                    </tr>
-                </table>
-
-                <p class="submit">
-                <input type="submit" class="button-secondary" value="<?php esc_html_e( 'Save Changes', 'cache-enabler' ); ?>" />
-                <input name="cache_enabler[clear_site_cache_on_saved_settings]" type="submit" class="button-primary" value="<?php esc_html_e( 'Save Changes and Clear Site Cache', 'cache-enabler' ); ?>" />
-                </p>
-            </form>
-        </div>
-
-        <?php
 	}
 }

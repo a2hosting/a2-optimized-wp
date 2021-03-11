@@ -8,8 +8,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 }
 
 $a2opt_cache_dir = ( ( defined( 'WP_PLUGIN_DIR' ) ) ? WP_PLUGIN_DIR : WP_CONTENT_DIR . '/plugins' ) . '/a2-optimized-wp';
-$a2opt_cache_engine_file = $ce_dir . '/A2_Optimized_CacheEngine.php';
-$a2opt_cache_disk_file = $ce_dir . '/A2_Optimized_CacheDisk.php';
+$a2opt_cache_engine_file = $a2opt_cache_dir . '/A2_Optimized_CacheEngine.php';
+$a2opt_cache_disk_file = $a2opt_cache_dir . '/A2_Optimized_CacheDisk.php';
 
 if ( file_exists( $a2opt_cache_engine_file ) && file_exists( $a2opt_cache_disk_file ) ) {
 	require_once $a2opt_cache_engine_file;
