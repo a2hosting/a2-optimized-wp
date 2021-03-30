@@ -112,11 +112,16 @@ class A2_Optimized_CLI {
 	public function enable($args, $assoc_args) {
 		$to_enable = $args[0];
 
+		$site_type = 'Site';
+		if (is_multisite()) {
+			$site_type = 'Network';
+		}
+
 		switch ($to_enable) {
 			case 'page_cache':
 				A2_Optimized_OptionsManager::enable_a2_page_cache();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network Page Cache enabled.', 'a2-optimized-wp' ) : esc_html__( 'Site Page Cache enabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' Page Cache enabled.', 'a2-optimized-wp' ));
 				break;
 			case 'object_cache':
 				//TODO after adding object cache element
@@ -124,34 +129,34 @@ class A2_Optimized_CLI {
 			case 'gzip':
 				A2_Optimized_OptionsManager::enable_a2_page_cache_gzip();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network GZIP enabled.', 'a2-optimized-wp' ) : esc_html__( 'Site GZIP enabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' GZIP enabled.', 'a2-optimized-wp' ));
 				break;
 			case 'html_min':
 				A2_Optimized_OptionsManager::enable_a2_page_cache_minify_html();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network HTML Minify enabled.', 'a2-optimized-wp' ) : esc_html__( 'Site HTML Minify enabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' HTML Minify enabled.', 'a2-optimized-wp' ));
 				break;
 			case 'cssjs_min':
 				A2_Optimized_OptionsManager::enable_a2_page_cache_minify_jscss();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network JS/CSS Minify enabled.', 'a2-optimized-wp' ) : esc_html__( 'Site JS/CSS Minify enabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' JS/CSS Minify enabled.', 'a2-optimized-wp' ));
 				break;
 			case 'xmlrpc':
 				A2_Optimized_OptionsManager::enable_xmlrpc_requests();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network XML-RPC Request Blocking enabled.', 'a2-optimized-wp' ) : esc_html__( 'Site XML-RPC Request Blocking enabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' XML-RPC Request Blocking enabled.', 'a2-optimized-wp' ));
 				break;
 			case 'htaccess':
 				A2_Optimized_OptionsManager::set_deny_direct(true);
 				A2_Optimized_OptionsManager::write_htaccess();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network Deny Direct Access to .htaccess enabled.', 'a2-optimized-wp' ) : esc_html__( 'Site Deny Direct Access to .htaccess enabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' Deny Direct Access to .htaccess enabled.', 'a2-optimized-wp' ));
 				break;
 			case 'lock_plugins':
 				A2_Optimized_OptionsManager::set_lockdown(true);
 				A2_Optimized_OptionsManager::write_wp_config();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network Lock editing of Plugins and Themes enabled.', 'a2-optimized-wp' ) : esc_html__( 'Site Lock editing of Plugins and Themes enabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' Lock editing of Plugins and Themes enabled.', 'a2-optimized-wp' ));
 				break;
 		}
 	}
@@ -183,11 +188,15 @@ class A2_Optimized_CLI {
 	public function disable($args, $assoc_args) {
 		$to_disable = $args[0];
 
+		$site_type = 'Site';
+		if (is_multisite()) {
+			$site_type = 'Network';
+		}
 		switch ($to_disable) {
 			case 'page_cache':
 				A2_Optimized_OptionsManager::disable_a2_page_cache();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network Page Cache disabled.', 'a2-optimized-wp' ) : esc_html__( 'Site Page Cache disabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' Page Cache disabled.', 'a2-optimized-wp' ));
 				break;
 			case 'object_cache':
 				//TODO after adding object cache element
@@ -195,34 +204,34 @@ class A2_Optimized_CLI {
 			case 'gzip':
 				A2_Optimized_OptionsManager::disable_a2_page_cache_gzip();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network GZIP disabled.', 'a2-optimized-wp' ) : esc_html__( 'Site GZIP disabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' GZIP disabled.', 'a2-optimized-wp' ));
 				break;
 			case 'html_min':
 				A2_Optimized_OptionsManager::disable_a2_page_cache_minify_html();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network HTML Minify disabled.', 'a2-optimized-wp' ) : esc_html__( 'Site HTML Minify disabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' HTML Minify disabled.', 'a2-optimized-wp' ));
 				break;
 			case 'cssjs_min':
 				A2_Optimized_OptionsManager::disable_a2_page_cache_minify_jscss();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network JS/CSS Minify disabled.', 'a2-optimized-wp' ) : esc_html__( 'Site JS/CSS Minify disabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' JS/CSS Minify disabled.', 'a2-optimized-wp' ));
 				break;
 			case 'xmlrpc':
 				A2_Optimized_OptionsManager::disable_xmlrpc_requests();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network XML-RPC Request Blocking disabled.', 'a2-optimized-wp' ) : esc_html__( 'Site XML-RPC Request Blocking disabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' XML-RPC Request Blocking disabled.', 'a2-optimized-wp' ));
 				break;
 			case 'htaccess':
 				A2_Optimized_OptionsManager::set_deny_direct(false);
 				A2_Optimized_OptionsManager::write_htaccess();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network Deny Direct Access to .htaccess disabled.', 'a2-optimized-wp' ) : esc_html__( 'Site Deny Direct Access to .htaccess disabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' Deny Direct Access to .htaccess disabled.', 'a2-optimized-wp' ));
 				break;
 			case 'lock_plugins':
 				A2_Optimized_OptionsManager::set_lockdown(false);
 				A2_Optimized_OptionsManager::write_wp_config();
 
-				return WP_CLI::success( ( is_multisite() ) ? esc_html__( 'Network Lock editing of Plugins and Themes disabled.', 'a2-optimized-wp' ) : esc_html__( 'Site Lock editing of Plugins and Themes disabled.', 'a2-optimized-wp' ) );
+				return WP_CLI::success(esc_html__( $site_type . ' Lock editing of Plugins and Themes disabled.', 'a2-optimized-wp' ));
 				break;
 		}
 	}
