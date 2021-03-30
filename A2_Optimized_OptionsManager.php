@@ -434,6 +434,7 @@ class A2_Optimized_OptionsManager {
 		$cache_settings['compress_cache'] = 1;
 
 		update_option('a2_optimized_cache', $cache_settings);
+		update_option('a2_cache_enabled', 1);
 
 		// Rebuild cache settings file
 		A2_Optimized_Cache::get_settings();
@@ -464,6 +465,7 @@ class A2_Optimized_OptionsManager {
 		$cache_settings['minify_html'] = 1;
 
 		update_option('a2_optimized_cache', $cache_settings);
+		update_option('a2_cache_enabled', 1);
 
 		// Rebuild cache settings file
 		A2_Optimized_Cache::get_settings();
@@ -496,6 +498,7 @@ class A2_Optimized_OptionsManager {
 		$cache_settings['minify_inline_css_js'] = 1;
 
 		update_option('a2_optimized_cache', $cache_settings);
+		update_option('a2_cache_enabled', 1);
 
 		// Rebuild cache settings file
 		A2_Optimized_Cache::get_settings();

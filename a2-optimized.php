@@ -117,3 +117,8 @@ register_uninstall_hook( __FILE__, array( 'A2_Optimized_Cache', 'on_uninstall' )
 $a2opt_class = new A2_Optimized();
 add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', array( 'A2_Optimized','showUpgradeNotification'), 10, 2);
 add_action( 'wp_enqueue_scripts', array('A2_Optimized', 'dequeue_woocommerce_cart_fragments'), 11, 2);
+
+// load WP-CLI command
+if ( defined( 'WP_CLI' ) && WP_CLI && class_exists( 'WP_CLI' ) ) {
+	require_once A2OPT_DIR . '/A2_Optimized_CLI.php';
+}
