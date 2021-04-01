@@ -7,7 +7,9 @@
  **/
 
 // Prevent direct access to this file
-if ( ! defined( 'WPINC' ) )  die;
+if ( ! defined( 'WPINC' ) ) {
+	die;
+}
 
 class A2_Optimized_Server_Info {
 	/* Is server behind Cloud Flare? */
@@ -58,21 +60,18 @@ class A2_Optimized_Server_Info {
 			foreach ($temp_headers as $i => $header) {
 				$header = explode(':', $header, 2);
 				if (isset($header[1])) {
-					$headers[$header[0]] = $header[1];
+					$headers[strtolower($header[0])] = $header[1];
 				} else {
-					$headers[$header[0]] = '';
+					$headers[strtolower($header[0])] = '';
 				}
-			}
-			if (isset($headers['Server']) && (strpos(strtolower($headers['Server']), 'cloudflare') !== false)) {
-				$this->cf = true;
 			}
 			if (isset($headers['server']) && (strpos(strtolower($headers['server']), 'cloudflare') !== false)) {
 				$this->cf = true;
 			}
-			if (isset($headers['Content-Encoding']) && (strpos(strtolower($headers['Content-Encoding']), 'gzip') !== false)) {
+			if (isset($headers['content-encoding']) && (strpos(strtolower($headers['content-encoding']), 'gzip') !== false)) {
 				$this->gzip = true;
 			}
-			if (isset($headers['Content-Encoding']) && (strpos(strtolower($headers['Content-Encoding']), 'br') !== false)) {
+			if (isset($headers['content-encoding']) && (strpos(strtolower($headers['content-encoding']), 'br') !== false)) {
 				$this->br = true;
 			}
 		}
