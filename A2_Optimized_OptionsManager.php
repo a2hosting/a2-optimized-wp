@@ -431,7 +431,8 @@ class A2_Optimized_OptionsManager {
 	public function enable_a2_object_cache() {
 		copy( A2OPT_DIR . '/object-cache.php', WP_CONTENT_DIR . '/object-cache.php' );
 
-		//TODO: Update wp-config.php
+		$this->write_wp_config();
+
 		update_option('a2_object_cache_enabled', 1);
 	}
 	
@@ -441,6 +442,8 @@ class A2_Optimized_OptionsManager {
 	 */
 	public function disable_a2_object_cache() {
 		@unlink( WP_CONTENT_DIR . '/object-cache.php' );
+		
+		$this->write_wp_config();
 
 		update_option('a2_object_cache_enabled', 0);
 	}
@@ -1646,7 +1649,7 @@ HTML;
 	}
 
 	/**
-	 * Save reCaptcha Settings
+	 * Save Cache Settings
 	 *
 	 */
 	private function cache_settings_save() {
@@ -1657,6 +1660,7 @@ HTML;
 		if (check_admin_referer('a2opt-cache-save', 'a2opt-cache-nonce')) {
 			update_option('a2opt-cache', $_REQUEST['a2opt-cache']);
 			update_option('a2_optimized_memcached_server', $_REQUEST['a2_optimized_memcached_server']);
+			$this->write_wp_config();
 		}
 	}
 
