@@ -425,6 +425,27 @@ class A2_Optimized_OptionsManager {
 	}
 	
 	/**
+	 * Enable memcached object cache
+	 *
+	 */
+	public function enable_a2_object_cache() {
+		copy( A2OPT_DIR . '/object-cache.php', WP_CONTENT_DIR . '/object-cache.php' );
+
+		//TODO: Update wp-config.php
+		update_option('a2_object_cache_enabled', 1);
+	}
+	
+	/**
+	 * Disable memcached object cache
+	 *
+	 */
+	public function disable_a2_object_cache() {
+		@unlink( WP_CONTENT_DIR . '/object-cache.php' );
+
+		update_option('a2_object_cache_enabled', 0);
+	}
+	
+	/**
 	 * Enable built-in page cache gzip
 	 *
 	 */
@@ -1587,6 +1608,25 @@ HTML;
                             </fieldset>
                         </td>
                     </tr>
+                    <tr valign="top">
+                        <th scope="row">
+                            <?php esc_html_e( 'Object Cache', 'a2-optimized-wp' ); ?>
+                        </th>
+                        <td>
+                            <fieldset>
+                                <p class="subheading"><?php esc_html_e( 'Memcached Server', 'a2-optimized-wp' ); ?></p>
+                                <label for="memcached_server">
+                                    <input name="a2_optimized_memcached_server" type="text" id="memcached_server" value="<?php echo esc_attr( get_option('a2_optimized_memcached_server') ) ?>" class="regular-text" />
+                                    <p class="description">
+                                    <?php
+									// translators: %s: ,
+									printf( esc_html__( 'Address and port of the memcached server for object caching', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
+                                    </p>
+                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">127.0.0.1:11211</code></p>
+                                </label>
+                            </fieldset>
+                        </td>
+                    </tr>
                 </table>
 
                 <p class="submit">
@@ -1616,6 +1656,7 @@ HTML;
 
 		if (check_admin_referer('a2opt-cache-save', 'a2opt-cache-nonce')) {
 			update_option('a2opt-cache', $_REQUEST['a2opt-cache']);
+			update_option('a2_optimized_memcached_server', $_REQUEST['a2_optimized_memcached_server']);
 		}
 	}
 
@@ -2254,8 +2295,8 @@ HTML;
 	 */
 	public function write_wp_config() {
 		$lockdown = $this->get_lockdown();
-
 		$nomods = $this->get_nomods();
+		$obj_server = $this->get_memcached_server();
 
 		touch(ABSPATH . 'wp-config.php');
 		copy(ABSPATH . 'wp-config.php', ABSPATH . 'wp-config.bak-a2.php');
@@ -2274,6 +2315,18 @@ PHP;
 			$a2_config .= <<<PHP
 
 define('DISALLOW_FILE_MODS', true);
+
+PHP;
+		}
+		
+		if ($obj_server) {
+			$a2_config .= <<<PHP
+
+\$memcached_server = array(';
+        'default' => array(
+                '{$obj_server}'
+        )
+);
 
 PHP;
 		}
@@ -2304,6 +2357,14 @@ PHP;
 	 */
 	public function get_nomods() {
 		return get_option('a2_optimized_nomods');
+	}
+	
+	/**
+	 * Check if there is a memcached server set
+	 *
+	 */
+	public function get_memcached_server() {
+		return get_option('a2_optimized_memcached_server');
 	}
 
 	/**

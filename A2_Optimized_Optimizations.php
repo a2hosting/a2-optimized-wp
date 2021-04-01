@@ -47,6 +47,8 @@ class A2_Optimized_Optimizations {
 		$public_opts = $this->get_public_optimizations();
 		$private_opts = $this->get_private_optimizations();
 
+		unset($private_opts['memcached']);
+
 		return array_merge($public_opts, $private_opts);
 	}
 
@@ -62,7 +64,7 @@ class A2_Optimized_Optimizations {
 				'configured' => false,
 				'description' => 'Enable Disk Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.<br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Advanced Settings</a>',
 				'is_configured' => function (&$item) use (&$thisclass) {
-					if (get_option('a2_cache_enabled') == 1) {
+					if (get_option('a2_cache_enabled') == 1 && file_exists( WP_CONTENT_DIR . '/advanced-cache.php')) {
 						$item['configured'] = true;
 
 						$thisclass->set_install_status('a2_page_cache', true);
@@ -99,6 +101,36 @@ class A2_Optimized_Optimizations {
 					$thisclass->enable_a2_page_cache_gzip();
 				},
 				'remove_link' => true
+			),
+			'a2_object_cache' => array(
+				'slug' => 'a2_object_cache',
+				'name' => 'Memcache Object Caching',
+				'plugin' => 'A2 Optimized',
+				'configured' => false,
+				'description' => '
+                    <ul>
+                        <li>Extremely fast and powerful caching system.</li>
+                        <li>Store frequently used database queries and WordPress objects in Memcached.</li>
+                        <li>Memcached is an in-memory key-value store for small chunks of arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.</li>
+                        <li>Take advantage of A2 Hosting&apos;s one-click memcached configuration for WordPress.</li>
+                    </ul>
+					<strong>A memcached server and the PHP memcached extension are required.</strong><br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Memcached Settings</a>
+                ',
+				'is_configured' => function (&$item) use (&$thisclass) {
+					if (get_option('a2_object_cache_enabled') == 1) {
+						$item['configured'] = true;
+
+						$thisclass->set_install_status('a2_object_cache', true);
+					} else {
+						$thisclass->set_install_status('a2_object_cache', false);
+					}
+				},
+				'disable' => function () use (&$thisclass) {
+					$thisclass->disable_a2_object_cache();
+				},
+				'enable' => function () use (&$thisclass) {
+					$thisclass->enable_a2_object_cache();
+				}
 			),
 			'a2_page_cache_minify_html' => array(
 				'slug' => 'a2_page_cache_minify_html',
@@ -565,23 +597,6 @@ class A2_Optimized_Optimizations {
                         <li>To serve static files, Turbo Web Hosting servers do not need to create a worker process as the user. Servers only create a worker process for PHP scripts, which results in faster performance.</li>
                         <li>PHP OpCode Caching is enabled by default. Accounts are allocated 256 MB of memory toward OpCode caching.</li>
                         <li>Turbo Web Hosting servers have a built-in caching engine for Full Page Cache and Edge Side Includes.</li>
-                    </ul>
-                ',
-				'is_configured' => function () {
-					return false;
-				}
-			),
-			'memcached' => array(
-				'name' => 'Memcached Database and Object Cache',
-				'slug' => 'memcached',
-				'configured' => false,
-				'premium' => true,
-				'description' => '
-                    <ul>
-                        <li>Extremely fast and powerful caching system.</li>
-                        <li>Store frequently used database queries and WordPress objects in Memcached.</li>
-                        <li>Memcached is an in-memory key-value store for small chunks of arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.</li>
-                        <li>Take advantage of A2 Hosting&apos;s one-click memcached configuration for WordPress.</li>
                     </ul>
                 ',
 				'is_configured' => function () {
