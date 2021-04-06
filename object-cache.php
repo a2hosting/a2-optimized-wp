@@ -468,10 +468,8 @@ class WP_Object_Cache {
 			'miss' => 0,
 		);
 
-		global $memcached_servers;
-
-		if ( isset( $memcached_servers ) ) {
-			$buckets = $memcached_servers;
+		if (defined('MEMCACHED_SERVERS')) {
+			$buckets = MEMCACHED_SERVERS;
 		} else {
 			$buckets = array( '127.0.0.1:11211' );
 		}

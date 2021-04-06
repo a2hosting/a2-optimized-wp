@@ -73,6 +73,8 @@ final class A2_Optimized_Cache_Disk {
 			array_map( 'unlink', glob( ABSPATH . 'A2OPT_SETTINGS_PATH-*.json' ) );
 			// delete advanced-cache.php drop-in
 			@unlink( WP_CONTENT_DIR . '/advanced-cache.php' );
+			// delete object-cache.php drop-in
+			@unlink( WP_CONTENT_DIR . '/object-cache.php' );
 			// unset WP_CACHE constant in config file if set by Cache Enabler
 			self::set_wp_cache_constant( false );
 		}
@@ -398,6 +400,8 @@ final class A2_Optimized_Cache_Disk {
 			return;
 		}
 
+		$settings = A2_Optimized_Cache::validate_settings($settings);
+
 		// get new settings file
 		$new_settings_file = self::get_settings_file();
 
@@ -420,6 +424,8 @@ final class A2_Optimized_Cache_Disk {
 		$new_settings_file_contents .= 'return ' . var_export( $settings, true ) . ';';
 
 		file_put_contents( $new_settings_file, $new_settings_file_contents );
+
+		update_option('a2opt-cache', $settings);
 
 		return $new_settings_file;
 	}
