@@ -317,7 +317,7 @@ final class A2_Optimized_Cache {
 
 	public static function get_settings() {
 		// get database option value
-		$settings = get_option( 'a2_optimized_cache' );
+		$settings = get_option( 'a2opt-cache' );
 
 		// if database option does not exist or settings are outdated
 		if ( $settings === false || isset( $settings['version'] ) && $settings['version'] !== A2OPT_VERSION ) {

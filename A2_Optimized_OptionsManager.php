@@ -410,7 +410,8 @@ class A2_Optimized_OptionsManager {
 	 */
 	public function enable_a2_page_cache() {
 		A2_Optimized_Cache_Disk::setup();
-		
+		A2_Optimized_Cache::update_backend();
+
 		update_option('a2_cache_enabled', 1);
 	}
 	
@@ -420,6 +421,7 @@ class A2_Optimized_OptionsManager {
 	 */
 	public function disable_a2_page_cache() {
 		A2_Optimized_Cache_Disk::clean();
+		A2_Optimized_Cache::update_backend();
 		
 		update_option('a2_cache_enabled', 0);
 	}
@@ -457,11 +459,11 @@ class A2_Optimized_OptionsManager {
 
 		$cache_settings['compress_cache'] = 1;
 
-		update_option('a2_optimized_cache', $cache_settings);
+		update_option('a2opt-cache', $cache_settings);
 		update_option('a2_cache_enabled', 1);
 
 		// Rebuild cache settings file
-		A2_Optimized_Cache::get_settings();
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
 	
 	/**
@@ -473,10 +475,10 @@ class A2_Optimized_OptionsManager {
 
 		$cache_settings['compress_cache'] = 0;
 
-		update_option('a2_optimized_cache', $cache_settings);
+		update_option('a2opt-cache', $cache_settings);
 
 		// Rebuild cache settings file
-		A2_Optimized_Cache::get_settings();
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
 
 	/**
@@ -488,11 +490,11 @@ class A2_Optimized_OptionsManager {
 
 		$cache_settings['minify_html'] = 1;
 
-		update_option('a2_optimized_cache', $cache_settings);
+		update_option('a2opt-cache', $cache_settings);
 		update_option('a2_cache_enabled', 1);
 
 		// Rebuild cache settings file
-		A2_Optimized_Cache::get_settings();
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
 	
 	/**
@@ -505,10 +507,10 @@ class A2_Optimized_OptionsManager {
 		$cache_settings['minify_html'] = 0;
 		$cache_settings['minify_inline_css_js'] = 0; // Need to disable css/js as well
 
-		update_option('a2_optimized_cache', $cache_settings);
+		update_option('a2opt-cache', $cache_settings);
 
 		// Rebuild cache settings file
-		A2_Optimized_Cache::get_settings();
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
 
 	/**
@@ -521,11 +523,11 @@ class A2_Optimized_OptionsManager {
 		$cache_settings['minify_html'] = 1; // need html to be enabled as well
 		$cache_settings['minify_inline_css_js'] = 1;
 
-		update_option('a2_optimized_cache', $cache_settings);
+		update_option('a2opt-cache', $cache_settings);
 		update_option('a2_cache_enabled', 1);
 
 		// Rebuild cache settings file
-		A2_Optimized_Cache::get_settings();
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
 	
 	/**
@@ -537,10 +539,10 @@ class A2_Optimized_OptionsManager {
 
 		$cache_settings['minify_inline_css_js'] = 0;
 
-		update_option('a2_optimized_cache', $cache_settings);
+		update_option('a2opt-cache', $cache_settings);
 
 		// Rebuild cache settings file
-		A2_Optimized_Cache::get_settings();
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
 	
 	/**
@@ -938,20 +940,21 @@ class A2_Optimized_OptionsManager {
 
 		foreach ($this->optimizations as $shortname => &$item) {
 			$this->optimization_status .= $this->get_optimization_status($item, $opts->server_info);
-			if ($item['configured']) {
+			if ($item['configured'] && !array_key_exists('optional', $item)) {
 				$this->optimization_count++;
 			}
-			if (array_key_exists('plugin', $item) && $item['plugin'] == 'W3 Total Cache') {
+			if ((array_key_exists('plugin', $item) && $item['plugin'] == 'W3 Total Cache') || (array_key_exists('optional', $item) && $item['optional'] == true)) {
 				// W3 Total Cache items don't count anymore
+				// Optional items don't count towards total
 				$optimization_number = $optimization_number - 1;
 			}
 		}
-		if ($this->optimization_count == $optimization_number) {
+		if ($this->optimization_count >= $optimization_number) {
 			$optimization_alert = '<div class="alert alert-success">Your site has been fully optimized!</div>';
-		} elseif (!$this->optimizations['a2_page_cache']['configured']) {
-			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		} elseif ($this->optimization_count > 2) {
 			$optimization_alert = '<div class="alert alert-success">Your site has been partially optimized!</div>';
+		} elseif (!$this->optimizations['a2_page_cache']['configured']) {
+			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		} else {
 			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		}
@@ -1620,12 +1623,12 @@ HTML;
                                 <p class="subheading"><?php esc_html_e( 'Memcached Server', 'a2-optimized-wp' ); ?></p>
                                 <label for="memcached_server">
                                     <input name="a2_optimized_memcached_server" type="text" id="memcached_server" value="<?php echo esc_attr( get_option('a2_optimized_memcached_server') ) ?>" class="regular-text" />
-                                    <p class="description">
+									<p class="description">
                                     <?php
 									// translators: %s: ,
 									printf( esc_html__( 'Address and port of the memcached server for object caching', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
                                     </p>
-                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">127.0.0.1:11211</code></p>
+									<p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">127.0.0.1:11211</code></p>
                                 </label>
                             </fieldset>
                         </td>
@@ -2305,13 +2308,17 @@ HTML;
 		touch(ABSPATH . 'wp-config.php');
 		copy(ABSPATH . 'wp-config.php', ABSPATH . 'wp-config.bak-a2.php');
 
-		$a2_config = '';
-		if ($lockdown) {
-			$a2_config = <<<PHP
+		$a2_config = <<<PHP
 
 // BEGIN A2 CONFIG
+
+PHP;
+
+		if ($lockdown) {
+			$a2_config .= <<<PHP
+
 define('DISALLOW_FILE_EDIT', true);
-// END A2 CONFIG
+
 PHP;
 		}
 
@@ -2326,14 +2333,14 @@ PHP;
 		if ($obj_server) {
 			$a2_config .= <<<PHP
 
-\$memcached_server = array(';
-        'default' => array(
-                '{$obj_server}'
-        )
-);
+define('MEMCACHED_SERVERS', array('default' => array('{$obj_server}')));
 
 PHP;
 		}
+		
+		$a2_config .= <<<PHP
+// END A2 CONFIG
+PHP;
 
 		$wpconfig = file_get_contents(ABSPATH . 'wp-config.php');
 		$pattern = "/[\r\n]*[\/][\/] BEGIN A2 CONFIG.*[\/][\/] END A2 CONFIG[\r\n]*/msU";

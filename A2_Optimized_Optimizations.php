@@ -117,7 +117,7 @@ class A2_Optimized_Optimizations {
 					<strong>A memcached server and the PHP memcached extension are required.</strong><br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Memcached Settings</a>
                 ',
 				'is_configured' => function (&$item) use (&$thisclass) {
-					if (get_option('a2_object_cache_enabled') == 1) {
+					if (get_option('a2_object_cache_enabled') == 1 && file_exists( WP_CONTENT_DIR . '/object-cache.php')) {
 						$item['configured'] = true;
 
 						$thisclass->set_install_status('a2_object_cache', true);
