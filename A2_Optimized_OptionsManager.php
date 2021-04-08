@@ -807,6 +807,9 @@ class A2_Optimized_OptionsManager {
 			if ($_GET['a2-page'] == 'upgrade_wizard') {
 				$this->upgrade_wizard_html($step);
 			}
+			if ($_GET['a2-page'] == 'w3tc_migration_wizard') {
+				$this->w3tc_migration_wizard_html($step);
+			}
 			if ($_GET['a2-page'] == 'w3tcfixed_confirm') {
 				update_option('a2opt_w3tcfixed_confirm', true);
 				$this->settings_page_html();
@@ -915,7 +918,8 @@ class A2_Optimized_OptionsManager {
 			$this->optimization_alert .= '<p>We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we will help you disable this W3 Total Cache plugin version and install an A2 Hosting supported version of W3 Total Cache in its place.</p>';
 			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Disable W3 Total Cache</a></p>";
 			$this->optimization_alert .= '</div>';
-		} elseif (is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')) {
+		}
+		if (is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')) {
 			$w3tc_fixed_info = get_plugin_data('w3-total-cache-fixed/w3-total-cache-fixed.php');
 			if (version_compare($w3tc_fixed_info['Version'], '0.9.5.0') >= 0) {
 				$this->optimization_alert = "<div class='alert alert-info'>";
@@ -930,6 +934,12 @@ class A2_Optimized_OptionsManager {
 				$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=w3tcfixed_confirm&page=A2_Optimized_Plugin_admin') . "' class='btn btn-warning'>I accept the risks</a></p>";
 				$this->optimization_alert .= '</div>';
 			}
+		}
+		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
+			$this->optimization_alert = "<div class='alert alert-info'>";
+			$this->optimization_alert .= '<p>We noticed you are using W3 Total Cache. The version you have installed is outdated and may cause issues with future versions of WordPress. However, A2 Optimized now comes with our own built-in caching engine. To get the best options for optimizing your WordPress site, we will help you disable the W3 Total Cache plugin version and install and configure A2 Optimized caching in place.</p>';
+			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=w3tc_migration_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Upgrade your caching</a></p>";
+			$this->optimization_alert .= '</div>';
 		}
 
 		$this->optimization_count = 0;
@@ -1219,6 +1229,194 @@ HTML;
 
 HTML;
 	}
+	
+	/**
+	 * Wizard to migrate from the W3TC plugin
+	 * @param integer $setup_step The step to begin install process
+	 *
+	 */
+	private function w3tc_migration_wizard_html($setup_step = 1) {
+		$image_dir = plugins_url('/assets/images', __FILE__);
+		$kb_search_box = $this->kb_searchbox_html();
+		$w3tc_settings = $this->get_w3tc_config();
+		$migrated_settings = array();
+		$migrated_settings['page_cache'] = array(
+			'name' => 'Enable Page Caching',
+			'w3tc_value' => $w3tc_settings['pgcache.enabled']
+		);
+		$migrated_settings['excluded_cookies'] = array(
+			'name' => 'Do not cache requests that have these cookies',
+			'w3tc_value' => $w3tc_settings['pgcache.reject.cookie']
+		);
+		$migrated_settings['object_cache'] = array(
+			'name' => 'Enable Memcached Object Caching',
+			'w3tc_value' => $w3tc_settings['objectcache.enabled']
+		);
+		$migrated_settings['memcached_server'] = array(
+			'name' => 'Memcached Servers',
+			'w3tc_value' => $w3tc_settings['objectcache.memcached.servers']
+		);
+		$migrated_settings['clear_site_cache_on_saved_post'] = array(
+			'name' => 'Clear cache when saving post',
+			'w3tc_value' => $w3tc_settings['pgcache.purge.post']
+		);
+		$migrated_settings['clear_site_cache_on_saved_comment'] = array(
+			'name' => 'Clear cache when a new comment is added',
+			'w3tc_value' => $w3tc_settings['pgcache.purge.comments']
+		);
+		$migrated_settings['compress_cache'] = array(
+			'name' => 'GZIP compress cached pages',
+			'w3tc_value' => $w3tc_settings['browsercache.html.compression']
+		);
+		$migrated_settings['minify_html'] = array(
+			'name' => 'HTML Minification',
+			'w3tc_value' => $w3tc_settings['minify.html.enable']
+		);
+		$migrated_settings['minify_inline_css_js'] = array(
+			'name' => 'Javascript and CSS Minification',
+			'w3tc_value' => $w3tc_settings['minify.js.enable']
+		);
+
+		if ($setup_step == 1) {
+			echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>A2 W3 Total Cache plugin settings</h3>
+			<p class='loading-spinner'><img src='{$image_dir}/spinner.gif' style='height: auto; width: 50px;' /></p>
+HTML;
+
+			$step_output = '<p>We have detected the following W3 Total Cache settings and will migrate them to the A2 Optimized caching engine.</p><ul>';
+
+			foreach ($migrated_settings as $k => $item) {
+				$value = 'No';
+				if ($item['w3tc_value']) {
+					$value = 'Yes';
+				}
+				if (is_array($item['w3tc_value'])) {
+					$value = json_encode($item['w3tc_value']);
+				}
+				if ($k == 'memcached_server') {
+					if (is_array($item['w3tc_value'])) {
+						$value = $item['w3tc_value'][0];
+					} else {
+						$value = 'Not set';
+					}
+				}
+				if ($k == 'excluded_cookies') {
+					if (is_array($item['w3tc_value'])) {
+						//  /^(comment_author|woocommerce_items_in_cart|wp_woocommerce_session)_?/
+						//$value = "/^(" . $item['w3tc_value'] . ")_?/";
+						$value = implode(', ', $item['w3tc_value']);
+					} else {
+						$value = 'Not set';
+					}
+				}
+				
+				$step_output .= '<li><strong>' . $item['name'] . '</strong>: ' . $value . '</li>';
+			}
+			
+			$step_output .= "</ul><p>Next we will need to deactivate the W3 Total Cache plugin.</p><p><a href='" . admin_url('admin.php?a2-page=w3tc_migration_wizard&page=A2_Optimized_Plugin_admin&step=2') . "' class='btn btn-success'>Deactivate</a></p>";
+			echo <<<HTML
+			<div>
+				{$step_output}
+			</div>
+		</div>
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+<style>
+.loading-spinner { display: none; }
+</style>
+HTML;
+		}
+
+		if ($setup_step == 2) {
+			$admin_url = admin_url('admin.php?page=A2_Optimized_Plugin_admin');
+
+			$a2_cache_settings = A2_Optimized_Cache::get_settings();
+			if ($migrated_settings['excluded_cookies']['w3tc_value'] && is_array($migrated_settings['excluded_cookies']['w3tc_value'])) {
+				$a2_cache_settings['excluded_cookies'] = implode(',', $migrated_settings['excluded_cookies']['w3tc_value']);
+			}
+			if ($migrated_settings['clear_site_cache_on_saved_post']['w3tc_value']) {
+				$a2_cache_settings['clear_site_cache_on_saved_post'] = 1;
+			}
+			if ($migrated_settings['clear_site_cache_on_saved_comment']['w3tc_value']) {
+				$a2_cache_settings['clear_site_cache_on_saved_comment'] = 1;
+			}
+			if ($migrated_settings['compress_cache']['w3tc_value']) {
+				$a2_cache_settings['compress_cache'] = 1;
+			}
+			if ($migrated_settings['minify_html']['w3tc_value']) {
+				$a2_cache_settings['minify_html'] = 1;
+			}
+			if ($migrated_settings['minify_inline_css_js']['w3tc_value']) {
+				$a2_cache_settings['minify_inline_css_js'] = 1;
+			}
+
+			$a2_cache_settings = A2_Optimized_Cache::validate_settings($a2_cache_settings);
+			update_option('a2opt-cache', $a2_cache_settings);
+			A2_Optimized_Cache_Disk::create_settings_file( $a2_cache_settings );
+
+			$this->deactivate_plugin('a2-w3-total-cache/a2-w3-total-cache.php');
+
+			if ($migrated_settings['page_cache']['w3tc_value']) {
+				$this->enable_a2_page_cache();
+			}
+			if ($migrated_settings['object_cache']['w3tc_value'] && is_array($migrated_settings['memcached_server']['w3tc_value'])) {
+				$memcached_server = $migrated_settings['memcached_server']['w3tc_value'][0];
+				if (substr($memcached_server, 0, 14) == '/opt/memcached') {
+					$memcached_server = 'unix://' . $memcached_server;
+				}
+				update_option('a2_optimized_memcached_server', $memcached_server);
+				$this->enable_a2_object_cache();
+			}
+
+			echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>Congratulations!</h3>
+			<div>
+				<p>You are now migrated from W3 Total Cache. You can now return to your A2 Optimized Dashboard.</p>
+				<p><a href='{$admin_url}' class='btn btn-success'>A2 Optimized Dashboard</a></p>
+			</div>
+		</div>
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+
+HTML;
+		}
+	}
 
 	/**
 	 * Wizard to install the W3TC plugin
@@ -1266,8 +1464,6 @@ HTML;
 				{$plugin_install_output}
 			</div>
 		</div>
-		$feedback
-
 	</div>
 
 	<div style="clear:both;padding:10px;"></div>
@@ -1305,8 +1501,6 @@ HTML;
 				<p><a href='{$admin_url}' class='btn btn-success'>Start Configuration</a></p>
 			</div>
 		</div>
-		$feedback
-
 	</div>
 
 	<div style="clear:both;padding:10px;"></div>
@@ -1357,8 +1551,6 @@ HTML;
 				{$plugin_install_output}
 			</div>
 		</div>
-		$feedback
-
 	</div>
 
 	<div style="clear:both;padding:10px;"></div>
@@ -1938,8 +2130,7 @@ JAVASCRIPT;
 				)
 			) {
 				$active_class = 'inactive';
-				// Disable W3 Total Cache items.
-				// TODO: Handle existing users that want to keep using
+
 				return;
 			}
 
