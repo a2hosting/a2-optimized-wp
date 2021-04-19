@@ -1,11 +1,11 @@
 # A2 Optimized WP
 
 Contributors: A2BCool, a2hosting, dmatteson, sputala
-Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
-Requires at least: 3.8
-Tested up to: 5.7
-Stable tag: 2.0.11.1.4
-Requires PHP: 5.3
+Tags: Speed, Optimize, Secure, Fast, A2, Cache, Caching, Hosting
+Requires at least: 5.1
+Tested up to: 5.7.1
+Stable tag: 2.1
+Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
 
@@ -13,46 +13,32 @@ Make your site faster and more secure with a few clicks of a button.
 
 ## Description
 
-**This update fixes an important security issue. Please upgrade immediately**
+A2 Optimized is designed to make it *quick and easy* to *speed up* and secure your website by installing and configuring several well known, stable optimizations with a few quick clicks.
 
-A2 Optimized is designed to make it *quick and easy* to *speed up* and secure your website by installing and configuring several well known, stable plugins with a few clicks of a button.
-
-**Have you ever tried to configure *W3 Total cache* and got lost in the mess of configuration pages?**
-
-A2 Optimized has broken it down into the most valuable optimizations and will automatically configure W3 Total Cache for what works best in most shared hosting environments.
-
+A2 Optimized has broken it down into the most valuable optimizations and will automatically configure your site for what works best in most shared hosting environments.
 
 ### Free Optimizations
 
-**Caching with W3 Total Cache**:
+**Disk Based Page Caching**:
 
-* Enable Page, Object and Database caching with W3 Total cache in one click.
 * Page Caching stores full copies of pages on the disk so that php code and database queries can be skipped by the web server.
-* Object Caching stores commonly used elements such as menus / widgets and forms on disk or in memory to speed up page rendering.
-* Database cache stores copies of common database queries on disk or in memcory to speed up page rendering.
+* Object Caching stores commonly used elements such as menus / widgets and forms in memory to speed up page rendering.
 
 **Minify HTML Pages**:
 
-* Auto Configure W3 Total Cache to remove excess white space and comments from html pages to compress their size.
-* This provides for minor imporvements in page load time.
+* Remove excess white space and comments from html pages to compress their size.
+* This provides for minor improvements in page load time.
 
-**Minify CSS Files**:
+**Minify Inline CSS and Javascript**:
 
-* Auto Configure W3 Total Cache to condense CSS files into non human-readable compressed files.
-* Combines multiple css files into a single download.
-* Can provide significant speed imporvements for page loads.
-
-**Minify JS Files**:
-
-* Auto Configure W3 Total Cache to condense JavaScript files into non human-readable compressed files.
-* Combines multiple js files into a single download.
-* Can provide significant speed imporvements for page loads.
+* Further reduce the size of cached pages by optimizing inline CSS and Javascript.
+* Can provide significant speed improvements for page loads.
 
 **Gzip Compression**:
 
-* Turns on gzip compression using W3 Total Cache.
+* Turns on gzip compression for cached pages.
 * Ensures that files are compressed before transfering them.
-* Can provide significant speed imporvements for page loads.
+* Can provide significant speed improvements for page loads.
 * Reduces bandwidth required to serve web pages.
 
 **Deny Direct Access to Configuration Files and Comment Form**:
@@ -66,6 +52,11 @@ A2 Optimized has broken it down into the most valuable optimizations and will au
 * Turns off the file editor in the wp-admin.
 * Prevents plugins and themes from being tampered with from the wp-admin.
 
+**Disable XML-RPC Services**:
+
+* XML-RPC is a frequent target for bot attacks and can cause site slow down even when unsuccessful.
+* WordPress related services such as Jetpack are whitelisted and continue to work as expected.
+
 ### A2 Hosting Exclusive Optimizations
 
 *These one-click optimizations are only available while hosted at A2 Hosting.*
@@ -73,12 +64,12 @@ A2 Optimized has broken it down into the most valuable optimizations and will au
 **Login URL Change**:
 
 * Move the login page from the default wp-login.php to a random URL.
-* Prevents bots from automatically brute-force attacking wp-login.php
+* Prevents bots from automatically brute-force attacking wp-login.php.
 
 **reCAPTCHA on comments and login**:
 
-* provides google reCAPTCHA on both the Login form and comments.
-* Prevents bots from automatically brute-force attacking wp-login.php
+* Provides google reCAPTCHA on both the Login form and comments.
+* Prevents bots from automatically brute-force attacking wp-login.php.
 * Prevents bots from automatically spamming comments.
 
 **Compress Images on Upload**:
@@ -91,13 +82,12 @@ A2 Optimized has broken it down into the most valuable optimizations and will au
 
 * Take advantage of A2 Hosting's Turbo Web Hosting platform.
 * Faster serving of static files.
-* Pre-compiled .htaccess files on the web server for imporved performance.
+* Pre-compiled .htaccess files on the web server for improved performance.
 * PHP OpCode cache enabled by default
 * Custom php engine that is faster than Fast-CGI and FPM
 
-**Memcached Database and Object Cache**:
+**Memcached Object Cache**:
 
-* Database and Object cache in memory instead of on disk.
 * Secure and Faster Memcached using Unix socket files.
 * Significant improvement in page load times, especially on pages that can not use full page cache such as wp-admin.
 
@@ -117,29 +107,28 @@ A2 Optimized has broken it down into the most valuable optimizations and will au
 ### How does A2 Optimized speed up my site?
 
 Caching is the fastest and easiest way to speed up a dynamic website.
-A2 Optimized will install and configure W3 Total Cache with the click of a few buttons.
+A2 Optimized will install and configure disk based caching with the click of a few buttons.
 
 ### Does A2 Optimized make all sites faster?
 
-A2 Optimized will speed up most sites; however, not all plugins are compatible with W3 Total Cache.
+A2 Optimized will speed up most sites; however, not all plugins and themes are compatible with all optimizations.
 
 If your site is slower after enabling caching in A2 Optimized, talk to a developer about finding better solutions for the plugins that you are using.
 
 ### Can I use A2 Optimized with WordFence?
 
-A2 Optimized is compatible with most of the features in WordFence, however you should disable caching and logging in WordFence.
-
-### Why use W3 Total Cache over WP Super Cache?
-
-W3 Total Cache is the only plugin that handles all types of caching.  It caches frequently used database queries, objects and pages.  It also allows the use of Memcached as a storage engine for cache.
+A2 Optimized is compatible with most of the features in WordFence, however you should disable caching and logging in WordFence. Also, is page caching in A2 Optimized is enabled, some WordFence features that required WordPress to be fully loaded may not trigger.
 
 ### Can I use A2 Optimized on any host?
 
 Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hosting provides a few more tools for speeding up your site when hosted on an A2 Hosting server.
 
-
 ## Changelog
 
+### 2.1
+* Removed requirement for W3 Total Cache. A2 Optimized now contains it's own caching engine. Don't worry if you still want to use W3 Total Cache, it will continue to work as it always has with this and future updates.
+* Memcached object caching is now available on any host that supports it.
+* Small UI refresh. 
 ### 2.0.11.1.4
 * Fixed an issue where server GZIP capabilities were not always detected 
 ### 2.0.11.1.2
