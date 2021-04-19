@@ -1,14 +1,4 @@
 <?php
-/*
-Plugin Name: Memcached Redux
-Description: The real Memcached (not Memcache) backend for the WP Object Cache.
-Version: 0.1.7
-Plugin URI: http://wordpress.org/extend/plugins/memcached-redux/
-Author: Scott Taylor - uses code from Ryan Boren, Denis de Bernardy, Matt Martz, Mike Schroder, Mika Epstein, Mohammad Jangda
-
-Install this file to wp-content/object-cache.php
-*/
-
 if ( !defined( 'WP_CACHE_KEY_SALT' ) ) {
 	define( 'WP_CACHE_KEY_SALT', '' );
 }
