@@ -405,6 +405,147 @@ class A2_Optimized_OptionsManager {
 	}
 	
 	/**
+	 * Enable built-in page cache
+	 *
+	 */
+	public function enable_a2_page_cache() {
+		A2_Optimized_Cache_Disk::setup();
+		A2_Optimized_Cache::update_backend();
+
+		update_option('a2_cache_enabled', 1);
+	}
+	
+	/**
+	 * Disable built-in page cache
+	 *
+	 */
+	public function disable_a2_page_cache() {
+		A2_Optimized_Cache_Disk::clean();
+		A2_Optimized_Cache::update_backend();
+		
+		update_option('a2_cache_enabled', 0);
+	}
+	
+	/**
+	 * Enable memcached object cache
+	 *
+	 */
+	public function enable_a2_object_cache() {
+		copy( A2OPT_DIR . '/object-cache.php', WP_CONTENT_DIR . '/object-cache.php' );
+
+		$this->write_wp_config();
+
+		update_option('a2_object_cache_enabled', 1);
+	}
+	
+	/**
+	 * Disable memcached object cache
+	 *
+	 */
+	public function disable_a2_object_cache() {
+		@unlink( WP_CONTENT_DIR . '/object-cache.php' );
+		
+		$this->write_wp_config();
+
+		update_option('a2_object_cache_enabled', 0);
+	}
+	
+	/**
+	 * Enable built-in page cache gzip
+	 *
+	 */
+	public function enable_a2_page_cache_gzip() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['compress_cache'] = 1;
+
+		update_option('a2opt-cache', $cache_settings);
+		update_option('a2_cache_enabled', 1);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
+	}
+	
+	/**
+	 * Disable built-in page cache gzip
+	 *
+	 */
+	public function disable_a2_page_cache_gzip() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['compress_cache'] = 0;
+
+		update_option('a2opt-cache', $cache_settings);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
+	}
+
+	/**
+	 * Enable built-in page cache html minification
+	 *
+	 */
+	public function enable_a2_page_cache_minify_html() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['minify_html'] = 1;
+
+		update_option('a2opt-cache', $cache_settings);
+		update_option('a2_cache_enabled', 1);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
+	}
+	
+	/**
+	 * Disable built-in page cache html minification
+	 *
+	 */
+	public function disable_a2_page_cache_minify_html() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['minify_html'] = 0;
+		$cache_settings['minify_inline_css_js'] = 0; // Need to disable css/js as well
+
+		update_option('a2opt-cache', $cache_settings);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
+	}
+
+	/**
+	 * Enable built-in page cache css/js minification
+	 *
+	 */
+	public function enable_a2_page_cache_minify_jscss() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['minify_html'] = 1; // need html to be enabled as well
+		$cache_settings['minify_inline_css_js'] = 1;
+
+		update_option('a2opt-cache', $cache_settings);
+		update_option('a2_cache_enabled', 1);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
+	}
+	
+	/**
+	 * Disable built-in page cache css/js minification
+	 *
+	 */
+	public function disable_a2_page_cache_minify_jscss() {
+		$cache_settings = A2_Optimized_Cache::get_settings();
+
+		$cache_settings['minify_inline_css_js'] = 0;
+
+		update_option('a2opt-cache', $cache_settings);
+
+		// Rebuild cache settings file
+		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
+	}
+	
+	/**
 	*  Enable WooCommerce Cart Fragment Dequeuing
 	*
 	*/
@@ -651,7 +792,6 @@ class A2_Optimized_OptionsManager {
 		$image_dir = plugins_url('/assets/images', __FILE__);
 
 		$ini_error_reporting = ini_get('error_reporting');
-		//ini_set('error_reporting',0);
 
 		if (isset($_GET['a2-page'])) {
 			if (isset($_GET['step'])) {
@@ -667,6 +807,9 @@ class A2_Optimized_OptionsManager {
 			if ($_GET['a2-page'] == 'upgrade_wizard') {
 				$this->upgrade_wizard_html($step);
 			}
+			if ($_GET['a2-page'] == 'w3tc_migration_wizard') {
+				$this->w3tc_migration_wizard_html($step);
+			}
 			if ($_GET['a2-page'] == 'w3tcfixed_confirm') {
 				update_option('a2opt_w3tcfixed_confirm', true);
 				$this->settings_page_html();
@@ -676,6 +819,13 @@ class A2_Optimized_OptionsManager {
 			}
 			if ($_GET['a2-page'] == 'recaptcha_settings_save') {
 				$this->recaptcha_settings_save();
+				$this->settings_page_html();
+			}
+			if ($_GET['a2-page'] == 'cache_settings') {
+				$this->cache_settings_html();
+			}
+			if ($_GET['a2-page'] == 'cache_settings_save') {
+				$this->cache_settings_save();
 				$this->settings_page_html();
 			}
 			if ($_GET['a2-page'] == 'dismiss_notice') {
@@ -768,7 +918,8 @@ class A2_Optimized_OptionsManager {
 			$this->optimization_alert .= '<p>We noticed you have W3 Total Cache already installed. We are not able to fully support this version of W3 Total Cache with A2 Optimized. To get the best options for optimizing your WordPress site, we will help you disable this W3 Total Cache plugin version and install an A2 Hosting supported version of W3 Total Cache in its place.</p>';
 			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=upgrade_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Disable W3 Total Cache</a></p>";
 			$this->optimization_alert .= '</div>';
-		} elseif (is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')) {
+		}
+		if (is_plugin_active('w3-total-cache-fixed/w3-total-cache-fixed.php')) {
 			$w3tc_fixed_info = get_plugin_data('w3-total-cache-fixed/w3-total-cache-fixed.php');
 			if (version_compare($w3tc_fixed_info['Version'], '0.9.5.0') >= 0) {
 				$this->optimization_alert = "<div class='alert alert-info'>";
@@ -783,38 +934,41 @@ class A2_Optimized_OptionsManager {
 				$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=w3tcfixed_confirm&page=A2_Optimized_Plugin_admin') . "' class='btn btn-warning'>I accept the risks</a></p>";
 				$this->optimization_alert .= '</div>';
 			}
-		} elseif (
-			$this->is_plugin_installed('a2-w3-total-cache/a2-w3-total-cache.php') === false
-				|| is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php') === false
-		) {
+		}
+		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
 			$this->optimization_alert = "<div class='alert alert-info'>";
-			$this->optimization_alert .= '<p>Thank you for installing A2 Optimized for WordPress. Some features below require an additional plugin. We will walk you through the process of installing our supported version of W3 Total Cache that will enable the rest of the options below.</p>';
-			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=newuser_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Begin Installation</a></p>";
+			$this->optimization_alert .= '<p>We noticed you are using W3 Total Cache. The version you have installed is outdated and may cause issues with future versions of WordPress. However, A2 Optimized now comes with our own built-in caching engine. To get the best options for optimizing your WordPress site, we will help you disable the W3 Total Cache plugin version and install and configure A2 Optimized caching in place.</p>';
+			$this->optimization_alert .= "<p><a href='" . admin_url('admin.php?a2-page=w3tc_migration_wizard&page=A2_Optimized_Plugin_admin') . "' class='btn btn-success'>Upgrade your caching</a></p>";
 			$this->optimization_alert .= '</div>';
 		}
 
 		$this->optimization_count = 0;
+		$optimization_number = count($this->optimizations);
+		$optimization_circle = '';
+
+		$a2_cache_enabled = get_option('a2_cache_enabled');
 
 		foreach ($this->optimizations as $shortname => &$item) {
 			$this->optimization_status .= $this->get_optimization_status($item, $opts->server_info);
-			if ($item['configured']) {
+			if ($item['configured'] && !array_key_exists('optional', $item)) {
 				$this->optimization_count++;
 			}
+			if ((array_key_exists('plugin', $item) && $item['plugin'] == 'W3 Total Cache') || (array_key_exists('optional', $item) && $item['optional'] == true)) {
+				// W3 Total Cache items don't count anymore
+				// Optional items don't count towards total
+				$optimization_number = $optimization_number - 1;
+			}
 		}
-
-		if ($this->optimization_count == count($this->optimizations)) {
+		if ($this->optimization_count >= $optimization_number) {
 			$optimization_alert = '<div class="alert alert-success">Your site has been fully optimized!</div>';
-		} elseif (!$this->optimizations['page_cache']['configured']) {
-			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		} elseif ($this->optimization_count > 2) {
 			$optimization_alert = '<div class="alert alert-success">Your site has been partially optimized!</div>';
+		} elseif (!$this->optimizations['a2_page_cache']['configured']) {
+			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		} else {
 			$optimization_alert = '<div class="alert alert-danger">Your site is NOT optimized!</div>';
 		}
 
-		$optimization_number = count($this->optimizations);
-
-		$optimization_circle = '';
 		if ($optimization_number > 0) {
 			$optimization_circle = <<<HTML
 <span class="badge badge-success">{$this->optimization_count}/{$optimization_number}</span>
@@ -896,7 +1050,7 @@ HTML;
 
 		<div class="tab-content">
 			<div role="tabpanel" aria-labelledby="li-optimization-status" id="optimization-status" class="tab-pane">
-				<h3>Optimization Status</h3>
+				<h1>Optimization Status</h1>
 				{$this->optimization_alert}
 				{$this->divi_extra_info}
 				<div >
@@ -904,61 +1058,38 @@ HTML;
 				</div>
 			</div>
 			<div role="tabpanel" aria-labelledby="li-optimization-warnings" id="optimization-warnings" class="tab-pane">
-				<h3>Warnings</h3>
+				<h1>Warnings</h1>
 				{$warnings}
 			</div>
 
 			<div role="tabpanel" aria-labelledby="li-optimization-advanced" id="optimization-advanced" class="tab-pane">
-				<h3>Advanced Optimizations</h3>
+				<h1>Advanced Optimizations</h1>
 					{$this->advanced_optimization_status}
 			</div>
 
             <div role="tabpanel" aria-labelledby="li-optimization-about" id="optimization-about" class="tab-pane">
 				<div style="margin:20px 0;">
-				    <h3>About A2 Optimized</h3>
+				    <h2>About A2 Optimized</h2>
                     <p>A2 Optimized was developed by A2 Hosting to make it faster and easier to configure the caching of all aspects of a WordPress site.</p>
                     <p>This free plugin comes with many of the popular Optimizations that come with WordPress hosted at A2 Hosting.</p>
                     <p>To get the full advantage of A2 Optimized, host your site at <a href='https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized' target='_blank'>A2 Hosting</a></p>
 
 				</div>
 				<div style="margin:20px 0;">
-					<h3>Additional Plugins Installed on A2 Hosting</h3>
-					<p><strong>A2 Total Cache</strong><br />
-					A community supported fork of W3 Total Cache</p>
+					<h2>Additional Plugins Installed on A2 Hosting</h2>
 					<p><strong>Easy Hide Login</strong><br />
 					Changes the location of the WordPress login page</p>
 					<p><strong>EWWW Image Optimizer</strong><br />
 					Compress and optimize images on upload</p>
 				</div>
 				<div style="margin:20px 0;">
-				    <h3>Free Optimizations</h3>
-				    <dt>Page Caching with W3 Total Cache</dt>
+				    <h2>Free Optimizations</h2>
+				    <dt>Page Caching</dt>
                     <dd>
                         <ul>
                             <li>Page Caching stores full copies of pages on the disk so that PHP code and database queries can be skipped by the web server.</li>
                         </ul>
                     </dd>
-                    <dt>DB Caching with W3 Total Cache</dt>
-                    <dd>
-                        <ul>
-                            <li>Database cache stores copies of common database queries on disk or in memory to speed up page rendering.</li>
-                        </ul>
-                    </dd>
-                    <dt>Object Caching with W3 Total Cache</dt>
-                    <dd>
-                        <ul>
-                            <li>Object Caching stores commonly used elements such as menus, widgets and forms on disk or in memory to speed up page rendering.</li>
-                        </ul>
-                    </dd>
-
-                    <dt>Browser Caching with W3 Total Cache</dt>
-                    <dd>
-                        <ul>
-                            <li>Add Rules to the web server to tell the visitor's browser to store a copy of static files to reduce the load time for pages requested after the first page is loaded.</li>
-                        </ul>
-                    </dd>
-
-
 
                     <dt>Minify HTML Pages</dt>
                     <dd>
@@ -967,26 +1098,22 @@ HTML;
                             <li>Smaller html pages download faster.</li>
                         </ul>
                     </dd>
-                    <dt>Minify CSS Files</dt>
+                    <dt>Minify inline CSS rules</dt>
                     <dd>
                         <ul>
-                            <li>Auto Configure W3 Total Cache to condense CSS files.</li>
-                            <li>Combines multiple css files into a single download.</li>
                             <li>Can provide significant speed imporvements for page loads.</li>
                         </ul>
                     </dd>
-                    <dt>Minify JS Files</dt>
+                    <dt>Minify inline JS</dt>
                     <dd>
                         <ul>
-                            <li>Auto Configure W3 Total Cache to condense JavaScript files into non human-readable compressed files.</li>
-                            <li>Combines multiple js files into a single download.</li>
                             <li>Can provide significant speed improvements for page loads.</li>
                         </ul>
                     </dd>
                     <dt>Gzip Compression Enabled</dt>
                     <dd>
                         <ul>
-                            <li>Turns on gzip compression using W3 Total Cache.</li>
+                            <li>Turns on gzip compression.</li>
                             <li>Ensures that files are compressed before sending them to the visitor's browser.</li>
                             <li>Can provide significant speed improvements for page loads.</li>
                             <li>Reduces bandwidth required to serve web pages.</li>
@@ -1009,7 +1136,7 @@ HTML;
                     </dd>
 				</div>
 				<div style="margin:20px 0;">
-				    <h3>A2 Hosting Exclusive Optimizations</h3>
+				    <h2>A2 Hosting Exclusive Optimizations</h2>
 				    <p>
 				        These one-click optimizations are only available while hosted at A2 Hosting.
                     </p>
@@ -1102,6 +1229,194 @@ HTML;
 
 HTML;
 	}
+	
+	/**
+	 * Wizard to migrate from the W3TC plugin
+	 * @param integer $setup_step The step to begin install process
+	 *
+	 */
+	private function w3tc_migration_wizard_html($setup_step = 1) {
+		$image_dir = plugins_url('/assets/images', __FILE__);
+		$kb_search_box = $this->kb_searchbox_html();
+		$w3tc_settings = $this->get_w3tc_config();
+		$migrated_settings = array();
+		$migrated_settings['page_cache'] = array(
+			'name' => 'Enable Page Caching',
+			'w3tc_value' => $w3tc_settings['pgcache.enabled']
+		);
+		$migrated_settings['excluded_cookies'] = array(
+			'name' => 'Do not cache requests that have these cookies',
+			'w3tc_value' => $w3tc_settings['pgcache.reject.cookie']
+		);
+		$migrated_settings['object_cache'] = array(
+			'name' => 'Enable Memcached Object Caching',
+			'w3tc_value' => $w3tc_settings['objectcache.enabled']
+		);
+		$migrated_settings['memcached_server'] = array(
+			'name' => 'Memcached Servers',
+			'w3tc_value' => $w3tc_settings['objectcache.memcached.servers']
+		);
+		$migrated_settings['clear_site_cache_on_saved_post'] = array(
+			'name' => 'Clear cache when saving post',
+			'w3tc_value' => $w3tc_settings['pgcache.purge.post']
+		);
+		$migrated_settings['clear_site_cache_on_saved_comment'] = array(
+			'name' => 'Clear cache when a new comment is added',
+			'w3tc_value' => $w3tc_settings['pgcache.purge.comments']
+		);
+		$migrated_settings['compress_cache'] = array(
+			'name' => 'GZIP compress cached pages',
+			'w3tc_value' => $w3tc_settings['browsercache.html.compression']
+		);
+		$migrated_settings['minify_html'] = array(
+			'name' => 'HTML Minification',
+			'w3tc_value' => $w3tc_settings['minify.html.enable']
+		);
+		$migrated_settings['minify_inline_css_js'] = array(
+			'name' => 'Javascript and CSS Minification',
+			'w3tc_value' => $w3tc_settings['minify.js.enable']
+		);
+
+		if ($setup_step == 1) {
+			echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>A2 W3 Total Cache plugin settings</h3>
+			<p class='loading-spinner'><img src='{$image_dir}/spinner.gif' style='height: auto; width: 50px;' /></p>
+HTML;
+
+			$step_output = '<p>We have detected the following W3 Total Cache settings and will migrate them to the A2 Optimized caching engine.</p><ul>';
+
+			foreach ($migrated_settings as $k => $item) {
+				$value = 'No';
+				if ($item['w3tc_value']) {
+					$value = 'Yes';
+				}
+				if (is_array($item['w3tc_value'])) {
+					$value = json_encode($item['w3tc_value']);
+				}
+				if ($k == 'memcached_server') {
+					if (is_array($item['w3tc_value'])) {
+						$value = $item['w3tc_value'][0];
+					} else {
+						$value = 'Not set';
+					}
+				}
+				if ($k == 'excluded_cookies') {
+					if (is_array($item['w3tc_value'])) {
+						//  /^(comment_author|woocommerce_items_in_cart|wp_woocommerce_session)_?/
+						//$value = "/^(" . $item['w3tc_value'] . ")_?/";
+						$value = implode(', ', $item['w3tc_value']);
+					} else {
+						$value = 'Not set';
+					}
+				}
+				
+				$step_output .= '<li><strong>' . $item['name'] . '</strong>: ' . $value . '</li>';
+			}
+			
+			$step_output .= "</ul><p>Next we will need to deactivate the W3 Total Cache plugin.</p><p><a href='" . admin_url('admin.php?a2-page=w3tc_migration_wizard&page=A2_Optimized_Plugin_admin&step=2') . "' class='btn btn-success'>Deactivate</a></p>";
+			echo <<<HTML
+			<div>
+				{$step_output}
+			</div>
+		</div>
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+<style>
+.loading-spinner { display: none; }
+</style>
+HTML;
+		}
+
+		if ($setup_step == 2) {
+			$admin_url = admin_url('admin.php?page=A2_Optimized_Plugin_admin');
+
+			$a2_cache_settings = A2_Optimized_Cache::get_settings();
+			if ($migrated_settings['excluded_cookies']['w3tc_value'] && is_array($migrated_settings['excluded_cookies']['w3tc_value'])) {
+				$a2_cache_settings['excluded_cookies'] = implode(',', $migrated_settings['excluded_cookies']['w3tc_value']);
+			}
+			if ($migrated_settings['clear_site_cache_on_saved_post']['w3tc_value']) {
+				$a2_cache_settings['clear_site_cache_on_saved_post'] = 1;
+			}
+			if ($migrated_settings['clear_site_cache_on_saved_comment']['w3tc_value']) {
+				$a2_cache_settings['clear_site_cache_on_saved_comment'] = 1;
+			}
+			if ($migrated_settings['compress_cache']['w3tc_value']) {
+				$a2_cache_settings['compress_cache'] = 1;
+			}
+			if ($migrated_settings['minify_html']['w3tc_value']) {
+				$a2_cache_settings['minify_html'] = 1;
+			}
+			if ($migrated_settings['minify_inline_css_js']['w3tc_value']) {
+				$a2_cache_settings['minify_inline_css_js'] = 1;
+			}
+
+			$a2_cache_settings = A2_Optimized_Cache::validate_settings($a2_cache_settings);
+			update_option('a2opt-cache', $a2_cache_settings);
+			A2_Optimized_Cache_Disk::create_settings_file( $a2_cache_settings );
+
+			$this->deactivate_plugin('a2-w3-total-cache/a2-w3-total-cache.php');
+
+			if ($migrated_settings['page_cache']['w3tc_value']) {
+				$this->enable_a2_page_cache();
+			}
+			if ($migrated_settings['object_cache']['w3tc_value'] && is_array($migrated_settings['memcached_server']['w3tc_value'])) {
+				$memcached_server = $migrated_settings['memcached_server']['w3tc_value'][0];
+				if (substr($memcached_server, 0, 14) == '/opt/memcached') {
+					$memcached_server = 'unix://' . $memcached_server;
+				}
+				update_option('a2_optimized_memcached_server', $memcached_server);
+				$this->enable_a2_object_cache();
+			}
+
+			echo <<<HTML
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="{$image_dir}/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						{$kb_search_box}
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<h3>Congratulations!</h3>
+			<div>
+				<p>You are now migrated from W3 Total Cache. You can now return to your A2 Optimized Dashboard.</p>
+				<p><a href='{$admin_url}' class='btn btn-success'>A2 Optimized Dashboard</a></p>
+			</div>
+		</div>
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+
+HTML;
+		}
+	}
 
 	/**
 	 * Wizard to install the W3TC plugin
@@ -1149,8 +1464,6 @@ HTML;
 				{$plugin_install_output}
 			</div>
 		</div>
-		$feedback
-
 	</div>
 
 	<div style="clear:both;padding:10px;"></div>
@@ -1188,8 +1501,6 @@ HTML;
 				<p><a href='{$admin_url}' class='btn btn-success'>Start Configuration</a></p>
 			</div>
 		</div>
-		$feedback
-
 	</div>
 
 	<div style="clear:both;padding:10px;"></div>
@@ -1240,8 +1551,6 @@ HTML;
 				{$plugin_install_output}
 			</div>
 		</div>
-		$feedback
-
 	</div>
 
 	<div style="clear:both;padding:10px;"></div>
@@ -1293,7 +1602,7 @@ HTML;
 			</div>
 		</div>
 		<div class="tab-content">
-			<h3>reCaptcha Settings</h3>
+			<h1>reCaptcha Settings</h1>
 			<div>
 				<form action="{$admin_url}" method="POST">
 					<div class="form-group">
@@ -1338,6 +1647,216 @@ HTML;
 		update_option('a2_recaptcha_sitekey', sanitize_text_field($_POST['a2_recaptcha_sitekey']));
 		update_option('a2_recaptcha_secretkey', sanitize_text_field($_POST['a2_recaptcha_secretkey']));
 		update_option('a2_recaptcha_theme', sanitize_text_field($_POST['a2_recaptcha_theme']));
+	}
+	
+	/**
+	 * Cache Settings Page
+	 *
+	 */
+	private function cache_settings_html() {
+		$image_dir = plugins_url('/assets/images', __FILE__);
+		$kb_search_box = $this->kb_searchbox_html();
+		$admin_url = admin_url('admin.php?a2-page=cache_settings_save&page=A2_Optimized_Plugin_admin&save_settings=1'); ?>
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="<?php echo $image_dir; ?>/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+						<?php echo $kb_search_box; ?>
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<?php if (isset($_GET['save_settings']) && $_GET['save_settings'] == 1) { ?>
+			<div class="notice notice-success is-dismissible"><p>Settings Saved</p></div>
+			<?php } ?>
+			<h3>Advanced Cache Settings</h3>
+			<div>
+				<form method="post" action="<?php echo $admin_url; ?>">
+                <?php settings_fields( 'a2opt-cache' ); ?>
+                <table class="form-table">
+                    <tr valign="top">
+                        <th scope="row">
+                            <?php esc_html_e( 'Cache Behavior', 'a2-optimized-wp' ); ?>
+                        </th>
+                        <td>
+                            <fieldset>
+                                <p class="subheading"><?php esc_html_e( 'Expiration', 'a2opt-cache' ); ?></p>
+                                <label for="cache_expires" class="checkbox--form-control">
+                                    <input name="a2opt-cache[cache_expires]" type="checkbox" id="cache_expires" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['cache_expires'] ); ?> />
+                                </label>
+                                <label for="cache_expiry_time">
+                                    <?php
+									printf(
+										// translators: %s: Number of hours.
+										esc_html__( 'Cached pages expire %s hours after being created.', 'a2-optimized-wp' ),
+			'<input name="a2opt-cache[cache_expiry_time]" type="number" id="cache_expiry_time" value="' . A2_Optimized_Cache_Engine::$settings['cache_expiry_time'] . '" class="small-text">'
+		); ?>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Clearing', 'a2-optimized-wp' ); ?></p>
+                                <label for="clear_site_cache_on_saved_post">
+                                    <input name="a2opt-cache[clear_site_cache_on_saved_post]" type="checkbox" id="clear_site_cache_on_saved_post" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['clear_site_cache_on_saved_post'] ); ?> />
+                                    <?php esc_html_e( 'Clear the site cache if any post type has been published, updated, or trashed (instead of only the page and/or associated cache).', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+                                <label for="clear_site_cache_on_saved_comment">
+                                    <input name="a2opt-cache[clear_site_cache_on_saved_comment]" type="checkbox" id="clear_site_cache_on_saved_comment" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['clear_site_cache_on_saved_comment'] ); ?> />
+                                    <?php esc_html_e( 'Clear the site cache if a comment has been posted, updated, spammed, or trashed (instead of only the page cache).', 'a2-optimzied-wp' ); ?>
+                                </label>
+
+                                <br />
+
+                                <label for="clear_site_cache_on_changed_plugin">
+                                    <input name="a2opt-cache[clear_site_cache_on_changed_plugin]" type="checkbox" id="clear_site_cache_on_changed_plugin" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['clear_site_cache_on_changed_plugin'] ); ?> />
+                                    <?php esc_html_e( 'Clear the site cache if a plugin has been activated, updated, or deactivated.', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Variants', 'a2-optimized-wp' ); ?></p>
+
+                                <label for="compress_cache">
+                                    <input name="a2opt-cache[compress_cache]" type="checkbox" id="compress_cache" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['compress_cache'] ); ?> />
+                                    <?php esc_html_e( 'Pre-compress cached pages with Gzip.', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Minification', 'a2-optimized-wp' ); ?></p>
+                                <label for="minify_html" class="checkbox--form-control">
+                                    <input name="a2opt-cache[minify_html]" type="checkbox" id="minify_html" value="1" <?php checked( '1', A2_Optimized_Cache_Engine::$settings['minify_html'] ); ?> />
+                                </label>
+                                <label for="minify_inline_css_js">
+                                    <?php
+									$minify_inline_css_js_options = array(
+										esc_html__( 'excluding', 'a2-optimized-wp' ) => 0,
+										esc_html__( 'including', 'a2-optimized-wp' ) => 1,
+									);
+		$minify_inline_css_js = '<select name="a2opt-cache[minify_inline_css_js]" id="minify_inline_css_js">';
+		foreach ( $minify_inline_css_js_options as $key => $value ) {
+			$minify_inline_css_js .= '<option value="' . esc_attr( $value ) . '"' . selected( $value, A2_Optimized_Cache_Engine::$settings['minify_inline_css_js'], false ) . '>' . $key . '</option>';
+		}
+		$minify_inline_css_js .= '</select>';
+		printf(
+										// translators: %s: Form field control for 'excluding' or 'including' inline CSS and JavaScript during HTML minification.
+										esc_html__( 'Minify HTML in cached pages %s inline CSS and JavaScript.', 'a2-optimized-wp' ),
+			$minify_inline_css_js
+		); ?>
+                                </label>
+                            </fieldset>
+                        </td>
+                    </tr>
+
+                    <tr valign="top">
+                        <th scope="row">
+                            <?php esc_html_e( 'Cache Exclusions', 'a2-optimized-wp' ); ?>
+                        </th>
+                        <td>
+                            <fieldset>
+                                <p class="subheading"><?php esc_html_e( 'Post IDs', 'a2-optimized-wp' ); ?></p>
+                                <label for="excluded_post_ids">
+                                    <input name="a2opt-cache[excluded_post_ids]" type="text" id="excluded_post_ids" value="<?php echo esc_attr( A2_Optimized_Cache_Engine::$settings['excluded_post_ids'] ) ?>" class="regular-text" />
+                                    <p class="description">
+                                    <?php
+									// translators: %s: ,
+									printf( esc_html__( 'Post IDs separated by a %s that should bypass the cache.', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
+                                    </p>
+                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">7,33,42</code></p>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Page Paths', 'a2-optimized-wp' ); ?></p>
+                                <label for="excluded_page_paths">
+                                    <input name="a2opt-cache[excluded_page_paths]" type="text" id="excluded_page_paths" value="<?php echo esc_attr( A2_Optimized_Cache_Engine::$settings['excluded_page_paths'] ) ?>" class="regular-text code" />
+                                    <p class="description"><?php esc_html_e( 'A regex matching page paths that should bypass the cache.', 'a2-optimized-wp' ); ?></p>
+                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^(\/|\/forums\/)$/</code></p>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Query Strings', 'a2-optimized-wp' ); ?></p>
+                                <label for="excluded_query_strings">
+                                    <input name="a2opt-cache[excluded_query_strings]" type="text" id="excluded_query_strings" value="<?php echo esc_attr( A2_Optimized_Cache_Engine::$settings['excluded_query_strings'] ) ?>" class="regular-text code" />
+                                    <p class="description"><?php esc_html_e( 'A regex matching query strings that should bypass the cache.', 'a2-optimized-wp' ); ?></p>
+                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^nocache$/</code></p>
+                                    <p><?php esc_html_e( 'Default if unset:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^(?!(fbclid|ref|mc_(cid|eid)|utm_(source|medium|campaign|term|content|expid)|gclid|fb_(action_ids|action_types|source)|age-verified|usqp|cn-reloaded|_ga|_ke)).+$/</code></p>
+                                </label>
+
+                                <br />
+
+                                <p class="subheading"><?php esc_html_e( 'Cookies', 'a2-optimized-wp' ); ?></p>
+                                <label for="excluded_cookies">
+                                    <input name="a2opt-cache[excluded_cookies]" type="text" id="excluded_cookies" value="<?php echo esc_attr( A2_Optimized_Cache_Engine::$settings['excluded_cookies'] ) ?>" class="regular-text code" />
+                                    <p class="description"><?php esc_html_e( 'A regex matching cookies that should bypass the cache.', 'a2-optimized-wp' ); ?></p>
+                                    <p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^(comment_author|woocommerce_items_in_cart|wp_woocommerce_session)_?/</code></p>
+                                    <p><?php esc_html_e( 'Default if unset:', 'a2-optimized-wp' ); ?> <code class="code--form-control">/^(wp-postpass|wordpress_logged_in|comment_author)_/</code></p>
+                                </label>
+                            </fieldset>
+                        </td>
+                    </tr>
+                    <tr valign="top">
+                        <th scope="row">
+                            <?php esc_html_e( 'Object Cache', 'a2-optimized-wp' ); ?>
+                        </th>
+                        <td>
+                            <fieldset>
+                                <p class="subheading"><?php esc_html_e( 'Memcached Server', 'a2-optimized-wp' ); ?></p>
+                                <label for="memcached_server">
+                                    <input name="a2_optimized_memcached_server" type="text" id="memcached_server" value="<?php echo esc_attr( get_option('a2_optimized_memcached_server') ) ?>" class="regular-text" />
+									<p class="description">
+                                    <?php
+									// translators: %s: ,
+									printf( esc_html__( 'Address and port of the memcached server for object caching', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
+                                    </p>
+									<p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">127.0.0.1:11211</code></p>
+                                </label>
+                            </fieldset>
+                        </td>
+                    </tr>
+                </table>
+
+                <p class="submit">
+					<?php wp_nonce_field( 'a2opt-cache-save', 'a2opt-cache-nonce' ); ?>
+					<input type="submit" class="button-secondary" value="<?php esc_html_e( 'Save Changes', 'a2-optimized-wp' ); ?>" />
+					<input name="a2opt-cache[clear_site_cache_on_saved_settings]" type="submit" class="button-primary" value="<?php esc_html_e( 'Save Changes and Clear Site Cache', 'a2-optimized-wp' ); ?>" />
+                </p>
+            </form>
+			</div>
+		</div>
+
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+									<?php
+	}
+
+	/**
+	 * Save Cache Settings
+	 *
+	 */
+	private function cache_settings_save() {
+		if (!current_user_can('manage_options')) {
+			die('Cheating eh?');
+		}
+
+		if (check_admin_referer('a2opt-cache-save', 'a2opt-cache-nonce')) {
+			update_option('a2opt-cache', $_REQUEST['a2opt-cache']);
+			update_option('a2_optimized_memcached_server', $_REQUEST['a2_optimized_memcached_server']);
+			$this->write_wp_config();
+		}
 	}
 
 	/**
@@ -1611,6 +2130,8 @@ JAVASCRIPT;
 				)
 			) {
 				$active_class = 'inactive';
+
+				return;
 			}
 
 			if ($item['configured']) {
@@ -1972,19 +2493,23 @@ HTML;
 	 */
 	public function write_wp_config() {
 		$lockdown = $this->get_lockdown();
-
 		$nomods = $this->get_nomods();
+		$obj_server = $this->get_memcached_server();
 
 		touch(ABSPATH . 'wp-config.php');
 		copy(ABSPATH . 'wp-config.php', ABSPATH . 'wp-config.bak-a2.php');
 
-		$a2_config = '';
-		if ($lockdown) {
-			$a2_config = <<<PHP
+		$a2_config = <<<PHP
 
 // BEGIN A2 CONFIG
+
+PHP;
+
+		if ($lockdown) {
+			$a2_config .= <<<PHP
+
 define('DISALLOW_FILE_EDIT', true);
-// END A2 CONFIG
+
 PHP;
 		}
 
@@ -1995,6 +2520,18 @@ define('DISALLOW_FILE_MODS', true);
 
 PHP;
 		}
+		
+		if ($obj_server) {
+			$a2_config .= <<<PHP
+
+define('MEMCACHED_SERVERS', array('default' => array('{$obj_server}')));
+
+PHP;
+		}
+		
+		$a2_config .= <<<PHP
+// END A2 CONFIG
+PHP;
 
 		$wpconfig = file_get_contents(ABSPATH . 'wp-config.php');
 		$pattern = "/[\r\n]*[\/][\/] BEGIN A2 CONFIG.*[\/][\/] END A2 CONFIG[\r\n]*/msU";
@@ -2022,6 +2559,14 @@ PHP;
 	 */
 	public function get_nomods() {
 		return get_option('a2_optimized_nomods');
+	}
+	
+	/**
+	 * Check if there is a memcached server set
+	 *
+	 */
+	public function get_memcached_server() {
+		return get_option('a2_optimized_memcached_server');
 	}
 
 	/**

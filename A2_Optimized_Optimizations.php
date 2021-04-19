@@ -47,6 +47,10 @@ class A2_Optimized_Optimizations {
 		$public_opts = $this->get_public_optimizations();
 		$private_opts = $this->get_private_optimizations();
 
+		if (!is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
+			unset($private_opts['memcached']);
+		}
+
 		return array_merge($public_opts, $private_opts);
 	}
 
@@ -54,253 +58,381 @@ class A2_Optimized_Optimizations {
 		$thisclass = $this->thisclass;
 		$thisclass->server_info = $this->server_info;
 
-		$optimizations = array(
-			'page_cache' => array(
-				'slug' => 'page_cache',
-				'name' => 'Page Caching with W3 Total Cache',
-				'plugin' => 'W3 Total Cache',
-				'configured' => false,
-				'description' => 'Utilize W3 Total Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.',
-				'is_configured' => function (&$item) use (&$thisclass) {
-					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['pgcache.enabled']) {
-						$item['configured'] = true;
-						$permalink_structure = get_option('permalink_structure');
-						$vars = array();
-						if ($w3tc['pgcache.engine'] == 'apc') {
-							if ($permalink_structure == '') {
-								$vars['pgcache.engine'] = 'file';
+		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
+			/* W3 Total Cache Caching */
+			$optimizations = array(
+				'page_cache' => array(
+					'slug' => 'page_cache',
+					'name' => 'Page Caching with W3 Total Cache',
+					'plugin' => 'W3 Total Cache',
+					'configured' => false,
+					'description' => 'Utilize W3 Total Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						$w3tc = $thisclass->get_w3tc_config();
+						if ($w3tc['pgcache.enabled']) {
+							$item['configured'] = true;
+							$permalink_structure = get_option('permalink_structure');
+							$vars = array();
+							if ($w3tc['pgcache.engine'] == 'apc') {
+								if ($permalink_structure == '') {
+									$vars['pgcache.engine'] = 'file';
+								} else {
+									$vars['pgcache.engine'] = 'file_generic';
+								}
 							} else {
-								$vars['pgcache.engine'] = 'file_generic';
-							}
-						} else {
-							if ($permalink_structure == '' && $w3tc['pgcache.engine'] != 'file') {
-								$vars['pgcache.engine'] = 'file';
-							} elseif ($permalink_structure != '' && $w3tc['pgcache.engine'] == 'file') {
-								$vars['pgcache.engine'] = 'file_generic';
-							}
-						}
-
-						if (count($vars) != 0) {
-							$thisclass->update_w3tc($vars);
-						}
-
-						$thisclass->set_install_status('page_cache', true);
-					} else {
-						$thisclass->set_install_status('page_cache', false);
-					}
-				},
-				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
-				'disable' => function () use (&$thisclass) {
-					$thisclass->disable_w3tc_page_cache();
-				},
-				'enable' => function () use (&$thisclass) {
-					$thisclass->enable_w3tc_page_cache();
-				}
-			),
-			'db_cache' => array(
-				'slug' => 'db_cache',
-				'name' => 'DB Caching with W3 Total Cache',
-				'plugin' => 'W3 Total Cache',
-				'configured' => false,
-				'description' => 'Speed up the site by storing the responses of common database queries in a cache.',
-				'is_configured' => function (&$item) use (&$thisclass) {
-					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['dbcache.enabled']) {
-						$vars = array();
-						$item['configured'] = true;
-						if (class_exists('W3_Config')) {
-							if (class_exists('WooCommerce')) {
-								if (array_search('_wc_session_', $w3tc['dbcache.reject.sql']) === false) {
-									$vars['dbcache.reject.sql'] = $w3tc['dbcache.reject.sql'];
-									$vars['dbcache.reject.sql'][] = '_wc_session_';
+								if ($permalink_structure == '' && $w3tc['pgcache.engine'] != 'file') {
+									$vars['pgcache.engine'] = 'file';
+								} elseif ($permalink_structure != '' && $w3tc['pgcache.engine'] == 'file') {
+									$vars['pgcache.engine'] = 'file_generic';
 								}
 							}
+
+							if (count($vars) != 0) {
+								$thisclass->update_w3tc($vars);
+							}
+
+							$thisclass->set_install_status('page_cache', true);
+						} else {
+							$thisclass->set_install_status('page_cache', false);
 						}
-						if (count($vars) != 0) {
-							$thisclass->update_w3tc($vars);
+					},
+					'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_w3tc_page_cache();
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_w3tc_page_cache();
+					}
+				),
+				'db_cache' => array(
+					'slug' => 'db_cache',
+					'name' => 'DB Caching with W3 Total Cache',
+					'plugin' => 'W3 Total Cache',
+					'configured' => false,
+					'description' => 'Speed up the site by storing the responses of common database queries in a cache.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						$w3tc = $thisclass->get_w3tc_config();
+						if ($w3tc['dbcache.enabled']) {
+							$vars = array();
+							$item['configured'] = true;
+							if (class_exists('W3_Config')) {
+								if (class_exists('WooCommerce')) {
+									if (array_search('_wc_session_', $w3tc['dbcache.reject.sql']) === false) {
+										$vars['dbcache.reject.sql'] = $w3tc['dbcache.reject.sql'];
+										$vars['dbcache.reject.sql'][] = '_wc_session_';
+									}
+								}
+							}
+							if (count($vars) != 0) {
+								$thisclass->update_w3tc($vars);
+							}
+
+							$thisclass->set_install_status('db_cache', true);
+						} else {
+							$thisclass->set_install_status('db_cache', false);
 						}
+					},
+					'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_w3tc_db_cache();
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_w3tc_db_cache();
+					}
+				),
+				'object_cache' => array(
+					'slug' => 'object_cache',
+					'name' => 'Object Caching with W3 Total Cache',
+					'plugin' => 'W3 Total Cache',
+					'configured' => false,
+					'description' => 'Store a copy of widgets and menu bars in cache to reduce the time it takes to render pages.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						$w3tc = $thisclass->get_w3tc_config();
+						if ($w3tc['objectcache.enabled']) {
+							$item['configured'] = true;
+							$thisclass->set_install_status('object_cache', true);
+						} else {
+							$thisclass->set_install_status('object_cache', false);
+						}
+					},
+					'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_w3tc_object_cache();
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_w3tc_object_cache();
+					}
+				),
+				'browser_cache' => array(
+					'slug' => 'browser_cache',
+					'name' => 'Browser Caching with W3 Total Cache',
+					'plugin' => 'W3 Total Cache',
+					'configured' => false,
+					'description' => 'Add Rules to the web server to tell the visitor&apos;s browser to store a copy of static files to reduce the load time pages requested after the first page is loaded.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						$w3tc = $thisclass->get_w3tc_config();
+						if ($w3tc['browsercache.enabled']) {
+							$item['configured'] = true;
+							$thisclass->set_install_status('browser_cache', true);
+						} else {
+							$thisclass->set_install_status('browser_cache', false);
+						}
+					},
+					'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_w3tc_browser_cache();
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_w3tc_browser_cache();
+					}
+				),
+				'minify' => array(
+					'name' => 'Minify HTML Pages',
+					'slug' => 'minify',
+					'plugin' => 'W3 Total Cache',
+					'optional' => false,
+					'configured' => false,
+					'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+					'description' => 'Removes extra spaces,tabs and line breaks in the HTML to reduce the size of the files sent to the user.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						$w3tc = $thisclass->get_w3tc_config();
+						if ($w3tc['minify.enabled'] && $w3tc['minify.html.enable']) {
+							$item['configured'] = true;
+							$thisclass->set_install_status('minify-html', true);
+						} else {
+							$thisclass->set_install_status('minify-html', false);
+						}
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_html_minify();
+					},
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_html_minify();
+					}
+				),
+				'css_minify' => array(
+					'name' => 'Minify CSS Files',
+					'slug' => 'css_minify',
+					'plugin' => 'W3 Total Cache',
+					'configured' => false,
+					'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+					'description' => 'Makes your site faster by condensing css files into a single downloadable file and by removing extra space in CSS files to make them smaller.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						$w3tc = $thisclass->get_w3tc_config();
+						if ($w3tc['minify.css.enable']) {
+							$item['configured'] = true;
+							$thisclass->set_install_status('minify-css', true);
+						} else {
+							$thisclass->set_install_status('minify-css', false);
+						}
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->update_w3tc(array(
+							'minify.css.enable' => true,
+							'minify.enabled' => true,
+							'minify.auto' => 0,
+							'minify.engine' => 'file'
+						));
+					},
+					'disable' => function () use (&$thisclass) {
+						$thisclass->update_w3tc(array(
+							'minify.css.enable' => false,
+							'minify.auto' => 0
+						));
+					}
+				),
+				'js_minify' => array(
+					'name' => 'Minify JS Files',
+					'slug' => 'js_minify',
+					'plugin' => 'W3 Total Cache',
+					'configured' => false,
+					'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
+					'description' => 'Makes your site faster by condensing JavaScript files into a single downloadable file and by removing extra space in JavaScript files to make them smaller.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						$w3tc = $thisclass->get_w3tc_config();
+						if ($w3tc['minify.js.enable']) {
+							$item['configured'] = true;
+							$thisclass->set_install_status('minify-js', true);
+						} else {
+							$thisclass->set_install_status('minify-js', false);
+						}
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->update_w3tc(array(
+							'minify.js.enable' => true,
+							'minify.enabled' => true,
+							'minify.auto' => 0,
+							'minify.engine' => 'file'
+						));
+					},
+					'disable' => function () use (&$thisclass) {
+						$thisclass->update_w3tc(array(
+							'minify.js.enable' => false,
+							'minify.auto' => 0
+						));
+					}
+				),
+				'gzip' => array(
+					'name' => 'Gzip Compression Enabled',
+					'slug' => 'gzip',
+					'plugin' => 'W3 Total Cache',
+					'configured' => false,
+					'description' => 'Makes your site significantly faster by compressing all text files to make them smaller.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						$w3tc = $thisclass->get_w3tc_config();
+						if ($w3tc['browsercache.html.compression'] || $thisclass->server_info->cf || $thisclass->server_info->gzip || $thisclass->server_info->br) {
+							$item['configured'] = true;
+							$thisclass->set_install_status('gzip', true);
+						} else {
+							$thisclass->set_install_status('gzip', false);
+						}
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_w3tc_gzip();
+					},
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_w3tc_gzip();
+					},
+					'remove_link' => true
+				)
+			);
+		} else {
+			/* Internal Caching */
+			$optimizations = array(
+				'a2_page_cache' => array(
+					'slug' => 'a2_page_cache',
+					'name' => 'Page Caching',
+					'plugin' => 'A2 Optimized',
+					'configured' => false,
+					'description' => 'Enable Disk Cache to make the site faster by caching pages as static content.  Cache: a copy of rendered dynamic pages will be saved by the server so that the next user does not need to wait for the server to generate another copy.<br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Advanced Settings</a>',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						if (get_option('a2_cache_enabled') == 1 && file_exists( WP_CONTENT_DIR . '/advanced-cache.php')) {
+							$item['configured'] = true;
 
-						$thisclass->set_install_status('db_cache', true);
-					} else {
-						$thisclass->set_install_status('db_cache', false);
+							$thisclass->set_install_status('a2_page_cache', true);
+						} else {
+							$thisclass->set_install_status('a2_page_cache', false);
+						}
+					},
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_a2_page_cache();
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_a2_page_cache();
 					}
-				},
-				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
-				'disable' => function () use (&$thisclass) {
-					$thisclass->disable_w3tc_db_cache();
-				},
-				'enable' => function () use (&$thisclass) {
-					$thisclass->enable_w3tc_db_cache();
-				}
-			),
+				),
+				'a2_page_cache_gzip' => array(
+					'slug' => 'a2_page_cache_gzip',
+					'name' => 'Gzip Compression Enabled',
+					'plugin' => 'A2 Optimized',
+					'configured' => false,
+					'description' => 'Makes your site significantly faster by compressing all text files to make them smaller.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						if (A2_Optimized_Cache_Engine::$settings['compress_cache']) {
+							$item['configured'] = true;
 
-			'object_cache' => array(
-				'slug' => 'object_cache',
-				'name' => 'Object Caching with W3 Total Cache',
-				'plugin' => 'W3 Total Cache',
-				'configured' => false,
-				'description' => 'Store a copy of widgets and menu bars in cache to reduce the time it takes to render pages.',
-				'is_configured' => function (&$item) use (&$thisclass) {
-					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['objectcache.enabled']) {
-						$item['configured'] = true;
-						$thisclass->set_install_status('object_cache', true);
-					} else {
-						$thisclass->set_install_status('object_cache', false);
-					}
-				},
-				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
-				'disable' => function () use (&$thisclass) {
-					$thisclass->disable_w3tc_object_cache();
-				},
-				'enable' => function () use (&$thisclass) {
-					$thisclass->enable_w3tc_object_cache();
-				}
-			),
+							$thisclass->set_install_status('a2_page_cache_gzip', true);
+						} else {
+							$thisclass->set_install_status('a2_page_cache_gzip', false);
+						}
+					},
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_a2_page_cache_gzip();
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_a2_page_cache_gzip();
+					},
+					'remove_link' => true
+				),
+				'a2_object_cache' => array(
+					'slug' => 'a2_object_cache',
+					'name' => 'Memcache Object Caching',
+					'plugin' => 'A2 Optimized',
+					'configured' => false,
+					'description' => '
+						<ul>
+							<li>Extremely fast and powerful caching system.</li>
+							<li>Store frequently used database queries and WordPress objects in Memcached.</li>
+							<li>Memcached is an in-memory key-value store for small chunks of arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.</li>
+							<li>Take advantage of A2 Hosting&apos;s one-click memcached configuration for WordPress.</li>
+						</ul>
+						<strong>A memcached server and the PHP memcached extension are required.</strong><br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Memcached Settings</a>
+					',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						if (get_option('a2_object_cache_enabled') == 1 && file_exists( WP_CONTENT_DIR . '/object-cache.php')) {
+							$item['configured'] = true;
 
-			'browser_cache' => array(
-				'slug' => 'browser_cache',
-				'name' => 'Browser Caching with W3 Total Cache',
-				'plugin' => 'W3 Total Cache',
-				'configured' => false,
-				'description' => 'Add Rules to the web server to tell the visitor&apos;s browser to store a copy of static files to reduce the load time pages requested after the first page is loaded.',
-				'is_configured' => function (&$item) use (&$thisclass) {
-					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['browsercache.enabled']) {
-						$item['configured'] = true;
-						$thisclass->set_install_status('browser_cache', true);
-					} else {
-						$thisclass->set_install_status('browser_cache', false);
+							$thisclass->set_install_status('a2_object_cache', true);
+						} else {
+							$thisclass->set_install_status('a2_object_cache', false);
+						}
+					},
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_a2_object_cache();
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_a2_object_cache();
 					}
-				},
-				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
-				'disable' => function () use (&$thisclass) {
-					$thisclass->disable_w3tc_browser_cache();
-				},
-				'enable' => function () use (&$thisclass) {
-					$thisclass->enable_w3tc_browser_cache();
-				}
-			),
+				),
+				'a2_page_cache_minify_html' => array(
+					'slug' => 'a2_page_cache_minify_html',
+					'name' => 'Minify HTML Pages',
+					'plugin' => 'A2 Optimized',
+					'configured' => false,
+					'description' => 'Removes extra spaces, tabs and line breaks in the HTML to reduce the size of the files sent to the user.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						if (A2_Optimized_Cache_Engine::$settings['minify_html']) {
+							$item['configured'] = true;
 
-			'minify' => array(
-				'name' => 'Minify HTML Pages',
-				'slug' => 'minify',
-				'plugin' => 'W3 Total Cache',
-				'optional' => false,
-				'configured' => false,
-				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
-				'description' => 'Removes extra spaces,tabs and line breaks in the HTML to reduce the size of the files sent to the user.',
-				'is_configured' => function (&$item) use (&$thisclass) {
-					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['minify.enabled'] && $w3tc['minify.html.enable']) {
-						$item['configured'] = true;
-						$thisclass->set_install_status('minify-html', true);
-					} else {
-						$thisclass->set_install_status('minify-html', false);
-					}
-				},
-				'enable' => function () use (&$thisclass) {
-					$thisclass->enable_html_minify();
-				},
-				'disable' => function () use (&$thisclass) {
-					$thisclass->disable_html_minify();
-				}
-			),
-			'css_minify' => array(
-				'name' => 'Minify CSS Files',
-				'slug' => 'css_minify',
-				'plugin' => 'W3 Total Cache',
-				'configured' => false,
-				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
-				'description' => 'Makes your site faster by condensing css files into a single downloadable file and by removing extra space in CSS files to make them smaller.',
-				'is_configured' => function (&$item) use (&$thisclass) {
-					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['minify.css.enable']) {
-						$item['configured'] = true;
-						$thisclass->set_install_status('minify-css', true);
-					} else {
-						$thisclass->set_install_status('minify-css', false);
-					}
-				},
-				'enable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
-						'minify.css.enable' => true,
-						'minify.enabled' => true,
-						'minify.auto' => 0,
-						'minify.engine' => 'file'
-					));
-				},
-				'disable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
-						'minify.css.enable' => false,
-						'minify.auto' => 0
-					));
-				}
-			),
-			'js_minify' => array(
-				'name' => 'Minify JS Files',
-				'slug' => 'js_minify',
-				'plugin' => 'W3 Total Cache',
-				'configured' => false,
-				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
-				'description' => 'Makes your site faster by condensing JavaScript files into a single downloadable file and by removing extra space in JavaScript files to make them smaller.',
-				'is_configured' => function (&$item) use (&$thisclass) {
-					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['minify.js.enable']) {
-						$item['configured'] = true;
-						$thisclass->set_install_status('minify-js', true);
-					} else {
-						$thisclass->set_install_status('minify-js', false);
-					}
-				},
-				'enable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
-						'minify.js.enable' => true,
-						'minify.enabled' => true,
-						'minify.auto' => 0,
-						'minify.engine' => 'file'
-					));
-				},
-				'disable' => function () use (&$thisclass) {
-					$thisclass->update_w3tc(array(
-						'minify.js.enable' => false,
-						'minify.auto' => 0
-					));
-				}
-			),
-			'gzip' => array(
-				'name' => 'Gzip Compression Enabled',
-				'slug' => 'gzip',
-				'plugin' => 'W3 Total Cache',
-				'configured' => false,
-				'description' => 'Makes your site significantly faster by compressing all text files to make them smaller.',
-				'is_configured' => function (&$item) use (&$thisclass) {
-					$w3tc = $thisclass->get_w3tc_config();
-					if ($w3tc['browsercache.html.compression'] || $thisclass->server_info->cf || $thisclass->server_info->gzip || $thisclass->server_info->br) {
-						$item['configured'] = true;
-						$thisclass->set_install_status('gzip', true);
-					} else {
-						$thisclass->set_install_status('gzip', false);
-					}
-				},
-				'enable' => function () use (&$thisclass) {
-					$thisclass->enable_w3tc_gzip();
-				},
-				'disable' => function () use (&$thisclass) {
-					$thisclass->disable_w3tc_gzip();
-				},
-				'remove_link' => true
-			),
+							$thisclass->set_install_status('a2_page_cache_minify_html', true);
+						} else {
+							$thisclass->set_install_status('a2_page_cache_minify_html', false);
+						}
+					},
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_a2_page_cache_minify_html();
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_a2_page_cache_minify_html();
+					},
+					'remove_link' => true
+				),
+				'a2_page_cache_minify_jscss' => array(
+					'slug' => 'a2_page_cache_minify_jscss',
+					'name' => 'Minify Inline CSS and Javascript',
+					'plugin' => 'A2 Optimized',
+					'configured' => false,
+					'optional' => true,
+					'description' => 'Removes extra spaces, tabs and line breaks in inline CSS and Javascript to reduce the size of the files sent to the user. <strong>Note:</strong> This may cause issues with some page builders or other Javascript heavy front end plugins/themes.',
+					'is_configured' => function (&$item) use (&$thisclass) {
+						if (A2_Optimized_Cache_Engine::$settings['minify_inline_css_js']) {
+							$item['configured'] = true;
+
+							$thisclass->set_install_status('a2_page_cache_minify_jscss', true);
+						} else {
+							$thisclass->set_install_status('a2_page_cache_minify_jscss', false);
+						}
+					},
+					'disable' => function () use (&$thisclass) {
+						$thisclass->disable_a2_page_cache_minify_jscss();
+					},
+					'enable' => function () use (&$thisclass) {
+						$thisclass->enable_a2_page_cache_minify_jscss();
+					},
+					'remove_link' => true
+				)
+			);
+		}
+
+		/* Common optimizations */
+		$common_optimizations = array(
 			'woo-cart-fragments' => array(
 				'name' => 'Dequeue WooCommerce Cart Fragments AJAX calls',
 				'slug' => 'woo-cart-fragments',
 				'plugin' => 'A2 Optimized',
 				'optional' => true,
 				'configured' => false,
-				'description' => '
-                    <p>Disable WooCommerce Cart Fragments on your homepage. Also enables "redirect to cart page" option in WooCommerce</p>
-				',
+				'description' => 'Disable WooCommerce Cart Fragments on your homepage. Also enables "redirect to cart page" option in WooCommerce',
 				'is_configured' => function (&$item) use (&$thisclass) {
 					if (get_option('a2_wc_cart_fragments')) {
 						$item['configured'] = true;
@@ -323,7 +455,7 @@ class A2_Optimized_Optimizations {
 				'optional' => true,
 				'configured' => false,
 				'description' => '
-                    <p>Completely Disable XML-RPC services</p>
+					<p>Completely Disable XML-RPC services</p>
 				',
 				'is_configured' => function (&$item) use (&$thisclass) {
 					if (get_option('a2_block_xmlrpc')) {
@@ -355,7 +487,7 @@ class A2_Optimized_Optimizations {
 					}
 				},
 				'description' => '
-                    <p>Generate new salt values for wp-config.php<br /><strong>This will log out all users including yourself</strong></p>
+					<p>Generate new salt values for wp-config.php<br /><strong>This will log out all users including yourself</strong></p>
 				',
 				'last_updated' => true,
 				'update' => true,
@@ -435,8 +567,8 @@ class A2_Optimized_Optimizations {
 				'configured' => false,
 				'kb' => 'http://www.a2hosting.com/kb/security/application-security/wordpress-security#a-namemethodRenameLoginPageaMethod-3.3A-Change-the-WordPress-login-URL',
 				'description' => '
-                    <p>Change the URL of your login page to make it harder for bots to find it to brute force attack.</p>
-                ',
+					<p>Change the URL of your login page to make it harder for bots to find it to brute force attack.</p>
+				',
 				'is_configured' => function () {
 					return false;
 				}
@@ -469,36 +601,21 @@ class A2_Optimized_Optimizations {
 				'configured' => false,
 				'premium' => true,
 				'description' => '
-                    <ul>
-                        <li>Turbo Web Hosting servers compile .htaccess files to make speed improvements. Any changes to .htaccess files are immediately re-compiled.</li>
-                        <li>Turbo Web Hosting servers have their own PHP API that provides speed improvements over FastCGI and PHP-FPM (FastCGI Process Manager). </li>
-                        <li>To serve static files, Turbo Web Hosting servers do not need to create a worker process as the user. Servers only create a worker process for PHP scripts, which results in faster performance.</li>
-                        <li>PHP OpCode Caching is enabled by default. Accounts are allocated 256 MB of memory toward OpCode caching.</li>
-                        <li>Turbo Web Hosting servers have a built-in caching engine for Full Page Cache and Edge Side Includes.</li>
-                    </ul>
-                ',
-				'is_configured' => function () {
-					return false;
-				}
-			),
-			'memcached' => array(
-				'name' => 'Memcached Database and Object Cache',
-				'slug' => 'memcached',
-				'configured' => false,
-				'premium' => true,
-				'description' => '
-                    <ul>
-                        <li>Extremely fast and powerful caching system.</li>
-                        <li>Store frequently used database queries and WordPress objects in Memcached.</li>
-                        <li>Memcached is an in-memory key-value store for small chunks of arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.</li>
-                        <li>Take advantage of A2 Hosting&apos;s one-click memcached configuration for WordPress.</li>
-                    </ul>
-                ',
+					<ul>
+						<li>Turbo Web Hosting servers compile .htaccess files to make speed improvements. Any changes to .htaccess files are immediately re-compiled.</li>
+						<li>Turbo Web Hosting servers have their own PHP API that provides speed improvements over FastCGI and PHP-FPM (FastCGI Process Manager). </li>
+						<li>To serve static files, Turbo Web Hosting servers do not need to create a worker process as the user. Servers only create a worker process for PHP scripts, which results in faster performance.</li>
+						<li>PHP OpCode Caching is enabled by default. Accounts are allocated 256 MB of memory toward OpCode caching.</li>
+						<li>Turbo Web Hosting servers have a built-in caching engine for Full Page Cache and Edge Side Includes.</li>
+					</ul>
+				',
 				'is_configured' => function () {
 					return false;
 				}
 			)
 		);
+
+		$optimizations = array_merge($optimizations, $common_optimizations);
 
 		if (get_template() == 'Divi') {
 			$optimizations['minify']['optional'] = true;
