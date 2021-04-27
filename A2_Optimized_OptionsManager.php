@@ -434,7 +434,6 @@ class A2_Optimized_OptionsManager {
 		copy( A2OPT_DIR . '/object-cache.php', WP_CONTENT_DIR . '/object-cache.php' );
 
 		$this->write_wp_config();
-
 		update_option('a2_object_cache_enabled', 1);
 	}
 	
@@ -2495,9 +2494,23 @@ HTML;
 		$lockdown = $this->get_lockdown();
 		$nomods = $this->get_nomods();
 		$obj_server = $this->get_memcached_server();
+		$backup_filename = 'wp-config.bak-a2.php';
+		$error_message = '<div class="notice notice-error"><p>Unable to write to ' . ABSPATH . 'wp-config.php. Please check file permissions.</p><p><a href="' . admin_url('admin.php?page=A2_Optimized_Plugin_admin') . '">Back to A2 Optimized</a></p></div>';
+
+		if (!file_exists(ABSPATH . 'wp-config.php')) {
+			echo $error_message;
+			exit;
+		}
 
 		touch(ABSPATH . 'wp-config.php');
-		copy(ABSPATH . 'wp-config.php', ABSPATH . 'wp-config.bak-a2.php');
+		copy(ABSPATH . 'wp-config.php', ABSPATH . $backup_filename);
+
+		$config_hash = sha1(file_get_contents(ABSPATH . 'wp-config.php'));
+		$backup_config_hash = sha1(file_get_contents(ABSPATH . $backup_filename));
+		if ($config_hash != $backup_config_hash || filesize(ABSPATH . $backup_filename) == 0) {
+			echo $error_message;
+			exit;
+		}
 
 		$a2_config = <<<PHP
 
@@ -2543,6 +2556,13 @@ PHP;
 		$fh = fopen(ABSPATH . 'wp-config.php', 'w+');
 		fwrite($fh, $wpconfig);
 		fclose($fh);
+
+		$updated_config_hash = sha1(file_get_contents(ABSPATH . 'wp-config.php'));
+		if ($updated_config_hash != sha1($wpconfig) || filesize(ABSPATH . 'wp-config.php') == 0) {
+			copy(ABSPATH . $backup_filename, ABSPATH . 'wp-config.php');
+			echo $error_message;
+			exit;
+		}
 	}
 
 	/**
