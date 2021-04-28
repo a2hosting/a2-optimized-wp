@@ -461,7 +461,7 @@ class WP_Object_Cache {
 		if (defined('MEMCACHED_SERVERS')) {
 			$buckets = MEMCACHED_SERVERS;
 		} else {
-			$buckets = array( '127.0.0.1:11211' );
+			$buckets = array( 'localhost:55555' );
 		}
 
 		reset( $buckets );
@@ -497,13 +497,15 @@ class WP_Object_Cache {
 		}
 
 		global $blog_id, $table_prefix;
-		$this->global_prefix = '';
-		$this->blog_prefix = '';
+		$key_hash = substr(md5(DB_NAME . $table_prefix), 0, 8);
+		$this->global_prefix = $key_hash . ':';
+		$this->blog_prefix = $key_hash . ':';
 		if ( function_exists( 'is_multisite' ) ) {
-			$this->global_prefix = ( is_multisite() || defined( 'CUSTOM_USER_TABLE' ) && defined( 'CUSTOM_USER_META_TABLE' ) ) ? '' : $table_prefix;
-			$this->blog_prefix = ( is_multisite() ? $blog_id : $table_prefix ) . ':';
+			if (is_multisite()) {
+				$this->blog_prefix = substr(md5($table_prefix . $blog_id . $key_hash), 0, 8) . ':';
+			}
 		}
-
+		
 		$this->cache_hits = & $this->stats['get'];
 		$this->cache_misses = & $this->stats['miss'];
 	}
