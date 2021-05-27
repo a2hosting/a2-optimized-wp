@@ -431,6 +431,10 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_a2_object_cache() {
+		if(get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false){
+			return false;
+		}
+
 		copy( A2OPT_DIR . '/object-cache.php', WP_CONTENT_DIR . '/object-cache.php' );
 
 		$this->write_wp_config();
@@ -1655,7 +1659,8 @@ HTML;
 	private function cache_settings_html() {
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
-		$admin_url = admin_url('admin.php?a2-page=cache_settings_save&page=A2_Optimized_Plugin_admin&save_settings=1'); ?>
+		$admin_url = 'options.php';
+		?>
 <section id="a2opt-content-general">
 	<div  class="wrap">
 		<div>
@@ -1672,9 +1677,12 @@ HTML;
 			</div>
 		</div>
 		<div class="tab-content">
-			<?php if (isset($_GET['save_settings']) && $_GET['save_settings'] == 1) { ?>
+			<?php if (isset($_REQUEST['settings-updated']) && $_GET['settings-updated'] == 'true') { ?>
 			<div class="notice notice-success is-dismissible"><p>Settings Saved</p></div>
 			<?php } ?>
+			<?php if(get_option('a2_optimized_memcached_invalid')){ ?>
+				<div class="notice notice-error"><p>There is an issue with your Memcached settings<br /><?php echo get_option('a2_optimized_memcached_invalid'); ?></p></div>
+			<?php }; ?>
 			<h3>Advanced Cache Settings</h3>
 			<div>
 				<form method="post" action="<?php echo $admin_url; ?>">
@@ -1819,7 +1827,6 @@ HTML;
 									// translators: %s: ,
 									printf( esc_html__( 'Address and port of the memcached server for object caching', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
                                     </p>
-									<p><?php esc_html_e( 'Example:', 'a2-optimized-wp' ); ?> <code class="code--form-control">127.0.0.1:11211</code></p>
                                 </label>
                             </fieldset>
                         </td>
