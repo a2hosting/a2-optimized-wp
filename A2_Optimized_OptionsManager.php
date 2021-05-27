@@ -431,7 +431,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_a2_object_cache() {
-		if(get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false){
+		if (get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false) {
 			return false;
 		}
 
@@ -1659,8 +1659,7 @@ HTML;
 	private function cache_settings_html() {
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
-		$admin_url = 'options.php';
-		?>
+		$admin_url = 'options.php'; ?>
 <section id="a2opt-content-general">
 	<div  class="wrap">
 		<div>
@@ -1680,9 +1679,9 @@ HTML;
 			<?php if (isset($_REQUEST['settings-updated']) && $_GET['settings-updated'] == 'true') { ?>
 			<div class="notice notice-success is-dismissible"><p>Settings Saved</p></div>
 			<?php } ?>
-			<?php if(get_option('a2_optimized_memcached_invalid')){ ?>
+			<?php if (get_option('a2_optimized_memcached_invalid')) { ?>
 				<div class="notice notice-error"><p>There is an issue with your Memcached settings<br /><?php echo get_option('a2_optimized_memcached_invalid'); ?></p></div>
-			<?php }; ?>
+			<?php } ?>
 			<h3>Advanced Cache Settings</h3>
 			<div>
 				<form method="post" action="<?php echo $admin_url; ?>">

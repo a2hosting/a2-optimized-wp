@@ -60,7 +60,7 @@ class A2_Optimized_Optimizations {
 
 		$a2_object_cache_additional_info = '';
 
-		if(get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false){
+		if (get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false) {
 			$a2_object_cache_additional_info = '<p><strong>Please confirm your memcached server settings before enabling Object Caching.</strong><br />' . get_option('a2_optimized_memcached_invalid') . '</p>';
 		}
 

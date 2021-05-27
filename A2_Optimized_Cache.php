@@ -1165,7 +1165,7 @@ final class A2_Optimized_Cache {
 	public static function validate_memcached($memcached_server) {
 		$options_manager = new A2_Optimized_OptionsManager;
 
-		if(class_exists('Memcached')){
+		if (class_exists('Memcached')) {
 			$memcached = new Memcached;
 			if ( 'unix://' == substr( $memcached_server, 0, 7 ) ) {
 				$node = str_replace('unix://', '', $memcached_server);
@@ -1184,7 +1184,7 @@ final class A2_Optimized_Cache {
 
 			$memcached->addServers($instances);
 			$memcached_available = $memcached->getStats();
-			if($memcached_available){
+			if ($memcached_available) {
 				$options_manager->write_wp_config();
 				delete_option('a2_optimized_memcached_invalid');
 			} else {
