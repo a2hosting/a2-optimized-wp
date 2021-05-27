@@ -1085,7 +1085,8 @@ final class A2_Optimized_Cache {
 	 */
 
 	public static function register_settings() {
-		register_setting( 'a2-optimized-wp', 'a2-optimized-wp', array( __CLASS__, 'validate_settings' ) );
+		register_setting( 'a2opt-cache', 'a2opt-cache', array( __CLASS__, 'validate_settings' ) );
+		register_setting( 'a2opt-cache', 'a2_optimized_memcached_server', array( __CLASS__, 'validate_memcached' ));
 	}
 
 	/**
@@ -1152,5 +1153,47 @@ final class A2_Optimized_Cache {
 		}
 
 		return $validated_settings;
+	}
+	
+	/**
+	 * validate memcached settings
+	 *
+	 * @param   string  $settings            user defined settings
+	 * @return  string  $validated_settings  validated settings
+	 */
+
+	public static function validate_memcached($memcached_server) {
+		$options_manager = new A2_Optimized_OptionsManager;
+
+		if (class_exists('Memcached')) {
+			$memcached = new Memcached;
+			if ( 'unix://' == substr( $memcached_server, 0, 7 ) ) {
+				$node = str_replace('unix://', '', $memcached_server);
+				$port = 0;
+			} else {
+				list( $node, $port ) = explode( ':', $memcached_server );
+				if ( ! $port ) {
+					$port = ini_get( 'memcache.default_port' );
+				}
+				$port = intval( $port );
+				if ( ! $port ) {
+					$port = 11211;
+				}
+			}
+			$instances[] = array( $node, $port, 1 );
+
+			$memcached->addServers($instances);
+			$memcached_available = $memcached->getStats();
+			if ($memcached_available) {
+				$options_manager->write_wp_config();
+				delete_option('a2_optimized_memcached_invalid');
+			} else {
+				update_option('a2_optimized_memcached_invalid', 'Unable to connect to Memcached Server');
+			}
+		} else {
+			update_option('a2_optimized_memcached_invalid', 'Missing Memcached extension');
+		}
+
+		return $memcached_server;
 	}
 }

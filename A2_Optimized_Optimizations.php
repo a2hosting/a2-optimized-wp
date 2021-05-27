@@ -58,6 +58,12 @@ class A2_Optimized_Optimizations {
 		$thisclass = $this->thisclass;
 		$thisclass->server_info = $this->server_info;
 
+		$a2_object_cache_additional_info = '';
+
+		if (get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false) {
+			$a2_object_cache_additional_info = '<p><strong>Please confirm your memcached server settings before enabling Object Caching.</strong><br />' . get_option('a2_optimized_memcached_invalid') . '</p>';
+		}
+
 		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
 			/* W3 Total Cache Caching */
 			$optimizations = array(
@@ -357,7 +363,7 @@ class A2_Optimized_Optimizations {
 							<li>Take advantage of A2 Hosting&apos;s one-click memcached configuration for WordPress.</li>
 						</ul>
 						<strong>A memcached server and the PHP memcached extension are required.</strong><br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Memcached Settings</a>
-					',
+					' . $a2_object_cache_additional_info,
 					'is_configured' => function (&$item) use (&$thisclass) {
 						if (get_option('a2_object_cache_enabled') == 1 && file_exists( WP_CONTENT_DIR . '/object-cache.php')) {
 							$item['configured'] = true;
