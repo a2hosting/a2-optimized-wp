@@ -493,8 +493,7 @@ class A2_Optimized_Optimizations {
 					}
 				},
 				'description' => '
-					<p>Generate new salt values for wp-config.php<br /><strong>This will log out all users including yourself</strong></p>
-				',
+					<p>Generate new salt values for wp-config.php</p><p>WordPress salts and security keys help secure your site’s login process and the cookies that WordPress uses to authenticate users. There are security benefits to periodically changing your salts to make it even harder for malicious actors to access them. You may need to clear your browser cookies after activating this option.</p><p><strong>This will log out all users including yourself</strong></p>',
 				'last_updated' => true,
 				'update' => true,
 				'enable' => function () use (&$thisclass) {
