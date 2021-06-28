@@ -915,7 +915,7 @@ final class A2_Optimized_Cache_Disk {
 		// if setting selected remove CSS and JavaScript comments
 		if ( A2_Optimized_Cache_Engine::$settings['minify_inline_css_js'] ) {
 			$minified_html = preg_replace(
-				'#/\*[\s\S]*?\*/|([^\'\"\\:\w]|^)//.*$#m',
+				'#/\*(?!!)[\s\S]*?\*/|(?:^[ \t]*)//.*$|((?<!\()[ \t>;,{}[\]])//[^;\n]*$#m',
 				'$1',
 				$minified_html
 			);
