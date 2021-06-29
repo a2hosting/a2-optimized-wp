@@ -31,6 +31,13 @@ final class A2_Optimized_Cache_Engine {
 	public static $started = false;
 
 	/**
+	 * specific HTTP request headers from current request
+	 *
+	 */
+		
+	public static $request_headers;
+
+	/**
 	 * engine settings from disk or database
 	 *
 	 * @var     array
@@ -44,6 +51,9 @@ final class A2_Optimized_Cache_Engine {
 	 */
 
 	public function __construct() {
+		// get request headers
+		self::$request_headers = self::get_request_headers();
+
 		// get settings from disk if directory index file
 		if ( self::is_index() ) {
 			self::$settings = A2_Optimized_Cache_Disk::get_settings();
@@ -132,6 +142,28 @@ final class A2_Optimized_Cache_Engine {
 	}
 
 	/**
+	 * get specific HTTP request headers from current request
+	 *
+	 * @return  array  $request_headers  specific HTTP request headers from current request
+	 */
+
+	private static function get_request_headers() {
+		$request_headers = ( function_exists( 'apache_request_headers' ) ) ? apache_request_headers() : array();
+
+		$request_headers = array(
+			'Accept' => ( isset( $request_headers['Accept'] ) ) ? $request_headers['Accept'] : ( ( isset( $_SERVER[ 'HTTP_ACCEPT' ] ) ) ? $_SERVER[ 'HTTP_ACCEPT' ] : '' ),
+			'Accept-Encoding' => ( isset( $request_headers['Accept-Encoding'] ) ) ? $request_headers['Accept-Encoding'] : ( ( isset( $_SERVER[ 'HTTP_ACCEPT_ENCODING' ] ) ) ? $_SERVER[ 'HTTP_ACCEPT_ENCODING' ] : '' ),
+			'Host' => ( isset( $request_headers['Host'] ) ) ? $request_headers['Host'] : ( ( isset( $_SERVER[ 'HTTP_HOST' ] ) ) ? $_SERVER[ 'HTTP_HOST' ] : '' ),
+			'If-Modified-Since' => ( isset( $request_headers['If-Modified-Since'] ) ) ? $request_headers['If-Modified-Since'] : ( ( isset( $_SERVER[ 'HTTP_IF_MODIFIED_SINCE' ] ) ) ? $_SERVER[ 'HTTP_IF_MODIFIED_SINCE' ] : '' ),
+			'User-Agent' => ( isset( $request_headers['User-Agent'] ) ) ? $request_headers['User-Agent'] : ( ( isset( $_SERVER[ 'HTTP_USER_AGENT' ] ) ) ? $_SERVER[ 'HTTP_USER_AGENT' ] : '' ),
+			'X-Forwarded-Proto' => ( isset( $request_headers['X-Forwarded-Proto'] ) ) ? $request_headers['X-Forwarded-Proto'] : ( ( isset( $_SERVER[ 'HTTP_X_FORWARDED_PROTO' ] ) ) ? $_SERVER[ 'HTTP_X_FORWARDED_PROTO' ] : '' ),
+			'X-Forwarded-Scheme' => ( isset( $request_headers['X-Forwarded-Scheme'] ) ) ? $request_headers['X-Forwarded-Scheme'] : ( ( isset( $_SERVER[ 'HTTP_X_FORWARDED_SCHEME' ] ) ) ? $_SERVER[ 'HTTP_X_FORWARDED_SCHEME' ] : '' ),
+		);
+
+		return $request_headers;
+	}
+
+	/**
 	 * check if directory index file
 	 *
 	 * @return  boolean  true if directory index file, false otherwise
@@ -202,7 +234,10 @@ final class A2_Optimized_Cache_Engine {
 	private static function is_excluded() {
 		// if post ID excluded
 		if ( ! empty( self::$settings['excluded_post_ids'] ) && function_exists( 'is_singular' ) && is_singular() ) {
-			if ( in_array( get_queried_object_id(), (array) explode( ',', self::$settings['excluded_post_ids'] ) ) ) {
+			$post_id = get_queried_object_id();
+			$excluded_post_ids = array_map( 'absint', (array) explode( ',', self::$settings['excluded_post_ids'] ) );
+		
+			if ( in_array( $post_id, $excluded_post_ids, true ) ) {
 				return true;
 			}
 		}
@@ -324,8 +359,26 @@ final class A2_Optimized_Cache_Engine {
 	 */
 
 	public static function deliver_cache() {
-		if ( A2_Optimized_Cache_Disk::cache_exists() && ! A2_Optimized_Cache_Disk::cache_expired() && ! self::bypass_cache()  ) {
-			readfile( A2_Optimized_Cache_Disk::get_cache() );
+		$cache_file = A2_Optimized_Cache_Disk::get_cache();
+		
+		if ( A2_Optimized_Cache_Disk::cache_exists( $cache_file ) && ! A2_Optimized_Cache_Disk::cache_expired( $cache_file ) && ! self::bypass_cache()  ) {
+			// set X-Cache-Handler response header
+			header( 'X-Cache-Handler: cache-enabler-engine' );
+
+			// return 304 Not Modified with empty body if applicable
+			if ( strtotime( self::$request_headers['If-Modified-Since'] >= filemtime( $cache_file ) ) ) {
+				header( $_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified', true, 304 );
+				exit;
+			}
+
+			// set Content-Encoding response header if applicable
+			if ( strpos( basename( $cache_file ), 'gz' ) !== false ) {
+				header( 'Content-Encoding: gzip' );
+			}
+
+			// deliver cache
+			readfile( $cache_file );
+
 			exit;
 		}
 
