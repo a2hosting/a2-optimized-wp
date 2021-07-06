@@ -989,6 +989,10 @@ HTML;
 		if (isset($_GET['save_settings']) && $_GET['save_settings']) {
 			$save_alert = '<div class="alert alert-success">Settings Saved</div>';
 		}
+		
+		if (isset($_GET['msg']) && $_GET['msg'] == 'token') {
+			$save_alert = '<div class="alert alert-danger">Session timed out, please try to configure your optimization again.</div>';
+		}
 
 		$warning_circle = '';
 		if ($num_warnings > 0) {
@@ -1897,44 +1901,28 @@ HTML;
 		$this->optimizations = $opts->get_optimizations();
 		$this->plugin_list = get_plugins();
 
-		if (isset($_GET['activate'])) {
-			foreach ($this->plugin_list as $file => $plugin) {
-				if ($_GET['activate'] == $plugin['Name']) {
-					$this->activate_plugin($file);
-				}
-			}
+		$url_token = false;
+
+		if (isset($_GET['a2_token'])) {
+			$url_token = $_GET['a2_token'];
 		}
 
-		if (isset($_GET['hide_login_url'])) {
-			$this->addOption('hide_login_url', true);
-		}
-
-		if (isset($_GET['deactivate'])) {
-			foreach ($this->plugin_list as $file => $plugin) {
-				if ($_GET['deactivate'] == $plugin['Name']) {
-					$this->deactivate_plugin($file);
-				}
-			}
-		}
-
-		if (isset($_GET['delete'])) {
-			foreach ($this->plugin_list as $file => $plugin) {
-				if ($_GET['delete'] == $plugin['Name']) {
-					$this->uninstall_plugin($file);
-				}
-			}
-		}
-
-		if (isset($_GET['disable_optimization'])) {
+		if (isset($_GET['disable_optimization']) && $url_token) {
 			$hash = '';
+			
+			$item_slug = $_GET['disable_optimization'];
+			$a2_token = get_transient('a2_token-' . $item_slug);
+			if ($a2_token && $a2_token == $url_token) {
+				if (isset($this->optimizations[$_GET['disable_optimization']])) {
+					$this->optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
+				}
 
-			if (isset($this->optimizations[$_GET['disable_optimization']])) {
-				$this->optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
-			}
-
-			if (isset($this->advanced_optimizations[$_GET['disable_optimization']])) {
-				$this->advanced_optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
-				$hash = '#optimization-advanced-tab';
+				if (isset($this->advanced_optimizations[$_GET['disable_optimization']])) {
+					$this->advanced_optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
+					$hash = '#optimization-advanced-tab';
+				}
+			} else {
+				$hash = '&msg=token';
 			}
 
 			echo <<<JAVASCRIPT
@@ -1945,15 +1933,22 @@ JAVASCRIPT;
 			exit();
 		}
 
-		if (isset($_GET['enable_optimization'])) {
+		if (isset($_GET['enable_optimization']) && $url_token) {
 			$hash = '';
-			if (isset($this->optimizations[$_GET['enable_optimization']])) {
-				$this->optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
-			}
+			$item_slug = $_GET['enable_optimization'];
+			$a2_token = get_transient('a2_token-' . $item_slug);
 
-			if (isset($this->advanced_optimizations[$_GET['enable_optimization']])) {
-				$this->advanced_optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
-				$hash = '#optimization-advanced-tab';
+			if ($a2_token && $a2_token == $url_token) {
+				if (isset($this->optimizations[$_GET['enable_optimization']])) {
+					$this->optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
+				}
+
+				if (isset($this->advanced_optimizations[$_GET['enable_optimization']])) {
+					$this->advanced_optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
+					$hash = '#optimization-advanced-tab';
+				}
+			} else {
+				$hash = '&msg=token';
 			}
 
 			echo <<<JAVASCRIPT
@@ -1964,7 +1959,7 @@ JAVASCRIPT;
 			exit();
 		}
 		
-		if (isset($_GET['apply_divi_settings'])) {
+		if (isset($_GET['apply_divi_settings']) && $url_token) {
 			$this->optimizations['minify']['disable']('minify');
 			$this->optimizations['css_minify']['disable']('css_minify');
 			$this->optimizations['js_minify']['disable']('js_minify');
@@ -2149,7 +2144,9 @@ JAVASCRIPT;
 						// skip adding "disable" link if 'remove_link' key is set and site is behind cloudflare
 						// used for Gzip options
 					} else {
-						$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self');
+						$a2_token = md5(time() . rand());
+						set_transient('a2_token-' . $item['slug'], $a2_token, 180);
+						$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Disable', '_self');
 					}
 				}
 				if (isset($item['settings'])) {
@@ -2174,7 +2171,9 @@ JAVASCRIPT;
 				$glyph = 'warning-sign';
 
 				if (isset($item['disable'])) {
-					$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}", 'Disable', '_self');
+					$a2_token = md5(time() . rand());
+					set_transient('a2_token-' . $item['slug'], $a2_token, 180);
+					$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Disable', '_self');
 				}
 				if (isset($item['settings'])) {
 					$links[] = array("{$item['settings']}", 'Configure', '_self');
@@ -2198,7 +2197,9 @@ JAVASCRIPT;
 					if (isset($item['update'])) {
 						$action_text = 'Update Now';
 					}
-					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", $action_text, '_self');
+					$a2_token = md5(time() . rand());
+					set_transient('a2_token-' . $item['slug'], $a2_token, 180);
+					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}&amp;a2_token={$a2_token}", $action_text, '_self');
 				}
 
 				if (isset($item['not_configured_links'])) {
@@ -2212,7 +2213,9 @@ JAVASCRIPT;
 				}
 			} else {
 				if (isset($item['enable']) && $active_class == '') {
-					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}", 'Enable', '_self');
+					$a2_token = md5(time() . rand());
+					set_transient('a2_token-' . $item['slug'], $a2_token, 180);
+					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Enable', '_self');
 				}
 
 				if (isset($item['not_configured_links'])) {
@@ -2804,57 +2807,6 @@ HTACCESS;
 		}
 
 		return false;
-	}
-
-	/**
-	 * Display plugin name, status and description
-	 * @param array $plugin The plugin attributes
-	 * @return markup HTML  The plugin information in HTML format
-	 */
-	private function plugin_display($plugin) {
-		$links['Delete'] = admin_url() . 'admin.php?page=' . $this->getSettingsSlug() . "&delete={$plugin['Name']}";
-
-		$glyph = 'warning-sign';
-		if (!$plugin['active']) {
-			if ($plugin['optional']) {
-				$glyph = 'warning-sign';
-			} else {
-				$glyph = 'exclamation-sign';
-			}
-			$links['Activate'] = admin_url() . 'admin.php?page=' . $this->getSettingsSlug() . "&activate={$plugin['Name']}";
-		} else {
-			$glyph = 'ok';
-			$links['Deactivate'] = admin_url() . 'admin.php?page=' . $this->getSettingsSlug() . "&deactivate={$plugin['Name']}";
-			if (isset($plugin['config_url'])) {
-				$links['Configure'] = $plugin['config_url'];
-			}
-		}
-
-		$link_html = '';
-		foreach ($links as $name => $href) {
-			$link_html .= <<<HTML
-<a href="{$href}">$name</a> |
-HTML;
-		}
-
-		$link_html = trim($link_html, ' |');
-
-		return <<<HTML
-<div class="optimization-item">
-	<div style="float:left;width:44px;font-size:36px">
-		<span class="glyphicon glyphicon-{$glyph}"></span>
-	</div>
-	<div style="float:left;">
-		<b>{$plugin['Name']}</b><br>
-	</div>
-	<div style="clear:both;">
-		<p>{$plugin['Description']}</p>
-	</div>
-	<div>
-		{$link_html}
-	</div>
-</div>
-HTML;
 	}
 
 	/**
