@@ -590,7 +590,7 @@ class A2_Optimized_Optimizations {
 			),
 			'images' => array(
 				'name' => 'Compress Images on Upload',
-				'plugin' => 'EWWW Image Optimizer',
+				'plugin' => 'Warp iMagick',
 				'slug' => 'images',
 				'premium' => true,
 				'configured' => false,

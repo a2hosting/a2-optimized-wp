@@ -1086,7 +1086,7 @@ HTML;
 					<h2>Additional Plugins Installed on A2 Hosting</h2>
 					<p><strong>Easy Hide Login</strong><br />
 					Changes the location of the WordPress login page</p>
-					<p><strong>EWWW Image Optimizer</strong><br />
+					<p><strong>Warp iMagick</strong><br />
 					Compress and optimize images on upload</p>
 				</div>
 				<div style="margin:20px 0;">
@@ -1165,7 +1165,7 @@ HTML;
                     <dt>Compress Images on Upload</dt>
                     <dd>
                         <ul>
-                            <li>Enables and configures EWWW Image Optimizer.</li>
+                            <li>Enables and configures Warp iMagick Image Optimizer.</li>
                             <li>Compresses images that are uploaded to save bandwidth.</li>
                             <li>Improves page load times: especially on sites with many images.</li>
                         </ul>

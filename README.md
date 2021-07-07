@@ -3,8 +3,8 @@
 Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, A2, Cache, Caching, Hosting
 Requires at least: 5.1
-Tested up to: 5.7.1
-Stable tag: 2.1.3.2
+Tested up to: 5.8
+Stable tag: 2.1.3.3
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -74,7 +74,7 @@ A2 Optimized has broken it down into the most valuable optimizations and will au
 
 **Compress Images on Upload**:
 
-* Enables and configures EWWW Image Optimizer.
+* Enables and configures Warp iMagick Image Optimizer.
 * Compresses images that are uploaded to save bandwidth.
 * Improves page load times: especially on sites with many images.
 
@@ -125,6 +125,8 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 ## Changelog
 
+### 2.1.3.3
+* Patches a cross-site-scripting vulnerablity. This is a recommended upgrade. 
 ### 2.1.3.1
 * Fixed issue with handling of some regex formulas in the advanced cache settings exclusion list 
 * Additional checks when adding memcached server for object caching 
