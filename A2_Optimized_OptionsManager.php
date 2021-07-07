@@ -1890,8 +1890,25 @@ HTML;
 	}
 
 	/**
+	 * Get a2 token from transients
+	 */
+	private function get_a2_token($slug) {
+		return get_transient('a2_token-' . $slug);
+	}
+	
+	/**
+	 * Set a2 token in transients
+	 */
+	private function set_a2_token($slug) {
+		$wp_salt = wp_salt('nonce');
+		$token = md5(time() . $wp_salt . $slug);
+		set_transient('a2_token-' . $slug, $token, 180);
+
+		return $token;
+	}
+
+	/**
 	 * Get the status of the plugin
-	 *
 	 */
 	public function get_plugin_status() {
 		$thisclass = $this;
@@ -1910,8 +1927,7 @@ HTML;
 		if (isset($_GET['disable_optimization']) && $url_token) {
 			$hash = '';
 			
-			$item_slug = $_GET['disable_optimization'];
-			$a2_token = get_transient('a2_token-' . $item_slug);
+			$a2_token = $this->get_a2_token($_GET['disable_optimization']);
 			if ($a2_token && $a2_token == $url_token) {
 				if (isset($this->optimizations[$_GET['disable_optimization']])) {
 					$this->optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
@@ -1935,9 +1951,8 @@ JAVASCRIPT;
 
 		if (isset($_GET['enable_optimization']) && $url_token) {
 			$hash = '';
-			$item_slug = $_GET['enable_optimization'];
-			$a2_token = get_transient('a2_token-' . $item_slug);
 
+			$a2_token = $this->get_a2_token($_GET['enable_optimization']);
 			if ($a2_token && $a2_token == $url_token) {
 				if (isset($this->optimizations[$_GET['enable_optimization']])) {
 					$this->optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
@@ -2144,8 +2159,7 @@ JAVASCRIPT;
 						// skip adding "disable" link if 'remove_link' key is set and site is behind cloudflare
 						// used for Gzip options
 					} else {
-						$a2_token = md5(time() . rand());
-						set_transient('a2_token-' . $item['slug'], $a2_token, 180);
+						$a2_token = $this->set_a2_token($item['slug']);
 						$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Disable', '_self');
 					}
 				}
@@ -2171,8 +2185,7 @@ JAVASCRIPT;
 				$glyph = 'warning-sign';
 
 				if (isset($item['disable'])) {
-					$a2_token = md5(time() . rand());
-					set_transient('a2_token-' . $item['slug'], $a2_token, 180);
+					$a2_token = $this->set_a2_token($item['slug']);
 					$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Disable', '_self');
 				}
 				if (isset($item['settings'])) {
@@ -2197,8 +2210,7 @@ JAVASCRIPT;
 					if (isset($item['update'])) {
 						$action_text = 'Update Now';
 					}
-					$a2_token = md5(time() . rand());
-					set_transient('a2_token-' . $item['slug'], $a2_token, 180);
+					$a2_token = $this->set_a2_token($item['slug']);
 					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}&amp;a2_token={$a2_token}", $action_text, '_self');
 				}
 
@@ -2213,8 +2225,7 @@ JAVASCRIPT;
 				}
 			} else {
 				if (isset($item['enable']) && $active_class == '') {
-					$a2_token = md5(time() . rand());
-					set_transient('a2_token-' . $item['slug'], $a2_token, 180);
+					$a2_token = $this->set_a2_token($item['slug']);
 					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Enable', '_self');
 				}
 
