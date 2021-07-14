@@ -798,7 +798,7 @@ class A2_Optimized_OptionsManager {
 
 		if (isset($_GET['a2-page'])) {
 			if (isset($_GET['step'])) {
-				$step = $_GET['step'];
+				$step = sanitize_text_field($_GET['step']);
 			} else {
 				$step = 1;
 			}
@@ -844,9 +844,10 @@ class A2_Optimized_OptionsManager {
 				);
 				if (isset($_GET['a2-option']) && in_array($_GET['a2-option'], $allowed_notices)) {
 					if ($_GET['a2-option'] == 'a2_login_bookmark') {
-						update_option($_GET['a2-option'], get_option('a2_login_page'));
+						update_option('a2_login_bookmark', get_option('a2_login_page'));
 					} else {
-						update_option($_GET['a2-option'], '1');
+						$a2_option = sanitize_text_field($_GET['a2-option']);
+						update_option($a2_option, '1');
 					}
 				}
 				$this->settings_page_html();
@@ -879,8 +880,6 @@ class A2_Optimized_OptionsManager {
 		} else {
 			$this->settings_page_html();
 		}
-
-		ini_set('error_reporting', $ini_error_reporting);
 	}
 
 	/**
@@ -1680,7 +1679,7 @@ HTML;
 			</div>
 		</div>
 		<div class="tab-content">
-			<?php if (isset($_REQUEST['settings-updated']) && $_GET['settings-updated'] == 'true') { ?>
+			<?php if (isset($_REQUEST['settings-updated']) && $_REQUEST['settings-updated'] == 'true') { ?>
 			<div class="notice notice-success is-dismissible"><p>Settings Saved</p></div>
 			<?php } ?>
 			<?php if (get_option('a2_optimized_memcached_invalid')) { ?>
@@ -1862,8 +1861,10 @@ HTML;
 		}
 
 		if (check_admin_referer('a2opt-cache-save', 'a2opt-cache-nonce')) {
-			update_option('a2opt-cache', $_REQUEST['a2opt-cache']);
-			update_option('a2_optimized_memcached_server', $_REQUEST['a2_optimized_memcached_server']);
+			$a2opt_cache = sanitize_text_field($_REQUEST['a2opt-cache']);
+			$a2_memcached_server = sanitize_text_field($_REQUEST['a2_optimized_memcached_server']);
+			update_option('a2opt-cache', $a2opt_cache);
+			update_option('a2_optimized_memcached_server', $a2_memcached_server);
 			$this->write_wp_config();
 		}
 	}
@@ -1921,20 +1922,22 @@ HTML;
 		$url_token = false;
 
 		if (isset($_GET['a2_token'])) {
-			$url_token = $_GET['a2_token'];
+			$url_token = sanitize_text_field($_GET['a2_token']);
 		}
 
 		if (isset($_GET['disable_optimization']) && $url_token) {
 			$hash = '';
-			
-			$a2_token = $this->get_a2_token($_GET['disable_optimization']);
+		
+			$optimization = sanitize_text_field($_GET['disable_optimization']);
+
+			$a2_token = $this->get_a2_token($optimization);
 			if ($a2_token && $a2_token == $url_token) {
-				if (isset($this->optimizations[$_GET['disable_optimization']])) {
-					$this->optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
+				if (isset($this->optimizations[$optimization])) {
+					$this->optimizations[$optimization]['disable']($optimization);
 				}
 
-				if (isset($this->advanced_optimizations[$_GET['disable_optimization']])) {
-					$this->advanced_optimizations[$_GET['disable_optimization']]['disable']($_GET['disable_optimization']);
+				if (isset($this->advanced_optimizations[$optimization])) {
+					$this->advanced_optimizations[$optimization]['disable']($optimization);
 					$hash = '#optimization-advanced-tab';
 				}
 			} else {
@@ -1951,15 +1954,17 @@ JAVASCRIPT;
 
 		if (isset($_GET['enable_optimization']) && $url_token) {
 			$hash = '';
+			
+			$optimization = sanitize_text_field($_GET['enable_optimization']);
 
-			$a2_token = $this->get_a2_token($_GET['enable_optimization']);
+			$a2_token = $this->get_a2_token($optimization);
 			if ($a2_token && $a2_token == $url_token) {
-				if (isset($this->optimizations[$_GET['enable_optimization']])) {
-					$this->optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
+				if (isset($this->optimizations[$optimization])) {
+					$this->optimizations[$optimization]['enable']($optimization);
 				}
 
-				if (isset($this->advanced_optimizations[$_GET['enable_optimization']])) {
-					$this->advanced_optimizations[$_GET['enable_optimization']]['enable']($_GET['enable_optimization']);
+				if (isset($this->advanced_optimizations[$optimization])) {
+					$this->advanced_optimizations[$optimization]['enable']($optimization);
 					$hash = '#optimization-advanced-tab';
 				}
 			} else {
