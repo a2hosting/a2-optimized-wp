@@ -2495,11 +2495,19 @@ HTML;
 	 *
 	 */
 	public function set_lockdown($lockdown = true) {
-		update_option('a2_optimized_lockdown', $lockdown);
+		if ($lockdown == false) {
+			delete_option('a2_optimized_lockdown');
+		} else {
+			update_option('a2_optimized_lockdown', $lockdown);
+		}
 	}
 
 	public function set_nomods($lockdown = true) {
-		update_option('a2_optimized_nomods', $lockdown);
+		if ($lockdown == false) {
+			delete_option('a2_optimized_nomods');
+		} else {
+			update_option('a2_optimized_nomods', $lockdown);
+		}
 	}
 
 	/**
@@ -2508,7 +2516,11 @@ HTML;
 	 *
 	 */
 	public function set_deny_direct($deny = true) {
-		update_option('a2_optimized_deny_direct', $deny);
+		if ($deny == false) {
+			delete_option('a2_optimized_deny_direct');
+		} else {
+			update_option('a2_optimized_deny_direct', $deny);
+		}
 	}
 
 	/**

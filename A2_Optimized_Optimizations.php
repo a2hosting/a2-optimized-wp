@@ -516,11 +516,9 @@ class A2_Optimized_Optimizations {
 						//make sure the basic a2-optimized rules are present
 						$thisclass->set_install_status('htaccess-deny-direct-access', false);
 					} else {
-						if ($thisclass->get_deny_direct() == false) {
-							$thisclass->set_deny_direct(true);
+						if ($thisclass->get_deny_direct() == true) {
+							$item['configured'] = true;
 						}
-						$item['configured'] = true;
-						$thisclass->set_install_status('htaccess-deny-direct-access', true);
 					}
 				},
 				'enable' => function () use (&$thisclass) {
@@ -547,11 +545,9 @@ class A2_Optimized_Optimizations {
 						}
 						$thisclass->set_install_status('lock-editing', false);
 					} else {
-						if ($thisclass->get_lockdown() == false) {
-							$thisclass->set_lockdown(true);
+						if ($thisclass->get_lockdown() == true) {
+							$item['configured'] = true;
 						}
-						$item['configured'] = true;
-						$thisclass->set_install_status('lock-editing', true);
 					}
 				},
 				'enable' => function () use (&$thisclass) {
