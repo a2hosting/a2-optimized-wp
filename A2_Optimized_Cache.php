@@ -133,7 +133,7 @@ final class A2_Optimized_Cache {
 	}
 
 	/**
-	 * Cache Enabler update actions
+	 * Cache update actions
 	 *
 	 */
 
@@ -1063,7 +1063,7 @@ final class A2_Optimized_Cache {
 					sprintf(
 						'<a href="%s">%s</a>',
 						admin_url( 'options-general.php?page=a2-optimized-wp' ),
-						esc_html__( 'Cache Enabler Settings', 'a2-optimized-wp' )
+						esc_html__( 'A2 Optimized Settings', 'a2-optimized-wp' )
 					)
 				)
 			);

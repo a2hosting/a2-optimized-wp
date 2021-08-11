@@ -75,7 +75,7 @@ final class A2_Optimized_Cache_Disk {
 			@unlink( WP_CONTENT_DIR . '/advanced-cache.php' );
 			// delete object-cache.php drop-in
 			@unlink( WP_CONTENT_DIR . '/object-cache.php' );
-			// unset WP_CACHE constant in config file if set by Cache Enabler
+			// unset WP_CACHE constant in config file if set
 			self::set_wp_cache_constant( false );
 		}
 	}
@@ -804,7 +804,7 @@ final class A2_Optimized_Cache_Disk {
 			$wp_config_file_contents = preg_replace( '/(\/\*\* Sets up WordPress vars and included files\. \*\/)/', $cache_wp_config_lines . '$1', $wp_config_file_contents );
 		}
 
-		// unset WP_CACHE constant if set by Cache Enabler
+		// unset WP_CACHE constant if set
 		if ( ! $set ) {
 			$wp_config_file_contents = preg_replace( '/.+Added by A2 Optimized\r\n/', '', $wp_config_file_contents ); // < 1.5.0
 			$wp_config_file_contents = preg_replace( '/\/\*\* Enables page caching for A2 Optimized Cache\. \*\/' . PHP_EOL . '.+' . PHP_EOL . '.+' . PHP_EOL . '\}' . PHP_EOL . PHP_EOL . '/', '', $wp_config_file_contents );
