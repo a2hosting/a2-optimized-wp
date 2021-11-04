@@ -122,7 +122,7 @@ final class A2_Optimized_Cache_Disk {
 		$expires_seconds = 60 * 60 * A2_Optimized_Cache_Engine::$settings['cache_expiry_time'];
 
 		// check if cached page has expired
-		if ( file_exists( self::cache_file_html() ) && ( filemtime( self::cache_file_html() ) + $expires_seconds ) <= $now ) {
+		if ( file_exists( self::cache_file_html() ) && ( @filemtime( self::cache_file_html() ) + $expires_seconds ) <= $now ) {
 			return true;
 		}
 
@@ -536,7 +536,7 @@ final class A2_Optimized_Cache_Disk {
 		}
 
 		// check modified since with cached file and return 304 if no difference
-		if ( $http_if_modified_since && file_exists( self::cache_file_html() ) && ( strtotime( $http_if_modified_since ) >= filemtime( self::cache_file_html() ) ) ) {
+		if ( $http_if_modified_since && file_exists( self::cache_file_html() ) && ( strtotime( $http_if_modified_since ) >= @filemtime( self::cache_file_html() ) ) ) {
 			header( $_SERVER['SERVER_PROTOCOL'] . ' 304 Not Modified', true, 304 );
 			exit;
 		}
