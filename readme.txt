@@ -2,7 +2,7 @@
 Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
 Requires at least: 5.1
-Tested up to: 5.8.1
+Tested up to: 5.9
 Stable tag: 2.1.3.8
 Requires PHP: 5.6
 License: GPLv3
