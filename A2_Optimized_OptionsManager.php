@@ -215,6 +215,10 @@ class A2_Optimized_OptionsManager {
 				$api->download_link = 'https://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/a2-w3-total-cache.zip';
 			}
 
+			if ($slug == 'a2-warp-imagick') {
+				$api->download_link = 'https://wp-plugins.a2hosting.com/wp-content/uploads/rkv-repo/warp-imagick.zip';
+			}
+
 			$response = $upgrader->install($api->download_link);
 			ob_end_clean();
 			$this->plugin_list = get_plugins();
