@@ -308,6 +308,7 @@ HTML;
 			add_filter("plugin_action_links_{$a2_plugin_basename}", array(&$this, 'plugin_settings_link'));
 			register_setting( 'a2opt-cache', 'a2opt-cache', array( __CLASS__, 'validate_settings' ) );
 			register_setting( 'a2opt-cache', 'a2_optimized_memcached_server', array( __CLASS__, 'validate_memcached' ));
+			new A2_Optimized_SiteHealth;
 		}
 
 		if (get_option('A2_Optimized_Plugin_recaptcha', 0) == 1 && !is_admin()) {
