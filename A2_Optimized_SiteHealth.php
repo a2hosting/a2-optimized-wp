@@ -676,25 +676,6 @@ class A2_Optimized_SiteHealth {
 				),
 			),
 		);
-
-		/*
-
-
-		Plugin version
-
-		MySQL/MariaDB Version
-
-		PHP Version
-
-		CPU Info
-
-		HTTP server information (apache/nginx/cf/litespeed)
-
-		PHP Memory limits
-
-		Status of each item in the Optimizations list
-
-		*/
 	   
 		/* MySQL Version */
 		global $wpdb;
