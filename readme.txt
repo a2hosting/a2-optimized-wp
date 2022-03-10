@@ -1,6 +1,6 @@
 === A2 Optimized WP ===
 Contributors: A2BCool, a2hosting, dmatteson, sputala
-Tags: Speed, Optimize, Secure, Fast, W3 Total Cache, W3TC, Hosting
+Tags: Speed, Optimize, Secure, Fast, LiteSpeed, LSCache, A2, Hosting
 Requires at least: 5.1
 Tested up to: 5.9
 Stable tag: 2.1.3.9
