@@ -27,6 +27,28 @@ class A2_Optimized_SiteHealth {
 	protected function hooks() {
 		add_filter( 'debug_information', array( $this, 'add_debug_section' ) );
 		add_filter( 'site_status_tests', array( $this, 'add_site_status_items' ) );
+
+		add_action( 'site_health_tab_content', array( $this, 'add_button_to_site_health_info_tab' ) );
+	}
+
+
+	/**
+	 * Add "Save" button to Debug tab
+	 *
+	 * @param array $tab Current tab being displayed within Site Health
+	 *
+	 * @return array Array with added A2 Optimized items.
+	 */
+	public function add_button_to_site_health_info_tab( $tab ) {
+		// Do nothing if this is not the "debug" tab.
+		if ( 'debug' !== $tab ) {
+			return;
+		}
+		?>
+		<div class='health-check-body health-check-debug-tab hide-if-no-js'>
+			<a href='admin.php?a2-page=site_health&page=A2_Optimized_Plugin_admin'><button class='button'>Save Report</button></a>
+		</div>
+		<?php
 	}
 
 	/**
