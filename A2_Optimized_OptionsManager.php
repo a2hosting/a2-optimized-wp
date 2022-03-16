@@ -843,6 +843,10 @@ class A2_Optimized_OptionsManager {
 				$this->site_health_save();
 				$this->site_health_page_html();
 			}
+			if ($_GET['a2-page'] == 'site_health_remove') {
+				$this->site_health_remove();
+				$this->site_health_page_html();
+			}
 
 			if ($_GET['a2-page'] == 'dismiss_notice') {
 				$allowed_notices = array(
@@ -1933,12 +1937,16 @@ HTML;
 			<?php if (isset($_REQUEST['a2-page']) && $_REQUEST['a2-page'] == 'site_health_save') { ?>
 			<div class="notice notice-success is-dismissible"><p>Site Health Record Saved</p></div>
 			<?php } ?>
+			<?php if (isset($_REQUEST['a2-page']) && $_REQUEST['a2-page'] == 'site_health_remove') { ?>
+			<div class="notice notice-info is-dismissible"><p>Site Health Record Removed</p></div>
+			<?php } ?>
 			<?php if (isset($_REQUEST['view_report']) && isset($_REQUEST['a2-page'])) { ?>
 				<h3>Site Health Results from <?php echo $site_health_date; ?></h3>
 				<p><a href="admin.php?a2-page=site_health&page=A2_Optimized_Plugin_admin" class="button">Back</a></p>
+				<p><a href="admin.php?a2-page=site_health_remove&page=A2_Optimized_Plugin_admin&remove_report=<?php echo md5($site_health_date); ?>" class="button">Remove Report</a></p>
 			<?php } else { ?>
 				<h3>Site Health Results</h3>
-				<p><a href="admin.php?a2-page=site_health_save&page=A2_Optimized_Plugin_admin" class="button">Save current results</a></p>
+				<p><a href="admin.php?a2-page=site_health_save&page=A2_Optimized_Plugin_admin" class="button">Save current results</a> <a href="site-health.php?tab=debug" class="button">Back to Site Health</a></p>
 			<?php }; ?>
 			<?php if(count($saved_health_items) > 0){ ?>
 			<p>
@@ -1991,6 +1999,36 @@ HTML;
 		$existing_health[date('Y-m-d H:i:s')] = $current_site_health;
 		
 		update_option('a2opt-sitehealth-results', $existing_health);
+	}
+	
+	/**
+	 * Remove Site Health Results
+	 *
+	 */
+	private function site_health_remove() {
+		if (!current_user_can('manage_options')) {
+			die('Cheating eh?');
+		}
+		
+		if ( ! class_exists( 'WP_Debug_Data' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
+		}
+
+		$existing_health = get_option('a2opt-sitehealth-results');
+
+		if(is_array($existing_health)){
+			$index_to_remove = 0;
+			foreach($existing_health as $date => $item){
+				if(md5($date) == $_REQUEST['remove_report']){
+					$index_to_remove = $date;
+				}
+			}
+			if($index_to_remove !== 0){
+				unset($existing_health[$index_to_remove]);
+				update_option('a2opt-sitehealth-results', $existing_health);
+			}
+		}
+		
 	}
 
 	/**
