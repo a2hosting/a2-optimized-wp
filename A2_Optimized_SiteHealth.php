@@ -716,7 +716,9 @@ class A2_Optimized_SiteHealth {
 		
 		/* CPU Info */
 		$cpu_info = exec('cat /proc/cpuinfo | grep "model name\\|processor"');
-		$cpu_info = str_replace('model name     :', '', $cpu_info);
+		$cpu_info = str_replace('model name', '', $cpu_info);
+		$cpu_info = str_replace('processor', '', $cpu_info);
+		$cpu_info = str_replace(':', '', $cpu_info);
 		$a2_optimized['fields']['cpu_info'] = array(
 			'label' => 'CPU Info',
 			'value' => $cpu_info

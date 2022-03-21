@@ -4,7 +4,7 @@ Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, LiteSpeed, LSCache, A2, Hosting
 Requires at least: 5.1
 Tested up to: 5.9
-Stable tag: 2.1.3.9
+Stable tag: 2.1.3.10
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -125,6 +125,8 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 ## Changelog
 
+### 2.1.3.10
+* Add information related to A2 Optimized to the Site Health panel. 
 ### 2.1.3.3
 * Patches a cross-site-scripting vulnerablity. This is a recommended upgrade. 
 ### 2.1.3.1
