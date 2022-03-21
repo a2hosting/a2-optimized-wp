@@ -25,9 +25,11 @@ require_once 'A2_Optimized_Server_Info.php';
 require_once 'A2_Optimized_Cache.php';
 require_once 'A2_Optimized_CacheEngine.php';
 require_once 'A2_Optimized_CacheDisk.php';
+require_once 'A2_Optimized_SiteHealth.php';
 
 //constants
 define( 'A2OPT_VERSION', '2.1' );
+define( 'A2OPT_FULL_VERSION', '2.1.3.9' );
 define( 'A2OPT_MIN_PHP', '5.6' );
 define( 'A2OPT_MIN_WP', '5.1' );
 define( 'A2OPT_FILE', __FILE__ );

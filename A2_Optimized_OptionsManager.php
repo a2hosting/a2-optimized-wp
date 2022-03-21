@@ -23,6 +23,7 @@ if (file_exists('/opt/a2-optimized/wordpress/Optimizations.php')) {
 	require_once '/opt/a2-optimized/wordpress/Optimizations.php';
 }
 require_once 'A2_Optimized_Optimizations.php';
+require_once 'A2_Optimized_SiteHealth.php';
 
 class A2_Optimized_OptionsManager {
 	public $plugin_dir;
@@ -835,6 +836,18 @@ class A2_Optimized_OptionsManager {
 				$this->cache_settings_save();
 				$this->settings_page_html();
 			}
+			if ($_GET['a2-page'] == 'site_health') {
+				$this->site_health_page_html();
+			}
+			if ($_GET['a2-page'] == 'site_health_save') {
+				$this->site_health_save();
+				$this->site_health_page_html();
+			}
+			if ($_GET['a2-page'] == 'site_health_remove') {
+				$this->site_health_remove();
+				$this->site_health_page_html();
+			}
+
 			if ($_GET['a2-page'] == 'dismiss_notice') {
 				$allowed_notices = array(
 					'a2_login_bookmark',
@@ -1006,6 +1019,8 @@ HTML;
 
 		$settingsGroup = get_class($this) . '-settings-group';
 		$description = $this->get_plugin_description();
+
+
 
 		if ($this->is_a2()) {
 			$feedback = <<<HTML
@@ -1871,6 +1886,145 @@ HTML;
 			update_option('a2_optimized_memcached_server', $a2_memcached_server);
 			$this->write_wp_config();
 		}
+	}
+	
+	/**
+	 * Site Health View Page
+	 *
+	 */
+	private function site_health_page_html() {
+		$image_dir = plugins_url('/assets/images', __FILE__);
+		if ( ! class_exists( 'WP_Debug_Data' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
+		}
+
+		$saved_health_items = get_option('a2opt-sitehealth-results');
+	
+		$current_site_health = null;
+
+		if (isset($_REQUEST['view_report'])) {
+			foreach($saved_health_items as $date => $item){
+				if(md5($date) == $_REQUEST['view_report']){
+					$current_site_health = $item;
+					$site_health_date = $date;
+				};
+			};
+		}
+		if(!$current_site_health){
+			$WP_Debug_Data = new WP_Debug_Data();
+			new A2_Optimized_SiteHealth;
+			$info = $WP_Debug_Data::debug_data();
+			$current_site_health = $WP_Debug_Data::format( $info, 'debug' );
+			$site_health_date = date('Y-m-d H:i:s');
+		}
+
+		?>
+<section id="a2opt-content-general">
+	<div  class="wrap">
+		<div>
+			<div>
+				<div>
+					<div style="float:left;clear:both">
+						<img src="<?php echo $image_dir; ?>/a2optimized.png"  style="margin-top:20px" />
+					</div>
+					<div style="float:right;">
+					</div>
+				</div>
+				<div style="clear:both;"></div>
+			</div>
+		</div>
+		<div class="tab-content">
+			<?php if (isset($_REQUEST['a2-page']) && $_REQUEST['a2-page'] == 'site_health_save') { ?>
+			<div class="notice notice-success is-dismissible"><p>Site Health Record Saved</p></div>
+			<?php } ?>
+			<?php if (isset($_REQUEST['a2-page']) && $_REQUEST['a2-page'] == 'site_health_remove') { ?>
+			<div class="notice notice-info is-dismissible"><p>Site Health Record Removed</p></div>
+			<?php } ?>
+			<?php if (isset($_REQUEST['view_report']) && isset($_REQUEST['a2-page'])) { ?>
+				<h3>Site Health Results from <?php echo $site_health_date; ?></h3>
+				<p><a href="admin.php?a2-page=site_health&page=A2_Optimized_Plugin_admin" class="button">Back</a></p>
+				<p><a href="admin.php?a2-page=site_health_remove&page=A2_Optimized_Plugin_admin&remove_report=<?php echo md5($site_health_date); ?>" class="button">Remove Report</a></p>
+			<?php } else { ?>
+				<h3>Site Health Results</h3>
+				<p><a href="admin.php?a2-page=site_health_save&page=A2_Optimized_Plugin_admin" class="button">Save current results</a> <a href="site-health.php?tab=debug" class="button">Back to Site Health</a></p>
+			<?php }; ?>
+			<?php if(count($saved_health_items) > 0){ ?>
+			<p>
+				<strong>Saved reports</strong>
+				<ul>
+					<?php foreach($saved_health_items as $date => $item){ ?>
+					<li><a href="admin.php?a2-page=site_health&page=A2_Optimized_Plugin_admin&view_report=<?php echo md5($date); ?>"><?php echo $date; ?></a></li>
+					<?php }; ?>
+				</ul>
+			</p>
+			<?php }; ?>
+			<div>
+				<pre>
+					<?php echo $current_site_health; ?>
+				</pre>
+			</div>
+		</div>
+
+	</div>
+
+	<div style="clear:both;padding:10px;"></div>
+</section>
+									<?php
+	}
+
+	/**
+	 * Save Site Health Results
+	 *
+	 */
+	private function site_health_save() {
+		if (!current_user_can('manage_options')) {
+			die('Cheating eh?');
+		}
+		
+		if ( ! class_exists( 'WP_Debug_Data' ) ) {
+			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
+		}
+
+		$existing_health = get_option('a2opt-sitehealth-results');
+
+		if(!$existing_health){
+			$existing_health = [];
+		}
+
+		$WP_Debug_Data = new WP_Debug_Data();
+		new A2_Optimized_SiteHealth;
+		$info = $WP_Debug_Data::debug_data();
+		$current_site_health = $WP_Debug_Data::format( $info, 'debug' );
+
+		$existing_health[date('Y-m-d H:i:s')] = $current_site_health;
+		
+		update_option('a2opt-sitehealth-results', $existing_health);
+	}
+	
+	/**
+	 * Remove Site Health Results
+	 *
+	 */
+	private function site_health_remove() {
+		if (!current_user_can('manage_options')) {
+			die('Cheating eh?');
+		}
+		
+		$existing_health = get_option('a2opt-sitehealth-results');
+
+		if(is_array($existing_health)){
+			$index_to_remove = 0;
+			foreach($existing_health as $date => $item){
+				if(md5($date) == $_REQUEST['remove_report']){
+					$index_to_remove = $date;
+				}
+			}
+			if($index_to_remove !== 0){
+				unset($existing_health[$index_to_remove]);
+				update_option('a2opt-sitehealth-results', $existing_health);
+			}
+		}
+		
 	}
 
 	/**
