@@ -355,7 +355,11 @@ class A2_Optimized_SiteHealth {
 			'test' => 'caching_enabled',
 		);
 
-		$opcache_status = opcache_get_status();
+		if(function_exists('opcache_get_status')){
+			$opcache_status = opcache_get_status();
+		} else {
+			$opcache_status = false;
+		};
 
 		if (!is_array($opcache_status) || !$opcache_status['opcache_enabled']) {
 			$result['status'] = 'recommended';
