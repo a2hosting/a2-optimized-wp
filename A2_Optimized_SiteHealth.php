@@ -455,7 +455,8 @@ class A2_Optimized_SiteHealth {
 			'test' => 'php_memory',
 		);
 
-		if (ini_get('memory_limit') < 134217727) { // 128mb
+		$memory_limit = $this->format_bytes(ini_get('memory_limit'));
+		if ($memory_limit < 134217727) { // 128mb
 			$result['status'] = 'recommended';
 			$result['label'] = ( 'PHP Memory should be increased' );
 			$result['description'] = sprintf(
@@ -753,5 +754,27 @@ class A2_Optimized_SiteHealth {
 		$debug_info['a2-optimized-wp'] = $a2_optimized;
 
 		return $debug_info;
+	}
+
+	/**
+	 * Takes raw string with size shorthand (K/M/G) and return int of bytes
+	 *
+	 * @param string $val Shorthand string
+	 *
+	 * @return int Actual value in bytes
+	 */
+	private function return_bytes($val) {
+		$val = trim($val);
+		$last = strtolower($val[strlen($val)-1]);
+		switch($last) {
+			// The 'G' modifier is available
+			case 'g':
+				$val *= 1024;
+			case 'm':
+				$val *= 1024;
+			case 'k':
+				$val *= 1024;
+		}
+		return $val;
 	}
 }
