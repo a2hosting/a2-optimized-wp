@@ -455,7 +455,7 @@ class A2_Optimized_SiteHealth {
 			'test' => 'php_memory',
 		);
 
-		$memory_limit = $this->format_bytes(ini_get('memory_limit'));
+		$memory_limit = $this->return_bytes(ini_get('memory_limit'));
 		if ($memory_limit < 134217727) { // 128mb
 			$result['status'] = 'recommended';
 			$result['label'] = ( 'PHP Memory should be increased' );
