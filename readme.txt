@@ -2,7 +2,7 @@
 Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, LiteSpeed, LSCache, A2, Hosting
 Requires at least: 5.1
-Tested up to: 5.9
+Tested up to: 6.0
 Stable tag: 2.1.3.10.3
 Requires PHP: 5.6
 License: GPLv3
