@@ -1212,20 +1212,13 @@ final class A2_Optimized_Cache {
 				break;
 			case 'redis':
 				if (class_exists('Redis')) {
-					$cfg_host = $server_address ;
-					$cfg_port = '0' ; // or 0 if use socket
-					$cfg_pswd = '' ; // Set if has
-					$cfg_db = 0 ;
-
 					$conn = new Redis() ;
-					$conn->connect( $cfg_host, $cfg_port ) ;
-					if ( $cfg_pswd ) $conn->auth( $cfg_pswd ) ;
-					if ( $cfg_db ) $conn->select( $cfg_db ) ;
+					$conn->connect( $server_address, 0 ) ;
+					$conn->select( 0 ); // default db
 
 					$redis_available = $conn->ping();
 
 					if ($redis_available) {
-						
 						update_option('litespeed.conf.object-kind', 1);
 						update_option('litespeed.conf.object-host', $server_address);
 						update_option('litespeed.conf.object-post', 0);
