@@ -1200,6 +1200,9 @@ final class A2_Optimized_Cache {
 					if ($memcached_available) {
 						$options_manager->write_wp_config();
 						delete_option('a2_optimized_memcached_invalid');
+						update_option('litespeed.conf.object-kind', 0);
+						update_option('litespeed.conf.object-host', $server_address);
+						update_option('litespeed.conf.object-post', 0);
 					} else {
 						update_option('a2_optimized_memcached_invalid', 'Unable to connect to Memcached Server');
 					}
