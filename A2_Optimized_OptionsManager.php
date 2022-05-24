@@ -487,7 +487,7 @@ class A2_Optimized_OptionsManager {
 
 	/* Is redis supported */
 	private function is_redis_supported(){
-		if (class_exists('A2_Optimized_Private_Optimizations')) {
+		if (class_exists('A2_Optimized_Private_Optimizations') && is_plugin_active('litespeed-cache/litespeed-cache.php')) {
 			$a2opt_priv = new A2_Optimized_Private_Optimizations();
 
 			return $a2opt_priv->is_redis_supported();

@@ -1222,7 +1222,11 @@ final class A2_Optimized_Cache {
 					$redis_available = $conn->ping();
 
 					if ($redis_available) {
-						$options_manager->write_wp_config();
+						
+						update_option('litespeed.conf.object-kind', 1);
+						update_option('litespeed.conf.object-host', $server_address);
+						update_option('litespeed.conf.object-post', 0);
+						
 						delete_option('a2_optimized_memcached_invalid');
 					} else {
 						update_option('a2_optimized_memcached_invalid', 'Unable to connect to Redis Server');
