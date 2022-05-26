@@ -60,8 +60,8 @@ class A2_Optimized_Optimizations {
 
 		$a2_object_cache_additional_info = '';
 
-		if (get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false) {
-			$a2_object_cache_additional_info = '<p><strong>Please confirm your memcached server settings before enabling Object Caching.</strong><br />' . get_option('a2_optimized_memcached_invalid') . '</p>';
+		if (get_option('a2_optimized_memcached_invalid')) {
+			$a2_object_cache_additional_info = '<p><strong>Please confirm your server settings before enabling Object Caching.</strong><br />' . get_option('a2_optimized_memcached_invalid') . '</p>';
 		}
 
 		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
@@ -358,11 +358,11 @@ class A2_Optimized_Optimizations {
 					'description' => '
 						<ul>
 							<li>Extremely fast and powerful caching system.</li>
-							<li>Store frequently used database queries and WordPress objects in Memcached.</li>
-							<li>Memcached is an in-memory key-value store for small chunks of arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.</li>
+							<li>Store frequently used database queries and WordPress objects in a in-memory object cache.</li>
+							<li>Object caching is a key-value store for small chunks of arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.</li>
 							<li>Take advantage of A2 Hosting&apos;s one-click memcached configuration for WordPress.</li>
 						</ul>
-						<strong>A memcached server and the PHP memcached extension are required.</strong><br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Memcached Settings</a>
+						<strong>A supported object cache server and the corresponding PHP extension are required.</strong><br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Object Cache Settings</a>
 					' . $a2_object_cache_additional_info,
 					'is_configured' => function (&$item) use (&$thisclass) {
 						if (get_option('a2_object_cache_enabled') == 1 && file_exists( WP_CONTENT_DIR . '/object-cache.php')) {
@@ -617,10 +617,39 @@ class A2_Optimized_Optimizations {
 
 		$optimizations = array_merge($optimizations, $common_optimizations);
 
+		$optimizations = $this->apply_optimization_filter($optimizations);
+
+		return $optimizations;
+	}
+
+	/*
+	 * Changes to optimizations based on various factors
+	 */
+	public function apply_optimization_filter($optimizations){
+		
 		if (get_template() == 'Divi') {
 			$optimizations['minify']['optional'] = true;
 			$optimizations['css_minify']['optional'] = true;
 			$optimizations['js_minify']['optional'] = true;
+		}
+
+		if(is_plugin_active('litespeed-cache/litespeed-cache.php')){
+			$optimizations['a2_object_cache']['name'] = "Object Caching with Memcached or Redis";
+			if(get_option('litespeed.conf.object') == 1){
+				$optimizations['a2_object_cache']['configured'] = true;
+				$optimizations['a2_object_cache']['description'] .= "<br /><strong>This feature is provided by the LiteSpeed Cache plugin.</strong></p>";
+				unset($optimizations['a2_object_cache']['disable']);
+			}
+			if(class_exists('A2_Optimized_Private_Optimizations')) {
+				$a2opt_priv = new A2_Optimized_Private_Optimizations();
+				$file_path = $a2opt_priv->get_redis_socket();
+
+				$optimizations['a2_object_cache']['description'] .= "<br />$file_path";
+			}
+		}
+
+		if(get_option('a2_optimized_memcached_invalid')){
+			unset($optimizations['a2_object_cache']['enable']);
 		}
 
 		return $optimizations;

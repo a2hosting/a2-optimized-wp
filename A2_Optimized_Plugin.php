@@ -306,8 +306,10 @@ HTML;
 			add_action('wp_dashboard_setup', array(&$this, 'dashboard_widget'));
 			$a2_plugin_basename = plugin_basename($GLOBALS['A2_Plugin_Dir'] . '/a2-optimized.php');
 			add_filter("plugin_action_links_{$a2_plugin_basename}", array(&$this, 'plugin_settings_link'));
-			register_setting( 'a2opt-cache', 'a2opt-cache', array( __CLASS__, 'validate_settings' ) );
-			register_setting( 'a2opt-cache', 'a2_optimized_memcached_server', array( __CLASS__, 'validate_memcached' ));
+			register_setting( 'a2opt-cache', 'a2opt-cache', array('A2_Optimized_Cache', 'validate_settings' ));
+			register_setting( 'a2opt-cache', 'a2_optimized_objectcache_type');
+			register_setting( 'a2opt-cache', 'a2_optimized_memcached_server', array('A2_Optimized_Cache', 'validate_object_cache' ));
+			register_setting( 'a2opt-cache', 'a2_optimized_redis_server', array('A2_Optimized_Cache', 'validate_object_cache' ));
 			new A2_Optimized_SiteHealth;
 		}
 

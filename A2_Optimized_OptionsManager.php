@@ -436,16 +436,66 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_a2_object_cache() {
-		if (get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false) {
+		if (get_option('a2_optimized_memcached_invalid')){
+			// Object cache server did not validate. exit.
 			return false;
 		}
+		if(is_plugin_active('litespeed-cache/litespeed-cache.php')){
+			// Litespeed cache plugin is active, use that
+			return $this->enable_lscache_object_cache();
+		} else {
+			// Try to enable A2 memcached object caching
+			if(get_option('a2_optimized_memcached_server') == false){
+				// Second check for object cache server
+				return false;
+			}
+			copy( A2OPT_DIR . '/object-cache.php', WP_CONTENT_DIR . '/object-cache.php' );
 
-		copy( A2OPT_DIR . '/object-cache.php', WP_CONTENT_DIR . '/object-cache.php' );
-
-		$this->write_wp_config();
-		update_option('a2_object_cache_enabled', 1);
+			update_option('a2_object_cache_enabled', 1);
+			$this->write_wp_config();
+		}
 	}
 	
+	/**
+	 * Enable litespeed object cache
+	 *
+	 */
+	public function enable_lscache_object_cache() {
+
+		$object_cache_type = 'memcached';
+
+		if(get_option('a2_optimized_objectcache_type')){
+			$object_cache_type = get_option('a2_optimized_objectcache_type');
+		}
+
+		/* Set type of object cache */
+		if($object_cache_type == 'memcached'){
+			$server_host = get_option('a2_optimized_memcached_server');
+			update_option('litespeed.conf.object-kind', 0);
+		}
+		if($object_cache_type == 'redis'){
+			$server_host = get_option('a2_optimized_redis_server');
+			update_option('litespeed.conf.object-kind', 1);
+		}
+
+		update_option('litespeed.conf.object', 1); // Enable object cache
+		update_option('litespeed.conf.object-host', $server_host); // Server host
+		update_option('litespeed.conf.object-port', '0'); // Port is 0 for socket connections
+
+		update_option('a2_object_cache_enabled', 1); // Flag that we have this enabled
+	}
+
+	/* Is redis supported */
+	private function is_redis_supported(){
+		if (class_exists('A2_Optimized_Private_Optimizations') && is_plugin_active('litespeed-cache/litespeed-cache.php')) {
+			$a2opt_priv = new A2_Optimized_Private_Optimizations();
+
+			return $a2opt_priv->is_redis_supported();
+		};
+		update_option('a2_optimized_objectcache_type', 'memcached');
+		return false;
+	}
+
 	/**
 	 * Disable memcached object cache
 	 *
@@ -1681,7 +1731,9 @@ HTML;
 	private function cache_settings_html() {
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
-		$admin_url = 'options.php'; ?>
+		$admin_url = 'options.php';
+
+		?>
 <section id="a2opt-content-general">
 	<div  class="wrap">
 		<div>
@@ -1840,7 +1892,36 @@ HTML;
                         </th>
                         <td>
                             <fieldset>
-                                <p class="subheading"><?php esc_html_e( 'Memcached Server', 'a2-optimized-wp' ); ?></p>
+								<?php if($this->is_redis_supported()){ ?>
+                                <p class="subheading"><?php esc_html_e( 'Object Cache Type', 'a2-optimized-wp' ); ?></p>
+                                <label for="object_cache_server">
+									<?php
+									$object_cache_options = array(
+										esc_html__( 'Memcached', 'a2-optimized-wp' ) => 'memcached',
+										esc_html__( 'Redis', 'a2-optimized-wp' ) => 'redis',
+									);?>
+									<select name="a2_optimized_objectcache_type" id="objet_cache_server">
+										<option value="memcached" <?php if(get_option('a2_optimized_objectcache_type') == 'memcached'){ echo 'selected'; }; ?>>Memcached</option>
+										<option value="redis" <?php if(get_option('a2_optimized_objectcache_type') == 'redis'){ echo 'selected'; }; ?>>Redis</option>
+									</select>
+									<p class="description">
+                                    <?php
+									// translators: %s: ,
+									printf( esc_html__( 'Redis or Memcached', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
+                                    </p>
+                                </label>
+								
+								<p class="subheading"><?php esc_html_e( 'Redis Server', 'a2-optimized-wp' ); ?></p>
+                                <label for="redis_server">
+                                    <input name="a2_optimized_redis_server" type="text" id="redis_server" value="<?php echo esc_attr( get_option('a2_optimized_redis_server') ) ?>" class="regular-text" />
+									<p class="description">
+                                    <?php
+									// translators: %s: ,
+									printf( esc_html__( 'Address and port of the redis server for object caching', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
+                                    </p>
+                                </label>
+								<?php }; ?>
+								<p class="subheading"><?php esc_html_e( 'Memcached Server', 'a2-optimized-wp' ); ?></p>
                                 <label for="memcached_server">
                                     <input name="a2_optimized_memcached_server" type="text" id="memcached_server" value="<?php echo esc_attr( get_option('a2_optimized_memcached_server') ) ?>" class="regular-text" />
 									<p class="description">
@@ -1849,6 +1930,7 @@ HTML;
 									printf( esc_html__( 'Address and port of the memcached server for object caching', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
                                     </p>
                                 </label>
+                                
                             </fieldset>
                         </td>
                     </tr>
