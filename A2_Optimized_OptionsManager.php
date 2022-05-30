@@ -2015,8 +2015,6 @@ HTML;
 
 		if (check_admin_referer('a2opt-cache-save', 'a2opt-cache-nonce')) {
 			$a2opt_db_optimizations = sanitize_text_field($_REQUEST['a2_db_optimizations']);
-			echo 'CONTENTS:<br />' . json_encode($a2opt_db_optimizations) . '<br />';
-			die;
 			$a2opt_cache = sanitize_text_field($_REQUEST['a2opt-cache']);
 			$a2_memcached_server = sanitize_text_field($_REQUEST['a2_optimized_memcached_server']);
 			update_option('a2opt-cache', $a2opt_cache);
