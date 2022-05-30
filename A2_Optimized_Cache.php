@@ -39,59 +39,59 @@ final class A2_Optimized_Cache {
 
 	public function __construct() {
 		// init hooks
-		add_action( 'init', array( 'A2_Optimized_Cache_Engine', 'start' ) );
-		add_action( 'init', array( __CLASS__, 'process_clear_cache_request' ) );
-		add_action( 'init', array( __CLASS__, 'register_textdomain' ) );
+		add_action( 'init', [ 'A2_Optimized_Cache_Engine', 'start' ] );
+		add_action( 'init', [ __CLASS__, 'process_clear_cache_request' ] );
+		add_action( 'init', [ __CLASS__, 'register_textdomain' ] );
 
 		// public clear cache hooks
-		add_action( 'a2opt_cache_clear_complete_cache', array( __CLASS__, 'clear_complete_cache' ) );
-		add_action( 'a2opt_cache_clear_site_cache', array( __CLASS__, 'clear_site_cache' ) );
-		add_action( 'a2opt_cache_clear_site_cache_by_blog_id', array( __CLASS__, 'clear_site_cache_by_blog_id' ) );
-		add_action( 'a2opt_cache_clear_page_cache_by_post_id', array( __CLASS__, 'clear_page_cache_by_post_id' ) );
-		add_action( 'a2opt_cache_clear_page_cache_by_url', array( __CLASS__, 'clear_page_cache_by_url' ) );
+		add_action( 'a2opt_cache_clear_complete_cache', [ __CLASS__, 'clear_complete_cache' ] );
+		add_action( 'a2opt_cache_clear_site_cache', [ __CLASS__, 'clear_site_cache' ] );
+		add_action( 'a2opt_cache_clear_site_cache_by_blog_id', [ __CLASS__, 'clear_site_cache_by_blog_id' ] );
+		add_action( 'a2opt_cache_clear_page_cache_by_post_id', [ __CLASS__, 'clear_page_cache_by_post_id' ] );
+		add_action( 'a2opt_cache_clear_page_cache_by_url', [ __CLASS__, 'clear_page_cache_by_url' ] );
 
 		// system clear cache hooks
-		add_action( '_core_updated_successfully', array( __CLASS__, 'clear_complete_cache' ) );
-		add_action( 'upgrader_process_complete', array( __CLASS__, 'on_upgrade' ), 10, 2 );
-		add_action( 'switch_theme', array( __CLASS__, 'clear_complete_cache' ) );
-		add_action( 'permalink_structure_changed', array( __CLASS__, 'clear_site_cache' ) );
-		add_action( 'activated_plugin', array( __CLASS__, 'on_plugin_activation_deactivation' ), 10, 2 );
-		add_action( 'deactivated_plugin', array( __CLASS__, 'on_plugin_activation_deactivation' ), 10, 2 );
-		add_action( 'save_post', array( __CLASS__, 'on_save_post' ) );
-		add_action( 'post_updated', array( __CLASS__, 'on_post_updated' ), 10, 3 );
-		add_action( 'wp_trash_post', array( __CLASS__, 'on_trash_post' ) );
-		add_action( 'transition_post_status', array( __CLASS__, 'on_transition_post_status' ), 10, 3 );
-		add_action( 'comment_post', array( __CLASS__, 'on_comment_post' ), 99, 2 );
-		add_action( 'edit_comment', array( __CLASS__, 'on_edit_comment' ), 10, 2 );
-		add_action( 'transition_comment_status', array( __CLASS__, 'on_transition_comment_status' ), 10, 3 );
+		add_action( '_core_updated_successfully', [ __CLASS__, 'clear_complete_cache' ] );
+		add_action( 'upgrader_process_complete', [ __CLASS__, 'on_upgrade' ], 10, 2 );
+		add_action( 'switch_theme', [ __CLASS__, 'clear_complete_cache' ] );
+		add_action( 'permalink_structure_changed', [ __CLASS__, 'clear_site_cache' ] );
+		add_action( 'activated_plugin', [ __CLASS__, 'on_plugin_activation_deactivation' ], 10, 2 );
+		add_action( 'deactivated_plugin', [ __CLASS__, 'on_plugin_activation_deactivation' ], 10, 2 );
+		add_action( 'save_post', [ __CLASS__, 'on_save_post' ] );
+		add_action( 'post_updated', [ __CLASS__, 'on_post_updated' ], 10, 3 );
+		add_action( 'wp_trash_post', [ __CLASS__, 'on_trash_post' ] );
+		add_action( 'transition_post_status', [ __CLASS__, 'on_transition_post_status' ], 10, 3 );
+		add_action( 'comment_post', [ __CLASS__, 'on_comment_post' ], 99, 2 );
+		add_action( 'edit_comment', [ __CLASS__, 'on_edit_comment' ], 10, 2 );
+		add_action( 'transition_comment_status', [ __CLASS__, 'on_transition_comment_status' ], 10, 3 );
 
 		// third party clear cache hooks
-		add_action( 'autoptimize_action_cachepurged', array( __CLASS__, 'clear_complete_cache' ) );
-		add_action( 'woocommerce_product_set_stock', array( __CLASS__, 'on_woocommerce_stock_update' ) );
-		add_action( 'woocommerce_variation_set_stock', array( __CLASS__, 'on_woocommerce_stock_update' ) );
-		add_action( 'woocommerce_product_set_stock_status', array( __CLASS__, 'on_woocommerce_stock_update' ) );
-		add_action( 'woocommerce_variation_set_stock_status', array( __CLASS__, 'on_woocommerce_stock_update' ) );
+		add_action( 'autoptimize_action_cachepurged', [ __CLASS__, 'clear_complete_cache' ] );
+		add_action( 'woocommerce_product_set_stock', [ __CLASS__, 'on_woocommerce_stock_update' ] );
+		add_action( 'woocommerce_variation_set_stock', [ __CLASS__, 'on_woocommerce_stock_update' ] );
+		add_action( 'woocommerce_product_set_stock_status', [ __CLASS__, 'on_woocommerce_stock_update' ] );
+		add_action( 'woocommerce_variation_set_stock_status', [ __CLASS__, 'on_woocommerce_stock_update' ] );
 
 		// multisite hooks
-		add_action( 'wp_initialize_site', array( __CLASS__, 'install_later' ) );
-		add_action( 'wp_uninitialize_site', array( __CLASS__, 'uninstall_later' ) );
+		add_action( 'wp_initialize_site', [ __CLASS__, 'install_later' ] );
+		add_action( 'wp_uninitialize_site', [ __CLASS__, 'uninstall_later' ] );
 
 		// settings hooks
-		add_action( 'permalink_structure_changed', array( __CLASS__, 'update_backend' ) );
-		add_action( 'add_option_a2opt_cache', array( __CLASS__, 'on_update_backend' ), 10, 2 );
-		add_action( 'update_option_a2opt_cache', array( __CLASS__, 'on_update_backend' ), 10, 2 );
+		add_action( 'permalink_structure_changed', [ __CLASS__, 'update_backend' ] );
+		add_action( 'add_option_a2opt_cache', [ __CLASS__, 'on_update_backend' ], 10, 2 );
+		add_action( 'update_option_a2opt_cache', [ __CLASS__, 'on_update_backend' ], 10, 2 );
 
 		// admin bar hook
-		add_action( 'admin_bar_menu', array( __CLASS__, 'add_admin_bar_items' ), 90 );
+		add_action( 'admin_bar_menu', [ __CLASS__, 'add_admin_bar_items' ], 90 );
 
 		// admin interface hooks
 		if ( is_admin() ) {
 			// settings
-			add_action( 'admin_init', array( __CLASS__, 'register_settings' ) );
+			add_action( 'admin_init', [ __CLASS__, 'register_settings' ] );
 			// notices
-			add_action( 'admin_notices', array( __CLASS__, 'requirements_check' ) );
-			add_action( 'admin_notices', array( __CLASS__, 'cache_cleared_notice' ) );
-			add_action( 'network_admin_notices', array( __CLASS__, 'cache_cleared_notice' ) );
+			add_action( 'admin_notices', [ __CLASS__, 'requirements_check' ] );
+			add_action( 'admin_notices', [ __CLASS__, 'cache_cleared_notice' ] );
+			add_action( 'network_admin_notices', [ __CLASS__, 'cache_cleared_notice' ] );
 		}
 	}
 
@@ -214,7 +214,7 @@ final class A2_Optimized_Cache {
 		}
 
 		// get defined settings, fall back to empty array if not found
-		$old_option_value = get_option( 'a2opt-cache', array() );
+		$old_option_value = get_option( 'a2opt-cache', [] );
 
 		// update default system settings
 		$old_option_value = wp_parse_args( self::get_default_settings( 'system' ), $old_option_value );
@@ -226,7 +226,7 @@ final class A2_Optimized_Cache {
 		update_option( 'a2opt-cache', $new_option_value );
 
 		// create settings file if action has not been registered for hook yet, like when in activation hook
-		if ( has_action( 'update_option_a2opt_cache', array( __CLASS__, 'on_update_backend' ) ) === false ) {
+		if ( has_action( 'update_option_a2opt_cache', [ __CLASS__, 'on_update_backend' ] ) === false ) {
 			A2_Optimized_Cache_Disk::create_settings_file( $new_option_value );
 		}
 
@@ -279,8 +279,8 @@ final class A2_Optimized_Cache {
 	 * @return  array    $callback_return  returned value(s) from callback function
 	 */
 
-	private static function each_site($network, $callback, $callback_params = array()) {
-		$callback_return = array();
+	private static function each_site($network, $callback, $callback_params = []) {
+		$callback_return = [];
 
 		if ( $network ) {
 			$blog_ids = self::get_blog_ids();
@@ -335,7 +335,7 @@ final class A2_Optimized_Cache {
 	 */
 
 	private static function get_blog_ids() {
-		$blog_ids = array( 1 );
+		$blog_ids = [ 1 ];
 
 		if ( is_multisite() ) {
 			global $wpdb;
@@ -369,7 +369,7 @@ final class A2_Optimized_Cache {
 	 */
 
 	public static function get_blog_paths() {
-		$blog_paths = array( '/' );
+		$blog_paths = [ '/' ];
 
 		if ( is_multisite() ) {
 			global $wpdb;
@@ -454,16 +454,16 @@ final class A2_Optimized_Cache {
 	 */
 
 	private static function get_default_settings($settings_type = null) {
-		$system_default_settings = array(
+		$system_default_settings = [
 			'version' => (string) A2OPT_VERSION,
 			'permalink_structure' => (string) self::get_permalink_structure(),
-		);
+		];
 
 		if ( $settings_type === 'system' ) {
 			return $system_default_settings;
 		}
 
-		$user_default_settings = array(
+		$user_default_settings = [
 			'cache_expires' => 0,
 			'cache_expiry_time' => 0,
 			'clear_site_cache_on_saved_post' => 1,
@@ -477,7 +477,7 @@ final class A2_Optimized_Cache {
 			'excluded_cookies' => '',
 			'minify_html' => 1,
 			'minify_inline_css_js' => 0,
-		);
+		];
 
 		// merge default settings
 		$default_settings = wp_parse_args( $user_default_settings, $system_default_settings );
@@ -502,31 +502,31 @@ final class A2_Optimized_Cache {
 
 		// add "Clear Network Cache" or "Clear Site Cache" button in admin bar
 		$wp_admin_bar->add_menu(
-			array(
+			[
 				'id' => 'a2opt_cache_clear_cache',
-				'href' => wp_nonce_url( add_query_arg( array(
+				'href' => wp_nonce_url( add_query_arg( [
 								'_cache' => 'a2-optimized-wp',
 								'_action' => 'clear',
-							) ), 'a2opt_cache_clear_cache_nonce' ),
+							] ), 'a2opt_cache_clear_cache_nonce' ),
 				'parent' => 'top-secondary',
 				'title' => '<span class="ab-item">' . $title . '</span>',
-				'meta' => array( 'title' => $title ),
-			)
+				'meta' => [ 'title' => $title ],
+			]
 		);
 
 		// add "Clear Page Cache" button in admin bar
 		if ( ! is_admin() ) {
 			$wp_admin_bar->add_menu(
-				array(
+				[
 					'id' => 'a2opt_cache_clear_page_cache',
-					'href' => wp_nonce_url( add_query_arg( array(
+					'href' => wp_nonce_url( add_query_arg( [
 									'_cache' => 'a2-optimized-wp',
 									'_action' => 'clearurl',
-								) ), 'a2opt_cache_clear_cache_nonce' ),
+								] ), 'a2opt_cache_clear_cache_nonce' ),
 					'parent' => 'top-secondary',
 					'title' => '<span class="ab-item">' . esc_html__( 'Clear Page Cache', 'a2-optimized-wp' ) . '</span>',
-					'meta' => array( 'title' => esc_html__( 'Clear Page Cache', 'a2-optimized-wp' ) ),
-				)
+					'meta' => [ 'title' => esc_html__( 'Clear Page Cache', 'a2-optimized-wp' ) ],
+				]
 			);
 		}
 	}
@@ -664,7 +664,7 @@ final class A2_Optimized_Cache {
 
 	public static function on_transition_post_status($new_status, $old_status, $post) {
 		// if any published post type status has changed
-		if ( $old_status === 'publish' && in_array( $new_status, array( 'future', 'draft', 'pending', 'private' ) ) ) {
+		if ( $old_status === 'publish' && in_array( $new_status, [ 'future', 'draft', 'pending', 'private' ] ) ) {
 			self::clear_cache_on_post_save( $post->ID );
 		}
 	}
@@ -759,7 +759,7 @@ final class A2_Optimized_Cache {
 		self::each_site( is_multisite(), 'self::clear_site_cache' );
 
 		// delete cache size transient(s)
-		self::each_site( is_multisite(), 'delete_transient', array( self::get_cache_size_transient_name() ) );
+		self::each_site( is_multisite(), 'delete_transient', [ self::get_cache_size_transient_name() ] );
 	}
 
 	/**
@@ -821,7 +821,7 @@ final class A2_Optimized_Cache {
 		foreach ( $taxonomies as $taxonomy ) {
 			if ( wp_count_terms( $taxonomy ) > 0 ) {
 				// get terms attached to post
-				$term_ids = wp_get_post_terms( $post_id, $taxonomy, array( 'fields' => 'ids' ) );
+				$term_ids = wp_get_post_terms( $post_id, $taxonomy, [ 'fields' => 'ids' ] );
 				foreach ( $term_ids as $term_id ) {
 					$term_archives_url = get_term_link( (int) $term_id, $taxonomy );
 					// validate URL and ensure it does not have a query string
@@ -1086,10 +1086,10 @@ final class A2_Optimized_Cache {
 	 */
 
 	public static function register_settings() {
-		register_setting( 'a2opt-cache', 'a2opt-cache', array( __CLASS__, 'validate_settings' ) );
+		register_setting( 'a2opt-cache', 'a2opt-cache', [ __CLASS__, 'validate_settings' ] );
 		register_setting( 'a2opt-cache', 'a2_optimized_objectcache_type' );
-		register_setting( 'a2opt-cache', 'a2_optimized_memcached_server', array( __CLASS__, 'validate_object_cache' ));
-		register_setting( 'a2opt-cache', 'a2_optimized_redis_server', array( __CLASS__, 'validate_object_cache' ));
+		register_setting( 'a2opt-cache', 'a2_optimized_memcached_server', [ __CLASS__, 'validate_object_cache' ]);
+		register_setting( 'a2opt-cache', 'a2_optimized_redis_server', [ __CLASS__, 'validate_object_cache' ]);
 	}
 
 	/**
@@ -1130,7 +1130,7 @@ final class A2_Optimized_Cache {
 			return;
 		}
 
-		$validated_settings = array(
+		$validated_settings = [
 			'cache_expires' => (int) ( ! empty( $settings['cache_expires'] ) ),
 			'cache_expiry_time' => (int) @$settings['cache_expiry_time'],
 			'clear_site_cache_on_saved_post' => (int) ( ! empty( $settings['clear_site_cache_on_saved_post'] ) ),
@@ -1144,7 +1144,7 @@ final class A2_Optimized_Cache {
 			'excluded_cookies' => (string) self::validate_regex( @$settings['excluded_cookies'] ),
 			'minify_html' => (int) ( ! empty( $settings['minify_html'] ) ),
 			'minify_inline_css_js' => (int) ( ! empty( $settings['minify_inline_css_js'] ) ),
-		);
+		];
 
 		// add default system settings
 		$validated_settings = wp_parse_args( $validated_settings, self::get_default_settings( 'system' ) );
@@ -1155,9 +1155,15 @@ final class A2_Optimized_Cache {
 			set_transient( self::get_cache_cleared_transient_name(), 1 );
 		}
 
+		// check if database optimizations should be executed
+		if ( ! empty( $settings['apply_db_optimizations_on_saved_settings'] ) ) {
+			$a2_db_optimizations = new A2_Optimized_DBOptimizations;
+			$a2_db_optimizations->execute_optimizations();
+		}
+
 		return $validated_settings;
 	}
-	
+
 	/**
 	 * validate memcached settings
 	 *
@@ -1166,17 +1172,17 @@ final class A2_Optimized_Cache {
 	 */
 
 	public static function validate_object_cache($server_address) {
-		if(!$server_address){
+		if (!$server_address) {
 			return;
 		}
 		$options_manager = new A2_Optimized_OptionsManager;
 
 		$object_cache_type = '';
-		if(get_option('a2_optimized_objectcache_type')){
+		if (get_option('a2_optimized_objectcache_type')) {
 			$object_cache_type = get_option('a2_optimized_objectcache_type');
 		}
 
-		switch($object_cache_type){
+		switch ($object_cache_type) {
 			case 'memcached':
 				if (class_exists('Memcached')) {
 					$memcached = new Memcached;
@@ -1193,7 +1199,7 @@ final class A2_Optimized_Cache {
 							$port = 11211;
 						}
 					}
-					$instances[] = array( $node, $port, 1 );
+					$instances[] = [ $node, $port, 1 ];
 
 					$memcached->addServers($instances);
 					$memcached_available = $memcached->getStats();
@@ -1209,6 +1215,7 @@ final class A2_Optimized_Cache {
 				} else {
 					update_option('a2_optimized_memcached_invalid', 'Missing Memcached extension');
 				}
+
 				break;
 			case 'redis':
 				if (class_exists('Redis')) {
@@ -1222,7 +1229,7 @@ final class A2_Optimized_Cache {
 						update_option('litespeed.conf.object-kind', 1);
 						update_option('litespeed.conf.object-host', $server_address);
 						update_option('litespeed.conf.object-post', 0);
-						
+
 						delete_option('a2_optimized_memcached_invalid');
 					} else {
 						update_option('a2_optimized_memcached_invalid', 'Unable to connect to Redis Server');
@@ -1230,6 +1237,7 @@ final class A2_Optimized_Cache {
 				} else {
 					update_option('a2_optimized_memcached_invalid', 'Missing Redis extension');
 				}
+
 				break;
 		}
 

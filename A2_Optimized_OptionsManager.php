@@ -69,7 +69,7 @@ class A2_Optimized_OptionsManager {
 	 * @return array
 	 */
 	public function get_w3tc_defaults() {
-		return array(
+		return [
 			'pgcache.check.domain' => true,
 			'pgcache.prime.post.enabled' => true,
 			'pgcache.reject.logged' => true,
@@ -90,12 +90,12 @@ class A2_Optimized_OptionsManager {
 			'pgcache.cache.feed' => true,
 			'pgcache.debug' => false,
 			'pgcache.purge.postpages_limit' => 0,//purge all pages that list posts
-			'pgcache.purge.feed.types' => array(
+			'pgcache.purge.feed.types' => [
 				0 => 'rdf',
 				1 => 'rss',
 				2 => 'rss2',
 				3 => 'atom'
-			),
+			],
 			'pgcache.compatibility' => true,
 			'minify.debug' => false,
 			'dbcache.debug' => false,
@@ -154,7 +154,7 @@ class A2_Optimized_OptionsManager {
 			'config.check' => true,
 
 			'varnish.enabled' => false
-		);
+		];
 	}
 
 	/**
@@ -191,7 +191,7 @@ class A2_Optimized_OptionsManager {
 	public function install_plugin($slug, $activate = false) {
 		require_once ABSPATH . 'wp-admin/includes/plugin.php';
 		require_once ABSPATH . 'wp-admin/includes/plugin-install.php';
-		$api = plugins_api('plugin_information', array('slug' => $slug));
+		$api = plugins_api('plugin_information', ['slug' => $slug]);
 		$response = true;
 
 		$found = false;
@@ -256,9 +256,9 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function hit_the_w3tc_page() {
-		$disregarded_cookies = array(
+		$disregarded_cookies = [
 			'PHPSESSID',
-			);
+			];
 
 		$cookie = '';
 		foreach ($_COOKIE as $name => $val) {
@@ -304,7 +304,7 @@ class A2_Optimized_OptionsManager {
 	 */
 	public function enable_w3tc_cache() {
 		$permalink_structure = get_option('permalink_structure');
-		$vars = array();
+		$vars = [];
 		if ($permalink_structure == '') {
 			$vars['pgcache.engine'] = 'file';
 		} else {
@@ -329,7 +329,7 @@ class A2_Optimized_OptionsManager {
 	 */
 	public function enable_w3tc_page_cache() {
 		$permalink_structure = get_option('permalink_structure');
-		$vars = array();
+		$vars = [];
 		if ($permalink_structure == '') {
 			$vars['pgcache.engine'] = 'file';
 		} else {
@@ -348,7 +348,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_db_cache() {
-		$vars = array();
+		$vars = [];
 
 		$vars['dbcache.engine'] = 'file';
 		$vars['dbcache.enabled'] = true;
@@ -361,7 +361,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_object_cache() {
-		$vars = array();
+		$vars = [];
 
 		$vars['objectcache.engine'] = 'file';
 		$vars['objectcache.enabled'] = true;
@@ -374,7 +374,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_browser_cache() {
-		$vars = array();
+		$vars = [];
 
 		$vars['browsercache.enabled'] = true;
 
@@ -386,7 +386,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_w3tc_gzip() {
-		$vars = array();
+		$vars = [];
 
 		$vars['browsercache.other.compression'] = true;
 		$vars['browsercache.html.compression'] = true;
@@ -400,7 +400,7 @@ class A2_Optimized_OptionsManager {
 	*
 	*/
 	public function disable_w3tc_gzip() {
-		$vars = array();
+		$vars = [];
 
 		$vars['browsercache.other.compression'] = false;
 		$vars['browsercache.html.compression'] = false;
@@ -408,7 +408,7 @@ class A2_Optimized_OptionsManager {
 
 		$this->update_w3tc($vars);
 	}
-	
+
 	/**
 	 * Enable built-in page cache
 	 *
@@ -419,7 +419,7 @@ class A2_Optimized_OptionsManager {
 
 		update_option('a2_cache_enabled', 1);
 	}
-	
+
 	/**
 	 * Disable built-in page cache
 	 *
@@ -427,73 +427,23 @@ class A2_Optimized_OptionsManager {
 	public function disable_a2_page_cache() {
 		A2_Optimized_Cache_Disk::clean();
 		A2_Optimized_Cache::update_backend();
-		
+
 		update_option('a2_cache_enabled', 0);
 	}
-	
+
 	/**
 	 * Enable memcached object cache
 	 *
 	 */
 	public function enable_a2_object_cache() {
-		if (get_option('a2_optimized_memcached_invalid')){
-			// Object cache server did not validate. exit.
+		if (get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false) {
 			return false;
 		}
-		if(is_plugin_active('litespeed-cache/litespeed-cache.php')){
-			// Litespeed cache plugin is active, use that
-			return $this->enable_lscache_object_cache();
-		} else {
-			// Try to enable A2 memcached object caching
-			if(get_option('a2_optimized_memcached_server') == false){
-				// Second check for object cache server
-				return false;
-			}
-			copy( A2OPT_DIR . '/object-cache.php', WP_CONTENT_DIR . '/object-cache.php' );
 
-			update_option('a2_object_cache_enabled', 1);
-			$this->write_wp_config();
-		}
-	}
-	
-	/**
-	 * Enable litespeed object cache
-	 *
-	 */
-	public function enable_lscache_object_cache() {
+		copy( A2OPT_DIR . '/object-cache.php', WP_CONTENT_DIR . '/object-cache.php' );
 
-		$object_cache_type = 'memcached';
-
-		if(get_option('a2_optimized_objectcache_type')){
-			$object_cache_type = get_option('a2_optimized_objectcache_type');
-		}
-
-		/* Set type of object cache */
-		if($object_cache_type == 'memcached'){
-			$server_host = get_option('a2_optimized_memcached_server');
-			update_option('litespeed.conf.object-kind', 0);
-		}
-		if($object_cache_type == 'redis'){
-			$server_host = get_option('a2_optimized_redis_server');
-			update_option('litespeed.conf.object-kind', 1);
-		}
-
-		update_option('litespeed.conf.object', 1); // Enable object cache
-		update_option('litespeed.conf.object-host', $server_host); // Server host
-		update_option('litespeed.conf.object-port', '0'); // Port is 0 for socket connections
-
-		update_option('a2_object_cache_enabled', 1); // Flag that we have this enabled
-	}
-
-	/* Is redis supported */
-	private function is_redis_supported(){
-		if (class_exists('A2_Optimized_Private_Optimizations') && is_plugin_active('litespeed-cache/litespeed-cache.php')) {
-			$a2opt_priv = new A2_Optimized_Private_Optimizations();
-
-			return $a2opt_priv->is_redis_supported();
-		};
-		update_option('a2_optimized_objectcache_type', 'memcached');
-		return false;
+		$this->write_wp_config();
+		update_option('a2_object_cache_enabled', 1);
 	}
 
 	/**
@@ -502,12 +452,12 @@ class A2_Optimized_OptionsManager {
 	 */
 	public function disable_a2_object_cache() {
 		@unlink( WP_CONTENT_DIR . '/object-cache.php' );
-		
+
 		$this->write_wp_config();
 
 		update_option('a2_object_cache_enabled', 0);
 	}
-	
+
 	/**
 	 * Enable built-in page cache gzip
 	 *
@@ -523,7 +473,7 @@ class A2_Optimized_OptionsManager {
 		// Rebuild cache settings file
 		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
-	
+
 	/**
 	 * Disable built-in page cache gzip
 	 *
@@ -554,7 +504,7 @@ class A2_Optimized_OptionsManager {
 		// Rebuild cache settings file
 		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
-	
+
 	/**
 	 * Disable built-in page cache html minification
 	 *
@@ -587,7 +537,7 @@ class A2_Optimized_OptionsManager {
 		// Rebuild cache settings file
 		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
-	
+
 	/**
 	 * Disable built-in page cache css/js minification
 	 *
@@ -602,7 +552,7 @@ class A2_Optimized_OptionsManager {
 		// Rebuild cache settings file
 		A2_Optimized_Cache_Disk::create_settings_file( $cache_settings );
 	}
-	
+
 	/**
 	*  Enable WooCommerce Cart Fragment Dequeuing
 	*
@@ -611,7 +561,7 @@ class A2_Optimized_OptionsManager {
 		update_option('a2_wc_cart_fragments', 1);
 		update_option('woocommerce_cart_redirect_after_add', 'yes'); // Recommended WooCommerce setting when disabling cart fragments
 	}
-	
+
 	/**
 	*  Disable WooCommerce Cart Fragment Dequeuing
 	*
@@ -620,7 +570,7 @@ class A2_Optimized_OptionsManager {
 		delete_option('a2_wc_cart_fragments');
 		delete_option('woocommerce_cart_redirect_after_add');
 	}
-	
+
 	/**
 	*  Enable Blocking of XML-RPC Requests
 	*
@@ -628,7 +578,7 @@ class A2_Optimized_OptionsManager {
 	public function enable_xmlrpc_requests() {
 		update_option('a2_block_xmlrpc', 1);
 	}
-	
+
 	/**
 	*  Disable Blocking of XML-RPC Requests
 	*
@@ -642,7 +592,7 @@ class A2_Optimized_OptionsManager {
 	*
 	*/
 	public function regenerate_wpconfig_salts() {
-		$this->salts_array = array(
+		$this->salts_array = [
 			"define('AUTH_KEY',",
 			'SECURE_AUTH_KEY',
 			'LOGGED_IN_KEY',
@@ -651,7 +601,7 @@ class A2_Optimized_OptionsManager {
 			'SECURE_AUTH_SALT',
 			'LOGGED_IN_SALT',
 			'NONCE_SALT',
-		);
+		];
 
 		$returned_salts = file_get_contents('https://api.wordpress.org/secret-key/1.1/salt/');
 		$this->new_salts = explode("\n", $returned_salts);
@@ -663,7 +613,7 @@ class A2_Optimized_OptionsManager {
 
 	public function regenerate_wpconfig_desc() {
 		$output = '<p>Generate new salt values for wp-config.php<br /><strong>This will log out all users including yourself</strong><br />Last regenerated:</p>';
-		
+
 		return $output;
 	}
 
@@ -696,7 +646,7 @@ class A2_Optimized_OptionsManager {
 			}
 		}
 	}
-	
+
 	private function config_file_path() {
 		$salts_file_name = 'wp-config';
 		$config_file = ABSPATH . $salts_file_name . '.php';
@@ -736,12 +686,12 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_cache() {
-		$this->update_w3tc(array(
+		$this->update_w3tc([
 			'pgcache.enabled' => false,
 			'dbcache.enabled' => false,
 			'objectcache.enabled' => false,
 			'browsercache.enabled' => false,
-		));
+		]);
 	}
 
 	/**
@@ -749,7 +699,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_page_cache() {
-		$vars = array();
+		$vars = [];
 		$vars['pgcache.enabled'] = false;
 		$this->update_w3tc($vars);
 	}
@@ -759,7 +709,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_db_cache() {
-		$vars = array();
+		$vars = [];
 		$vars['dbcache.enabled'] = false;
 		$this->update_w3tc($vars);
 	}
@@ -769,7 +719,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_object_cache() {
-		$vars = array();
+		$vars = [];
 		$vars['objectcache.enabled'] = false;
 		$this->update_w3tc($vars);
 	}
@@ -779,7 +729,7 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_w3tc_browser_cache() {
-		$vars = array();
+		$vars = [];
 		$vars['browsercache.enabled'] = false;
 		$this->update_w3tc($vars);
 	}
@@ -789,11 +739,11 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function disable_html_minify() {
-		$this->update_w3tc(array(
+		$this->update_w3tc([
 			'minify.html.enable' => false,
 			'minify.html.enabled' => false,
 			'minify.auto' => false
-		));
+		]);
 	}
 
 	/**
@@ -801,12 +751,12 @@ class A2_Optimized_OptionsManager {
 	 *
 	 */
 	public function enable_html_minify() {
-		$this->update_w3tc(array(
+		$this->update_w3tc([
 			'minify.html.enable' => true,
 			'minify.enabled' => true,
 			'minify.auto' => false,
 			'minify.engine' => 'file'
-		));
+		]);
 	}
 
 	public function curl_save_w3tc($cookie, $url) {
@@ -845,7 +795,7 @@ class A2_Optimized_OptionsManager {
 
 		wp_enqueue_style('bootstrap', plugins_url('/assets/bootstrap/css/bootstrap.css', __FILE__), '', $thisclass->getVersion());
 		wp_enqueue_style('bootstrap-theme', plugins_url('/assets/bootstrap/css/bootstrap-theme.css', __FILE__), '', $thisclass->getVersion());
-		wp_enqueue_script('bootstrap-theme', plugins_url('/assets/bootstrap/js/bootstrap.js', __FILE__), array('jquery'), $thisclass->getVersion());
+		wp_enqueue_script('bootstrap-theme', plugins_url('/assets/bootstrap/js/bootstrap.js', __FILE__), ['jquery'], $thisclass->getVersion());
 
 		$image_dir = plugins_url('/assets/images', __FILE__);
 
@@ -899,7 +849,7 @@ class A2_Optimized_OptionsManager {
 			}
 
 			if ($_GET['a2-page'] == 'dismiss_notice') {
-				$allowed_notices = array(
+				$allowed_notices = [
 					'a2_login_bookmark',
 					'a2_notice_incompatible_plugins',
 					'a2_notice_w3totalcache',
@@ -908,7 +858,7 @@ class A2_Optimized_OptionsManager {
 					'a2_notice_wordfence_waf',
 					'a2_notice_configpage',
 					'a2_notice_diviminify',
-				);
+				];
 				if (isset($_GET['a2-option']) && in_array($_GET['a2-option'], $allowed_notices)) {
 					if ($_GET['a2-option'] == 'a2_login_bookmark') {
 						update_option('a2_login_bookmark', get_option('a2_login_page'));
@@ -1055,7 +1005,7 @@ HTML;
 		if (isset($_GET['save_settings']) && $_GET['save_settings']) {
 			$save_alert = '<div class="alert alert-success">Settings Saved</div>';
 		}
-		
+
 		if (isset($_GET['msg']) && $_GET['msg'] == 'token') {
 			$save_alert = '<div class="alert alert-danger">Session timed out, please try to configure your optimization again.</div>';
 		}
@@ -1069,8 +1019,6 @@ HTML;
 
 		$settingsGroup = get_class($this) . '-settings-group';
 		$description = $this->get_plugin_description();
-
-
 
 		if ($this->is_a2()) {
 			$feedback = <<<HTML
@@ -1304,7 +1252,7 @@ HTML;
 
 HTML;
 	}
-	
+
 	/**
 	 * Wizard to migrate from the W3TC plugin
 	 * @param integer $setup_step The step to begin install process
@@ -1314,43 +1262,43 @@ HTML;
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
 		$w3tc_settings = $this->get_w3tc_config();
-		$migrated_settings = array();
-		$migrated_settings['page_cache'] = array(
+		$migrated_settings = [];
+		$migrated_settings['page_cache'] = [
 			'name' => 'Enable Page Caching',
 			'w3tc_value' => $w3tc_settings['pgcache.enabled']
-		);
-		$migrated_settings['excluded_cookies'] = array(
+		];
+		$migrated_settings['excluded_cookies'] = [
 			'name' => 'Do not cache requests that have these cookies',
 			'w3tc_value' => $w3tc_settings['pgcache.reject.cookie']
-		);
-		$migrated_settings['object_cache'] = array(
+		];
+		$migrated_settings['object_cache'] = [
 			'name' => 'Enable Memcached Object Caching',
 			'w3tc_value' => $w3tc_settings['objectcache.enabled']
-		);
-		$migrated_settings['memcached_server'] = array(
+		];
+		$migrated_settings['memcached_server'] = [
 			'name' => 'Memcached Servers',
 			'w3tc_value' => $w3tc_settings['objectcache.memcached.servers']
-		);
-		$migrated_settings['clear_site_cache_on_saved_post'] = array(
+		];
+		$migrated_settings['clear_site_cache_on_saved_post'] = [
 			'name' => 'Clear cache when saving post',
 			'w3tc_value' => $w3tc_settings['pgcache.purge.post']
-		);
-		$migrated_settings['clear_site_cache_on_saved_comment'] = array(
+		];
+		$migrated_settings['clear_site_cache_on_saved_comment'] = [
 			'name' => 'Clear cache when a new comment is added',
 			'w3tc_value' => $w3tc_settings['pgcache.purge.comments']
-		);
-		$migrated_settings['compress_cache'] = array(
+		];
+		$migrated_settings['compress_cache'] = [
 			'name' => 'GZIP compress cached pages',
 			'w3tc_value' => $w3tc_settings['browsercache.html.compression']
-		);
-		$migrated_settings['minify_html'] = array(
+		];
+		$migrated_settings['minify_html'] = [
 			'name' => 'HTML Minification',
 			'w3tc_value' => $w3tc_settings['minify.html.enable']
-		);
-		$migrated_settings['minify_inline_css_js'] = array(
+		];
+		$migrated_settings['minify_inline_css_js'] = [
 			'name' => 'Javascript and CSS Minification',
 			'w3tc_value' => $w3tc_settings['minify.js.enable']
-		);
+		];
 
 		if ($setup_step == 1) {
 			echo <<<HTML
@@ -1400,10 +1348,10 @@ HTML;
 						$value = 'Not set';
 					}
 				}
-				
+
 				$step_output .= '<li><strong>' . $item['name'] . '</strong>: ' . $value . '</li>';
 			}
-			
+
 			$step_output .= "</ul><p>Next we will need to deactivate the W3 Total Cache plugin.</p><p><a href='" . admin_url('admin.php?a2-page=w3tc_migration_wizard&page=A2_Optimized_Plugin_admin&step=2') . "' class='btn btn-success'>Deactivate</a></p>";
 			echo <<<HTML
 			<div>
@@ -1723,7 +1671,7 @@ HTML;
 		update_option('a2_recaptcha_secretkey', sanitize_text_field($_POST['a2_recaptcha_secretkey']));
 		update_option('a2_recaptcha_theme', sanitize_text_field($_POST['a2_recaptcha_theme']));
 	}
-	
+
 	/**
 	 * Cache Settings Page
 	 *
@@ -1732,8 +1680,7 @@ HTML;
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
 		$admin_url = 'options.php';
-
-		?>
+		$db_optimization_settings = get_option(A2_Optimized_DBOptimizations::WP_SETTING); ?>
 <section id="a2opt-content-general">
 	<div  class="wrap">
 		<div>
@@ -1756,7 +1703,7 @@ HTML;
 			<?php if (get_option('a2_optimized_memcached_invalid')) { ?>
 				<div class="notice notice-error"><p>There is an issue with your Memcached settings<br /><?php echo get_option('a2_optimized_memcached_invalid'); ?></p></div>
 			<?php } ?>
-			<h3>Advanced Cache Settings</h3>
+			<h3>Advanced A2 Optimized Settings</h3>
 			<div>
 				<form method="post" action="<?php echo $admin_url; ?>">
                 <?php settings_fields( 'a2opt-cache' ); ?>
@@ -1819,10 +1766,10 @@ HTML;
                                 </label>
                                 <label for="minify_inline_css_js">
                                     <?php
-									$minify_inline_css_js_options = array(
+									$minify_inline_css_js_options = [
 										esc_html__( 'excluding', 'a2-optimized-wp' ) => 0,
 										esc_html__( 'including', 'a2-optimized-wp' ) => 1,
-									);
+									];
 		$minify_inline_css_js = '<select name="a2opt-cache[minify_inline_css_js]" id="minify_inline_css_js">';
 		foreach ( $minify_inline_css_js_options as $key => $value ) {
 			$minify_inline_css_js .= '<option value="' . esc_attr( $value ) . '"' . selected( $value, A2_Optimized_Cache_Engine::$settings['minify_inline_css_js'], false ) . '>' . $key . '</option>';
@@ -1892,36 +1839,7 @@ HTML;
                         </th>
                         <td>
                             <fieldset>
-								<?php if($this->is_redis_supported()){ ?>
-                                <p class="subheading"><?php esc_html_e( 'Object Cache Type', 'a2-optimized-wp' ); ?></p>
-                                <label for="object_cache_server">
-									<?php
-									$object_cache_options = array(
-										esc_html__( 'Memcached', 'a2-optimized-wp' ) => 'memcached',
-										esc_html__( 'Redis', 'a2-optimized-wp' ) => 'redis',
-									);?>
-									<select name="a2_optimized_objectcache_type" id="objet_cache_server">
-										<option value="memcached" <?php if(get_option('a2_optimized_objectcache_type') == 'memcached'){ echo 'selected'; }; ?>>Memcached</option>
-										<option value="redis" <?php if(get_option('a2_optimized_objectcache_type') == 'redis'){ echo 'selected'; }; ?>>Redis</option>
-									</select>
-									<p class="description">
-                                    <?php
-									// translators: %s: ,
-									printf( esc_html__( 'Redis or Memcached', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
-                                    </p>
-                                </label>
-								
-								<p class="subheading"><?php esc_html_e( 'Redis Server', 'a2-optimized-wp' ); ?></p>
-                                <label for="redis_server">
-                                    <input name="a2_optimized_redis_server" type="text" id="redis_server" value="<?php echo esc_attr( get_option('a2_optimized_redis_server') ) ?>" class="regular-text" />
-									<p class="description">
-                                    <?php
-									// translators: %s: ,
-									printf( esc_html__( 'Address and port of the redis server for object caching', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
-                                    </p>
-                                </label>
-								<?php }; ?>
-								<p class="subheading"><?php esc_html_e( 'Memcached Server', 'a2-optimized-wp' ); ?></p>
+                                <p class="subheading"><?php esc_html_e( 'Memcached Server', 'a2-optimized-wp' ); ?></p>
                                 <label for="memcached_server">
                                     <input name="a2_optimized_memcached_server" type="text" id="memcached_server" value="<?php echo esc_attr( get_option('a2_optimized_memcached_server') ) ?>" class="regular-text" />
 									<p class="description">
@@ -1930,16 +1848,67 @@ HTML;
 									printf( esc_html__( 'Address and port of the memcached server for object caching', 'a2-optimized-wp' ), '<code class="code--form-control">,</code>' ); ?>
                                     </p>
                                 </label>
-                                
                             </fieldset>
                         </td>
                     </tr>
+
+					<tr valign="top">
+						<th scope="row">
+							<?php esc_html_e( 'Database Optimizations', 'a2-optimized-wp'); ?>
+						</th>
+						<td>
+							<fieldset>
+								<label for="remove_revision_posts">
+                                    <input name="a2_db_optimizations[remove_revision_posts]" type="checkbox" id="remove_revision_posts" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_REVISION_POSTS] ); ?> />
+                                    <?php esc_html_e( 'Delete all history of post revisions', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+								<label for="remove_trashed_posts">
+                                    <input name="a2_db_optimizations[remove_trashed_posts]" type="checkbox" id="remove_trashed_posts" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_TRASHED_POSTS] ); ?> />
+                                    <?php esc_html_e( 'Permanently delete all posts in trash', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+								<label for="remove_spam_comments">
+                                    <input name="a2_db_optimizations[remove_spam_comments]" type="checkbox" id="remove_spam_comments" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_SPAM_COMMENTS] ); ?> />
+                                    <?php esc_html_e( 'Delete all comments marked as spam', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+								<label for="remove_trashed_comments">
+                                    <input name="a2_db_optimizations[remove_trashed_comments]" type="checkbox" id="remove_trashed_comments" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_TRASHED_COMMENTS] ); ?> />
+                                    <?php esc_html_e( 'Permanently delete all comments in trash', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+								<label for="remove_expired_transients">
+                                    <input name="a2_db_optimizations[remove_expired_transients]" type="checkbox" id="remove_expired_transients" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_EXPIRED_TRANSIENTS] ); ?> />
+                                    <?php esc_html_e( 'Delete temporary data that has expired', 'a2-optimized-wp' ); ?>
+                                </label>
+
+                                <br />
+
+								<label for="optimize_tables">
+                                    <input name="a2_db_optimizations[optimize_tables]" type="checkbox" id="optimize_tables" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::OPTIMIZE_TABLES] ); ?> />
+                                    <?php esc_html_e( 'Perform optimizations on all database tables', 'a2-optimized-wp' ); ?>
+                                </label>
+								
+							</fieldset>
+						</td>
+					</tr>
+
                 </table>
 
                 <p class="submit">
 					<?php wp_nonce_field( 'a2opt-cache-save', 'a2opt-cache-nonce' ); ?>
 					<input type="submit" class="button-secondary" value="<?php esc_html_e( 'Save Changes', 'a2-optimized-wp' ); ?>" />
 					<input name="a2opt-cache[clear_site_cache_on_saved_settings]" type="submit" class="button-primary" value="<?php esc_html_e( 'Save Changes and Clear Site Cache', 'a2-optimized-wp' ); ?>" />
+					<input name="a2opt-cache[apply_db_optimizations_on_saved_settings]" type="submit" class="button-primary" value="<?php esc_html_e( 'Save Changes and Apply Database Optimizations', 'a2-optimized-wp' ); ?>" />
                 </p>
             </form>
 			</div>
@@ -1962,6 +1931,9 @@ HTML;
 		}
 
 		if (check_admin_referer('a2opt-cache-save', 'a2opt-cache-nonce')) {
+			$a2opt_db_optimizations = sanitize_text_field($_REQUEST['a2_db_optimizations']);
+			echo 'CONTENTS:<br />' . json_encode($a2opt_db_optimizations) . '<br />';
+			die;
 			$a2opt_cache = sanitize_text_field($_REQUEST['a2opt-cache']);
 			$a2_memcached_server = sanitize_text_field($_REQUEST['a2_optimized_memcached_server']);
 			update_option('a2opt-cache', $a2opt_cache);
@@ -1969,7 +1941,7 @@ HTML;
 			$this->write_wp_config();
 		}
 	}
-	
+
 	/**
 	 * Site Health View Page
 	 *
@@ -1981,26 +1953,24 @@ HTML;
 		}
 
 		$saved_health_items = get_option('a2opt-sitehealth-results');
-	
+
 		$current_site_health = null;
 
 		if (isset($_REQUEST['view_report'])) {
-			foreach($saved_health_items as $date => $item){
-				if(md5($date) == $_REQUEST['view_report']){
+			foreach ($saved_health_items as $date => $item) {
+				if (md5($date) == $_REQUEST['view_report']) {
 					$current_site_health = $item;
 					$site_health_date = $date;
-				};
-			};
+				}
+			}
 		}
-		if(!$current_site_health){
+		if (!$current_site_health) {
 			$WP_Debug_Data = new WP_Debug_Data();
 			new A2_Optimized_SiteHealth;
 			$info = $WP_Debug_Data::debug_data();
 			$current_site_health = $WP_Debug_Data::format( $info, 'debug' );
 			$site_health_date = date('Y-m-d H:i:s');
-		}
-
-		?>
+		} ?>
 <section id="a2opt-content-general">
 	<div  class="wrap">
 		<div>
@@ -2029,17 +1999,17 @@ HTML;
 			<?php } else { ?>
 				<h3>Site Health Results</h3>
 				<p><a href="admin.php?a2-page=site_health_save&page=A2_Optimized_Plugin_admin" class="button">Save current results</a> <a href="site-health.php?tab=debug" class="button">Back to Site Health</a></p>
-			<?php }; ?>
-			<?php if(count($saved_health_items) > 0){ ?>
+			<?php } ?>
+			<?php if (count($saved_health_items) > 0) { ?>
 			<p>
 				<strong>Saved reports</strong>
 				<ul>
-					<?php foreach($saved_health_items as $date => $item){ ?>
+					<?php foreach ($saved_health_items as $date => $item) { ?>
 					<li><a href="admin.php?a2-page=site_health&page=A2_Optimized_Plugin_admin&view_report=<?php echo md5($date); ?>"><?php echo $date; ?></a></li>
-					<?php }; ?>
+					<?php } ?>
 				</ul>
 			</p>
-			<?php }; ?>
+			<?php } ?>
 			<div>
 				<pre>
 					<?php echo $current_site_health; ?>
@@ -2062,14 +2032,14 @@ HTML;
 		if (!current_user_can('manage_options')) {
 			die('Cheating eh?');
 		}
-		
+
 		if ( ! class_exists( 'WP_Debug_Data' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
 		}
 
 		$existing_health = get_option('a2opt-sitehealth-results');
 
-		if(!$existing_health){
+		if (!$existing_health) {
 			$existing_health = [];
 		}
 
@@ -2079,10 +2049,10 @@ HTML;
 		$current_site_health = $WP_Debug_Data::format( $info, 'debug' );
 
 		$existing_health[date('Y-m-d H:i:s')] = $current_site_health;
-		
+
 		update_option('a2opt-sitehealth-results', $existing_health);
 	}
-	
+
 	/**
 	 * Remove Site Health Results
 	 *
@@ -2091,22 +2061,21 @@ HTML;
 		if (!current_user_can('manage_options')) {
 			die('Cheating eh?');
 		}
-		
+
 		$existing_health = get_option('a2opt-sitehealth-results');
 
-		if(is_array($existing_health)){
+		if (is_array($existing_health)) {
 			$index_to_remove = 0;
-			foreach($existing_health as $date => $item){
-				if(md5($date) == $_REQUEST['remove_report']){
+			foreach ($existing_health as $date => $item) {
+				if (md5($date) == $_REQUEST['remove_report']) {
 					$index_to_remove = $date;
 				}
 			}
-			if($index_to_remove !== 0){
+			if ($index_to_remove !== 0) {
 				unset($existing_health[$index_to_remove]);
 				update_option('a2opt-sitehealth-results', $existing_health);
 			}
 		}
-		
 	}
 
 	/**
@@ -2136,7 +2105,7 @@ HTML;
 	private function get_a2_token($slug) {
 		return get_transient('a2_token-' . $slug);
 	}
-	
+
 	/**
 	 * Set a2 token in transients
 	 */
@@ -2167,7 +2136,7 @@ HTML;
 
 		if (isset($_GET['disable_optimization']) && $url_token) {
 			$hash = '';
-		
+
 			$optimization = sanitize_text_field($_GET['disable_optimization']);
 
 			$a2_token = $this->get_a2_token($optimization);
@@ -2194,7 +2163,7 @@ JAVASCRIPT;
 
 		if (isset($_GET['enable_optimization']) && $url_token) {
 			$hash = '';
-			
+
 			$optimization = sanitize_text_field($_GET['enable_optimization']);
 
 			$a2_token = $this->get_a2_token($optimization);
@@ -2218,7 +2187,7 @@ JAVASCRIPT;
 JAVASCRIPT;
 			exit();
 		}
-		
+
 		if (isset($_GET['apply_divi_settings']) && $url_token) {
 			$this->optimizations['minify']['disable']('minify');
 			$this->optimizations['css_minify']['disable']('css_minify');
@@ -2260,6 +2229,7 @@ JAVASCRIPT;
 	 */
 	public function addOption($optionName, $value) {
 		$prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
+
 		return add_option($prefixedOptionName, $value);
 	}
 
@@ -2308,7 +2278,7 @@ JAVASCRIPT;
 		$this->deactivate_plugin($file);
 		uninstall_plugin($file);
 		if ($delete) {
-			delete_plugins(array($file));
+			delete_plugins([$file]);
 		}
 		unset($this->plugin_list[$file]);
 		$this->clear_w3_total_cache();
@@ -2344,7 +2314,7 @@ JAVASCRIPT;
 	 *       'Rating:', 'Excellent', 'Good', 'Fair', 'Poor')
 	 */
 	public function getOptionMetaData() {
-		return array();
+		return [];
 	}
 
 	private function curl($url) {
@@ -2379,7 +2349,7 @@ JAVASCRIPT;
 			$active_color = 'danger';
 			$active_text = 'Not Activated';
 			$glyph = 'exclamation-sign';
-			$links = array();
+			$links = [];
 
 			$active_class = '';
 			if (
@@ -2405,19 +2375,19 @@ JAVASCRIPT;
 						// used for Gzip options
 					} else {
 						$a2_token = $this->set_a2_token($item['slug']);
-						$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Disable', '_self');
+						$links[] = ["?page=$settings_slug&amp;disable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Disable', '_self'];
 					}
 				}
 				if (isset($item['settings'])) {
-					$links[] = array("{$item['settings']}", 'Configure', '_self');
+					$links[] = ["{$item['settings']}", 'Configure', '_self'];
 				}
 
 				if (isset($item['configured_links'])) {
 					foreach ($item['configured_links'] as $name => $link) {
 						if (gettype($link) == 'array') {
-							$links[] = array($link[0], $name, $link[1]);
+							$links[] = [$link[0], $name, $link[1]];
 						} else {
-							$links[] = array($link, $name, '_self');
+							$links[] = [$link, $name, '_self'];
 						}
 					}
 				}
@@ -2431,18 +2401,18 @@ JAVASCRIPT;
 
 				if (isset($item['disable'])) {
 					$a2_token = $this->set_a2_token($item['slug']);
-					$links[] = array("?page=$settings_slug&amp;disable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Disable', '_self');
+					$links[] = ["?page=$settings_slug&amp;disable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Disable', '_self'];
 				}
 				if (isset($item['settings'])) {
-					$links[] = array("{$item['settings']}", 'Configure', '_self');
+					$links[] = ["{$item['settings']}", 'Configure', '_self'];
 				}
 
 				if (isset($item['partially_configured_links'])) {
 					foreach ($item['partially_configured_links'] as $name => $link) {
 						if (gettype($link) == 'array') {
-							$links[] = array($link[0], $name, $link[1]);
+							$links[] = [$link[0], $name, $link[1]];
 						} else {
-							$links[] = array($link, $name, '_self');
+							$links[] = [$link, $name, '_self'];
 						}
 					}
 				}
@@ -2456,36 +2426,36 @@ JAVASCRIPT;
 						$action_text = 'Update Now';
 					}
 					$a2_token = $this->set_a2_token($item['slug']);
-					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}&amp;a2_token={$a2_token}", $action_text, '_self');
+					$links[] = ["?page=$settings_slug&amp;enable_optimization={$item['slug']}&amp;a2_token={$a2_token}", $action_text, '_self'];
 				}
 
 				if (isset($item['not_configured_links'])) {
 					foreach ($item['not_configured_links'] as $name => $link) {
 						if (gettype($link) == 'array') {
-							$links[] = array($link[0], $name, $link[1]);
+							$links[] = [$link[0], $name, $link[1]];
 						} else {
-							$links[] = array($link, $name, '_self');
+							$links[] = [$link, $name, '_self'];
 						}
 					}
 				}
 			} else {
 				if (isset($item['enable']) && $active_class == '') {
 					$a2_token = $this->set_a2_token($item['slug']);
-					$links[] = array("?page=$settings_slug&amp;enable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Enable', '_self');
+					$links[] = ["?page=$settings_slug&amp;enable_optimization={$item['slug']}&amp;a2_token={$a2_token}", 'Enable', '_self'];
 				}
 
 				if (isset($item['not_configured_links'])) {
 					foreach ($item['not_configured_links'] as $name => $link) {
 						if (gettype($link) == 'array') {
-							$links[] = array($link[0], $name, $link[1]);
+							$links[] = [$link[0], $name, $link[1]];
 						} else {
-							$links[] = array($link, $name, '_self');
+							$links[] = [$link, $name, '_self'];
 						}
 					}
 				}
 			}
 			if (isset($item['kb'])) {
-				$links[] = array($item['kb'], 'Learn More', '_blank');
+				$links[] = [$item['kb'], 'Learn More', '_blank'];
 			}
 			$link_html = '';
 			foreach ($links as $i => $link) {
@@ -2564,20 +2534,24 @@ HTML;
 											$warning_html .= $this->warning_display($warning);
 											$num_warnings++;
 										}
+
 										break;
 									case '<':
 										if ($value < $warning['threshold']) {
 											$warning_html .= $this->warning_display($warning);
 											$num_warnings++;
 										}
+
 										break;
 									case '=':
 										if ($value == $warning['threshold']) {
 											$warning_html .= $this->warning_display($warning);
 											$num_warnings++;
 										}
+
 										break;
 								}
+
 								break;
 							case 'text':
 								switch ($warning['threshold_type']) {
@@ -2586,14 +2560,17 @@ HTML;
 											$warning_html .= $this->warning_display($warning);
 											$num_warnings++;
 										}
+
 										break;
 									case '!=':
 										if ($value != $warning['threshold']) {
 											$warning_html .= $this->warning_display($warning);
 											$num_warnings++;
 										}
+
 										break;
 								}
+
 								break;
 							case 'array_count':
 								switch ($warning['threshold_type']) {
@@ -2602,11 +2579,14 @@ HTML;
 											$warning_html .= $this->warning_display($warning);
 											$num_warnings++;
 										}
+
 										break;
 								}
+
 								break;
 						}
 					}
+
 					break;
 				case 'Advanced Warnings':
 					foreach ($warning_set as $name => $warning) {
@@ -2615,6 +2595,7 @@ HTML;
 							$num_warnings++;
 						}
 					}
+
 					break;
 				case 'Bad Plugins':
 					foreach ($warning_set as $plugin_folder => $warning) {
@@ -2633,7 +2614,7 @@ HTML;
 			}
 		}
 
-		return array($warning_html, $num_warnings);
+		return [$warning_html, $num_warnings];
 	}
 
 	/**
@@ -2810,7 +2791,7 @@ define('DISALLOW_FILE_MODS', true);
 
 PHP;
 		}
-		
+
 		if ($obj_server) {
 			$a2_config .= <<<PHP
 
@@ -2818,7 +2799,7 @@ define('MEMCACHED_SERVERS', array('default' => array('{$obj_server}')));
 
 PHP;
 		}
-		
+
 		$a2_config .= <<<PHP
 // END A2 CONFIG
 PHP;
@@ -2857,7 +2838,7 @@ PHP;
 	public function get_nomods() {
 		return get_option('a2_optimized_nomods');
 	}
-	
+
 	/**
 	 * Check if there is a memcached server set
 	 *
@@ -2879,7 +2860,7 @@ PHP;
 		//make sure it is writable by owner and readable by everybody
 		chmod(ABSPATH . '.htaccess', 0644);
 
-		$home_path = explode('/', str_replace(array('http://', 'https://'), '', home_url()), 2);
+		$home_path = explode('/', str_replace(['http://', 'https://'], '', home_url()), 2);
 
 		if (!isset($home_path[1]) || $home_path[1] == '') {
 			$home_path = '/';
@@ -2960,6 +2941,7 @@ HTACCESS;
 	 */
 	public function deleteOption($optionName) {
 		$prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
+
 		return delete_option($prefixedOptionName);
 	}
 
@@ -2972,6 +2954,7 @@ HTACCESS;
 	 */
 	public function updateOption($optionName, $value) {
 		$prefixedOptionName = $this->prefix($optionName); // how it is stored in DB
+
 		return update_option($prefixedOptionName, $value);
 	}
 
@@ -3147,7 +3130,7 @@ HTACCESS;
 	public function getPluginHeaderValue($key) {
 		// Read the string from the comment header of the main plugin file
 		$data = file_get_contents($this->getPluginDir() . DIRECTORY_SEPARATOR . $this->getMainPluginFileName());
-		$match = array();
+		$match = [];
 		preg_match('/' . $key . ':\s*(\S+)/', $data, $match);
 		if (count($match) >= 1) {
 			return $match[1];

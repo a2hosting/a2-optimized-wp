@@ -61,13 +61,13 @@ class A2_Optimized_Optimizations {
 		$a2_object_cache_additional_info = '';
 
 		if (get_option('a2_optimized_memcached_invalid')) {
-			$a2_object_cache_additional_info = '<p><strong>Please confirm your server settings before enabling Object Caching.</strong><br />' . get_option('a2_optimized_memcached_invalid') . '</p>';
+			$a2_object_cache_additional_info = '<p><strong>Please confirm your memcached server settings before enabling Object Caching.</strong><br />' . get_option('a2_optimized_memcached_invalid') . '</p>';
 		}
 
 		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
 			/* W3 Total Cache Caching */
-			$optimizations = array(
-				'page_cache' => array(
+			$optimizations = [
+				'page_cache' => [
 					'slug' => 'page_cache',
 					'name' => 'Page Caching with W3 Total Cache',
 					'plugin' => 'W3 Total Cache',
@@ -78,7 +78,7 @@ class A2_Optimized_Optimizations {
 						if ($w3tc['pgcache.enabled']) {
 							$item['configured'] = true;
 							$permalink_structure = get_option('permalink_structure');
-							$vars = array();
+							$vars = [];
 							if ($w3tc['pgcache.engine'] == 'apc') {
 								if ($permalink_structure == '') {
 									$vars['pgcache.engine'] = 'file';
@@ -109,8 +109,8 @@ class A2_Optimized_Optimizations {
 					'enable' => function () use (&$thisclass) {
 						$thisclass->enable_w3tc_page_cache();
 					}
-				),
-				'db_cache' => array(
+				],
+				'db_cache' => [
 					'slug' => 'db_cache',
 					'name' => 'DB Caching with W3 Total Cache',
 					'plugin' => 'W3 Total Cache',
@@ -119,7 +119,7 @@ class A2_Optimized_Optimizations {
 					'is_configured' => function (&$item) use (&$thisclass) {
 						$w3tc = $thisclass->get_w3tc_config();
 						if ($w3tc['dbcache.enabled']) {
-							$vars = array();
+							$vars = [];
 							$item['configured'] = true;
 							if (class_exists('W3_Config')) {
 								if (class_exists('WooCommerce')) {
@@ -145,8 +145,8 @@ class A2_Optimized_Optimizations {
 					'enable' => function () use (&$thisclass) {
 						$thisclass->enable_w3tc_db_cache();
 					}
-				),
-				'object_cache' => array(
+				],
+				'object_cache' => [
 					'slug' => 'object_cache',
 					'name' => 'Object Caching with W3 Total Cache',
 					'plugin' => 'W3 Total Cache',
@@ -168,8 +168,8 @@ class A2_Optimized_Optimizations {
 					'enable' => function () use (&$thisclass) {
 						$thisclass->enable_w3tc_object_cache();
 					}
-				),
-				'browser_cache' => array(
+				],
+				'browser_cache' => [
 					'slug' => 'browser_cache',
 					'name' => 'Browser Caching with W3 Total Cache',
 					'plugin' => 'W3 Total Cache',
@@ -191,8 +191,8 @@ class A2_Optimized_Optimizations {
 					'enable' => function () use (&$thisclass) {
 						$thisclass->enable_w3tc_browser_cache();
 					}
-				),
-				'minify' => array(
+				],
+				'minify' => [
 					'name' => 'Minify HTML Pages',
 					'slug' => 'minify',
 					'plugin' => 'W3 Total Cache',
@@ -215,8 +215,8 @@ class A2_Optimized_Optimizations {
 					'disable' => function () use (&$thisclass) {
 						$thisclass->disable_html_minify();
 					}
-				),
-				'css_minify' => array(
+				],
+				'css_minify' => [
 					'name' => 'Minify CSS Files',
 					'slug' => 'css_minify',
 					'plugin' => 'W3 Total Cache',
@@ -233,21 +233,21 @@ class A2_Optimized_Optimizations {
 						}
 					},
 					'enable' => function () use (&$thisclass) {
-						$thisclass->update_w3tc(array(
+						$thisclass->update_w3tc([
 							'minify.css.enable' => true,
 							'minify.enabled' => true,
 							'minify.auto' => 0,
 							'minify.engine' => 'file'
-						));
+						]);
 					},
 					'disable' => function () use (&$thisclass) {
-						$thisclass->update_w3tc(array(
+						$thisclass->update_w3tc([
 							'minify.css.enable' => false,
 							'minify.auto' => 0
-						));
+						]);
 					}
-				),
-				'js_minify' => array(
+				],
+				'js_minify' => [
 					'name' => 'Minify JS Files',
 					'slug' => 'js_minify',
 					'plugin' => 'W3 Total Cache',
@@ -264,21 +264,21 @@ class A2_Optimized_Optimizations {
 						}
 					},
 					'enable' => function () use (&$thisclass) {
-						$thisclass->update_w3tc(array(
+						$thisclass->update_w3tc([
 							'minify.js.enable' => true,
 							'minify.enabled' => true,
 							'minify.auto' => 0,
 							'minify.engine' => 'file'
-						));
+						]);
 					},
 					'disable' => function () use (&$thisclass) {
-						$thisclass->update_w3tc(array(
+						$thisclass->update_w3tc([
 							'minify.js.enable' => false,
 							'minify.auto' => 0
-						));
+						]);
 					}
-				),
-				'gzip' => array(
+				],
+				'gzip' => [
 					'name' => 'Gzip Compression Enabled',
 					'slug' => 'gzip',
 					'plugin' => 'W3 Total Cache',
@@ -300,12 +300,12 @@ class A2_Optimized_Optimizations {
 						$thisclass->disable_w3tc_gzip();
 					},
 					'remove_link' => true
-				)
-			);
+				]
+			];
 		} else {
 			/* Internal Caching */
-			$optimizations = array(
-				'a2_page_cache' => array(
+			$optimizations = [
+				'a2_page_cache' => [
 					'slug' => 'a2_page_cache',
 					'name' => 'Page Caching',
 					'plugin' => 'A2 Optimized',
@@ -326,8 +326,8 @@ class A2_Optimized_Optimizations {
 					'enable' => function () use (&$thisclass) {
 						$thisclass->enable_a2_page_cache();
 					}
-				),
-				'a2_page_cache_gzip' => array(
+				],
+				'a2_page_cache_gzip' => [
 					'slug' => 'a2_page_cache_gzip',
 					'name' => 'Gzip Compression Enabled',
 					'plugin' => 'A2 Optimized',
@@ -349,8 +349,8 @@ class A2_Optimized_Optimizations {
 						$thisclass->enable_a2_page_cache_gzip();
 					},
 					'remove_link' => true
-				),
-				'a2_object_cache' => array(
+				],
+				'a2_object_cache' => [
 					'slug' => 'a2_object_cache',
 					'name' => 'Memcache Object Caching',
 					'plugin' => 'A2 Optimized',
@@ -358,7 +358,7 @@ class A2_Optimized_Optimizations {
 					'description' => '
 						<ul>
 							<li>Extremely fast and powerful caching system.</li>
-							<li>Store frequently used database queries and WordPress objects in a in-memory object cache.</li>
+							<li>Store frequently used database queries and WordPress objects in an in-memory object cache.</li>
 							<li>Object caching is a key-value store for small chunks of arbitrary data (strings, objects) from results of database calls, API calls, or page rendering.</li>
 							<li>Take advantage of A2 Hosting&apos;s one-click memcached configuration for WordPress.</li>
 						</ul>
@@ -379,8 +379,8 @@ class A2_Optimized_Optimizations {
 					'enable' => function () use (&$thisclass) {
 						$thisclass->enable_a2_object_cache();
 					}
-				),
-				'a2_page_cache_minify_html' => array(
+				],
+				'a2_page_cache_minify_html' => [
 					'slug' => 'a2_page_cache_minify_html',
 					'name' => 'Minify HTML Pages',
 					'plugin' => 'A2 Optimized',
@@ -402,8 +402,8 @@ class A2_Optimized_Optimizations {
 						$thisclass->enable_a2_page_cache_minify_html();
 					},
 					'remove_link' => true
-				),
-				'a2_page_cache_minify_jscss' => array(
+				],
+				'a2_page_cache_minify_jscss' => [
 					'slug' => 'a2_page_cache_minify_jscss',
 					'name' => 'Minify Inline CSS and Javascript',
 					'plugin' => 'A2 Optimized',
@@ -426,13 +426,36 @@ class A2_Optimized_Optimizations {
 						$thisclass->enable_a2_page_cache_minify_jscss();
 					},
 					'remove_link' => true
-				)
-			);
+				]
+			];
 		}
 
 		/* Common optimizations */
-		$common_optimizations = array(
-			'woo-cart-fragments' => array(
+		$common_optimizations = [
+			'a2-db-optimizations' => [
+				'name' => 'Schedule Automatic Database Optimizations',
+				'slug' => 'a2-db-optimizations',
+				'plugin' => 'A2 Optimized',
+				'configured' => false,
+				'description' => 'If enabled, will periodically clean the MySQL database of expired transients, trashed comments, spam comments, and optimize all tables. You may also select to remove post revisions and trashed posts from the Database Optimization Settings.<br />
+				<a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Database Optimization Settings</a>',
+				'is_configured' => function (&$item) use (&$thisclass) {
+					$toggles = get_option(A2_Optimized_DBOptimizations::WP_SETTING);
+					if (isset($toggles[A2_Optimized_DBOptimizations::CRON_ACTIVE]) && $toggles[A2_Optimized_DBOptimizations::CRON_ACTIVE]) {
+						$item['configured'] = true;
+						$thisclass->set_install_status('a2-db-optimizations', true);
+					} else {
+						$thisclass->set_install_status('a2-db-optimizations', false);
+					}
+				},
+				'enable' => function () use (&$thisclass) {
+					A2_Optimized_DBOptimizations::set(A2_Optimized_DBOptimizations::CRON_ACTIVE, true);
+				},
+				'disable' => function () use (&$thisclass) {
+					A2_Optimized_DBOptimizations::set(A2_Optimized_DBOptimizations::CRON_ACTIVE, false);
+				},
+			],
+			'woo-cart-fragments' => [
 				'name' => 'Dequeue WooCommerce Cart Fragments AJAX calls',
 				'slug' => 'woo-cart-fragments',
 				'plugin' => 'A2 Optimized',
@@ -453,8 +476,8 @@ class A2_Optimized_Optimizations {
 				'disable' => function () use (&$thisclass) {
 					$thisclass->disable_woo_cart_fragments();
 				},
-			),
-			'xmlrpc-requests' => array(
+			],
+			'xmlrpc-requests' => [
 				'name' => 'Block Unauthorized XML-RPC Requests',
 				'slug' => 'xmlrpc-requests',
 				'plugin' => 'A2 Optimized',
@@ -477,8 +500,8 @@ class A2_Optimized_Optimizations {
 				'disable' => function () use (&$thisclass) {
 					$thisclass->disable_xmlrpc_requests();
 				},
-			),
-			'regenerate-salts' => array(
+			],
+			'regenerate-salts' => [
 				'name' => 'Regenerate wp-config salts',
 				'slug' => 'regenerate-salts',
 				'plugin' => 'A2 Optimized',
@@ -498,8 +521,8 @@ class A2_Optimized_Optimizations {
 				'enable' => function () use (&$thisclass) {
 					$thisclass->regenerate_wpconfig_salts();
 				},
-			),
-			'htaccess' => array(
+			],
+			'htaccess' => [
 				'name' => 'Deny Direct Access to Configuration Files and Comment Form',
 				'slug' => 'htaccess',
 				'plugin' => 'A2 Optimized',
@@ -529,8 +552,8 @@ class A2_Optimized_Optimizations {
 					$thisclass->set_deny_direct(false);
 					$thisclass->write_htaccess();
 				}
-			),
-			'lock' => array(
+			],
+			'lock' => [
 				'name' => 'Lock Editing of Plugins and Themes from the WP Admin',
 				'slug' => 'lock',
 				'plugin' => 'A2 Optimized',
@@ -558,8 +581,8 @@ class A2_Optimized_Optimizations {
 					$thisclass->set_lockdown(false);
 					$thisclass->write_wp_config();
 				}
-			),
-			'wp-login' => array(
+			],
+			'wp-login' => [
 				'name' => 'Login URL Change',
 				'slug' => 'wp-login',
 				'premium' => true,
@@ -572,8 +595,8 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				}
-			),
-			'captcha' => array(
+			],
+			'captcha' => [
 				'name' => 'reCAPTCHA on comments and login',
 				'plugin' => 'reCAPTCHA',
 				'slug' => 'captcha',
@@ -583,8 +606,8 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				}
-			),
-			'images' => array(
+			],
+			'images' => [
 				'name' => 'Compress Images on Upload',
 				'plugin' => 'Image Optimizer',
 				'slug' => 'images',
@@ -594,8 +617,8 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				}
-			),
-			'turbo' => array(
+			],
+			'turbo' => [
 				'name' => 'Turbo Web Hosting',
 				'slug' => 'turbo',
 				'configured' => false,
@@ -612,8 +635,8 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				}
-			)
-		);
+			]
+		];
 
 		$optimizations = array_merge($optimizations, $common_optimizations);
 
@@ -625,30 +648,27 @@ class A2_Optimized_Optimizations {
 	/*
 	 * Changes to optimizations based on various factors
 	 */
-	public function apply_optimization_filter($optimizations){
-		
+	public function apply_optimization_filter($optimizations) {
 		if (get_template() == 'Divi') {
 			$optimizations['minify']['optional'] = true;
 			$optimizations['css_minify']['optional'] = true;
 			$optimizations['js_minify']['optional'] = true;
 		}
 
-		if(is_plugin_active('litespeed-cache/litespeed-cache.php')){
-			$optimizations['a2_object_cache']['name'] = "Object Caching with Memcached or Redis";
-			if(get_option('litespeed.conf.object') == 1){
+		if (is_plugin_active('litespeed-cache/litespeed-cache.php')) {
+			$optimizations['a2_object_cache']['name'] = 'Object Caching with Memcached or Redis';
+			if (get_option('litespeed.conf.object') == 1) {
 				$optimizations['a2_object_cache']['configured'] = true;
-				$optimizations['a2_object_cache']['description'] .= "<br /><strong>This feature is provided by the LiteSpeed Cache plugin.</strong></p>";
+				$optimizations['a2_object_cache']['description'] .= '<br /><strong>This feature is provided by the LiteSpeed Cache plugin.</strong></p>';
 				unset($optimizations['a2_object_cache']['disable']);
 			}
-			if(class_exists('A2_Optimized_Private_Optimizations')) {
+			if (class_exists('A2_Optimized_Private_Optimizations')) {
 				$a2opt_priv = new A2_Optimized_Private_Optimizations();
 				$file_path = $a2opt_priv->get_redis_socket();
-
 				$optimizations['a2_object_cache']['description'] .= "<br />$file_path";
 			}
 		}
-
-		if(get_option('a2_optimized_memcached_invalid')){
+		if (get_option('a2_optimized_memcached_invalid')) {
 			unset($optimizations['a2_object_cache']['enable']);
 		}
 
@@ -661,7 +681,7 @@ class A2_Optimized_Optimizations {
 
 			return $a2opt_priv->get_optimizations($this->thisclass);
 		} else {
-			return array();
+			return [];
 		}
 	}
 
@@ -675,8 +695,8 @@ class A2_Optimized_Optimizations {
 	protected function get_public_advanced() {
 		$thisclass = $this->thisclass;
 
-		return array(
-			'gtmetrix' => array(
+		return [
+			'gtmetrix' => [
 				'slug' => 'gtmetrix',
 				'name' => 'GTmetrix',
 				'plugin' => 'GTmetrix',
@@ -684,7 +704,7 @@ class A2_Optimized_Optimizations {
 				'file' => 'gtmetrix-for-wordpress/gtmetrix-for-wordpress.php',
 				'configured' => false,
 				'partially_configured' => false,
-				'required_options' => array('gfw_options' => array('authorized')),
+				'required_options' => ['gfw_options' => ['authorized']],
 				'description' => '
       			<p>
 					Plugin that actively keeps track of your WP install and sends you alerts if your site falls below certain criteria.
@@ -694,15 +714,15 @@ class A2_Optimized_Optimizations {
       				<b>Use this plugin only if your site is experiencing issues with slow load times.</b><br><b style="color:red">The GTMetrix plugin will slow down your site.</b>
       			</p>
       			',
-				'not_configured_links' => array(),
-				'configured_links' => array(
+				'not_configured_links' => [],
+				'configured_links' => [
 					'Configure GTmetrix' => 'admin.php?page=gfw_settings',
 					'GTmetrix Tests' => 'admin.php?page=gfw_tests',
-				),
-				'partially_configured_links' => array(
+				],
+				'partially_configured_links' => [
 					'Configure GTmetrix' => 'admin.php?page=gfw_settings',
 					'GTmetrix Tests' => 'admin.php?page=gfw_tests',
-				),
+				],
 				'partially_configured_message' => 'Click &quot;Configure GTmetrix&quot; to enter your GTmetrix Account Email and GTmetrix API Key.',
 				'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-w3-total-cache-and-gtmetrix',
 				'is_configured' => function (&$item) use (&$thisclass) {
@@ -731,8 +751,8 @@ class A2_Optimized_Optimizations {
 					$item = $item[$slug];
 					$thisclass->deactivate_plugin($item['file']);
 				}
-			),
-			'cloudflare' => array(
+			],
+			'cloudflare' => [
 				'slug' => 'cloudflare',
 				'name' => 'CloudFlare',
 				'premium' => true,
@@ -759,9 +779,9 @@ class A2_Optimized_Optimizations {
 				'is_configured' => function () {
 					return false;
 				},
-				'not_configured_links' => array('Host with A2' => 'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized')
-			)
-		);
+				'not_configured_links' => ['Host with A2' => 'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized']
+			]
+		];
 	}
 
 	protected function get_private_advanced() {
@@ -770,7 +790,7 @@ class A2_Optimized_Optimizations {
 
 			return $a2opt_priv->get_advanced($this->thisclass);
 		} else {
-			return array();
+			return [];
 		}
 	}
 
@@ -782,43 +802,43 @@ class A2_Optimized_Optimizations {
 	}
 
 	protected function get_public_warnings() {
-		return array(
-			'Bad WP Options' => array(
-				'posts_per_page' => array(
+		return [
+			'Bad WP Options' => [
+				'posts_per_page' => [
 					'title' => 'Recent Post Limit',
 					'description' => 'The number of recent posts per page is set greater than five. This could be slowing down page loads.',
 					'type' => 'numeric',
 					'threshold_type' => '>',
 					'threshold' => 5,
 					'config_url' => admin_url() . 'options-reading.php'
-				),
-				'posts_per_rss' => array(
+				],
+				'posts_per_rss' => [
 					'title' => 'RSS Post Limit',
 					'description' => 'The number of posts from external feeds is set greater than 5. This could be slowing down page loads.',
 					'type' => 'numeric',
 					'threshold_type' => '>',
 					'threshold' => 5,
 					'config_url' => admin_url() . 'options-reading.php'
-				),
-				'show_on_front' => array(
+				],
+				'show_on_front' => [
 					'title' => 'Recent Posts showing on home page',
 					'description' => 'Speed up your home page by selecting a static page to display.',
 					'type' => 'text',
 					'threshold_type' => '=',
 					'threshold' => 'posts',
 					'config_url' => admin_url() . 'options-reading.php'
-				),
-				'permalink_structure' => array(
+				],
+				'permalink_structure' => [
 					'title' => 'Permalink Structure',
 					'description' => 'To fully optimize page caching with "Disk Enhanced" mode:<br>you must set a permalink structure other than "Default".',
 					'type' => 'text',
 					'threshold_type' => '=',
 					'threshold' => '',
 					'config_url' => admin_url() . 'options-permalink.php'
-				)
-			),
-			'Advanced Warnings' => array(
-				'themes' => array(
+				]
+			],
+			'Advanced Warnings' => [
+				'themes' => [
 					'is_warning' => function () {
 						$theme_count = 0;
 						$themes = wp_get_themes();
@@ -843,8 +863,8 @@ class A2_Optimized_Optimizations {
 					'title' => 'Unused Themes',
 					'description' => 'One or more unused non-default themes are installed. Unused non-default themes should be deleted.  For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping#Theme_Housekeeping">WordPress Housekeeping</a>',
 					'config_url' => admin_url() . 'themes.php'
-				),
-				'a2_hosting' => array(
+				],
+				'a2_hosting' => [
 					'title' => 'Not Hosted with A2 Hosting',
 					'description' => 'Get faster page load times and more optimizations when you <a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank">host with A2 Hosting</a>.',
 					'is_warning' => function () {
@@ -855,14 +875,14 @@ class A2_Optimized_Optimizations {
 						return true;
 					},
 					'config_url' => 'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized'
-				)
-			),
-			'Bad Plugins' => array(
+				]
+			],
+			'Bad Plugins' => [
 				'wp-super-cache',
 				'wp-file-cache',
 				'wp-db-backup',
-			)
-		);
+			]
+		];
 	}
 
 	protected function get_private_warnings() {
@@ -871,7 +891,7 @@ class A2_Optimized_Optimizations {
 
 			return $a2opt_priv->get_warnings($this->thisclass);
 		} else {
-			return array();
+			return [];
 		}
 	}
 }
