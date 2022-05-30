@@ -61,7 +61,7 @@ class A2_Optimized_Optimizations {
 		$a2_object_cache_additional_info = '';
 
 		if (get_option('a2_optimized_memcached_invalid')) {
-			$a2_object_cache_additional_info = '<p><strong>Please confirm your memcached server settings before enabling Object Caching.</strong><br />' . get_option('a2_optimized_memcached_invalid') . '</p>';
+			$a2_object_cache_additional_info = '<p><strong>Please confirm your server settings before enabling Object Caching.</strong><br />' . get_option('a2_optimized_memcached_invalid') . '</p>';
 		}
 
 		if (is_plugin_active('a2-w3-total-cache/a2-w3-total-cache.php')) {
