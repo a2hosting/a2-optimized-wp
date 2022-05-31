@@ -3,7 +3,7 @@ Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, LiteSpeed, LSCache, A2, Hosting
 Requires at least: 5.1
 Tested up to: 6.0
-Stable tag: 2.1.3.10.3
+Stable tag: 2.1.4
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -38,6 +38,16 @@ A2 Optimized has broken it down into the most valuable optimizations and will au
 * Ensures that files are compressed before transfering them.
 * Can provide significant speed improvements for page loads.
 * Reduces bandwidth required to serve web pages.
+
+**Scheduled Database Optimizations**:
+
+If enabled, will periodically perform the following database operations:
+* Remove expired transients
+* Remove Trashed comments
+* Remove spam comments
+* Optimize all tables
+* Remove post revisions (not enabled by default)
+* Remove trashed posts (not enabled by default)
 
 **Deny Direct Access to Configuration Files and Comment Form**:
 
@@ -122,6 +132,10 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 
 == Changelog ==
+
+= 2.1.4 =
+* Added Scheduled Database Optimizations.
+* Added support for redis object caching on A2 Hosting.
 
 = 2.1.3.10 =
 * Add information related to A2 Optimized to the Site Health panel. 
