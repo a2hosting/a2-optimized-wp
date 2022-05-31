@@ -26,6 +26,7 @@ require_once 'A2_Optimized_Cache.php';
 require_once 'A2_Optimized_CacheEngine.php';
 require_once 'A2_Optimized_CacheDisk.php';
 require_once 'A2_Optimized_SiteHealth.php';
+require_once 'A2_Optimized_DB_Optimizations.php';
 
 //constants
 define( 'A2OPT_VERSION', '2.1' );
@@ -39,7 +40,7 @@ define( 'A2OPT_DIR', __DIR__ );
 class A2_Optimized {
 	public function __construct() {
 		if (version_compare(PHP_VERSION, A2OPT_MIN_PHP) < 0) {
-			add_action('admin_notices', array(&$this,'A2_Optimized_noticePhpVersionWrong'));
+			add_action('admin_notices', [&$this,'A2_Optimized_noticePhpVersionWrong']);
 
 			return;
 		}
@@ -60,10 +61,10 @@ class A2_Optimized {
 		$a2Plugin->addActionsAndFilters();
 
 		// Register the Plugin Activation Hook
-		register_activation_hook(__FILE__, array(&$a2Plugin, 'activate'));
+		register_activation_hook(__FILE__, [&$a2Plugin, 'activate']);
 
 		// Register the Plugin Deactivation Hook
-		register_deactivation_hook(__FILE__, array(&$a2Plugin, 'deactivate'));
+		register_deactivation_hook(__FILE__, [&$a2Plugin, 'deactivate']);
 	}
 
 	public function A2_Optimized_noticePhpVersionWrong() {
@@ -82,7 +83,7 @@ class A2_Optimized {
 		if (!$upgrade_notices) {
 			$response = wp_remote_get( 'https://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice?notice_plugin=2' );
 			if ( is_array( $response ) ) {
-				$upgrade_notices = array();
+				$upgrade_notices = [];
 				$body = json_decode($response['body']); // use the content
 				foreach ($body as $item) {
 					$upgrade_notices[$item->title->rendered] = 'Version ' . $item->title->rendered . ': ' . strip_tags($item->content->rendered);
@@ -97,6 +98,7 @@ class A2_Optimized {
 			if (version_compare($currentPluginMetadata['Version'], $ver) < 0) {
 				echo '</div><p style="background-color: #d54e21; padding: 10px; color: #f9f9f9; margin-top: 10px" class="update-message notice inline notice-warning notice-alt"><strong>Important Upgrade Notice:</strong><br />';
 				echo esc_html($notice), '</p><div>';
+
 				break;
 			}
 		}
@@ -111,14 +113,14 @@ class A2_Optimized {
 }
 
 if (get_option('a2_cache_enabled') == 1) {
-	add_action( 'plugins_loaded', array( 'A2_Optimized_Cache', 'init' ) );
+	add_action( 'plugins_loaded', [ 'A2_Optimized_Cache', 'init' ] );
 }
-register_deactivation_hook( __FILE__, array( 'A2_Optimized_Cache', 'on_deactivation' ) );
-register_uninstall_hook( __FILE__, array( 'A2_Optimized_Cache', 'on_uninstall' ) );
+register_deactivation_hook( __FILE__, [ 'A2_Optimized_Cache', 'on_deactivation' ] );
+register_uninstall_hook( __FILE__, [ 'A2_Optimized_Cache', 'on_uninstall' ] );
 
 $a2opt_class = new A2_Optimized();
-add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', array( 'A2_Optimized','showUpgradeNotification'), 10, 2);
-add_action( 'wp_enqueue_scripts', array('A2_Optimized', 'dequeue_woocommerce_cart_fragments'), 11, 2);
+add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', [ 'A2_Optimized','showUpgradeNotification'], 10, 2);
+add_action( 'wp_enqueue_scripts', ['A2_Optimized', 'dequeue_woocommerce_cart_fragments'], 11, 2);
 
 // load WP-CLI command
 if ( defined( 'WP_CLI' ) && WP_CLI && class_exists( 'WP_CLI' ) ) {
