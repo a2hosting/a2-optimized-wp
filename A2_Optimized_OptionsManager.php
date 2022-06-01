@@ -1730,7 +1730,7 @@ HTML;
 		$image_dir = plugins_url('/assets/images', __FILE__);
 		$kb_search_box = $this->kb_searchbox_html();
 		$admin_url = 'options.php';
-		$db_optimization_settings = get_option(A2_Optimized_DBOptimizations::WP_SETTING); ?>
+		$db_optimization_settings = get_option('a2_db_optimizations'); ?>
 <section id="a2opt-content-general">
 	<div  class="wrap">
 		<div>
@@ -1942,42 +1942,42 @@ HTML;
 						<td>
 							<fieldset>
 								<label for="remove_revision_posts">
-                                    <input name="a2_db_optimizations[remove_revision_posts]" type="checkbox" id="remove_revision_posts" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_REVISION_POSTS] ); ?> />
+                                    <input name="a2_db_optimizations[remove_revision_posts]" type="checkbox" id="remove_revision_posts" value="1" <?php checked( '1', $db_optimization_settings['remove_revision_posts'] ); ?> />
                                     <?php esc_html_e( 'Delete all history of post revisions', 'a2-optimized-wp' ); ?>
                                 </label>
 
                                 <br />
 
 								<label for="remove_trashed_posts">
-                                    <input name="a2_db_optimizations[remove_trashed_posts]" type="checkbox" id="remove_trashed_posts" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_TRASHED_POSTS] ); ?> />
+                                    <input name="a2_db_optimizations[remove_trashed_posts]" type="checkbox" id="remove_trashed_posts" value="1" <?php checked( '1', $db_optimization_settings['remove_trashed_posts'] ); ?> />
                                     <?php esc_html_e( 'Permanently delete all posts in trash', 'a2-optimized-wp' ); ?>
                                 </label>
 
                                 <br />
 
 								<label for="remove_spam_comments">
-                                    <input name="a2_db_optimizations[remove_spam_comments]" type="checkbox" id="remove_spam_comments" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_SPAM_COMMENTS] ); ?> />
+                                    <input name="a2_db_optimizations[remove_spam_comments]" type="checkbox" id="remove_spam_comments" value="1" <?php checked( '1', $db_optimization_settings['remove_spam_comments'] ); ?> />
                                     <?php esc_html_e( 'Delete all comments marked as spam', 'a2-optimized-wp' ); ?>
                                 </label>
 
                                 <br />
 
 								<label for="remove_trashed_comments">
-                                    <input name="a2_db_optimizations[remove_trashed_comments]" type="checkbox" id="remove_trashed_comments" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_TRASHED_COMMENTS] ); ?> />
+                                    <input name="a2_db_optimizations[remove_trashed_comments]" type="checkbox" id="remove_trashed_comments" value="1" <?php checked( '1', $db_optimization_settings['remove_trashed_comments'] ); ?> />
                                     <?php esc_html_e( 'Permanently delete all comments in trash', 'a2-optimized-wp' ); ?>
                                 </label>
 
                                 <br />
 
 								<label for="remove_expired_transients">
-                                    <input name="a2_db_optimizations[remove_expired_transients]" type="checkbox" id="remove_expired_transients" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::REMOVE_EXPIRED_TRANSIENTS] ); ?> />
+                                    <input name="a2_db_optimizations[remove_expired_transients]" type="checkbox" id="remove_expired_transients" value="1" <?php checked( '1', $db_optimization_settings['remove_expired_transients'] ); ?> />
                                     <?php esc_html_e( 'Delete temporary data that has expired', 'a2-optimized-wp' ); ?>
                                 </label>
 
                                 <br />
 
 								<label for="optimize_tables">
-                                    <input name="a2_db_optimizations[optimize_tables]" type="checkbox" id="optimize_tables" value="1" <?php checked( '1', $db_optimization_settings[A2_Optimized_DBOptimizations::OPTIMIZE_TABLES] ); ?> />
+                                    <input name="a2_db_optimizations[optimize_tables]" type="checkbox" id="optimize_tables" value="1" <?php checked( '1', $db_optimization_settings['optimize_tables'] ); ?> />
                                     <?php esc_html_e( 'Perform optimizations on all database tables', 'a2-optimized-wp' ); ?>
                                 </label>
 								
