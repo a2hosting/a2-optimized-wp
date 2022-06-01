@@ -159,7 +159,7 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 		}
 
 		// deactivate the scheduled weekly database optimizations
-		wp_clear_scheduled_hook(A2_Optimized_DBOptimizations::EXECUTE_OPTIMIZATIONS_HOOK);
+		wp_clear_scheduled_hook('a2_execute_db_optimizations');
 	}
 
 	public function upgrade() {

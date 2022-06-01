@@ -1,18 +1,7 @@
 <?php
 
-//@TODO: Button run optimizations. deactivate hook to remove cron task
-
 class A2_Optimized_DBOptimizations {
 	public $wpdb;
-	public const WP_SETTING = 'a2_db_optimizations';
-	public const REMOVE_REVISION_POSTS = 'remove_revision_posts';
-	public const REMOVE_TRASHED_POSTS = 'remove_trashed_posts';
-	public const REMOVE_SPAM_COMMENTS = 'remove_spam_comments';
-	public const REMOVE_TRASHED_COMMENTS = 'remove_trashed_comments';
-	public const REMOVE_EXPIRED_TRANSIENTS = 'remove_expired_transients';
-	public const OPTIMIZE_TABLES = 'optimize_tables';
-	public const EXECUTE_OPTIMIZATIONS_HOOK = 'a2_execute_db_optimizations';
-	public const CRON_ACTIVE = 'cron_active';
 
 	public function __construct() {
 		if ( ! $this->allow_load() ) {
@@ -39,11 +28,11 @@ class A2_Optimized_DBOptimizations {
 	 * Integration hooks.
 	 */
 	protected function hooks() {
-		$toggles = get_option(self::WP_SETTING);
-		if ($toggles && isset($toggles[self::CRON_ACTIVE]) && $toggles[self::CRON_ACTIVE]) {
-			add_action(self::EXECUTE_OPTIMIZATIONS_HOOK, [&$this, 'execute_optimizations']);
-			if (!wp_next_scheduled(self::EXECUTE_OPTIMIZATIONS_HOOK)) {
-				wp_schedule_event(time(), 'weekly', self::EXECUTE_OPTIMIZATIONS_HOOK);
+		$toggles = get_option('a2_db_optimizations');
+		if ($toggles && isset($toggles['cron_active']) && $toggles['cron_active']) {
+			add_action('a2_execute_db_optimizations', [&$this, 'execute_optimizations']);
+			if (!wp_next_scheduled('a2_execute_db_optimizations')) {
+				wp_schedule_event(time(), 'weekly', 'a2_execute_db_optimizations');
 			}
 		}
 	}
@@ -63,12 +52,12 @@ class A2_Optimized_DBOptimizations {
 	 */
 	private static function get_defaults() {
 		$default_toggles = [
-			self::REMOVE_REVISION_POSTS => 0,
-			self::REMOVE_TRASHED_POSTS => 0,
-			self::REMOVE_SPAM_COMMENTS => 1,
-			self::REMOVE_TRASHED_COMMENTS => 1,
-			self::REMOVE_EXPIRED_TRANSIENTS => 1,
-			self::OPTIMIZE_TABLES => 1
+			'remove_revision_posts' => 0,
+			'remove_trashed_posts' => 0,
+			'remove_spam_comments' => 1,
+			'remove_trashed_comments' => 1,
+			'remove_expired_transients' => 1,
+			'optimize_tables' => 1
 		];
 
 		return $default_toggles;
@@ -76,12 +65,12 @@ class A2_Optimized_DBOptimizations {
 
 	private static function zero_settings() {
 		$default_toggles = [
-			self::REMOVE_REVISION_POSTS => 0,
-			self::REMOVE_TRASHED_POSTS => 0,
-			self::REMOVE_SPAM_COMMENTS => 0,
-			self::REMOVE_TRASHED_COMMENTS => 0,
-			self::REMOVE_EXPIRED_TRANSIENTS => 0,
-			self::OPTIMIZE_TABLES => 0
+			'remove_revision_posts' => 0,
+			'remove_trashed_posts' => 0,
+			'remove_spam_comments' => 0,
+			'remove_trashed_comments' => 0,
+			'remove_expired_transients' => 0,
+			'optimize_tables' => 0
 		];
 
 		return $default_toggles;
@@ -94,35 +83,35 @@ class A2_Optimized_DBOptimizations {
 	 * @param bool $value      Update the setting to true or false
 	 */
 	public static function set($setting, $value) {
-		$toggles = get_option(self::WP_SETTING);
+		$toggles = get_option('a2_db_optimizations');
 		$defaults = self::get_defaults();
 		$combined = wp_parse_args($toggles, $defaults);
 		$combined[$setting] = $value;
-		update_option(self::WP_SETTING, $combined);
+		update_option('a2_db_optimizations', $combined);
 	}
 
 	/**
 	 * Execute optimizations that have been enabled by the user
 	 */
 	public function execute_optimizations() {
-		$toggles = get_option(self::WP_SETTING);
+		$toggles = get_option('a2_db_optimizations');
 
-		if ($toggles[self::REMOVE_REVISION_POSTS]) {
+		if ($toggles['remove_revision_posts']) {
 			$this->remove_revisions_posts();
 		}
-		if ($toggles[self::REMOVE_TRASHED_POSTS]) {
+		if ($toggles['remove_trashed_posts']) {
 			$this->remove_trashed_posts();
 		}
-		if ($toggles[self::REMOVE_SPAM_COMMENTS]) {
+		if ($toggles['remove_spam_comments']) {
 			$this->remove_spam_comments();
 		}
-		if ($toggles[self::REMOVE_TRASHED_COMMENTS]) {
+		if ($toggles['remove_trashed_comments']) {
 			$this->remove_trashed_comments();
 		}
-		if ($toggles[self::REMOVE_EXPIRED_TRANSIENTS]) {
+		if ($toggles['remove_expired_transients']) {
 			$this->remove_expired_transients();
 		}
-		if ($toggles[self::OPTIMIZE_TABLES]) {
+		if ($toggles['optimize_tables']) {
 			$this->remove_optimize_tables();
 		}
 	}

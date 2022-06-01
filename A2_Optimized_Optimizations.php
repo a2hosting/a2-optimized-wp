@@ -440,8 +440,8 @@ class A2_Optimized_Optimizations {
 				'description' => 'If enabled, will periodically clean the MySQL database of expired transients, trashed comments, spam comments, and optimize all tables. You may also select to remove post revisions and trashed posts from the Database Optimization Settings.<br />
 				<a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Database Optimization Settings</a>',
 				'is_configured' => function (&$item) use (&$thisclass) {
-					$toggles = get_option(A2_Optimized_DBOptimizations::WP_SETTING);
-					if (isset($toggles[A2_Optimized_DBOptimizations::CRON_ACTIVE]) && $toggles[A2_Optimized_DBOptimizations::CRON_ACTIVE]) {
+					$toggles = get_option('a2_db_optimizations');
+					if (isset($toggles['cron_active']) && $toggles['cron_active']) {
 						$item['configured'] = true;
 						$thisclass->set_install_status('a2-db-optimizations', true);
 					} else {
@@ -449,10 +449,10 @@ class A2_Optimized_Optimizations {
 					}
 				},
 				'enable' => function () use (&$thisclass) {
-					A2_Optimized_DBOptimizations::set(A2_Optimized_DBOptimizations::CRON_ACTIVE, true);
+					A2_Optimized_DBOptimizations::set('cron_active', true);
 				},
 				'disable' => function () use (&$thisclass) {
-					A2_Optimized_DBOptimizations::set(A2_Optimized_DBOptimizations::CRON_ACTIVE, false);
+					A2_Optimized_DBOptimizations::set('cron_active', false);
 				},
 			],
 			'woo-cart-fragments' => [
