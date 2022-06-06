@@ -664,8 +664,10 @@ class A2_Optimized_Optimizations {
 			}
 			if (class_exists('A2_Optimized_Private_Optimizations')) {
 				$a2opt_priv = new A2_Optimized_Private_Optimizations();
-				$file_path = $a2opt_priv->get_redis_socket();
-				$optimizations['a2_object_cache']['description'] .= "<br />$file_path";
+				if(method_exists($a2opt_priv, 'get_redis_socket')){
+					$file_path = $a2opt_priv->get_redis_socket();
+					$optimizations['a2_object_cache']['description'] .= "<br />$file_path";
+				}
 			}
 		}
 		if (get_option('a2_optimized_memcached_invalid')) {
