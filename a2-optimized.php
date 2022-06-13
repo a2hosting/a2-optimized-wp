@@ -2,7 +2,7 @@
 /*
 	Plugin Name: A2 Optimized WP
 	Plugin URI: https://wordpress.org/plugins/a2-optimized/
-	Version: 2.1.4.4.3
+	Version: 2.1.4.5
 	Author: A2 Hosting
 	Author URI: https://www.a2hosting.com/
 	Description: A2 Optimized - WordPress Optimization Plugin
@@ -30,7 +30,7 @@ require_once 'A2_Optimized_DB_Optimizations.php';
 
 //constants
 define( 'A2OPT_VERSION', '2.1' );
-define( 'A2OPT_FULL_VERSION', '2.1.4' );
+define( 'A2OPT_FULL_VERSION', '2.1.4.5' );
 define( 'A2OPT_MIN_PHP', '5.6' );
 define( 'A2OPT_MIN_WP', '5.1' );
 define( 'A2OPT_FILE', __FILE__ );
