@@ -1001,9 +1001,7 @@ final class A2_Optimized_Cache {
 		}
 
 		// check advanced-cache.php drop-in
-		$litespeed_cache_enabled = is_plugin_active('litespeed-cache/litespeed-cache.php');
-		
-		if ( ! file_exists( WP_CONTENT_DIR . '/advanced-cache.php' ) && !$cache_enabled ) {
+		if ( ! file_exists( WP_CONTENT_DIR . '/advanced-cache.php' ) && is_plugin_active('litespeed-cache/litespeed-cache.php')) {
 			echo sprintf(
 				'<div class="notice notice-warning"><p>%s</p></div>',
 				sprintf(
