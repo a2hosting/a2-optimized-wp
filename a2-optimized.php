@@ -113,7 +113,12 @@ class A2_Optimized {
 }
 
 if (get_option('a2_cache_enabled') == 1) {
-	add_action( 'plugins_loaded', [ 'A2_Optimized_Cache', 'init' ] );
+	if(is_plugin_active('litespeed-cache/litespeed-cache.php')){
+		A2_Optimized_Cache_Disk::clean();
+		update_option('a2_cache_enabled', 0);
+	} else {
+		add_action( 'plugins_loaded', [ 'A2_Optimized_Cache', 'init' ] );
+	}
 }
 register_deactivation_hook( __FILE__, [ 'A2_Optimized_Cache', 'on_deactivation' ] );
 register_uninstall_hook( __FILE__, [ 'A2_Optimized_Cache', 'on_uninstall' ] );
