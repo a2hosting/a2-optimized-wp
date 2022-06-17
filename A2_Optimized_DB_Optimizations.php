@@ -112,7 +112,7 @@ class A2_Optimized_DBOptimizations {
 			$this->remove_expired_transients();
 		}
 		if ($toggles['optimize_tables']) {
-			$this->remove_optimize_tables();
+			$this->optimize_tables();
 		}
 	}
 
