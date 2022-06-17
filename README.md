@@ -4,7 +4,7 @@ Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, LiteSpeed, LSCache, A2, Hosting
 Requires at least: 5.1
 Tested up to: 6.0
-Stable tag: 2.1.4.5
+Stable tag: 2.1.4.5.1
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -135,7 +135,10 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 ## Changelog
 
-### 2.1.4
+### 2.1.4.5.1
+* Optimize database tables was not being called correctly in some cases.
+
+### 2.1.4.5
 * Fix for issue where TurboCache was not being correctly identified.
 
 ### 2.1.4
@@ -144,19 +147,25 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 ### 2.1.3.10
 * Add information related to A2 Optimized to the Site Health panel. 
+
 ### 2.1.3.3
 * Patches a cross-site-scripting vulnerablity. This is a recommended upgrade. 
+
 ### 2.1.3.1
 * Fixed issue with handling of some regex formulas in the advanced cache settings exclusion list 
 * Additional checks when adding memcached server for object caching 
+
 ### 2.1
 * Removed requirement for W3 Total Cache. A2 Optimized now contains it's own caching engine. Don't worry if you still want to use W3 Total Cache, it will continue to work as it always has with this and future updates.
 * Memcached object caching is now available on any host that supports it.
 * Small UI refresh. 
+
 ### 2.0.11.1.4
 * Fixed an issue where server GZIP capabilities were not always detected 
+
 ### 2.0.11.1.2
 * No longer count default themes on Warnings tab
+
 ### 2.0.11.1
 * Added Divi specific optimizations
 
