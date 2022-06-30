@@ -1176,10 +1176,10 @@ final class A2_Optimized_Cache {
 		}
 		$options_manager = new A2_Optimized_OptionsManager;
 
-		$object_cache_type = '';
+		$object_cache_type = 'memcached';
 		if (get_option('a2_optimized_objectcache_type')) {
 			$object_cache_type = get_option('a2_optimized_objectcache_type');
-		}
+		} 
 
 		switch ($object_cache_type) {
 			case 'memcached':
