@@ -2164,6 +2164,12 @@ HTML;
 	 *
 	 */
 	private function kb_searchbox_html() {
+		$help_link = "<h3><a href='https://wordpress.org/support/plugin/a2-optimized-wp/' target='_blank'>Questions, comments, concerns?</a></h3>";
+
+		if (class_exists('A2_Optimized_Private_Optimizations')) {
+			$help_link = "<h3><a href='https://my.a2hosting.com/submitticket.php?action=support&type=other' target='_blank'>Questions, comments, concerns?</a></h3>";
+		};
+
 		return <<<HTML
 <div class='big-search' style="margin-top:34px" >
 	<div class='kb-search' >
@@ -2174,6 +2180,7 @@ HTML;
 			</div>
 			<input type="text" id="kb-search-request" name="keywords" placeholder="Search The A2 Knowledge Base">
 			<button class='btn btn-success' type='submit'>Search</button>
+			{$help_link}
 		</form>
 	</div>
 </div>
