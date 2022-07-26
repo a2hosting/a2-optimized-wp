@@ -4,7 +4,7 @@ Contributors: A2BCool, a2hosting, dmatteson, sputala
 Tags: Speed, Optimize, Secure, Fast, LiteSpeed, LSCache, A2, Hosting
 Requires at least: 5.1
 Tested up to: 6.0
-Stable tag: 2.1.4.5.3
+Stable tag: 2.1.4.6
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -134,6 +134,9 @@ A2 Optimized is compatible with most of the features in WordFence, however you s
 Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hosting provides a few more tools for speeding up your site when hosted on an A2 Hosting server.
 
 ## Changelog
+
+### 2.1.4.6
+* Better compatibility with LiteSpeed Cache
 
 ### 2.1.4.5.1
 * Optimize database tables was not being called correctly in some cases.
