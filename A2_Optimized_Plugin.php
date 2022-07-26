@@ -14,8 +14,8 @@ if (! defined('WPINC')) {
 include_once('A2_Optimized_OptionsManager.php');
 
 class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
-	const optionInstalled = '_installed';
-	const optionVersion = '_version';
+	public const optionInstalled = '_installed';
+	public const optionVersion = '_version';
 	private $config_pages = [
 		'w3tc_dashboard',
 		'w3tc_general',
@@ -32,7 +32,16 @@ class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
 		'w3tc_extensions',
 		'w3tc_install',
 		'w3tc_about',
-		'w3tc_faq'
+		'w3tc_faq',
+		'litespeed',
+		'litespeed-general',
+		'litespeed-cache',
+		'litespeed-cdn',
+		'litespeed-img_optm',
+		'litespeed-page_optm',
+		'litespeed-db_optm',
+		'litespeed-crawler',
+		'litespeed-toolbox'
 	];
 
 	//list of plugins that may conflict, displays a notice on installation of these plugins
@@ -309,15 +318,16 @@ HTML;
 			add_action('wp_dashboard_setup', [&$this, 'dashboard_widget']);
 			$a2_plugin_basename = plugin_basename($GLOBALS['A2_Plugin_Dir'] . '/a2-optimized.php');
 			add_filter("plugin_action_links_{$a2_plugin_basename}", [&$this, 'plugin_settings_link']);
-			register_setting( 'a2opt-cache', 'a2opt-cache', [ 'A2_Optimized_Cache', 'validate_settings' ] );
-			register_setting( 'a2opt-cache', 'a2_optimized_objectcache_type');
-			register_setting( 'a2opt-cache', 'a2_optimized_memcached_server', ['A2_Optimized_Cache', 'validate_object_cache' ]);
-			register_setting( 'a2opt-cache', 'a2_optimized_redis_server', ['A2_Optimized_Cache', 'validate_object_cache' ]);
-			new A2_Optimized_SiteHealth;
+			register_setting('a2opt-cache', 'a2opt-cache', [ 'A2_Optimized_Cache', 'validate_settings' ]);
+			register_setting('a2opt-cache', 'a2_optimized_objectcache_type');
+			register_setting('a2opt-cache', 'a2_optimized_memcached_server', ['A2_Optimized_Cache', 'validate_object_cache' ]);
+			register_setting('a2opt-cache', 'a2_optimized_redis_server', ['A2_Optimized_Cache', 'validate_object_cache' ]);
+			new A2_Optimized_SiteHealth();
 			register_setting('a2opt-cache', 'a2_db_optimizations', ['A2_Optimized_DBOptimizations', 'validate_db_optimization_settings']);
+			add_action('admin_menu', [&$this, 'remove_admin_menu_items'], 999);
 		}
 
-		new A2_Optimized_DBOptimizations;
+		new A2_Optimized_DBOptimizations();
 
 		if (get_option('A2_Optimized_Plugin_recaptcha', 0) == 1 && !is_admin()) {
 			add_action('woocommerce_login_form', [&$this, 'login_captcha']);
@@ -329,6 +339,15 @@ HTML;
 		if ($this->is_xmlrpc_request() && get_option('a2_block_xmlrpc')) {
 			$this->block_xmlrpc_request();
 			add_filter('xmlrpc_methods', [&$this, 'remove_xmlrpc_methods']);
+		}
+	}
+
+	public function remove_admin_menu_items() {
+		if (isset($_GET) && isset($_GET['page'])) {
+			if (!in_array($_GET['page'], $this->config_pages)) {
+				// Only show the Litespeed Cache menu if the user has directly navigated to it
+				remove_menu_page('litespeed');
+			}
 		}
 	}
 
