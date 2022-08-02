@@ -2,7 +2,7 @@
 /*
     Plugin Name: A2 Optimized WP
     Plugin URI: https://wordpress.org/plugins/a2-optimized/
-    Version: 2.1.4.6
+    Version: 2.1.4.6.1
     Author: A2 Hosting
     Author URI: https://www.a2hosting.com/
     Description: A2 Optimized - WordPress Optimization Plugin
