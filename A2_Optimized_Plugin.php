@@ -348,6 +348,8 @@ HTML;
 				// Only show the Litespeed Cache menu if the user has directly navigated to it
 				remove_menu_page('litespeed');
 			}
+		} else {
+			remove_menu_page('litespeed');
 		}
 	}
 
