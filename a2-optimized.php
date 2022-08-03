@@ -1,138 +1,86 @@
 <?php
-/*
-    Plugin Name: A2 Optimized WP
-    Plugin URI: https://wordpress.org/plugins/a2-optimized/
-    Version: 2.1.4.6.1
-    Author: A2 Hosting
-    Author URI: https://www.a2hosting.com/
-    Description: A2 Optimized - WordPress Optimization Plugin
-    Text Domain: a2-optimized
-    License: GPLv3
-*/
+/**
+ * Main Plugin File
+ *
+ * @link              http://example.com
+ * @since             1.0.0
+ * @package           A2_Optimized
+ *
+ * @wordpress-plugin
+ * Plugin Name:       A2 Optimized
+ * Plugin URI:        http://example.com/a2-optimized-uri/
+ * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
+ * Version:           1.0.0
+ * Author:            Your Name or Your Company
+ * Author URI:        http://example.com/
+ * License:           GPL-2.0+
+ * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
+ * Text Domain:       a2-optimized
+ * Domain Path:       /languages
+ */
 
-// Prevent direct access to this file
-if (! defined('WPINC')) {
-    die;
+// If this file is called directly, abort.
+if ( ! defined( 'WPINC' ) ) {
+	die;
 }
 
-//////////////////////////////////
-// Run initialization
-/////////////////////////////////
+/**
+ * Creates/Maintains the object of Requirements Checker Class
+ *
+ * @return \A2_Optimized\Includes\Requirements_Checker
+ * @since 1.0.0
+ */
+function plugin_requirements_checker() {
+	static $requirements_checker = null;
 
-require_once 'A2_Optimized_Plugin.php';
-require_once ABSPATH . 'wp-admin/includes/plugin.php';
-require_once 'A2_Optimized_Server_Info.php';
-require_once 'A2_Optimized_Cache.php';
-require_once 'A2_Optimized_CacheEngine.php';
-require_once 'A2_Optimized_CacheDisk.php';
-require_once 'A2_Optimized_SiteHealth.php';
-require_once 'A2_Optimized_DB_Optimizations.php';
+	if ( null === $requirements_checker ) {
+		require_once plugin_dir_path( __FILE__ ) . 'includes/class-requirements-checker.php';
+		$requirements_conf = apply_filters( 'a2_optimized_minimum_requirements', include_once( plugin_dir_path( __FILE__ ) . 'requirements-config.php' ) );
+		$requirements_checker = new A2_Optimized\Includes\Requirements_Checker( $requirements_conf );
+	}
 
-//constants
-define('A2OPT_VERSION', '2.1');
-define('A2OPT_FULL_VERSION', '2.1.4.6');
-define('A2OPT_MIN_PHP', '5.6');
-define('A2OPT_MIN_WP', '5.1');
-define('A2OPT_FILE', __FILE__);
-define('A2OPT_BASE', plugin_basename(__FILE__));
-define('A2OPT_DIR', __DIR__);
-
-class A2_Optimized
-{
-    public function __construct()
-    {
-        if (version_compare(PHP_VERSION, A2OPT_MIN_PHP) < 0) {
-            add_action('admin_notices', [&$this,'A2_Optimized_noticePhpVersionWrong']);
-
-            return;
-        }
-
-        $GLOBALS['A2_Plugin_Dir'] = dirname(__FILE__);
-
-        $a2Plugin = new A2_Optimized_Plugin();
-
-        // Install the plugin
-        if (!$a2Plugin->isInstalled()) {
-            $a2Plugin->install();
-        } else {
-            // Perform any version-upgrade activities prior to activation (e.g. database changes)
-            $a2Plugin->upgrade();
-        }
-
-        // Add callbacks to hooks
-        $a2Plugin->addActionsAndFilters();
-
-        // Register the Plugin Activation Hook
-        register_activation_hook(__FILE__, [&$a2Plugin, 'activate']);
-
-        // Register the Plugin Deactivation Hook
-        register_deactivation_hook(__FILE__, [&$a2Plugin, 'deactivate']);
-    }
-
-    public function A2_Optimized_noticePhpVersionWrong()
-    {
-        echo '<div class="notice notice-warning fade is-dismissible">' .
-            __('Error: plugin "A2 Optimized" requires a newer version of PHP to be running.', 'a2-optimized') .
-            '<br/>' . __('Minimal version of PHP required: ', 'a2-optimized') . '<strong>' . A2OPT_MIN_PHP . '</strong>' .
-            '<br/>' . __('Your site is running PHP version: ', 'a2-optimized') . '<strong>' . phpversion() . '</strong>' .
-            '<br />' . __(' To learn how to change the version of php running on your site') . ' <a target="_blank" href="http://www.a2hosting.com/kb/cpanel/cpanel-software-and-services/php-version">' . __('read this Knowledge Base Article') . '</a>.' .
-            '</div>';
-    }
-
-    // add plugin upgrade notification
-    public static function showUpgradeNotification($currentPluginMetadata)
-    {
-        // Notice Transient
-        $upgrade_notices = get_transient('a2_opt_ug_notes');
-        if (!$upgrade_notices) {
-            $response = wp_remote_get('https://wp-plugins.a2hosting.com/wp-json/wp/v2/update_notice?notice_plugin=2');
-            if (is_array($response)) {
-                $upgrade_notices = [];
-                $body = json_decode($response['body']); // use the content
-                foreach ($body as $item) {
-                    $upgrade_notices[$item->title->rendered] = 'Version ' . $item->title->rendered . ': ' . strip_tags($item->content->rendered);
-                }
-                set_transient('a2_opt_ug_notes', $upgrade_notices, 3600 * 12);
-            } else {
-                return;
-            }
-        }
-
-        foreach ($upgrade_notices as $ver => $notice) {
-            if (version_compare($currentPluginMetadata['Version'], $ver) < 0) {
-                echo '</div><p style="background-color: #d54e21; padding: 10px; color: #f9f9f9; margin-top: 10px" class="update-message notice inline notice-warning notice-alt"><strong>Important Upgrade Notice:</strong><br />';
-                echo esc_html($notice), '</p><div>';
-
-                break;
-            }
-        }
-    }
-
-    // Remove WooCommerce AJAX calls from homepage if user has selected
-    public static function dequeue_woocommerce_cart_fragments()
-    {
-        if (is_front_page() && get_option('a2_wc_cart_fragments')) {
-            wp_dequeue_script('wc-cart-fragments');
-        }
-    }
+	return $requirements_checker;
 }
 
-if (get_option('a2_cache_enabled') == 1) {
-    if (is_plugin_active('litespeed-cache/litespeed-cache.php')) {
-        A2_Optimized_Cache_Disk::clean();
-        update_option('a2_cache_enabled', 0);
-    } else {
-        add_action('plugins_loaded', [ 'A2_Optimized_Cache', 'init' ]);
-    }
-}
-register_deactivation_hook(__FILE__, [ 'A2_Optimized_Cache', 'on_deactivation' ]);
-register_uninstall_hook(__FILE__, [ 'A2_Optimized_Cache', 'on_uninstall' ]);
+/**
+ * Begins execution of the plugin.
+ *
+ * @since    1.0.0
+ */
+function run_a2_optimized() {
 
-$a2opt_class = new A2_Optimized();
-add_action('in_plugin_update_message-a2-optimized-wp/a2-optimized.php', [ 'A2_Optimized','showUpgradeNotification'], 10, 2);
-add_action('wp_enqueue_scripts', ['A2_Optimized', 'dequeue_woocommerce_cart_fragments'], 11, 2);
+	// If Plugins Requirements are not met.
+	if ( ! plugin_requirements_checker()->requirements_met() ) {
+		add_action( 'admin_notices', array( plugin_requirements_checker(), 'show_requirements_errors' ) );
 
-// load WP-CLI command
-if (defined('WP_CLI') && WP_CLI && class_exists('WP_CLI')) {
-    require_once A2OPT_DIR . '/A2_Optimized_CLI.php';
+		// Deactivate plugin immediately if requirements are not met.
+		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
+		deactivate_plugins( plugin_basename( __FILE__ ) );
+
+		return;
+	}
+
+	/**
+	 * The core plugin class that is used to define internationalization,
+	 * admin-specific hooks, and frontend-facing site hooks.
+	 */
+	require_once plugin_dir_path( __FILE__ ) . 'includes/class-a2-optimized.php';
+
+	/**
+	 * Begins execution of the plugin.
+	 *
+	 * Since everything within the plugin is registered via hooks,
+	 * then kicking off the plugin from this point in the file does
+	 * not affect the page life cycle.
+	 *
+	 * @since    1.0.0
+	 */
+	$router_class_name = apply_filters( 'a2_optimized_router_class_name', '\A2_Optimized\Core\Router' );
+	$routes = apply_filters( 'a2_optimized_routes_file', plugin_dir_path( __FILE__ ) . 'routes.php' );
+	$GLOBALS['a2_optimized'] = new A2_Optimized( $router_class_name, $routes );
+
+	register_activation_hook( __FILE__, array( new A2_Optimized\App\Activator(), 'activate' ) );
+	register_deactivation_hook( __FILE__, array( new A2_Optimized\App\Deactivator(), 'deactivate' ) );
 }
+
+run_a2_optimized();
