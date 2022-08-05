@@ -50,26 +50,67 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		public function run_benchmarks() {
 			$target_url = $_POST['target_url'];
 			$page = $_POST['a2_page'];
-			$data = $this->get_benchmark(false);
-
-			$data['pagespeed_desktop']['overall_score']['score'] = 55;
-			$data['pagespeed_desktop']['overall_score']['text'] = '55';
-			$data['pagespeed_desktop']['overall_score']['score'] = 55;
-			$data['pagespeed_desktop']['overall_score']['last_check_percent'] = 20;
-			$data['pagespeed_desktop']['overall_score']['last_check_direction'] = 'up';
-
-			
+			$frontend_data = $this->get_frontend_benchmark(false);//false for now while getting the UI in order
 
 			if ($page == 'server_performance'){
-				$data = $data['pagespeed_desktop'];
+				$frontend_data = $frontend_data['pagespeed_desktop'];
 			}
+
+			$opt_data = $this->get_optimization_benchmark();
+
+			$data = array_merge($frontend_data, $opt_data);
+
 			echo json_encode($data);
 			wp_die();
 
 		}
 
-		public function get_benchmark($run = false) {
+		public function get_optimization_benchmark(){
+			$temp_graphs = [
+				'opt_perf' => [
+					'display_text' => 'Performance',
+					'metric_text' => 'Performance is good',
+					'thresholds' => [],
+					'explanation' => 'blah blah',
+					'last_check_percent' => 0,
+					'last_check_dir' => 'none',
+					'score' => 38,
+					'max' => 100,
+					'text' => '5/8',
+					'color_class' => 'success',
+				],
+				'opt_security' => [
+					'display_text' => 'Security',
+					'metric_text' => 'Security is good',
+					'thresholds' => [],
+					'explanation' => 'blah blah',
+					'last_check_percent' => 0,
+					'last_check_dir' => 'none',
+					'score' => 20,
+					'max' => 100,
+					'text' => '1/5',
+					'color_class' => 'danger',
+				],
+				'opt_bp' => [
+					'display_text' => 'Best Practices',
+					'metric_text' => 'Practice is good',
+					'thresholds' => [],
+					'explanation' => 'blah blah',
+					'last_check_percent' => 0,
+					'last_check_dir' => 'none',
+					'score' => 0,
+					'max' => 100,
+					'text' => '7/7',
+					'color_class' => 'danger',
+				],
+			];
+
+			return $temp_graphs;
+		}
+
+		public function get_frontend_benchmark($run = false) {
 			if ($run){
+				//print_r("running benchmarks<br>");
 				$desktop_result = $this->benchmark->get_lighthouse_results('desktop');
 				$mobile_result = $this->benchmark->get_lighthouse_results('mobile');
 
@@ -77,42 +118,57 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 					// then what? dunno.
 				}
 			}
-			$last_desktop = null;
-			$last_mobile = null;
-			$prev_desktop = null;
-			$prev_mobile = null;
-			$desktop_check_date = null;
-			$mobile_check_date = null;
 
 			$frontend_benchmarks = get_option('a2opt-benchmarks-frontend');
+			if ($frontend_benchmarks){
+				$last_desktop = null;
+				$last_mobile = null;
+				$prev_desktop = null;
+				$prev_mobile = null;
+				$desktop_check_date = null;
+				$mobile_check_date = null;
 
-			foreach (array_reverse($frontend_benchmarks) as $check_date => $fbm){
-				if ($fbm['strategy'] == 'desktop'){
-					if ($last_desktop == null){
-						$desktop_check_date = $check_date;
-						$last_desktop = $fbm;
+				foreach (array_reverse($frontend_benchmarks) as $check_date => $fbm){
+					if ($fbm['strategy'] == 'desktop'){
+						if ($last_desktop == null){
+							$desktop_check_date = $check_date;
+							$last_desktop = $fbm;
+						}
+						else if ($prev_desktop == null){
+							$prev_desktop = $fbm;
+						}
 					}
-					else if ($prev_desktop == null){
-						$prev_desktop = $fbm;
+					else if ($fbm['strategy'] == 'mobile'){
+						if ($last_mobile == null){
+							$mobile_check_date = $check_date;
+							$last_mobile = $fbm;
+						}
+						else if ($prev_mobile == null){
+							$prev_mobile = $fbm;
+						}
+					}
+	
+					if (isset($last_desktop) && isset($prev_desktop) && isset($last_mobile) && isset($prev_mobile) ){
+						break;
 					}
 				}
-				else if ($fbm['strategy'] == 'mobile'){
-					if ($last_mobile == null){
-						$mobile_check_date = $check_date;
-						$last_mobile = $fbm;
-					}
-					else if ($prev_mobile == null){
-						$prev_mobile = $fbm;
-					}
-				}
-
-				if (isset($last_desktop) && isset($prev_desktop) && isset($last_mobile) && isset($prev_mobile) ){
-					break;
-				}
+				// set these to false if no benchmarks
+				$result['pagespeed_desktop'] = $this->get_graph_data($desktop_check_date, $last_desktop, $prev_desktop);
+				$result['pagespeed_mobile'] = $this->get_graph_data($mobile_check_date, $last_mobile, $prev_mobile);
+	
 			}
-			$result['pagespeed_desktop'] = $this->get_graph_data($desktop_check_date, $last_desktop, $prev_desktop);
-			$result['pagespeed_mobile'] = $this->get_graph_data($mobile_check_date, $last_mobile, $prev_mobile);
+			else {
+				$result['pagespeed_desktop'] = false;
+				$result['pagespeed_mobile'] = false;
+			}
+
 			//print_r($result);
+
+			//$backend_benchmarks = get_option('a2opt-benchmarks-hosting');
+			//$bm = array_pop($backend_benchmarks);
+			//print_r($bm);
+			//wp_die();
+
 
 			return $result;
 		}
@@ -147,6 +203,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				'display_text' => 'Visual Stability',
 				'metric_text' => 'Cumulative Layout Shift (CLS)',
 				'explanation' => 'Here is a detailed explanation of what the CLS means, as rendered lovingly by George'
+			],
+			'recommendations' => [
+				'display_text' => 'Opportunity',
+				'metric_text' => 'Areas that can be improved',
+				'explanation' => 'Here is an explanation of what recommendations are for, and what to do about them',
 			]
 
 		];
@@ -187,9 +248,9 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$metrics = ['overall_score', 'fcp', 'ttfb', 'cls','lcp', 'fid'];
 
 			//print_r(json_encode(array_keys($previous['scores'])) . "<br>");
-			$latest['scores']['overall_score'] = 10;
-			$latest['scores']['ttfb'] = 600;
-			$latest['scores']['lcp'] = 5000;
+			//$latest['scores']['overall_score'] = 10;
+			//$latest['scores']['ttfb'] = 600;
+			//$latest['scores']['lcp'] = 5000;
 			//$previous['scores']['overall_score'] = 50;
 			$result = [];
 			foreach ($metrics as $metric){
@@ -229,6 +290,26 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				// pull in display data
 				$data = array_merge($data, self::BENCHMARK_DISPLAY_DATA[$metric]);
 				$result[$metric] = $data;
+
+				$audits = [];
+				//print_r(json_encode($fbm['scores']['audit_result']['first-contentful-paint']));
+				$lcv = 0;
+				foreach($latest['scores']['audit_result'] as $audit){
+					$audits[] = [
+						'display_text' => $audit['title'],
+						'description' => $audit['description']
+					];
+					++$lcv;
+					if ($lcv > 4){
+						break;
+					}
+				}
+				$result['recommendations'] = [
+					'list' => $audits
+				];
+
+				$result['recommendations'] = array_merge($result['recommendations'], self::BENCHMARK_DISPLAY_DATA['recommendations']);
+//print_r($result); wp_die();
 	
 			}
 			return $result;

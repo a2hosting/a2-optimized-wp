@@ -152,58 +152,44 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 */
 		public function markup_settings_page() {
 			if (current_user_can(static::REQUIRED_CAPABILITY)) {
-				if (isset($_REQUEST['a2_page'])) {
-					$run_benchmarks = false;
-					if (isset($_POST['run_benchmarks'])){
-						$run_benchmarks = true;
-					}
-					switch ($_REQUEST['a2_page']) {
-						case 'page_speed_score':
-							$graphs = $this->get_model()->get_benchmark($run_benchmarks);
-							$this->view->admin_pagespeed_page(
-								[
-									'page_title'    => A2_Optimized::PLUGIN_NAME,
-									'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
-									'graphs' => $graphs,
-									'run_benchmarks' => $run_benchmarks
-								]
-							);
-
-							break;
-						case 'server_performance':
-							$graphs = $this->get_model()->get_benchmark($run_benchmarks);
-							$this->view->admin_server_performance_page(
-								[
-									'page_title'    => A2_Optimized::PLUGIN_NAME,
-									'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
-									'graphs' => $graphs['pagespeed_desktop'],
-									'run_benchmarks' => $run_benchmarks
-								]
-							);
-
-							break;
-	
-						default:
-							$this->view->admin_settings_page(
-								[
-									'page_title'    => A2_Optimized::PLUGIN_NAME,
-									'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
-								]
-							);
-
-							break;
-					}
+				if (!isset($_REQUEST['a2_page'])){
+					$page = 'page_speed_score';
 				}
-				else if (isset($_POST['a2_page'])){
-
-				} 
 				else {
-					$this->view->admin_settings_page(
-						[
-							'page_title'    => A2_Optimized::PLUGIN_NAME,
-							'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
-						]
-					);
+					$page = $_REQUEST['a2_page'];
+				}
+				$run_benchmarks = false;
+				switch ($page) {
+					case 'server_performance':
+						$graphs = $this->get_model()->get_frontend_benchmark($run_benchmarks);
+						$this->view->admin_server_performance_page(
+							[
+								'page_title'    => A2_Optimized::PLUGIN_NAME,
+								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
+								'graphs' => $graphs['pagespeed_desktop'],
+								'run_benchmarks' => $run_benchmarks
+							]
+						);
+
+						break;
+
+					case 'page_speed_score':
+					default:
+						$frontend_metrics = $this->get_model()->get_frontend_benchmark($run_benchmarks);
+						$opt_data = $this->get_model()->get_optimization_benchmark();
+
+						$graphs = array_merge($frontend_metrics, $opt_data);
+
+						$this->view->admin_pagespeed_page(
+							[
+								'page_title'    => A2_Optimized::PLUGIN_NAME,
+								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
+								'graphs' => $graphs,
+								'run_benchmarks' => $run_benchmarks
+							]
+						);
+
+						break;
 				}
 			} else {
 				wp_die(__('Access denied.')); // WPCS: XSS OK.

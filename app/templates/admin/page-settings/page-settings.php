@@ -22,6 +22,7 @@
 	}
 
 	function generateCircle(id, radius, width, graph_data){
+		if (!graph_data) {return;}
 		let baseColor = palette[graph_data.color_class];
 
 		var circle_graph = Circles.create({
@@ -45,6 +46,7 @@
 	}
 
 	function createLineGraph(elemId, graphData, circleId){
+		if (!graphData) {return;}
 		let lineDiv = document.getElementById(elemId);
 		let bodyRect = document.body.getBoundingClientRect();
 		let rect = lineDiv.getBoundingClientRect();
@@ -205,6 +207,11 @@
 		data() {
 			return page_data
 		},
+		methods: {
+			pageSpeedCheck: function(){
+				this.$root.pageSpeedCheck('server-performance');
+			}
+		},
 		template: `
 		<div class="col-sm-12">
             <div class="row" style="">
@@ -215,7 +222,7 @@
                 <div class="col-sm-10 border-left" id="a2-optimized-serverperformance">
                     <div class="row">
                         <div class="col-sm-12">
-                            <a href="#" class="btn cta-btn-green">Run Check</a> <span class="last-check">{{ last_check }}</span>
+                            <a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
                         </div>
                     </div>
                     <div class="row">
@@ -344,13 +351,13 @@
                                 <div class="graph_data">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <h4>{{recommendations.display_text}}</h4>
+                                            <h4>{{performance.recommendations.display_text}}</h4>
                                         </div>
                                     </div>
                                     <div class="row text-left" >
                                         <div class="col-sm-12">
                                         <ul>
-											<li v-for="recommendation in recommendations.list">{{recommendation.display_text}}</li>
+											<li v-for="recommendation in performance.recommendations.list">{{recommendation.display_text}}</li>
                                         </ul>
                                         </div>
                                     </div>
@@ -358,7 +365,7 @@
                                 <div class="graph_info" style="display:none;">
                                     <div class="row">
                                         <div class="col-sm-12">
-                                            <p>{{ recommendations.explanation}}</p>
+                                            <p>{{ performance.recommendations.explanation}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -464,19 +471,8 @@
 			return page_data
 		},
 		methods: {
-			pageSpeedCheck: function(page) {
-				let postData = {
-					'action': 'run_benchmarks',
-					'a2_page': page,
-				};
-				jQuery.post(
-					ajaxurl, 
-					postData, 
-					function(response) {
-						page_data.graphs = response;
-					},
-					'json'
-				);
+			pageSpeedCheck: function(){
+				this.$root.pageSpeedCheck('page-speed-score');
 			}
 		},
 		template: `
@@ -493,12 +489,12 @@
 									</div>
 									<div class="col-sm-4 text-right">
 										<p><a class="btn cta-btn-green" @click="pageSpeedCheck('page_speed_score')">Run check</a><br>
-										<span>Last Check: {{graphs.pagespeed_mobile.overall_score.last_check_date}}</span></p>
+										<span>Last Check: {{ last_check_date }}</span></p>
 									</div>
 								</div>
 								<div class="row">
 									<div class="col-sm-11 col-sm-offset-1">
-										<div class="col-sm-5 box-element" :class="graphs.pagespeed_mobile.overall_score.color_class">
+										<div v-if="graphs.pagespeed_mobile" class="col-sm-5 box-element" :class="graphs.pagespeed_mobile.overall_score.color_class">
 											<p class='box-title'>Mobile</p>
 											<div class="circle" id="circles-pls-mobile"></div>
 											<div v-if="graphs.pagespeed_mobile.overall_score.last_check_percent != 0">
@@ -508,7 +504,7 @@
 												<p>&nbsp;</p>
 											</div>
 										</div>
-										<div class="col-sm-5 col-sm-offset-1 box-element" :class="graphs.pagespeed_desktop.overall_score.color_class">
+										<div v-if="graphs.pagespeed_desktop" class="col-sm-5 col-sm-offset-1 box-element" :class="graphs.pagespeed_desktop.overall_score.color_class">
 											<p class='box-title'>Desktop</p>
 											<div class="circle" id="circles-pls-desktop"></div>
 											<div v-if="graphs.pagespeed_desktop.overall_score.last_check_percent != 0">
@@ -580,14 +576,13 @@
 				</div>
 			</div>
 		</div>
-	</div>
 		`,
 		mounted() {
 			jQuery( document ).ready( function( $ ) {
 				let graphs = page_data.graphs;
 				var plsMobile = generateCircle('circles-pls-mobile', 40, 10,  graphs.pagespeed_mobile.overall_score);
 				var plsDesktop = generateCircle('circles-pls-desktop', 40, 10,  graphs.pagespeed_desktop.overall_score);
-				$('#circles-pls-mobile .circles-text, #circles-pls-desktop .circles-text').css({'left': '-32px', 'top': '-10px', 'font-size': '50px'});
+				jQuery('#circles-pls-mobile .circles-text, #circles-pls-desktop .circles-text').css({'left': '-32px', 'top': '-10px', 'font-size': '50px'});
 
 				var optPerf = generateCircle('circles-opt-perf', 35, 7,  graphs.opt_perf);
 				var optSec = generateCircle('circles-opt-sec', 35, 7,  graphs.opt_security);
@@ -599,26 +594,29 @@
 	var app = new Vue({
 		el: '#a2-optimized-wrapper',
 		data: page_data,
-	});
-/*
-	function pageSpeedCheck(pageName) {
-		//var url='/dev/wp-admin/options-general.php?page=a2-optimized&a2_page=page_speed_score&run_benchmarks=true';
-		let data = {
-			'action': 'run_benchmarks',
-			'a2_page': pageName,
-		};
-		
-		jQuery.post(
-			ajaxurl, 
-			data, 
-			function(response) {
-				response.pagespeed_desktop.overall_score = 77;
-				app.data = response;
+		methods: {
+			forceRerender: function() {
+				this.mainkey += 1;
 			},
-			'json');
-	}
-*/
-
+			pageSpeedCheck: function(page) {
+				let postData = {
+					'action': 'run_benchmarks',
+					'a2_page': page,
+				};
+				let that = this;
+				jQuery.post(
+					ajaxurl, 
+					postData, 
+					function(response) {
+						page_data.last_check_date = 'just now'; // todo: get this the right value
+						page_data.graphs = response;
+						that.forceRerender();
+					},
+					'json'
+				);
+			}
+		},
+	});
 	</script>
 
 </div> <!-- .wrap -->
