@@ -5,7 +5,7 @@ use A2_Optimized\App\Models\Settings as Settings_Model;
 use A2_Optimized\App\Models\Admin\Base_Model;
 use A2_Optimized_Benchmark;
 
-require_once(__DIR__ . '/../../../A2_Optimized_Benchmark.php');
+//require_once(__DIR__ . '/../../../includes/A2_Optimized_Benchmark.php');
 
 if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 	/**

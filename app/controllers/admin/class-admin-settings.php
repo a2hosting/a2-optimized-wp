@@ -90,6 +90,20 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			 */
 
 			wp_enqueue_script(
+				A2_Optimized::PLUGIN_ID . '_vue-js',
+				A2_Optimized::get_plugin_url() . 'assets/js/admin/vue.js',
+				[],
+				A2_Optimized::PLUGIN_VERSION,
+				false
+			);
+			wp_enqueue_script(
+				A2_Optimized::PLUGIN_ID . '_axios-js',
+				A2_Optimized::get_plugin_url() . 'assets/js/admin/axios.js',
+				[],
+				A2_Optimized::PLUGIN_VERSION,
+				true
+			);
+			wp_enqueue_script(
 				A2_Optimized::PLUGIN_ID . '_admin-js',
 				A2_Optimized::get_plugin_url() . 'assets/js/admin/a2-optimized.js',
 				[ 'jquery' ],
@@ -143,6 +157,13 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				A2_Optimized::PLUGIN_VERSION,
 				'all'
 			);
+			wp_enqueue_style(
+				A2_Optimized::PLUGIN_ID . '_fonts-css',
+				'https://fonts.googleapis.com/css?family=Raleway:300,500,700,900|Poppins:300,500,700,900',
+				[],
+				A2_Optimized::PLUGIN_VERSION,
+				'all'
+			);
 		}
 
 		/**
@@ -152,10 +173,9 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 */
 		public function markup_settings_page() {
 			if (current_user_can(static::REQUIRED_CAPABILITY)) {
-				if (!isset($_REQUEST['a2_page'])){
+				if (!isset($_REQUEST['a2_page'])) {
 					$page = 'page_speed_score';
-				}
-				else {
+				} else {
 					$page = $_REQUEST['a2_page'];
 				}
 				$run_benchmarks = false;
@@ -172,7 +192,6 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 						);
 
 						break;
-
 					case 'page_speed_score':
 					default:
 						$frontend_metrics = $this->get_model()->get_frontend_benchmark($run_benchmarks);

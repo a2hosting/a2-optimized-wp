@@ -55,7 +55,6 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$args['data'] = $data;
 			echo $this->render_template(
 				'admin/page-settings/page-settings.php',
-				//'admin/page-settings/page-pagespeedscore.php',
 				$args
 			); // WPCS: XSS OK.
 		}
