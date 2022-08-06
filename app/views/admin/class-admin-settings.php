@@ -22,10 +22,13 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 * @since 1.0.0
 		 */
 		public function admin_pagespeed_page($args = []) {
-			$last_check = "None";
+			$last_check = 'None';
 			$graphs = $args['graphs'];
-			if ($graphs['pagespeed_desktop']) { $last_check = $graphs['pagespeed_desktop']['overall_score']['last_check_date']; }
-			else if ($graphs['pagespeed_mobile']) { $last_check = $graphs['pagespeed_mobile']['overall_score']['last_check_date']; }
+			if ($graphs['pagespeed_desktop']) {
+				$last_check = $graphs['pagespeed_desktop']['overall_score']['last_check_date'];
+			} elseif ($graphs['pagespeed_mobile']) {
+				$last_check = $graphs['pagespeed_mobile']['overall_score']['last_check_date'];
+			}
 
 			$data = [
 				'mainkey' => 1,
@@ -36,15 +39,16 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				],
 				'last_check_date' => $last_check,
 				'explanations' => [
-					'pagespeed' => 'super detailed information about pagespeed',
-					'opt' => 'super detailed information about opt',
+					'pagespeed' => 'The Performance score is a weighted average of the metric scores. Naturally, more heavily weighted metrics have a bigger effect on your overall Performance score. The metric scores are not visible in the report, but are calculated under the hood.',
+					'opt' => 'Vearious optimizations hand-selected to help keep your site fast, safe and secure.',
 				],
 				'graphs' => $args['graphs']
 			];
 
 			$data_json = json_encode($data);
-			if ($args['run_benchmarks']){
+			if ($args['run_benchmarks']) {
 				echo $data_json;
+
 				return;
 			}
 			$data['data_json'] = $data_json;
@@ -56,10 +60,12 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			); // WPCS: XSS OK.
 		}
 
-		public function admin_server_performance_page($args = []){
-			$last_check = "None";
+		public function admin_server_performance_page($args = []) {
+			$last_check = 'None';
 			$graphs = $args['graphs'];
-			if ($graphs) { $last_check = $graphs['overall_score']['last_check_date']; }
+			if ($graphs) {
+				$last_check = $graphs['overall_score']['last_check_date'];
+			}
 
 			$data = [
 				'mainkey' => 1,
@@ -72,8 +78,9 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'performance' => $graphs,
 			];
 			$data_json = json_encode($data);
-			if ($args['run_benchmarks']){
+			if ($args['run_benchmarks']) {
 				echo $data_json;
+
 				return;
 			}
 
@@ -84,7 +91,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				$args
 			); // WPCS: XSS OK.
 		}
-		
+
 		public function admin_settings_page($args = []) {
 			$data = [
 				'content-element' => '<page-speed-score></page-speed-score>',
@@ -139,7 +146,6 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				$args
 			); // WPCS: XSS OK.
 		}
-		
 
 		/**
 		 * Prints Section's Description.

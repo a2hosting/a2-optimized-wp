@@ -17,7 +17,7 @@
 		else{
 			explanation_div.hide();
 			data_div.show();
-			that.text('❔');
+			that.text('<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>');
 		}
 	}
 
@@ -117,7 +117,7 @@
 				<h2>Optimization <span class='normal'>Dashboard</span></h2>
 			</div>
 			<div class="col-sm-4 search">
-				<input type="text" />
+				<input type="text" value="<?php echo get_site_url(); ?>" />
 				<p class='small'>Data relates to your homepage</p>
 			</div>
 			<div class="col-sm-2 text-right utility">
@@ -160,7 +160,7 @@
 		props: {metric: {type: String}},
 		template: `
 		<div class="info-toggle-button">
-			<span v-on:click="toggleInfoDiv(metric, $event);">❔</span>
+			<span v-on:click="toggleInfoDiv(metric, $event);"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></span>
 		</div>
 		`,
 		methods: {
@@ -250,7 +250,8 @@
                                 </div>
                                 <div class="graph_info" style="display:none;">
                                     <div class="row">
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-12">
+                                            <h4>{{performance.ttfb.display_text}}</h4>
                                             <p>{{ performance.ttfb.explanation}}</p>
                                         </div>
                                     </div>
@@ -280,7 +281,8 @@
                                 </div>
                                 <div class="graph_info" style="display:none;">
                                     <div class="row">
-                                        <div class="col-sm-8">
+                                        <div class="col-sm-10">
+                                            <h4>{{performance.lcp.display_text}}</h4>
                                             <p>{{ performance.lcp.explanation}}</p>
                                         </div>
                                     </div>
@@ -290,7 +292,7 @@
 								<info-button metric='fid'></info-button>
                                 <div class="graph_data">
                                     <div class="row">
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-12">
                                             <h4>{{performance.fid.display_text}}</h4>
                                             <p>{{performance.fid.metric_text}}</p>
                                         </div>
@@ -307,7 +309,8 @@
                                 </div>
                                 <div class="graph_info" style="display:none;">
                                     <div class="row">
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-12">
+                                            <h4>{{performance.fid.display_text}}</h4>
                                             <p>{{ performance.fid.explanation}}</p>
                                         </div>
                                     </div>
@@ -341,6 +344,7 @@
                                 <div class="graph_info" style="display:none;">
                                     <div class="row">
                                         <div class="col-sm-12">
+                                            <h4>{{performance.overall_score.display_text}}</h4>
                                             <p>{{ performance.overall_score.explanation}}</p>
                                         </div>
                                     </div>
@@ -365,6 +369,7 @@
                                 <div class="graph_info" style="display:none;">
                                     <div class="row">
                                         <div class="col-sm-12">
+                                            <h4>{{performance.recommendations.display_text}}</h4>
                                             <p>{{ performance.recommendations.explanation}}</p>
                                         </div>
                                     </div>
@@ -394,7 +399,8 @@
                                 <div class="graph_info" style="display:none;">
                                     <div class="row">
                                         <div class="col-sm-10">
-                                            <p>{{ performance.cls.explanation}}</p>
+                                            <h4>{{performance.fcp.display_text}}</h4>
+                                            <p>{{ performance.fcp.explanation}}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -425,7 +431,8 @@
                                 </div>
                                 <div class="graph_info" style="display:none;">
                                     <div class="row">
-                                        <div class="col-sm-10">
+                                        <div class="col-sm-12">
+                                            <h4>{{performance.cls.display_text}}</h4>
                                             <p>{{ performance.cls.explanation}}</p>
                                         </div>
                                     </div>
@@ -518,8 +525,17 @@
 								</div>
 							</div>
 							<div class="graph_info" style="display:none;">
+								<div class="row header">
+									<div class="col-sm-8">
+										<h3>Page Load Speed</h3>
+									</div>
+									<div class="col-sm-4 text-right">
+										<p><a class="btn cta-btn-green" @click="pageSpeedCheck('page_speed_score')">Run check</a><br>
+										<span>Last Check: {{ last_check_date }}</span></p>
+									</div>
+								</div>
 								<div class="row">
-									<div class="col-sm-10">
+									<div class="col-sm-10 col-sm-offset-1">
 										<p>{{ explanations.pagespeed}}</p>
 									</div>
 								</div>
@@ -562,11 +578,19 @@
 											</div>
 										</div>
 									</div>
+									<div class="col-sm-10 col-sm-offset-1 text-right">
+										<p><a href="#" class="cta-link">Go to Recommendations</a></p>
+									</div>
 								</div>
 							</div>
 							<div class="graph_info" style="display:none;">
+								<div class="row header">
+									<div class="col-sm-12">
+										<h3>Optimization Status</h3>
+									</div>
+								</div>
 								<div class="row">
-									<div class="col-sm-10">
+									<div class="col-sm-10 col-sm-offset-1">
 										<p>{{ explanations.opt}}</p>
 									</div>
 								</div>

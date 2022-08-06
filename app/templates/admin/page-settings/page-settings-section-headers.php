@@ -3,7 +3,7 @@
 				<h2>Optimization <span class='normal'>Dashboard</span></h2>
 			</div>
 			<div class="col-sm-4 search">
-				<input type="text" />
+				<input type="text" value="<?php echo get_site_url(); ?>" />
 				<p class='small'>Data relates to your homepage</p>
 			</div>
 			<div class="col-sm-2 text-right utility">

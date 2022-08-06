@@ -17,7 +17,7 @@
 		else{
 			explanation_div.hide();
 			data_div.show();
-			that.text('❔');
+			that.text('<span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span>');
 		}
 	}
 
@@ -179,6 +179,7 @@
 							<div class="graph_info" style="display:none;">
 								<div class="row">
 									<div class="col-sm-10">
+										<h3>Page Load Speed</h3>
 										<p>{{ explanations.pagespeed}}</p>
 									</div>
 								</div>
@@ -226,6 +227,7 @@
 							<div class="graph_info" style="display:none;">
 								<div class="row">
 									<div class="col-sm-10">
+										<h3>Optimization Status</h3>
 										<p>{{ explanations.opt}}</p>
 									</div>
 								</div>
@@ -261,7 +263,7 @@
 		props: {metric: {type: String}},
 		template: `
 		<div class="info-toggle-button">
-			<span v-on:click="toggleInfoDiv2(metric, $event);">❔</span>
+			<span v-on:click="toggleInfoDiv2(metric, $event);"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></span>
 		</div>
 		`,
 		methods: {
