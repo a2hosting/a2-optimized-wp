@@ -14,8 +14,8 @@ if (! defined('WPINC')) {
 include_once('A2_Optimized_OptionsManager.php');
 
 class A2_Optimized_Plugin extends A2_Optimized_OptionsManager {
-	public const optionInstalled = '_installed';
-	public const optionVersion = '_version';
+	const optionInstalled = '_installed';
+	const optionVersion = '_version';
 	private $config_pages = [
 		'w3tc_dashboard',
 		'w3tc_general',
