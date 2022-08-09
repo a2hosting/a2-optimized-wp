@@ -270,4 +270,22 @@ $warn: $orange;
     .padding-bottom {
         padding-bottom: 15px;
     }
+
+    #circles-ttfb,
+    #circles-cls {
+        .circles-text {
+            left: -32px;
+            top: -10px;
+            font-size: 39px;
+        }
+    }
+
+    #circles-overall_score {
+        .circles-text {
+            left: -32px;
+            top: -10px;
+            font-size: 39px;
+        }
+    }
+
 }

@@ -32,7 +32,8 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 
 			$data = [
 				'mainkey' => 1,
-				'content-element' => '<page-speed-score :key="mainkey"></page-speed-score>',
+				'updateView' => 0,
+				'content-element' => '<page-speed-score :update-Child="updateView" :key="mainkey"></page-speed-score>',
 				'home_url' => home_url(),
 				'nav' => [
 					'pls_class' => 'current'
@@ -68,13 +69,14 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 
 			$data = [
 				'mainkey' => 1,
-				'content-element' => '<server-performance :key="mainkey"></server-performance>',
+				'updateView' => 0,
+				'content-element' => '<server-performance :update-Child="updateView" :key="mainkey"></server-performance>',
 				'home_url' => home_url(),
 				'nav' => [
 					'wsp_class' => 'current'
 				],
 				'last_check_date' => $last_check,
-				'performance' => $graphs,
+				'graphs' => $graphs,
 			];
 			$data_json = json_encode($data);
 			if ($args['run_benchmarks']) {

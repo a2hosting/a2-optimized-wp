@@ -50,7 +50,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$page = $_POST['a2_page'];
 			$frontend_data = $this->get_frontend_benchmark(false);//false for now while getting the UI in order
 
-			if ($page == 'server_performance') {
+			if ($page == 'server-performance') {
 				$frontend_data = $frontend_data['pagespeed_desktop'];
 			}
 
@@ -154,8 +154,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result['pagespeed_mobile'] = false;
 			}
 
-			//print_r($result);
-
 			//$backend_benchmarks = get_option('a2opt-benchmarks-hosting');
 			//$bm = array_pop($backend_benchmarks);
 			//print_r($bm);
@@ -241,16 +239,17 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		public function get_graph_data($last_check_date, $latest, $previous) {
 			$metrics = ['overall_score', 'fcp', 'ttfb', 'cls','lcp', 'fid'];
 
-			//print_r(json_encode(array_keys($previous['scores'])) . "<br>");
-			//$latest['scores']['overall_score'] = 10;
-			//$latest['scores']['ttfb'] = 600;
-			//$latest['scores']['lcp'] = 5000;
-			//$previous['scores']['overall_score'] = 50;
 			$result = [];
 			foreach ($metrics as $metric) {
 				$latest_score = $latest['scores'][$metric];
 				$previous_score = $previous['scores'][$metric];
 				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
+
+				$latest_score = rand(0, $status_info['thresholds']['max']);
+				$previous_score = rand(0, $status_info['thresholds']['max']);
+				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
+
+
 				$data = [
 					'last_check_date' => $last_check_date,
 					'score' => $latest_score,
@@ -263,9 +262,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 				$direction = 'none';
 				$percent_change = 0;
-				//print_r("{$metric}: {$latest_score} - {$previous_score}<br>");
 				$diff = $latest_score - $previous_score;
-				//print_r("{$diff}<br>");
 				if ($diff != 0) {
 					if ($diff < 0) {
 						$direction = 'down';
@@ -275,7 +272,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 					$diff = abs($diff);
 					$percent_change = $diff; // i'm not really sure what formula they want us to use for this
 				}
-				//print_r("{$percent_change} - {$direction}<br>");
 				$data['last_check_percent'] = $percent_change;
 				$data['last_check_dir'] = $direction;
 
@@ -284,7 +280,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result[$metric] = $data;
 
 				$audits = [];
-				//print_r(json_encode($fbm['scores']['audit_result']['first-contentful-paint']));
 				$lcv = 0;
 				foreach ($latest['scores']['audit_result'] as $audit) {
 					$audits[] = [
@@ -301,7 +296,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				];
 
 				$result['recommendations'] = array_merge($result['recommendations'], self::BENCHMARK_DISPLAY_DATA['recommendations']);
-				//print_r($result); wp_die();
 			}
 
 			return $result;

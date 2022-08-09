@@ -208,5 +208,16 @@
 #a2-optimized-wrapper .padding-bottom {
   padding-bottom: 15px;
 }
+#a2-optimized-wrapper #circles-ttfb .circles-text,
+#a2-optimized-wrapper #circles-cls .circles-text {
+  left: -32px;
+  top: -10px;
+  font-size: 39px;
+}
+#a2-optimized-wrapper #circles-overall_score .circles-text {
+  left: -32px;
+  top: -10px;
+  font-size: 39px;
+}
 
 /*# sourceMappingURL=a2-optimized.css.map */
