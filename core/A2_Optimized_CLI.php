@@ -7,6 +7,10 @@ if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+if (defined( 'WP_CLI' ) && WP_CLI && class_exists( 'WP_CLI' )) {
+	WP_CLI::add_command( 'a2-optimized', 'A2_Optimized_CLI' );
+}
+
 class A2_Optimized_CLI {
 	/**
 	 * Clear the page cache.
@@ -46,11 +50,11 @@ class A2_Optimized_CLI {
 	public function clear($args, $assoc_args) {
 		$assoc_args = wp_parse_args(
 			$assoc_args,
-			array(
+			[
 				'ids' => '',
 				'urls' => '',
 				'sites' => '',
-			)
+			]
 		);
 
 		if ( empty( $assoc_args['ids'] ) && empty( $assoc_args['urls'] ) && empty( $assoc_args['sites'] ) ) {
@@ -84,7 +88,7 @@ class A2_Optimized_CLI {
 			}
 		}
 	}
-	
+
 	/**
 	 * Enables various parts of the A2 Optimized plugin
 	 *
@@ -108,7 +112,7 @@ class A2_Optimized_CLI {
 	 *    Success: Site Page Cache enabled.
 	 *
 	 */
-	
+
 	public function enable($args, $assoc_args) {
 		$options_manager = new A2_Optimized_OptionsManager;
 		$to_enable = $args[0];
@@ -123,47 +127,55 @@ class A2_Optimized_CLI {
 				$options_manager->enable_a2_page_cache();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Page Cache enabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'object_cache':
 				$options_manager->enable_a2_object_cache();
-				
+
 				return WP_CLI::success(esc_html__( $site_type . ' Object Cache enabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'gzip':
 				$options_manager->enable_a2_page_cache_gzip();
 
 				return WP_CLI::success(esc_html__( $site_type . ' GZIP enabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'html_min':
 				$options_manager->enable_a2_page_cache_minify_html();
 
 				return WP_CLI::success(esc_html__( $site_type . ' HTML Minify enabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'cssjs_min':
 				$options_manager->enable_a2_page_cache_minify_jscss();
 
 				return WP_CLI::success(esc_html__( $site_type . ' JS/CSS Minify enabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'xmlrpc':
 				$options_manager->enable_xmlrpc_requests();
 
 				return WP_CLI::success(esc_html__( $site_type . ' XML-RPC Request Blocking enabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'htaccess':
 				$options_manager->set_deny_direct(true);
 				$options_manager->write_htaccess();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Deny Direct Access to .htaccess enabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'lock_plugins':
 				$options_manager->set_lockdown(true);
 				$options_manager->write_wp_config();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Lock editing of Plugins and Themes enabled.', 'a2-optimized-wp' ));
+
 				break;
 		}
 	}
-	
+
 	/**
 	 * Disables various parts of the A2 Optimized plugin
 	 *
@@ -187,10 +199,10 @@ class A2_Optimized_CLI {
 	 *    Success: Site Page Cache disabled.
 	 *
 	 */
-	
+
 	public function disable($args, $assoc_args) {
 		$options_manager = new A2_Optimized_OptionsManager;
-		
+
 		$to_disable = $args[0];
 
 		$site_type = 'Site';
@@ -202,47 +214,55 @@ class A2_Optimized_CLI {
 				$options_manager->disable_a2_page_cache();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Page Cache disabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'object_cache':
 				$options_manager->disable_a2_object_cache();
-				
+
 				return WP_CLI::success(esc_html__( $site_type . ' Object Cache disabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'gzip':
 				$options_manager->disable_a2_page_cache_gzip();
 
 				return WP_CLI::success(esc_html__( $site_type . ' GZIP disabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'html_min':
 				$options_manager->disable_a2_page_cache_minify_html();
 
 				return WP_CLI::success(esc_html__( $site_type . ' HTML Minify disabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'cssjs_min':
 				$options_manager->disable_a2_page_cache_minify_jscss();
 
 				return WP_CLI::success(esc_html__( $site_type . ' JS/CSS Minify disabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'xmlrpc':
 				$options_manager->disable_xmlrpc_requests();
 
 				return WP_CLI::success(esc_html__( $site_type . ' XML-RPC Request Blocking disabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'htaccess':
 				$options_manager->set_deny_direct(false);
 				$options_manager->write_htaccess();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Deny Direct Access to .htaccess disabled.', 'a2-optimized-wp' ));
+
 				break;
 			case 'lock_plugins':
 				$options_manager->set_lockdown(false);
 				$options_manager->write_wp_config();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Lock editing of Plugins and Themes disabled.', 'a2-optimized-wp' ));
+
 				break;
 		}
 	}
-	
+
 	public function memcached_server($args, $assoc_args) {
 		$server_address = $args[0];
 
@@ -250,7 +270,7 @@ class A2_Optimized_CLI {
 		if (is_multisite()) {
 			$site_type = 'Network';
 		}
-	
+
 		update_option('a2_optimized_memcached_server', $server_address);
 
 		$options_manager = new A2_Optimized_OptionsManager;
@@ -262,14 +282,14 @@ class A2_Optimized_CLI {
 	/**
 	 * Returns a site health report for the current site
 	 */
-	public function site_health($args, $assoc_args){
+	public function site_health($args, $assoc_args) {
 		if ( ! class_exists( 'WP_Debug_Data' ) ) {
 			require_once ABSPATH . 'wp-admin/includes/class-wp-debug-data.php';
 		}
 
 		$output_filename = ABSPATH . 'a2-opt-sitehealth-' . date('Y-m-d_H-i-s') . '.txt';
 
-		if($fh = fopen($output_filename, 'w+')){
+		if ($fh = fopen($output_filename, 'w+')) {
 			$WP_Debug_Data = new WP_Debug_Data();
 			new A2_Optimized_SiteHealth;
 			$info = $WP_Debug_Data::debug_data();
@@ -278,32 +298,32 @@ class A2_Optimized_CLI {
 			fwrite($fh, $current_site_health);
 			fclose($fh);
 
-			echo "Saved site health report to " . $output_filename . "\n\r";
+			echo 'Saved site health report to ' . $output_filename . "\n\r";
 		} else {
 			echo "Error writing report file, check file permissions\n\r";
-		};
+		}
 	}
 
 	/**
 	 * This command is for pruning the number of benchmark results in the WP options.
 	 * Interfaces with A2_Optimized_Benchmark class
-	 * 
+	 *
 	 * ## OPTIONS
-	 * 
+	 *
 	 * frontend|backend [which set of results to prune]
 	 * items: Number of items to keep (defaults to 25)
-	 * 
+	 *
 	 * ## EXAMPLES
-	 * 
+	 *
 	 *    # Prune backend results to default (25)
 	 *    $ wp a2-optimized prune backend
-	 * 
+	 *
 	 *    # Prune frontend results to 10
 	 *    $ wp a2-optimized prune frontend 10
 	 */
 	public function prune($args, $assoc_args) {
 		$a2opt_benchmark = new A2_Optimized_Benchmark();
-		
+
 		$benchmark_type = empty($args[0]) ? null : $args[0]; // frontend / backend
 
 		if (empty($benchmark_type)) {
@@ -318,6 +338,7 @@ class A2_Optimized_CLI {
 		if (!$benchmark_type || ($benchmark_type != 'frontend' && $benchmark_type != 'backend')) {
 			echo "Please specify a benchmark to prune (frontend or backend)\n\r";
 			echo "wp a2-optimized prune [items_to_keep]\n\r";
+
 			return;
 		}
 
@@ -326,6 +347,7 @@ class A2_Optimized_CLI {
 			$items_to_keep = $args[1];
 			if (!is_numeric($items_to_keep) || $items_to_keep < 0 || $items_to_keep > 25) {
 				echo "Please enter an integer value between 0 and 25 for the number of records to keep.\n\r";
+
 				return;
 			}
 			$items_to_keep = intval($args[1]);
@@ -335,8 +357,11 @@ class A2_Optimized_CLI {
 		$a2opt_benchmark->prune_benchmarks($benchmark_type, $items_to_keep);
 
 		$post_prune_benchmarks = [];
-		if ($benchmark_type == 'frontend') $post_prune_benchmarks = get_option('a2opt-benchmarks-frontend');
-		elseif ($benchmark_type == 'backend') $post_prune_benchmarks = get_option('a2opt-benchmarks-hosting');
+		if ($benchmark_type == 'frontend') {
+			$post_prune_benchmarks = get_option('a2opt-benchmarks-frontend');
+		} elseif ($benchmark_type == 'backend') {
+			$post_prune_benchmarks = get_option('a2opt-benchmarks-hosting');
+		}
 		echo 'After pruning, there are ' . count($post_prune_benchmarks) . ' ' . $benchmark_type . " records\r\n";
 	}
 
@@ -357,7 +382,7 @@ class A2_Optimized_CLI {
 	 *
 	 * --test_runs: Multiplier for number of executions on the PHP benchmarks
 	 * --json: If this argument is present, output the results in JSON format
-	 * 
+	 *
 	 * ## EXAMPLES
 	 *
 	 *    # Run backend tests
@@ -371,13 +396,13 @@ class A2_Optimized_CLI {
 	 *
 	 *    # View specific frontend result (enclose date in single quotes)
 	 *    $ wp a2-optimized benchmarks view frontend '2022-04-11 10:37:15'
-	 * 
+	 *
 	 *    # Run backend PHP tests only, and output results as json
 	 *    $ wp a2-optimized benchmarks run backend php --json
 	 */
-	public function benchmarks($args, $assoc_args){
+	public function benchmarks($args, $assoc_args) {
 		$a2opt_benchmark = new A2_Optimized_Benchmark();
-		
+
 		$sub_command = empty($args[0]) ? null : $args[0]; // run/view
 		$benchmark_type = empty($args[1]) ? null : $args[1]; // frontend / backend
 		$selected_benchmark = empty($args[2]) ? null : $args[2]; // latest or date
@@ -390,7 +415,7 @@ class A2_Optimized_CLI {
 			echo "\texample:\n\r";
 			echo "\twp a2-optimized benchmarks run backend\n\r";
 		}
-		
+
 		$selected_benchmark = empty($args[2]) ? null : $args[2]; // frontend: latest or date; backend: php mysql wordpress filesystem
 
 		$test_runs_multiplier = 1.0;
@@ -398,6 +423,7 @@ class A2_Optimized_CLI {
 			$multiplier = $assoc_args['test_runs'];
 			if (!is_numeric($multiplier)) {
 				echo "Please enter a floating-point value between 0.1 and 10.0 for the test runs multiplier.\n\r";
+
 				return;
 			}
 			$test_runs_multiplier = floatval($assoc_args['test_runs']);
@@ -420,15 +446,18 @@ class A2_Optimized_CLI {
 			echo "\twp a2-optimized benchmarks view frontend '2022-04-11 10:37:15'\n\r";
 		}
 
-		if ($sub_command == "run") {
+		if ($sub_command == 'run') {
 			if (!$benchmark_type) {
 				echo "Please specify a benchmark to run\n\r";
 				echo "wp a2-optimized benchmark run frontend|backend\n\r";
+
 				return;
 			}
 
-			if ($benchmark_type == "frontend") {
-				if (!$output_json) echo "Running frontend benchmarks. This may take a couple of minutes\n\r";
+			if ($benchmark_type == 'frontend') {
+				if (!$output_json) {
+					echo "Running frontend benchmarks. This may take a couple of minutes\n\r";
+				}
 				if (!$selected_benchmark || !in_array($selected_benchmark, ['desktop', 'mobile'])) {
 					$selected_benchmark = 'desktop';
 				}
@@ -442,45 +471,67 @@ class A2_Optimized_CLI {
 				if ($result['status'] == 'success') {
 					$frontend_benchmarks = get_option('a2opt-benchmarks-frontend');
 					$frontend_benchmarks_last = array_pop($frontend_benchmarks);
-					if ($output_json) echo json_encode($frontend_benchmarks_last);
-					else echo $this->format_frontend_results($frontend_benchmarks_last);
+					if ($output_json) {
+						echo json_encode($frontend_benchmarks_last);
+					} else {
+						echo $this->format_frontend_results($frontend_benchmarks_last);
+					}
 				}
 			}
 
-			if ($benchmark_type == "backend") {
+			if ($benchmark_type == 'backend') {
 				if ($selected_benchmark) {
 					$result = false;
 					switch ($selected_benchmark) {
 						case 'php':
-							if (!$output_json) echo "Running PHP benchmarks. Please wait a moment.\r\n";
+							if (!$output_json) {
+								echo "Running PHP benchmarks. Please wait a moment.\r\n";
+							}
 							$result = $a2opt_benchmark->run_php_benchmarks($test_runs_multiplier);
 							$result = $result['total'];
+
 							break;
 						case 'mysql':
-							if (!$output_json) echo "Running MySQL benchmarks. Please wait a moment.\r\n";
+							if (!$output_json) {
+								echo "Running MySQL benchmarks. Please wait a moment.\r\n";
+							}
 							$result = $a2opt_benchmark->run_mysql_benchmarks();
 							$result = $result['benchmark']['mysql_total'];
+
 							break;
 						case 'wordpress':
-							if (!$output_json) echo "Running Wordpress benchmarks. Please wait a moment.\r\n";
+							if (!$output_json) {
+								echo "Running Wordpress benchmarks. Please wait a moment.\r\n";
+							}
 							$result = $a2opt_benchmark->run_wordpress_benchmarks();
 							$result = $result['queries_per_second'];
+
 							break;
 						case 'filesystem':
-							if (!$output_json) echo "Running filesystem benchmarks. Please wait a moment.\r\n";
+							if (!$output_json) {
+								echo "Running filesystem benchmarks. Please wait a moment.\r\n";
+							}
 							$result = $a2opt_benchmark->run_filesystem_benchmarks();
+
 							break;
 						default:
 							echo "Please supply one of the following benchmarks: php mysql wordpress filesystem\n\r";
 					}
 
 					if ($result) {
-						if (!$output_json) echo "Benchmarking complete\n\r";
-						if ($output_json) echo json_encode($result);
-						else  echo 'Result: ' . $result . "\n\r";
+						if (!$output_json) {
+							echo "Benchmarking complete\n\r";
+						}
+						if ($output_json) {
+							echo json_encode($result);
+						} else {
+							echo 'Result: ' . $result . "\n\r";
+						}
 					}
 				} else {
-					if (!$output_json) echo "Running backend benchmarks. This may take a couple of minutes\n\r";
+					if (!$output_json) {
+						echo "Running backend benchmarks. This may take a couple of minutes\n\r";
+					}
 					$result = $a2opt_benchmark->run_hosting_test_suite();
 
 					if (!$output_json) {
@@ -488,15 +539,18 @@ class A2_Optimized_CLI {
 						echo $result['message'] . "\n\r";
 					}
 					if ($result['status'] == 'success') {
-						if ($output_json) echo json_encode($result['data']);
-						else echo $this->format_backend_results($result['data']);
+						if ($output_json) {
+							echo json_encode($result['data']);
+						} else {
+							echo $this->format_backend_results($result['data']);
+						}
 					}
 				}
 			}
 		}
 
-		if ($sub_command == "view") {
-			if ($benchmark_type == "frontend") {
+		if ($sub_command == 'view') {
+			if ($benchmark_type == 'frontend') {
 				$benchmarks = get_option('a2opt-benchmarks-frontend');
 				if (!$selected_benchmark) {
 					if (!$output_json) {
@@ -507,34 +561,38 @@ class A2_Optimized_CLI {
 					if (empty($benchmarks)) {
 						echo "No results found\n\r";
 					} else {
-						if ($output_json) echo json_encode($benchmarks);
-						else {
+						if ($output_json) {
+							echo json_encode($benchmarks);
+						} else {
 							foreach ($benchmarks as $benchmark_date => $item) {
-								echo ' * ' . $benchmark_date . ' - ' . $item['strategy'] . "\n\r"; 
+								echo ' * ' . $benchmark_date . ' - ' . $item['strategy'] . "\n\r";
 							}
 						}
 					}
 				} else {
 					$found_benchmark = false;
-					if($selected_benchmark == 'latest'){
+					if ($selected_benchmark == 'latest') {
 						$benchmark = array_pop($benchmarks);
 						$found_benchmark = true;
 					} else {
-						if(!array_key_exists($selected_benchmark, $benchmarks)){
+						if (!array_key_exists($selected_benchmark, $benchmarks)) {
 							echo "\n\rCould not find requested benchmark\n\r";
 						} else {
 							$benchmark = $benchmarks[$selected_benchmark];
 							$found_benchmark = true;
 						}
 					}
-					if($found_benchmark){
-						if ($output_json) echo json_encode($benchmark);
-						else echo $this->format_frontend_results($benchmark);
-					} 
+					if ($found_benchmark) {
+						if ($output_json) {
+							echo json_encode($benchmark);
+						} else {
+							echo $this->format_frontend_results($benchmark);
+						}
+					}
 				}
 				echo "\n\r";
 			}
-			if ($benchmark_type == "backend") {
+			if ($benchmark_type == 'backend') {
 				$benchmarks = get_option('a2opt-benchmarks-hosting');
 				if (!$selected_benchmark) {
 					if (!$output_json) {
@@ -545,63 +603,65 @@ class A2_Optimized_CLI {
 					if (empty($benchmarks)) {
 						echo "No results found\n\r";
 					} else {
-						if ($output_json) echo json_encode($benchmarks);
-						else {
+						if ($output_json) {
+							echo json_encode($benchmarks);
+						} else {
 							foreach ($benchmarks as $benchmark_date => $item) {
-								echo ' * ' . $benchmark_date . "\n\r"; 
+								echo ' * ' . $benchmark_date . "\n\r";
 							}
 						}
 					}
 				} else {
 					$found_benchmark = false;
-					if($selected_benchmark == 'latest'){
+					if ($selected_benchmark == 'latest') {
 						$benchmark = array_pop($benchmarks);
 						$found_benchmark = true;
 					} else {
-						if(!array_key_exists($selected_benchmark, $benchmarks)){
+						if (!array_key_exists($selected_benchmark, $benchmarks)) {
 							echo "\n\rCould not find requested benchmark\n\r";
 						} else {
 							$benchmark = $benchmarks[$selected_benchmark];
 							$found_benchmark = true;
 						}
 					}
-					if($found_benchmark){
-						if ($output_json) echo json_encode($benchmark);
-						else echo $this->format_backend_results($benchmark);
-					} 
-					
-				} 
+					if ($found_benchmark) {
+						if ($output_json) {
+							echo json_encode($benchmark);
+						} else {
+							echo $this->format_backend_results($benchmark);
+						}
+					}
+				}
 				echo "\n\r";
 			}
-
 		}
 
 		$a2opt_benchmark->prune_benchmarks('frontend');
 		$a2opt_benchmark->prune_benchmarks('backend');
 	}
 
-	private function format_frontend_results($data){
+	private function format_frontend_results($data) {
 		$output = "\n\rFrontend Results\n\r";
 		$output .= "==========================\n\r";
-		$output .= "Device: " . $data['strategy'] . "\n\r";
-		$output .= "Overall Score: " . $data['scores']['overall_score'] . "\n\r";
-		$output .= "FCP: " . $data['scores']['fcp'] . "\n\r";
-		$output .= "TTFB: " . $data['scores']['ttfb'] . "\n\r";
-		$output .= "LCP: " . $data['scores']['lcp'] . "\n\r";
-		$output .= "FID: " . $data['scores']['fid'] . "\n\r";
-		$output .= "CLS: " . $data['scores']['cls'] . "\n\r";
-		
+		$output .= 'Device: ' . $data['strategy'] . "\n\r";
+		$output .= 'Overall Score: ' . $data['scores']['overall_score'] . "\n\r";
+		$output .= 'FCP: ' . $data['scores']['fcp'] . "\n\r";
+		$output .= 'TTFB: ' . $data['scores']['ttfb'] . "\n\r";
+		$output .= 'LCP: ' . $data['scores']['lcp'] . "\n\r";
+		$output .= 'FID: ' . $data['scores']['fid'] . "\n\r";
+		$output .= 'CLS: ' . $data['scores']['cls'] . "\n\r";
+
 		return $output;
 	}
-	
-	private function format_backend_results($data){
+
+	private function format_backend_results($data) {
 		$output = "\n\rBackend Results\n\r";
 		$output .= "==========================\n\r";
-		$output .= "Overall Score: " . round($data['wordpress_db']['queries_per_second']) . "\n\r";
-		$output .= "PHP: " . $data['php']['total'] . "\n\r";
-		$output .= "MySQL: " . $data['mysql']['benchmark']['mysql_total'] . "\n\r";
-		$output .= "Filesystem: " . $data['filesystem'] . "\n\r";
-		
+		$output .= 'Overall Score: ' . round($data['wordpress_db']['queries_per_second']) . "\n\r";
+		$output .= 'PHP: ' . $data['php']['total'] . "\n\r";
+		$output .= 'MySQL: ' . $data['mysql']['benchmark']['mysql_total'] . "\n\r";
+		$output .= 'Filesystem: ' . $data['filesystem'] . "\n\r";
+
 		return $output;
 	}
 
@@ -623,11 +683,11 @@ class A2_Optimized_CLI {
 	 *    $ wp a2-optimized recommendations show
 	 *
 	 */
-	
+
 	public function recommendations($args, $assoc_args) {
 		$options_manager = new A2_Optimized_OptionsManager;
 		$opts = new A2_Optimized_Optimizations($options_manager);
-		
+
 		$action = $args[0];
 
 		$output = '';
@@ -637,23 +697,23 @@ class A2_Optimized_CLI {
 				$output .= "We would enable the following optimizations:\n";
 				$optimizations = $opts->get_recommended_optimizations();
 				/* Run tests for each item */
-				foreach($optimizations as $k => $optimization){
-					if(isset($optimization['is_configured'])){
+				foreach ($optimizations as $k => $optimization) {
+					if (isset($optimization['is_configured'])) {
 						$optimizations[$k]['is_configured']($optimizations[$k]);
 					}
 				}
 
 				$optimization_count = 0;
-				foreach($optimizations as $k => $optimization){
-					if(!$optimization['configured']){
-						if(!isset($optimization['compatibility_issue'])){
+				foreach ($optimizations as $k => $optimization) {
+					if (!$optimization['configured']) {
+						if (!isset($optimization['compatibility_issue'])) {
 							$output .= $optimization['name'] . "\n";
 							$optimization_count++;
 						}
 					}
 				}
 
-				if($optimization_count == 0){
+				if ($optimization_count == 0) {
 					$output = "Site is already optimized!\n\n";
 				}
 
@@ -679,6 +739,3 @@ class A2_Optimized_CLI {
 		echo $output;
 	}
 }
-
-// add WP-CLI command
-WP_CLI::add_command( 'a2-optimized', 'A2_Optimized_CLI' );

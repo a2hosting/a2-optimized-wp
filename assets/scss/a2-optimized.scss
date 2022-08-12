@@ -166,17 +166,17 @@ $warn: $orange;
 
             &.wave-bg {
                 &.success {
-                    background: url("../images/wave-success.png") no-repeat bottom;
+                    background: url("../../images/admin/wave-success.png") no-repeat bottom;
                     background-size: 110%, 75%;
                 }
 
                 &.warn {
-                    background: url("../images/wave-danger.png") no-repeat bottom;
+                    background: url("../../images/admin/wave-danger.png") no-repeat bottom;
                     background-size: 110%;
                 }
 
                 &.danger {
-                    background: url("../images/wave-danger.png") no-repeat bottom;
+                    background: url("../../images/admin/wave-danger.png") no-repeat bottom;
                     background-size: 110%;
                 }
             }
@@ -266,4 +266,26 @@ $warn: $orange;
     span.warn {
         color: $warn;
     }
+
+    .padding-bottom {
+        padding-bottom: 15px;
+    }
+
+    #circles-ttfb,
+    #circles-cls {
+        .circles-text {
+            left: -32px;
+            top: -10px;
+            font-size: 39px;
+        }
+    }
+
+    #circles-overall_score {
+        .circles-text {
+            left: -32px;
+            top: -10px;
+            font-size: 39px;
+        }
+    }
+
 }

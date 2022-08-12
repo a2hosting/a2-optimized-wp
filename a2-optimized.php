@@ -24,6 +24,14 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
+define( 'A2OPT_VERSION', '3.0' );
+define( 'A2OPT_FULL_VERSION', '3.0' );
+define( 'A2OPT_MIN_PHP', '5.6' );
+define( 'A2OPT_MIN_WP', '5.1' );
+define( 'A2OPT_FILE', __FILE__ );
+define( 'A2OPT_BASE', plugin_basename( __FILE__ ) );
+define( 'A2OPT_DIR', __DIR__ );
+
 /**
  * Creates/Maintains the object of Requirements Checker Class
  *
@@ -48,10 +56,9 @@ function plugin_requirements_checker() {
  * @since    1.0.0
  */
 function run_a2_optimized() {
-
 	// If Plugins Requirements are not met.
 	if ( ! plugin_requirements_checker()->requirements_met() ) {
-		add_action( 'admin_notices', array( plugin_requirements_checker(), 'show_requirements_errors' ) );
+		add_action( 'admin_notices', [ plugin_requirements_checker(), 'show_requirements_errors' ] );
 
 		// Deactivate plugin immediately if requirements are not met.
 		require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
@@ -79,8 +86,8 @@ function run_a2_optimized() {
 	$routes = apply_filters( 'a2_optimized_routes_file', plugin_dir_path( __FILE__ ) . 'routes.php' );
 	$GLOBALS['a2_optimized'] = new A2_Optimized( $router_class_name, $routes );
 
-	register_activation_hook( __FILE__, array( new A2_Optimized\App\Activator(), 'activate' ) );
-	register_deactivation_hook( __FILE__, array( new A2_Optimized\App\Deactivator(), 'deactivate' ) );
+	register_activation_hook( __FILE__, [ new A2_Optimized\App\Activator(), 'activate' ] );
+	register_deactivation_hook( __FILE__, [ new A2_Optimized\App\Deactivator(), 'deactivate' ] );
 }
 
 run_a2_optimized();

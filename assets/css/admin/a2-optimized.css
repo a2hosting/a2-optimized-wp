@@ -131,15 +131,15 @@
   padding: 0 10px;
 }
 #a2-optimized-wrapper #a2-optimized-serverperformance .box-element.wave-bg.success {
-  background: url("../images/wave-success.png") no-repeat bottom;
+  background: url("../../images/admin/wave-success.png") no-repeat bottom;
   background-size: 110%, 75%;
 }
 #a2-optimized-wrapper #a2-optimized-serverperformance .box-element.wave-bg.warn {
-  background: url("../images/wave-danger.png") no-repeat bottom;
+  background: url("../../images/admin/wave-danger.png") no-repeat bottom;
   background-size: 110%;
 }
 #a2-optimized-wrapper #a2-optimized-serverperformance .box-element.wave-bg.danger {
-  background: url("../images/wave-danger.png") no-repeat bottom;
+  background: url("../../images/admin/wave-danger.png") no-repeat bottom;
   background-size: 110%;
 }
 #a2-optimized-wrapper #a2-optimized-serverperformance .box-element h4 {
@@ -204,6 +204,20 @@
 }
 #a2-optimized-wrapper span.warn {
   color: #FC8C1E;
+}
+#a2-optimized-wrapper .padding-bottom {
+  padding-bottom: 15px;
+}
+#a2-optimized-wrapper #circles-ttfb .circles-text,
+#a2-optimized-wrapper #circles-cls .circles-text {
+  left: -32px;
+  top: -10px;
+  font-size: 39px;
+}
+#a2-optimized-wrapper #circles-overall_score .circles-text {
+  left: -32px;
+  top: -10px;
+  font-size: 39px;
 }
 
 /*# sourceMappingURL=a2-optimized.css.map */
