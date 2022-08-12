@@ -639,7 +639,10 @@ class A2_Optimized_Benchmark {
 				'total' => '1.927',
 			],
 			'mysql' => '2.5',
-			'wordpress_db' => '190',
+			'wordpress_db' => [
+				'time' => '5',
+				'queries_per_second' => '190',
+			],
 			'filesystem' => '1.4',
 		];
 		
@@ -655,7 +658,10 @@ class A2_Optimized_Benchmark {
 				'total' => '1.333',
 			],
 			'mysql' => '1.6',
-			'wordpress_db' => '1450',
+			'wordpress_db' => [
+				'time' => '.7',
+				'queries_per_second' => '1450',
+			],
 			'filesystem' => '0.9',
 		];
 

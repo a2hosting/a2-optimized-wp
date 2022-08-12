@@ -1,39 +1,536 @@
 <div class="wrap">
 <script> 
 	let page_data = <?php echo $data['data_json'] ?>;
-
-	// scripts that should be shared in a header or footer
-
-/*
-	function getLinePath(x,y, length, color){
-		var path = document.createElementNS("http://www.w3.org/2000/svg", "path");
-		path.setAttribute("fill", "transparent");
-		path.setAttribute("stroke", color);
-		path.setAttribute("stroke-width", "10");
-		path.setAttribute("stroke-linecap", "round");
-		path.setAttribute("stroke-linejoin", "round");
-		path.setAttribute("class", "line-graph-style");
-		path.setAttribute("d", "m " + x + "," + y +" h " + length + " Z");
-
-		return path;
-
-	}
-
-	// thanks stackoverflow! https://stackoverflow.com/questions/1740700/how-to-get-hex-color-value-rather-than-rgb-value
-	const rgb2hex = (rgb) => `#${rgb.match(/^rgb\((\d+),\s*(\d+),\s*(\d+)\)$/).slice(1).map(n => parseInt(n, 10).toString(16).padStart(2, '0')).join('')}`
-
-	let palette = [];
-	jQuery( document ).ready( function( $ ) {
-		jQuery("#color-palette span").each(function (index, elem){
-			var $j = jQuery(elem);
-			var color = rgb2hex($j.css('color'));
-			var colorClass = $j.attr('class');
-			palette[colorClass] = color;
-		});
-	});
-	*/
+	page_data.showModal = false;
 </script>
+<script type="text/x-template" id="info-button-template">
+	<div class="info-toggle-button">
+		<span @click="toggleInfoDiv(metric, $event);"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></span>
+	</div>
+</script>
+<script type="text/x-template" id="graph-legend-template">
+	<div class="col-sm-10 graph-legend ">
+		<div class="row graph-legend-header">
+			<div class="col-sm-4 success">
+				good
+			</div>
+			<div class="col-sm-4 warn">
+				not good
+			</div>
+			<div class="col-sm-4 danger">
+				bad
+			</div>
+		</div>
+		<div class="row">
+			<div class="col-sm-4">
+				&nbsp;
+			</div>
+			<div class="col-sm-4 left-label">
+				<span>&nbsp;{{thresholds.warn}}</span>
+			</div>
+			<div class="col-sm-4 left-label">
+				<span>&nbsp;{{thresholds.danger}}</span>
+			</div>
+		</div>
+	</div>
+</script>
+<script type="text/x-template" id="hosting-matchup-template">
+	<div class="col-sm-12">
+		<div class="row">
+			<div class="col-sm-2 side-nav">
+				<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance">Web Performance</a></p>
+				<p><a href="options-general.php?page=a2-optimized&a2_page=hosting_matchup">Hosting Matchup</a></p>
+			</div>
+			<div class="col-sm-10 border-left" id="a2-optimized-hostingmatchup">
+				<div class="row">
+					<div class="col-sm-6">
+						<div id="graph-webperformance" class="box-element success">
+							<info-button metric='webperformance'></info-button>
+							<div class="graph_info" style="display:none;">
+								<div class="row">
+									<div class="col-sm-11 col-sm-offset-1">
+										<h4>{{graphs.webperformance.display_text}}</h4>
+										<p>{{graphs.webperformance.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-10 col-sm-offset-1">
+										<p>{{ graphs.webperformance.explanation}}</p>
+									</div>
+								</div>
+							</div>
+							<div class="graph_data">
+								<div class="row">
+									<div class="col-sm-11 col-sm-offset-1">
+										<h4>{{graphs.webperformance.display_text}}</h4>
+										<p>{{graphs.webperformance.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row" style="max-height:500px;">
+									<div v-if="graphs" class="col-sm-11 col-sm-offset-1">
+										<canvas id="overall_wordpress_canvas" width="400" height="400"></canvas>
+									</div>
+									<div v-else>
+										<p>&nbsp; no data yet</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-6">
+						<div id="graph-serverperformance" class="box-element success">
+							<info-button metric='serverperformance'></info-button>
+							<div class="graph_info" style="display:none;">
+								<div class="row">
+									<div class="col-sm-11 col-sm-offset-1">
+										<h4>{{graphs.serverperformance.display_text}}</h4>
+										<p>{{graphs.serverperformance.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-10 col-sm-offset-1">
+										<p>{{ explanations.serverperformance}}</p>
+									</div>
+								</div>
+							</div>
+							<div class="graph_data">
+								<div class="row">
+									<div class="col-sm-11 col-sm-offset-1">
+										<h4>{{graphs.serverperformance.display_text}}</h4>
+										<p>{{graphs.serverperformance.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row" style="max-height:500px">
+									<div v-if="graphs" class="col-sm-11 col-sm-offset-1">
+										<canvas id="server_perf_canvas" width="400" height="400"></canvas>
+									</div>
+									<div v-else>
+										<p>&nbsp; no data yet</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<script type="text/x-template" id="page-speed-score-template">
+	<div class="row">
+		<div class="col-sm-10 col-sm-offset-1">
+			<div class="row">
+				<div class="col-sm-6">
+					<div id="graph-pagespeed" class="box-element success">
+						<info-button metric='pagespeed'></info-button>
+						<div class="graph_info" style="display:none;">
+							<div class="row header">
+								<div class="col-sm-8">
+									<h3>Page Load Speed</h3>
+								</div>
+								<div class="col-sm-4 text-right">
+									<p><a class="btn cta-btn-green" @click="pageSpeedCheck('page_speed_score')">Run check</a><br>
+									<span>Last Check: {{ last_check_date }}</span></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-10 col-sm-offset-1">
+									<p>{{ explanations.pagespeed}}</p>
+								</div>
+							</div>
+						</div>
+						<div class="graph_data">
+							<div class="row header">
+								<div class="col-sm-8">
+									<h3>Page Load Speed</h3>
+								</div>
+								<div class="col-sm-4 text-right">
+									<p><a class="btn cta-btn-green" @click="pageSpeedCheck('page_speed_score')">Run check</a><br>
+									<span>Last Check: {{ last_check_date }}</span></p>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-11 col-sm-offset-1">
+									<div v-if="graphs.pagespeed_mobile" class="col-sm-5 box-element" :class="graphs.pagespeed_mobile.overall_score.color_class">
+										<p class='box-title'>Mobile</p>
+										<div class="circle" id="circles-pls-mobile"></div>
+										<div v-if="graphs.pagespeed_mobile.overall_score.last_check_percent != 0">
+										<p><span :class="graphs.pagespeed_mobile.overall_score.color_class"><span class="glyphicon" :class="'glyphicon-arrow-' + graphs.pagespeed_mobile.overall_score.last_check_dir" aria-hidden="true"></span>{{ graphs.pagespeed_mobile.overall_score.last_check_percent }}%</span> Since Last Check</p>
+										</div>
+										<div v-else>
+											<p>&nbsp;</p>
+										</div>
+									</div>
+									<div v-if="graphs.pagespeed_desktop" class="col-sm-5 col-sm-offset-1 box-element" :class="graphs.pagespeed_desktop.overall_score.color_class">
+										<p class='box-title'>Desktop</p>
+										<div class="circle" id="circles-pls-desktop"></div>
+										<div v-if="graphs.pagespeed_desktop.overall_score.last_check_percent != 0">
+										<p><span :class="graphs.pagespeed_desktop.overall_score.color_class"><span class="glyphicon" :class="'glyphicon-arrow-' + graphs.pagespeed_desktop.overall_score.last_check_dir" aria-hidden="true"></span>{{ graphs.pagespeed_desktop.overall_score.last_check_percent }}%</span> Since Last Check</p>
+										</div>
+										<div v-else>
+											<p>&nbsp;</p>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col-sm-7">
+							<p>Data pulled from Google PageSpeed Insights</p>
+						</div>
+						<div class="col-sm-5 text-right">
+							<p>Compare with <a href="https://gtmetrix.com/" target="_blank">GTMetrix</a></p>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6" id="a2-optimized-optstatus">
+					<div id="graph-opt" class="box-element success">
+						<info-button metric='opt'></info-button>
+						<div class="graph_info" style="display:none;">
+							<div class="row header">
+								<div class="col-sm-12">
+									<h3>Optimization Status</h3>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-10 col-sm-offset-1">
+									<p>{{ explanations.opt}}</p>
+								</div>
+							</div>
+						</div>
+						<div class="graph_data">
+							<div class="row header">
+								<div class="col-sm-12">
+									<h3>Optimization Status</h3>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col-sm-11 col-sm-offset-1">
+									<div class="col-sm-11 box-element normal">
+										<div class="row">
+											<div class="col-sm-4 text-center">
+												<div class="circle" id="circles-opt-perf"></div>
+												Performance
+											</div>
+											<div class="col-sm-4 text-center">
+												<div class="circle" id="circles-opt-sec"></div>
+												Security
+											</div>
+											<div class="col-sm-4 text-center">
+												<div class="circle" id="circles-opt-bp"></div>
+												Best Practices
+											</div>
+										</div>
+									</div>
+								</div>
+								<div class="col-sm-10 col-sm-offset-1 text-right">
+									<p><a href="#" class="cta-link">Go to Recommendations</a></p>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<script type="text/x-template" id="server-performance-template">
+	<div class="col-sm-12">
+		<div class="row" style="">
+			<div class="col-sm-2 side-nav">
+				<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance">Web Performance</a></p>
+				<p><a href="options-general.php?page=a2-optimized&a2_page=hosting_matchup">Hosting Matchup</a></p>
+			</div>
+			<div class="col-sm-10 border-left" id="a2-optimized-serverperformance">
+				<div class="row padding-bottom">
+					<div class="col-sm-12">
+						<select name="server-perf-strategy" id="server-perf-strategy-select" class="form-element" @change="strategyChanged($event)">
+							<option selected value="desktop">Desktop</option>
+							<option value="mobile">Mobile</option>
+						</select>
+						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col-sm-4"> <!-- using graphs.ttfb -->
+						<div id="graph-ttfb" class="box-element normal graph-card wave-bg" :class="graphs.ttfb.color_class">
+							<info-button metric='ttfb'></info-button>
+							<div class="graph_data">
+								<div class="row">
+									<div class="col-sm-8">
+										<h4>{{graphs.ttfb.display_text}}</h4>
+										<p>{{graphs.ttfb.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="circle" id="circles-ttfb"></div>
+									</div>
+									<div class="col-sm-6">
+										<span class="glyphicon" :class="['glyphicon-arrow-' + graphs.ttfb.last_check_dir, graphs.ttfb.color_class]" style="font-size: 2em;"></span>
+										<br>
+										<span :class="graphs.ttfb.color_class">{{graphs.ttfb.last_check_percent}}</span>
+										<span>vs <br> last check</span>
+									</div>
+								</div>
+							</div>
+							<div class="graph_info" style="display:none;">
+								<div class="row">
+									<div class="col-sm-12">
+										<h4>{{graphs.ttfb.display_text}}</h4>
+										<p>{{ graphs.ttfb.explanation}}</p>
+									</div>
+								</div>
+							</div>
+							<div class="row graph-card_bottom" style="min-height: 50px;">
+								&nbsp;
+							</div>
+						</div>
+						<div id="graph-lcp" class="box-element normal graph-card" :class="graphs.lcp.color_class">
+							<info-button metric='lcp'></info-button>
+							<div class="graph_data">
+								<div class="row">
+									<div class="col-sm-10">
+										<h4>{{graphs.lcp.display_text}}</h4>
+										<p>{{graphs.lcp.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-10">
+										<div class="circle" id="circles-lcp"></div>
+										<div class="line-graph" id="line-graph-lcp"></div>
+									</div>
+								</div>
+								<div class="row">
+									<graph-legend metric='lcp'></graph-legend>
+								</div>
+							</div>
+							<div class="graph_info" style="display:none;">
+								<div class="row">
+									<div class="col-sm-10">
+										<h4>{{graphs.lcp.display_text}}</h4>
+										<p>{{ graphs.lcp.explanation}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="graph-fid" class="box-element normal graph-card" :class="graphs.fid.color_class">
+							<info-button metric='fid'></info-button>
+							<div class="graph_data">
+								<div class="row">
+									<div class="col-sm-12">
+										<h4>{{graphs.fid.display_text}}</h4>
+										<p>{{graphs.fid.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-10">
+										<div class="circle" id="circles-fid"></div>
+										<div class="line-graph" id="line-graph-fid"></div>
+									</div>
+								</div>
+								<div class="row">
+									<graph-legend metric='fid'></graph-legend>
+								</div>
+							</div>
+							<div class="graph_info" style="display:none;">
+								<div class="row">
+									<div class="col-sm-12">
+										<h4>{{graphs.fid.display_text}}</h4>
+										<p>{{ graphs.fid.explanation}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4 bg-green">
+						<div id="graph-overall_score" class="box-element normal graph-card-centered" :class="graphs.overall_score.color_class">
+							<info-button metric='overall_score'></info-button>
+							<div class="graph_data">
+								<div class="row">
+									<div class="col-sm-12">
+										<h4>{{graphs.overall_score.display_text}}</h4>
+										<p>{{graphs.overall_score.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<div class="circle" id="circles-overall_score"></div>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-12">
+										<span class="glyphicon" :class="['glyphicon-arrow-' + graphs.overall_score.last_check_dir,graphs.overall_score.color_class]" style="font-size: 2em;"></span>
+										<br>
+										<span :class="graphs.overall_score.color_class">{{graphs.overall_score.last_check_percent}}</span>
+										<span>vs <br> last check</span>
+									</div>
+								</div>
+							</div>
+							<div class="graph_info" style="display:none;">
+								<div class="row">
+									<div class="col-sm-12">
+										<h4>{{graphs.overall_score.display_text}}</h4>
+										<p>{{ graphs.overall_score.explanation}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="graph-Recommendations" class="box-element normal graph-card-centered ">
+							<info-button metric='Recommendations'></info-button>
+							<div class="graph_data">
+								<div class="row">
+									<div class="col-sm-12">
+										<h4>{{graphs.recommendations.display_text}}</h4>
+									</div>
+								</div>
+								<div class="row text-left" >
+									<div class="col-sm-12">
+									<ul>
+										<li v-for="recommendation in graphs.recommendations.list" :id="'rec_item_' + recommendation.lcv">
+											{{recommendation.display_text}} <a v-on:click='rec_toggle(recommendation.lcv)'><span :id="'rec_item_toggle_' + recommendation.lcv" class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+											<span style="display:none" :id="'rec_item_desc_' + recommendation.lcv ">
+												<span v-html='recommendation.description'></span>
+											</span>
+										</li>
+									</ul>
+									</div>
+								</div>
+							</div>
+							<div class="graph_info" style="display:none;">
+								<div class="row">
+									<div class="col-sm-12">
+										<h4>{{graphs.recommendations.display_text}}</h4>
+										<p>{{ graphs.recommendations.explanation}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-4">
+						<div id="graph-fcp" class="box-element normal graph-card" :class="graphs.fcp.color_class" >
+							<info-button metric='fcp'></info-button>
+							<div class="graph_data">
+								<div class="row">
+									<div class="col-sm-10">
+										<h4>{{graphs.fcp.display_text}}</h4>
+										<p>{{graphs.fcp.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-10">
+										<div class="circle" id="circles-fcp"></div>
+										<div class="line-graph" id="line-graph-fcp"></div>
+									</div>
+								</div>
+								<div class="row">
+									<graph-legend metric='fcp'></graph-legend>
+								</div>
+							</div>
+							<div class="graph_info" style="display:none;">
+								<div class="row">
+									<div class="col-sm-10">
+										<h4>{{graphs.fcp.display_text}}</h4>
+										<p>{{ graphs.fcp.explanation}}</p>
+									</div>
+								</div>
+							</div>
+						</div>
+						<div id="graph-cls" class="box-element normal graph-card wave-bg" :class="graphs.cls.color_class">
+							<info-button metric='cls'></info-button>
+							<div class="graph_data">
+								<div class="row">
+									<div class="col-sm-10">
+										<h4>{{graphs.cls.display_text}}</h4>
+										<p>{{graphs.cls.metric_text}}</p>
+									</div>
+								</div>
+								<div class="row">
+									<div class="col-sm-6">
+										<div class="circle" id="circles-cls"></div>
+									</div>
+									<div class="col-sm-6">
+										<span class="glyphicon" :class="['glyphicon-arrow-' + graphs.cls.last_check_dir,graphs.cls.color_class]" style="font-size: 2em;"></span>
+										<br>
+										<span :class="graphs.cls.color_class">{{graphs.cls.last_check_percent}}</span>
+										<span>vs <br> last check</span>
+									</div>
+								</div>
+								<div class="row">
+									<graph-legend metric='cls'></graph-legend>
+								</div>
+							</div>
+							<div class="graph_info" style="display:none;">
+								<div class="row">
+									<div class="col-sm-12">
+										<h4>{{graphs.cls.display_text}}</h4>
+										<p>{{ graphs.cls.explanation}}</p>
+									</div>
+								</div>
+							</div>
+							<div class="row">
+							</div>
+							<div class="row graph-card_bottom" style="min-height: 50px;">
+								&nbsp;
+							</div>
+						</div>
+						<div class="text-center">
+							<a href="#" class="btn btn-lg cta-btn-green text-right">Improve Score</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+<script type="text/x-template" id="modal-template">
+<transition name="modal">
+	<div class="modal-mask">
+		<div class="modal-wrapper">
+			<div class="modal-container">
+
+				<div class="modal-header">
+					<slot name="header"></slot>
+					<!-- <span class="glyphicon glyphicon-remove" style="font-size: 2em;" @click="$emit('close')"></span> -->
+				</div>
+
+				<div class="modal-body">
+					<slot name="body">
+						<p>It'll just take a few moments to update your scores</p>
+					</slot>
+				</div>
+
+				<div class="modal-footer">
+					<slot name="footer"></slot>
+					<div class="row">
+						<div class="col-sm-4"></div>
+						<div class="col-sm-4">
+							<div class="item-loader-container">
+								<div class="la-line-spin-fade-rotating la-2x la-dark">
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+								</div>
+							</div> 
+						</div>
+						<div class="col-sm-4"></div>
+					</div>
+				</div>
+			</div><!-- blah -->
+		</div>
+	</div>
+</transition>
+</script>
+
 	<div class="container-fluid"  id="a2-optimized-wrapper">
+		<modal v-if="showModal" @close="showModal = false">
+		</modal>
 		<div class="row" id="a2-optimized-header">
 			<div class="col-sm-6 title">
 				<h2>Optimization <span class='normal'>Dashboard</span></h2>
@@ -50,6 +547,7 @@
 				<span class="success"></span>
 				<span class="warn"></span>
 				<span class="danger"></span>
+				<span class="thishost"></span>
 			</div>
 		</div>
 		<div class="row" id="a2-optimized-nav">

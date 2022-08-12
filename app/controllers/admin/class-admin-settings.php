@@ -124,6 +124,13 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				A2_Optimized::PLUGIN_VERSION,
 				true
 			);
+			wp_enqueue_script(
+				A2_Optimized::PLUGIN_ID . '_chart-js',
+				A2_Optimized::get_plugin_url() . 'assets/js/admin/chart.min.js',
+				[ 'jquery' ],
+				A2_Optimized::PLUGIN_VERSION,
+				true
+			);
 		}
 
 		/**
@@ -191,6 +198,17 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 							]
 						);
 
+						break;
+					case 'hosting_matchup':
+						$data = $this->get_model()->get_hosting_benchmark();
+						$this->view->admin_hosting_matchup_page(
+							[
+								'page_title'    => A2_Optimized::PLUGIN_NAME,
+								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
+								'data' => $data,
+								'run_benchmarks' => $run_benchmarks
+							]
+						);
 						break;
 					case 'page_speed_score':
 					default:

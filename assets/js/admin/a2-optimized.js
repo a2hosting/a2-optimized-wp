@@ -22,6 +22,157 @@ function generateCircle(id, radius, width, graph_data) {
 	return circle_graph;
 }
 
+const plugin_draw_a2hosting_box = {
+	id: 'custom_canvas_background_color_area',
+	beforeDraw: (chart) => {
+		const { ctx } = chart;
+		ctx.save();
+		ctx.globalCompositeOperation = 'destination-over';
+		ctx.strokeStyle = palette.success + '50';
+		ctx.lineWidth = 5;
+		let meta = chart.getDatasetMeta(0);
+		let data = meta.data[1];
+
+		let top = chart.chartArea.top - 5;
+		let height = chart.chartArea.height + 10;
+		let left = data.x - (data.width * .5) - 20;
+		ctx.strokeRect(left, top, chart.chartArea.width - left + 20, height);
+		ctx.font = '20px Verdana';
+		/*
+		var gradient = ctx.createLinearGradient(0, 0, chart.chartArea.width - left + 20, 0);
+		gradient.addColorStop("0", palette.success);
+		gradient.addColorStop("1", palette.success);
+		ctx.fillStyle = gradient;
+		*/
+		ctx.fillStyle = palette.success;
+		ctx.fillText('A2 Hosting', left + 60, top + 30);
+		ctx.restore();
+	}
+}
+
+function generateSingleBarGraphData(graph, dataPoint) {
+	graph_products = ['host', 'a2hosting-turbo', 'a2hosting-mwp'];
+
+	let set_title = graph.legend_text;
+
+	let graph_labels = [];
+	let graph_dataset = [];
+	let colors = [];
+	let bgColors = [];
+	let borderColors = [];
+	let entryData = [];
+
+	graph_products.forEach((product, index, array) => {
+		let data_entry = page_data.graph_data[product];
+		graph_labels[index] = data_entry.display_text;
+
+
+		let value = parseFloat(data_entry[dataPoint]);
+		colors[index] = palette[data_entry.color_class];
+		bgColors[index] = palette[data_entry.color_class] + '80';
+		borderColors[index] = palette[data_entry.color_class] + '50';
+		entryData[index] = value;
+
+	});
+	graph_dataset[0] = {
+		label: dataPoint,
+		color: colors,
+		backgroundColor: bgColors,
+		hoverBackgroundColor: bgColors,
+		borderColor: borderColors,
+		data: entryData
+	}
+	return { title: set_title, labels: graph_labels, dataset: graph_dataset, show_legend: false, stack: false };
+}
+
+function generateStackedBarGraphData(graph, dataPoints = []) {
+	graph_products = ['host', 'a2hosting-turbo', 'a2hosting-mwp'];
+
+	let set_title = graph.legend_text;
+
+	let graph_labels = [];
+	let data_labels = [];
+	let graph_dataset = [];
+
+	graph_products.forEach((el, index2, array) => {
+		let colors = [];
+		let bgColors = [];
+		let borderColors = [];
+		let entryData = [];
+		graph_labels[index2] = page_data.graph_data[el].display_text;
+		dataPoints.forEach((dataPointName, index, array) => {
+
+			let data_entry = page_data.graph_data[el];
+
+			let value = parseFloat(data_entry[dataPointName]);
+			colors[index] = palette[data_entry.color_class];
+			bgColors[index] = palette[data_entry.color_class] + '80';
+			borderColors[index] = palette[data_entry.color_class] + '50';
+			entryData[index] = value;
+			data_labels[index] = dataPointName;
+		});
+
+		graph_dataset[index2] =
+		{
+			label: data_labels[index2],
+			color: colors,
+			backgroundColor: bgColors,
+			hoverBackgroundColor: bgColors,
+			borderColor: borderColors,
+			data: entryData
+		}
+	});
+
+	return { title: set_title, labels: graph_labels, dataset: graph_dataset, show_legend: true, stack: true };
+}
+
+function createBarGraph(canvasId, graph_metadata) {
+	const targetCanvas = document.getElementById(canvasId);
+
+	var chart = new Chart(targetCanvas, {
+		type: 'bar',
+		data: {
+			labels: graph_metadata.labels,
+			datasets: graph_metadata.dataset,
+		},
+		plugins: [plugin_draw_a2hosting_box],
+		options: {
+			tooltips: {
+				callbacks: {
+					label: function (tooltipItem, data) {
+						return Number(tooltipItem.yLabel).toFixed(2);
+					}
+				}
+			},
+			scales: {
+				x: {
+					stacked: graph_metadata.stack,
+					ticks: {
+						color: (c) => {
+							return c.index > 0 ? 'green' : Chart.defaults.color;
+						},
+					}
+				},
+				y: {
+					stacked: graph_metadata.stack
+				}
+
+			},
+			responsive: false,
+			plugins: {
+				title: {
+					display: true,
+					text: graph_metadata.title
+				},
+				legend: {
+					display: graph_metadata.show_legend,
+				},
+			}
+		},
+	});
+	return chart;
+}
+
 function createLineGraph(elemId, graphData, circleId) {
 	if (!graphData) { return; }
 	let lineDiv = document.getElementById(elemId);
@@ -92,18 +243,14 @@ document.addEventListener("DOMContentLoaded", function () {
 		var hex = rgb2hex(element_color);
 		palette[element_class] = hex;
 	});
+
 });
 
 Vue.component('info-button', {
 	props: { metric: { type: String } },
-	template: `
-	<div class="info-toggle-button">
-		<span @click="toggleInfoDiv(metric, $event);"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></span>
-	</div>
-	`,
+	template: "#info-button-template",
 	methods: {
 		toggleInfoDiv: function (metric, elem) {
-			console.log('info button clicked for ' + metric);
 			this.$root.toggleInfoDiv(metric);
 		}
 	}
@@ -114,32 +261,27 @@ Vue.component('graph-legend', {
 	data() {
 		return page_data.graphs[this.metric]
 	},
-	template: `
-	<div class="col-sm-10 graph-legend ">
-		<div class="row graph-legend-header">
-			<div class="col-sm-4 success">
-				good
-			</div>
-			<div class="col-sm-4 warn">
-				not good
-			</div>
-			<div class="col-sm-4 danger">
-				bad
-			</div>
-		</div>
-		<div class="row">
-			<div class="col-sm-4">
-				&nbsp;
-			</div>
-			<div class="col-sm-4 left-label">
-				<span>&nbsp;{{thresholds.warn}}</span>
-			</div>
-			<div class="col-sm-4 left-label">
-				<span>&nbsp;{{thresholds.danger}}</span>
-			</div>
-		</div>
-	</div>
-	`
+	template: "#graph-legend-template"
+});
+
+Vue.component('hosting-matchup', {
+	data() {
+		return page_data
+	},
+	template: "#hosting-matchup-template",
+	mounted() {
+		document.addEventListener("DOMContentLoaded", function () {
+			let webperf_meta = generateSingleBarGraphData(page_data.graphs['webperformance'], 'wordpress_db');
+			let serverperf_meta = generateStackedBarGraphData(page_data.graphs['serverperformance'], ['php', 'mysql', 'filesystem']);
+
+			createBarGraph('overall_wordpress_canvas', webperf_meta);
+			createBarGraph('server_perf_canvas', serverperf_meta, true, true);
+		});
+	}
+});
+
+Vue.component("modal", {
+	template: "#modal-template"
 });
 
 Vue.component('server-performance', {
@@ -147,8 +289,27 @@ Vue.component('server-performance', {
 		return page_data
 	},
 	methods: {
+		strategyChanged: function (evt) {
+			this.$root.pageSpeedCheck('server-performance', false);
+
+		},
 		pageSpeedCheck: function () {
 			this.$root.pageSpeedCheck('server-performance');
+		},
+		rec_toggle: function(id) {
+			var desc = document.getElementById('rec_item_desc_' + id);
+			var toggle = document.getElementById('rec_item_toggle_' + id);
+			
+			if(desc.style.display === 'none'){
+				desc.style.display = 'block';
+				toggle.classList.remove('glyphicon-chevron-right');
+				toggle.classList.add('glyphicon-chevron-down');
+			} else {
+				desc.style.display = 'none';
+				toggle.classList.add('glyphicon-chevron-right');
+				toggle.classList.remove('glyphicon-chevron-down');
+			}
+			
 		},
 		drawGraphs: function () {
 			let perf = page_data.graphs;
@@ -170,246 +331,7 @@ Vue.component('server-performance', {
 			var line_graph_fcp = createLineGraph('line-graph-fcp', perf.fcp, 'circles-fcp');
 		}
 	},
-	template: `
-	<div class="col-sm-12">
-		<div class="row" style="">
-			<div class="col-sm-2 side-nav">
-				<p><a href="#">Web Performance</a></p>
-				<p><a href="#">Hosting Matchup</a></p>
-			</div>
-			<div class="col-sm-10 border-left" id="a2-optimized-serverperformance">
-				<div class="row padding-bottom">
-					<div class="col-sm-12">
-						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-4"> <!-- using graphs.ttfb -->
-						<div id="graph-ttfb" class="box-element normal graph-card wave-bg" :class="graphs.ttfb.color_class">
-							<info-button metric='ttfb'></info-button>
-							<div class="graph_data">
-								<div class="row">
-									<div class="col-sm-8">
-										<h4>{{graphs.ttfb.display_text}}</h4>
-										<p>{{graphs.ttfb.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-6">
-										<div class="circle" id="circles-ttfb"></div>
-									</div>
-									<div class="col-sm-6">
-										<span class="glyphicon" :class="['glyphicon-arrow-' + graphs.ttfb.last_check_dir, graphs.ttfb.color_class]" style="font-size: 2em;"></span>
-										<br>
-										<span :class="graphs.ttfb.color_class">{{graphs.ttfb.last_check_percent}}</span>
-										<span>vs <br> last check</span>
-									</div>
-								</div>
-							</div>
-							<div class="graph_info" style="display:none;">
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.ttfb.display_text}}</h4>
-										<p>{{ graphs.ttfb.explanation}}</p>
-									</div>
-								</div>
-							</div>
-							<div class="row graph-card_bottom" style="min-height: 50px;">
-								&nbsp;
-							</div>
-						</div>
-						<div id="graph-lcp" class="box-element normal graph-card" :class="graphs.lcp.color_class">
-							<info-button metric='lcp'></info-button>
-							<div class="graph_data">
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.lcp.display_text}}</h4>
-										<p>{{graphs.lcp.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-10">
-										<div class="circle" id="circles-lcp"></div>
-										<div class="line-graph" id="line-graph-lcp"></div>
-									</div>
-								</div>
-								<div class="row">
-									<graph-legend metric='lcp'></graph-legend>
-								</div>
-							</div>
-							<div class="graph_info" style="display:none;">
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.lcp.display_text}}</h4>
-										<p>{{ graphs.lcp.explanation}}</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div id="graph-fid" class="box-element normal graph-card" :class="graphs.fid.color_class">
-							<info-button metric='fid'></info-button>
-							<div class="graph_data">
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.fid.display_text}}</h4>
-										<p>{{graphs.fid.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-10">
-										<div class="circle" id="circles-fid"></div>
-										<div class="line-graph" id="line-graph-fid"></div>
-									</div>
-								</div>
-								<div class="row">
-									<graph-legend metric='fid'></graph-legend>
-								</div>
-							</div>
-							<div class="graph_info" style="display:none;">
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.fid.display_text}}</h4>
-										<p>{{ graphs.fid.explanation}}</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-4 bg-green">
-						<div id="graph-overall_score" class="box-element normal graph-card-centered" :class="graphs.overall_score.color_class">
-							<info-button metric='overall_score'></info-button>
-							<div class="graph_data">
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.overall_score.display_text}}</h4>
-										<p>{{graphs.overall_score.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-12">
-										<div class="circle" id="circles-overall_score"></div>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-12">
-										<span class="glyphicon" :class="['glyphicon-arrow-' + graphs.overall_score.last_check_dir,graphs.overall_score.color_class]" style="font-size: 2em;"></span>
-										<br>
-										<span :class="graphs.overall_score.color_class">{{graphs.overall_score.last_check_percent}}</span>
-										<span>vs <br> last check</span>
-									</div>
-								</div>
-							</div>
-							<div class="graph_info" style="display:none;">
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.overall_score.display_text}}</h4>
-										<p>{{ graphs.overall_score.explanation}}</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div id="graph-Recommendations" class="box-element normal graph-card-centered ">
-							<info-button metric='Recommendations'></info-button>
-							<div class="graph_data">
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.recommendations.display_text}}</h4>
-									</div>
-								</div>
-								<div class="row text-left" >
-									<div class="col-sm-12">
-									<ul>
-										<li v-for="recommendation in graphs.recommendations.list">{{recommendation.display_text}}</li>
-									</ul>
-									</div>
-								</div>
-							</div>
-							<div class="graph_info" style="display:none;">
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.recommendations.display_text}}</h4>
-										<p>{{ graphs.recommendations.explanation}}</p>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="col-sm-4">
-						<div id="graph-fcp" class="box-element normal graph-card" :class="graphs.fcp.color_class" >
-							<info-button metric='fcp'></info-button>
-							<div class="graph_data">
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.fcp.display_text}}</h4>
-										<p>{{graphs.fcp.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-10">
-										<div class="circle" id="circles-fcp"></div>
-										<div class="line-graph" id="line-graph-fcp"></div>
-									</div>
-								</div>
-								<div class="row">
-									<graph-legend metric='fcp'></graph-legend>
-								</div>
-							</div>
-							<div class="graph_info" style="display:none;">
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.fcp.display_text}}</h4>
-										<p>{{ graphs.fcp.explanation}}</p>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div id="graph-cls" class="box-element normal graph-card wave-bg" :class="graphs.cls.color_class">
-							<info-button metric='cls'></info-button>
-							<div class="graph_data">
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.cls.display_text}}</h4>
-										<p>{{graphs.cls.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-6">
-										<div class="circle" id="circles-cls"></div>
-									</div>
-									<div class="col-sm-6">
-										<span class="glyphicon" :class="['glyphicon-arrow-' + graphs.cls.last_check_dir,graphs.cls.color_class]" style="font-size: 2em;"></span>
-										<br>
-										<span :class="graphs.cls.color_class">{{graphs.cls.last_check_percent}}</span>
-										<span>vs <br> last check</span>
-									</div>
-								</div>
-								<div class="row">
-									<graph-legend metric='cls'></graph-legend>
-								</div>
-							</div>
-							<div class="graph_info" style="display:none;">
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.cls.display_text}}</h4>
-										<p>{{ graphs.cls.explanation}}</p>
-									</div>
-								</div>
-							</div>
-							<div class="row">
-							</div>
-							<div class="row graph-card_bottom" style="min-height: 50px;">
-								&nbsp;
-							</div>
-						</div>
-						<div class="text-center">
-							<a href="#" class="btn btn-lg cta-btn-green text-right">Improve Score</a>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	`,
+	template: "#server-performance-template",
 	props: ['updateChild'],
 	watch: {
 		updateChild: function () {
@@ -447,125 +369,7 @@ Vue.component('page-speed-score', {
 			var optBP = generateCircle('circles-opt-bp', 35, 7, graphs.opt_bp);
 		}
 	},
-	template: `
-	<div class="row">
-		<div class="col-sm-10 col-sm-offset-1">
-			<div class="row">
-				<div class="col-sm-6">
-					<div id="graph-pagespeed" class="box-element success">
-						<info-button metric='pagespeed'></info-button>
-						<div class="graph_info" style="display:none;">
-							<div class="row header">
-								<div class="col-sm-8">
-									<h3>Page Load Speed</h3>
-								</div>
-								<div class="col-sm-4 text-right">
-									<p><a class="btn cta-btn-green" @click="pageSpeedCheck('page_speed_score')">Run check</a><br>
-									<span>Last Check: {{ last_check_date }}</span></p>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-10 col-sm-offset-1">
-									<p>{{ explanations.pagespeed}}</p>
-								</div>
-							</div>
-						</div>
-						<div class="graph_data">
-							<div class="row header">
-								<div class="col-sm-8">
-									<h3>Page Load Speed</h3>
-								</div>
-								<div class="col-sm-4 text-right">
-									<p><a class="btn cta-btn-green" @click="pageSpeedCheck('page_speed_score')">Run check</a><br>
-									<span>Last Check: {{ last_check_date }}</span></p>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-11 col-sm-offset-1">
-									<div v-if="graphs.pagespeed_mobile" class="col-sm-5 box-element" :class="graphs.pagespeed_mobile.overall_score.color_class">
-										<p class='box-title'>Mobile</p>
-										<div class="circle" id="circles-pls-mobile"></div>
-										<div v-if="graphs.pagespeed_mobile.overall_score.last_check_percent != 0">
-										<p><span :class="graphs.pagespeed_mobile.overall_score.color_class"><span class="glyphicon" :class="'glyphicon-arrow-' + graphs.pagespeed_mobile.overall_score.last_check_dir" aria-hidden="true"></span>{{ graphs.pagespeed_mobile.overall_score.last_check_percent }}%</span> Since Last Check</p>
-										</div>
-										<div v-else>
-											<p>&nbsp;</p>
-										</div>
-									</div>
-									<div v-if="graphs.pagespeed_desktop" class="col-sm-5 col-sm-offset-1 box-element" :class="graphs.pagespeed_desktop.overall_score.color_class">
-										<p class='box-title'>Desktop</p>
-										<div class="circle" id="circles-pls-desktop"></div>
-										<div v-if="graphs.pagespeed_desktop.overall_score.last_check_percent != 0">
-										<p><span :class="graphs.pagespeed_desktop.overall_score.color_class"><span class="glyphicon" :class="'glyphicon-arrow-' + graphs.pagespeed_desktop.overall_score.last_check_dir" aria-hidden="true"></span>{{ graphs.pagespeed_desktop.overall_score.last_check_percent }}%</span> Since Last Check</p>
-										</div>
-										<div v-else>
-											<p>&nbsp;</p>
-										</div>
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col-sm-7">
-							<p>Data pulled from Google PageSpeed Insights</p>
-						</div>
-						<div class="col-sm-5 text-right">
-							<p>Compare with <a href="https://gtmetrix.com/" target="_blank">GTMetrix</a></p>
-						</div>
-					</div>
-				</div>
-				<div class="col-sm-6" id="a2-optimized-optstatus">
-					<div id="graph-opt" class="box-element success">
-						<info-button metric='opt'></info-button>
-						<div class="graph_info" style="display:none;">
-							<div class="row header">
-								<div class="col-sm-12">
-									<h3>Optimization Status</h3>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-10 col-sm-offset-1">
-									<p>{{ explanations.opt}}</p>
-								</div>
-							</div>
-						</div>
-						<div class="graph_data">
-							<div class="row header">
-								<div class="col-sm-12">
-									<h3>Optimization Status</h3>
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-sm-11 col-sm-offset-1">
-									<div class="col-sm-11 box-element normal">
-										<div class="row">
-											<div class="col-sm-4 text-center">
-												<div class="circle" id="circles-opt-perf"></div>
-												Performance
-											</div>
-											<div class="col-sm-4 text-center">
-												<div class="circle" id="circles-opt-sec"></div>
-												Security
-											</div>
-											<div class="col-sm-4 text-center">
-												<div class="circle" id="circles-opt-bp"></div>
-												Best Practices
-											</div>
-										</div>
-									</div>
-								</div>
-								<div class="col-sm-10 col-sm-offset-1 text-right">
-									<p><a href="#" class="cta-link">Go to Recommendations</a></p>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-	`,
+	template: "#page-speed-score-template",
 	mounted() {
 		let that = this;
 
@@ -598,19 +402,36 @@ var app = new Vue({
 				explanation_div.style.display = '';
 			}
 		},
-		pageSpeedCheck: function (page) {
+		pageSpeedCheck: function (page, run_checks = true) {
+			page_data.showModal = true;
 			var params = new URLSearchParams();
 			params.append('action', 'run_benchmarks');
 			params.append('a2_page', page);
+			params.append('run_checks', run_checks);
+			let strat = document.getElementById('server-perf-strategy-select');
+			if (strat) {
+				params.append('a2_performance_strategy', strat.value);
+			}
 
 			axios
 				.post(ajaxurl, params)
+				.catch((error) => {
+					alert('There was a problem getting benchmark data. See console log.');
+					console.log(error.message);
+					page_data.showModal = false;
+				})
 				.then((response) => {
-					console.log('post finished, got data');
-					console.log(response.data);
-					page_data.last_check_date = 'just now'; // todo: get this the right value
+					//console.log('post finished, got data');
+					//console.log(response.data);
+					if (run_checks) {
+						page_data.last_check_date = 'just now';
+					}
+					else {
+						page_data.last_check_date = response.data.overall_score.last_check_date;
+					}
 					page_data.graphs = response.data;
 					page_data.updateView++;
+					page_data.showModal = false;
 				});
 		}
 	},

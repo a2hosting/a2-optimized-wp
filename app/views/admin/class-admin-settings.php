@@ -47,11 +47,13 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			];
 
 			$data_json = json_encode($data);
+			/*
 			if ($args['run_benchmarks']) {
 				echo $data_json;
 
 				return;
 			}
+			*/
 			$data['data_json'] = $data_json;
 			$args['data'] = $data;
 			echo $this->render_template(
@@ -79,14 +81,45 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'graphs' => $graphs,
 			];
 			$data_json = json_encode($data);
-			if ($args['run_benchmarks']) {
-				echo $data_json;
-
-				return;
-			}
 
 			$data['data_json'] = $data_json;
 			$args['data'] = $data;
+			echo $this->render_template(
+				'admin/page-settings/page-settings.php',
+				$args
+			); // WPCS: XSS OK.
+		}
+
+		public function admin_hosting_matchup_page($args = []) {
+			$last_check = 'None';
+			$data = $args['data'];
+			if ($data) {
+				$last_check = $data['last_check_date'];
+			}
+
+			$data = [
+				'mainkey' => 1,
+				'updateView' => 0,
+				'content-element' => '<hosting-matchup :update-Child="updateView" :key="mainkey"></hosting-matchup>',
+				'home_url' => home_url(),
+				'nav' => [
+					'wsp_class' => 'current'
+				],
+				'explanations' => [
+					'webperformance' => 'you want good performance for your web',
+					'serverperformance' => 'you want good performance for your server',
+				],
+				'last_check_date' => $last_check,
+				'graphs' => $data['graphs'],
+				'graph_data' => $data['graph_data']
+			];
+			$data_json = json_encode($data);
+
+			$data['data_json'] = $data_json;
+			$args['data'] = $data;
+
+			//print_r($data['data_json']);
+			//wp_die();
 			echo $this->render_template(
 				'admin/page-settings/page-settings.php',
 				$args

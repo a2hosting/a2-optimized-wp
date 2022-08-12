@@ -3509,7 +3509,7 @@ HTML;
         $recommendation_count = 0;
 
         $element_id = md5(rand(0, 100000)+strtotime(time()));
-        ;
+        
 
         $output = '';
 
