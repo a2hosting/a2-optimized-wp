@@ -48,10 +48,16 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		public function run_benchmarks() {
 			$target_url = $_POST['target_url'];
 			$page = $_POST['a2_page'];
-			$frontend_data = $this->get_frontend_benchmark(false);//false for now while getting the UI in order
+			$run_checks = $_POST['run_checks'] !== 'false';
+
+			//wp_die(json_encode($_POST));
+
+			$frontend_data = $this->get_frontend_benchmark($run_checks);
+
 
 			if ($page == 'server-performance') {
-				$frontend_data = $frontend_data['pagespeed_desktop'];
+				$strategy = 'pagespeed_' . $_POST['a2_performance_strategy'];
+				$frontend_data = $frontend_data[$strategy];
 			}
 
 			$opt_data = $this->get_optimization_benchmark();
@@ -105,6 +111,43 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			return $temp_graphs;
 		}
 
+		public function get_hosting_benchmark($run = false) {
+			$backend_benchmarks = get_option('a2opt-benchmarks-hosting');
+			$baseline_benchmarks = $this->benchmark->get_baseline_results();
+
+			$bm = array_pop($backend_benchmarks);
+			$result = [];
+			$result['last_check_date'] = $bm['sysinfo']['time'];
+			$hostentry = [
+				'php' => $bm['php']['total'],
+				'mysql' => $bm['mysql']['benchmark']['mysql_total'],
+				'wordpress_db' => $bm['wordpress_db']['time'],
+				'filesystem' => $bm['filesystem'],
+			];
+			$hostentry = array_merge(self::BENCHMARK_DISPLAY_DATA['benchmark-host'], $hostentry);
+
+			$result['graph_data']['host'] = $hostentry;
+			foreach ($baseline_benchmarks as $key => $benchmark){
+				$entry = [
+					'php' => $benchmark['php']['total'],
+					'mysql' => $benchmark['mysql'],
+					'wordpress_db' => $benchmark['wordpress_db']['time'],
+					'filesystem' => $benchmark['filesystem']
+				];
+				$entry = array_merge(self::BENCHMARK_DISPLAY_DATA[$key], $entry);
+				$result['graph_data'][$key] = $entry;
+			}
+			$result['graphs']['webperformance'] = self::BENCHMARK_DISPLAY_DATA['webperformance'];
+			$result['graphs']['serverperformance'] = self::BENCHMARK_DISPLAY_DATA['serverperformance'];
+
+			//print_r(json_encode($bm));
+			//print_r('<br>');
+			//print_r(json_encode($baseline_benchmarks));
+			//print_r(json_encode($result));
+			//wp_die();
+			return $result;
+		}
+
 		public function get_frontend_benchmark($run = false) {
 			if ($run) {
 				//print_r("running benchmarks<br>");
@@ -154,11 +197,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result['pagespeed_mobile'] = false;
 			}
 
-			//$backend_benchmarks = get_option('a2opt-benchmarks-hosting');
-			//$bm = array_pop($backend_benchmarks);
-			//print_r($bm);
-			//wp_die();
-
 			return $result;
 		}
 
@@ -197,7 +235,39 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				'display_text' => 'Opportunity',
 				'metric_text' => 'Areas that can be improved',
 				'explanation' => 'These suggestions can help your page load faster. They don\'t directly affect the Performance score.',
-			]
+			],
+			'benchmark-host' => [
+				'display_text' => 'Your Host',
+				'metric_text' => '',
+				'explanation' => 'this is your pathetic slow host',
+				'color_class' => 'thishost'
+			],
+			'a2hosting-turbo' => [
+				'display_text' => 'Turbo Boost',
+				'metric_text' => '',
+				'explanation' => 'fast as lightning',
+				'color_class' => 'warn'
+			],
+			'a2hosting-mwp' => [
+				'display_text' => 'Managed Wordpress',
+				'metric_text' => '',
+				'explanation' => 'this is your pathetic slow host',
+				'color_class' => 'success'
+			],
+			'webperformance' => [
+				'display_text' => 'Web Performance',
+				'metric_text' => 'How does your hosting provider compare to A2 Hosting?',
+				'legend_text' => "Overall Wordpress Execution Time",
+				'explanation' => 'web perf explanation',
+				'color_class' => 'success'
+			],
+			'serverperformance' => [
+				'display_text' => 'Server Performance',
+				'metric_text' => "How fast is your hosting provider compare to A2 Hosting's server?",
+				'legend_text' => "PHP, Mysql, and File I/O Response Time Comparison",
+				'explanation' => 'server perf explanation',
+				'color_class' => 'success'
+			],
 		];
 
 		public const BENCHMARK_SCORE_PROFILES = [
@@ -244,11 +314,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$latest_score = $latest['scores'][$metric];
 				$previous_score = $previous['scores'][$metric];
 				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
-
+				/*
 				$latest_score = rand(0, $status_info['thresholds']['max']);
 				$previous_score = rand(0, $status_info['thresholds']['max']);
 				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
-
+				*/
 
 				$data = [
 					'last_check_date' => $last_check_date,
@@ -281,10 +351,18 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 				$audits = [];
 				$lcv = 0;
+				$pattern = "/\[([^]]*)\] *\(([^)]*)\)/i";
+                $replacement = '<a href="$2" target="_blank">$1</a>';
 				foreach ($latest['scores']['audit_result'] as $audit) {
+					$display_value = '';
+					$description = preg_replace($pattern, $replacement, $audit['description']);
+					if(isset($audit['displayValue'])){
+						$description .= '<br />' . $audit['displayValue'];
+					}
 					$audits[] = [
+						'lcv' => $lcv,
 						'display_text' => $audit['title'],
-						'description' => $audit['description']
+						'description' => $description,
 					];
 					++$lcv;
 					if ($lcv > 4) {
