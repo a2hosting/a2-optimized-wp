@@ -280,6 +280,13 @@ Vue.component('hosting-matchup', {
 	}
 });
 
+Vue.component('optimizations-performance', {
+	data() {
+		return page_data
+	},
+	template: "#optimizations-performance-template",
+});
+
 Vue.component("modal", {
 	template: "#modal-template"
 });
@@ -421,12 +428,9 @@ var app = new Vue({
 					page_data.showModal = false;
 				})
 				.then((response) => {
-					//console.log('post finished, got data');
-					//console.log(response.data);
 					if (run_checks) {
 						page_data.last_check_date = 'just now';
-					}
-					else {
+					} else {
 						page_data.last_check_date = response.data.overall_score.last_check_date;
 					}
 					page_data.graphs = response.data;

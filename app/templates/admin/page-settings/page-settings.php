@@ -1,13 +1,16 @@
 <div class="wrap">
+
 <script> 
 	let page_data = <?php echo $data['data_json'] ?>;
 	page_data.showModal = false;
 </script>
+
 <script type="text/x-template" id="info-button-template">
 	<div class="info-toggle-button">
 		<span @click="toggleInfoDiv(metric, $event);"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></span>
 	</div>
 </script>
+
 <script type="text/x-template" id="graph-legend-template">
 	<div class="col-sm-10 graph-legend ">
 		<div class="row graph-legend-header">
@@ -34,12 +37,14 @@
 		</div>
 	</div>
 </script>
+
+
 <script type="text/x-template" id="hosting-matchup-template">
 	<div class="col-sm-12">
 		<div class="row">
 			<div class="col-sm-2 side-nav">
-				<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance">Web Performance</a></p>
-				<p><a href="options-general.php?page=a2-optimized&a2_page=hosting_matchup">Hosting Matchup</a></p>
+				<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance" :class="nav.webperf_class">Web Performance</a></p>
+				<p><a href="options-general.php?page=a2-optimized&a2_page=hosting_matchup" :class="nav.hmatch_class">Hosting Matchup</a></p>
 			</div>
 			<div class="col-sm-10 border-left" id="a2-optimized-hostingmatchup">
 				<div class="row">
@@ -116,6 +121,54 @@
 		</div>
 	</div>
 </script>
+
+
+
+<script type="text/x-template" id="optimizations-performance-template">
+	<div class="col-sm-12">
+		<div class="row">
+			<div class="col-sm-2 side-nav">
+				<p><a href="options-general.php?page=a2-optimized&a2_page=opt_performance" :class="nav.optperf_class">Performance</a></p>
+				<p><a href="options-general.php?page=a2-optimized&a2_page=opt_security" :class="nav.optsec_class">Security</a></p>
+				<p><a href="options-general.php?page=a2-optimized&a2_page=opt_bestp" :class="nav.optbestp_class">Best Practices</a></p>
+				<p><a href="options-general.php?page=a2-optimized&a2_page=opt_results" :class="nav.optresult_class">Results</a></p>
+			</div>
+			<div class="col-sm-10 border-left" id="a2-optimized-opt_performance">
+				<div class="row">
+					<div class="col-sm-9">
+						<div id="" class="box-element success">
+							<div class="padding-15">
+								<h3>Optimization Essentials</h3>
+								<div class="row" v-for="optimization in optimizations" :key="optimization.slug">
+									<div class="col-sm-10">
+										<h4>{{ optimization.name }} <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></h4>
+									</div>
+									<div class="col-sm-2 padding-top-30">
+										<li class="tg-list-item">
+											<input class="tgl tgl-ios" :id="'toggle-' + optimization.slug" :name="optimization.slug" v-model="optimization.configured" true-value="true" false-value="false" type="checkbox"/>
+											<label class="tgl-btn" :for="'toggle-' + optimization.slug"></label>
+										</li>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div class="box-element">
+							<p>x/x items enabled</p>	
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>
+
+
+
+
+
+
 <script type="text/x-template" id="page-speed-score-template">
 	<div class="row">
 		<div class="col-sm-10 col-sm-offset-1">
@@ -235,12 +288,13 @@
 		</div>
 	</div>
 </script>
+
 <script type="text/x-template" id="server-performance-template">
 	<div class="col-sm-12">
 		<div class="row" style="">
 			<div class="col-sm-2 side-nav">
-				<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance">Web Performance</a></p>
-				<p><a href="options-general.php?page=a2-optimized&a2_page=hosting_matchup">Hosting Matchup</a></p>
+				<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance" :class="nav.webperf_class">Web Performance</a></p>
+				<p><a href="options-general.php?page=a2-optimized&a2_page=hosting_matchup" :class="nav.hmatch_class">Hosting Matchup</a></p>
 			</div>
 			<div class="col-sm-10 border-left" id="a2-optimized-serverperformance">
 				<div class="row padding-bottom">
@@ -484,48 +538,49 @@
 		</div>
 	</div>
 </script>
+
 <script type="text/x-template" id="modal-template">
-<transition name="modal">
-	<div class="modal-mask">
-		<div class="modal-wrapper">
-			<div class="modal-container">
+	<transition name="modal">
+		<div class="modal-mask">
+			<div class="modal-wrapper">
+				<div class="modal-container">
 
-				<div class="modal-header">
-					<slot name="header"></slot>
-					<!-- <span class="glyphicon glyphicon-remove" style="font-size: 2em;" @click="$emit('close')"></span> -->
-				</div>
-
-				<div class="modal-body">
-					<slot name="body">
-						<p>It'll just take a few moments to update your scores</p>
-					</slot>
-				</div>
-
-				<div class="modal-footer">
-					<slot name="footer"></slot>
-					<div class="row">
-						<div class="col-sm-4"></div>
-						<div class="col-sm-4">
-							<div class="item-loader-container">
-								<div class="la-line-spin-fade-rotating la-2x la-dark">
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
-								</div>
-							</div> 
-						</div>
-						<div class="col-sm-4"></div>
+					<div class="modal-header">
+						<slot name="header"></slot>
+						<!-- <span class="glyphicon glyphicon-remove" style="font-size: 2em;" @click="$emit('close')"></span> -->
 					</div>
-				</div>
-			</div><!-- blah -->
+
+					<div class="modal-body">
+						<slot name="body">
+							<p>It'll just take a few moments to update your scores</p>
+						</slot>
+					</div>
+
+					<div class="modal-footer">
+						<slot name="footer"></slot>
+						<div class="row">
+							<div class="col-sm-4"></div>
+							<div class="col-sm-4">
+								<div class="item-loader-container">
+									<div class="la-line-spin-fade-rotating la-2x la-dark">
+										<div></div>
+										<div></div>
+										<div></div>
+										<div></div>
+										<div></div>
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
+								</div> 
+							</div>
+							<div class="col-sm-4"></div>
+						</div>
+					</div>
+				</div><!-- blah -->
+			</div>
 		</div>
-	</div>
-</transition>
+	</transition>
 </script>
 
 	<div class="container-fluid"  id="a2-optimized-wrapper">
@@ -560,7 +615,7 @@
 						<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance" class="<?php echo $data['nav']['wsp_class'] ?>">Website &amp; Server Performance</a></p>
 					</div>
 					<div class="col-sm-4 text-center">
-						<p><a href="#" class="<?php echo $data['nav']['opt_class'] ?>">Optimization</a></p>
+						<p><a href="options-general.php?page=a2-optimized&a2_page=optimizations" class="<?php echo $data['nav']['opt_class'] ?>">Optimization</a></p>
 					</div>
 				</div>
 			</div>

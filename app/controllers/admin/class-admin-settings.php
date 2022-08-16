@@ -210,6 +210,16 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 							]
 						);
 						break;
+					case 'optimizations':
+						$data = $this->get_model()->get_opt_performance();
+						$this->view->admin_opt_performance_page(
+							[
+								'page_title'    => A2_Optimized::PLUGIN_NAME,
+								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
+								'data' => $data,
+							]
+						);
+						break;
 					case 'page_speed_score':
 					default:
 						$frontend_metrics = $this->get_model()->get_frontend_benchmark($run_benchmarks);

@@ -4,8 +4,7 @@ namespace A2_Optimized\App\Models\Admin;
 use A2_Optimized\App\Models\Settings as Settings_Model;
 use A2_Optimized\App\Models\Admin\Base_Model;
 use A2_Optimized_Benchmark;
-
-//require_once(__DIR__ . '/../../../includes/A2_Optimized_Benchmark.php');
+use A2_Optimized_Optimizations;
 
 if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 	/**
@@ -17,6 +16,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 	 */
 	class Admin_Settings extends Base_Model {
 		private $benchmark;
+		private $optimizations;
 
 		/**
 		 * Constructor
@@ -26,6 +26,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		protected function __construct() {
 			$this->register_hook_callbacks();
 			$this->benchmark = new A2_Optimized_Benchmark();
+			$this->optimizations = new A2_Optimized_Optimizations();
 		}
 
 		/**
@@ -50,10 +51,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$page = $_POST['a2_page'];
 			$run_checks = $_POST['run_checks'] !== 'false';
 
-			//wp_die(json_encode($_POST));
-
 			$frontend_data = $this->get_frontend_benchmark($run_checks);
-
 
 			if ($page == 'server-performance') {
 				$strategy = 'pagespeed_' . $_POST['a2_performance_strategy'];
@@ -197,6 +195,13 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result['pagespeed_mobile'] = false;
 			}
 
+			return $result;
+		}
+
+		public function get_opt_performance() {
+			$result = [];
+			$result['optimizations'] = $this->optimizations->get_optimizations();
+		
 			return $result;
 		}
 
@@ -377,17 +382,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			}
 
 			return $result;
-		}
-
-		private function format_backend_results($data) {
-			$output = "\n\rBackend Results\n\r";
-			$output .= "==========================\n\r";
-			$output .= 'Overall Score: ' . round($data['wordpress_db']['queries_per_second']) . "\n\r";
-			$output .= 'PHP: ' . $data['php']['total'] . "\n\r";
-			$output .= 'MySQL: ' . $data['mysql']['benchmark']['mysql_total'] . "\n\r";
-			$output .= 'Filesystem: ' . $data['filesystem'] . "\n\r";
-
-			return $output;
 		}
 
 		/**

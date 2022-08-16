@@ -75,7 +75,8 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'content-element' => '<server-performance :update-Child="updateView" :key="mainkey"></server-performance>',
 				'home_url' => home_url(),
 				'nav' => [
-					'wsp_class' => 'current'
+					'wsp_class' => 'current',
+					'webperf_class' => 'current'
 				],
 				'last_check_date' => $last_check,
 				'graphs' => $graphs,
@@ -103,7 +104,8 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'content-element' => '<hosting-matchup :update-Child="updateView" :key="mainkey"></hosting-matchup>',
 				'home_url' => home_url(),
 				'nav' => [
-					'wsp_class' => 'current'
+					'wsp_class' => 'current',
+					'hmatch_class' => 'current'
 				],
 				'explanations' => [
 					'webperformance' => 'you want good performance for your web',
@@ -120,6 +122,49 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 
 			//print_r($data['data_json']);
 			//wp_die();
+			echo $this->render_template(
+				'admin/page-settings/page-settings.php',
+				$args
+			); // WPCS: XSS OK.
+		}
+
+		public function admin_opt_performance_page($args = []) {
+			
+			$data = $args['data'];
+
+			$displayed_optimizations = [];
+			$other_optimizations = [];
+			foreach($data['optimizations'] as $k => $optimization){
+				if($optimization['category'] == 'performance'){
+					if(isset($optimization['optional'])){
+						$other_optimizations[$k] = $optimization;
+ 					} else {
+						$displayed_optimizations[$k] = $optimization;
+					}
+				}
+			}
+
+			$data = [
+				'mainkey' => 1,
+				'updateView' => 0,
+				'content-element' => '<optimizations-performance :update-Child="updateView" :key="mainkey"></optimizations-performance>',
+				'home_url' => home_url(),
+				'nav' => [
+					'opt_class' => 'current',
+					'optperf_class' => 'current'
+				],
+				'optimizations' => $displayed_optimizations,
+				'other_optimizations' => $other_optimizations,
+				'explanations' => [
+					'webperformance' => 'you want good performance for your web',
+					'serverperformance' => 'you want good performance for your server',
+				],
+			];
+			$data_json = json_encode($data);
+
+			$data['data_json'] = $data_json;
+			$args['data'] = $data;
+			
 			echo $this->render_template(
 				'admin/page-settings/page-settings.php',
 				$args
