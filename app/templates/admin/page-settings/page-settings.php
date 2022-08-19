@@ -128,20 +128,64 @@
 	<div class="col-sm-12">
 		<div class="row">
 			<div class="col-sm-2 side-nav">
-				<p><a href="options-general.php?page=a2-optimized&a2_page=opt_performance" :class="nav.optperf_class">Performance</a></p>
-				<p><a href="options-general.php?page=a2-optimized&a2_page=opt_security" :class="nav.optsec_class">Security</a></p>
-				<p><a href="options-general.php?page=a2-optimized&a2_page=opt_bestp" :class="nav.optbestp_class">Best Practices</a></p>
-				<p><a href="options-general.php?page=a2-optimized&a2_page=opt_results" :class="nav.optresult_class">Results</a></p>
+				<p><a href="#" v-on:click.prevent="sidenav = 'optperf'" :class="nav.optperf_class">Performance</a></p>
+				<p><a href="#" v-on:click.prevent="sidenav = 'optsec'" :class="nav.optsec_class">Security</a></p>
+				<p><a href="#" v-on:click.prevent="sidenav = 'optbestp'" :class="nav.optbestp_class">Best Practices</a></p>
+				<p><a href="#" v-on:click.prevent="sidenav = 'optresults'" :class="nav.optresult_class">Results</a></p>
 			</div>
 			<div class="col-sm-10 border-left" id="a2-optimized-opt_performance">
-				<div class="row">
+
+				<!-- Performance -->
+				<div class="row" v-show="sidenav == 'optperf'">
 					<div class="col-sm-9">
 						<div id="" class="box-element success">
 							<div class="padding-15">
 								<h3>Optimization Essentials</h3>
-								<div class="row" v-for="optimization in optimizations" :key="optimization.slug">
+								<div class="row" v-for="optimization in optimizations.performance" :key="optimization.slug">
 									<div class="col-sm-10">
-										<h4>{{ optimization.name }} <span class="glyphicon glyphicon-chevron-down" aria-hidden="true"></span></h4>
+										<h4>{{ optimization.name }} <a class="glyphicon glyphicon-chevron-down toggle" aria-hidden="true" v-on:click.prevent="desc_toggle(optimization.slug)" :id="'opt_item_toggle_' + optimization.slug"></a></h4>
+										<div :id="'opt_item_desc_' + optimization.slug" style="display: none" v-html="optimization.description"></div>
+									</div>
+									<div class="col-sm-2 padding-top-30">
+										<li class="tg-list-item">
+											<input class="tgl tgl-ios" :id="'toggle-' + optimization.slug" :name="optimization.slug" v-model="optimization.configured" true-value="true" false-value="false" type="checkbox"/>
+											<label class="tgl-btn" :for="'toggle-' + optimization.slug"></label>
+										</li>
+										<?php
+										/*
+										TODO: disable status on these for items that are just "on"
+										list of other_optimizations
+										*/
+										?>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div class="opt-completed">	
+							<h4><span>Completed</span><br />Performance<br />Optimization</h4>
+							<div class="row">
+								<div class="col-sm-6 col-sm-offset-3">
+									<div class="box-element" style="padding-top: 5px;">
+										<div class="circle" id="circles-opt-perf"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<!-- Security -->
+				<div class="row" v-show="sidenav == 'optsec'" style="display: none">
+					<div class="col-sm-9">
+						<div id="" class="box-element success">
+							<div class="padding-15">
+								<h3>Security</h3>
+								<div class="row" v-for="optimization in optimizations.security" :key="optimization.slug">
+									<div class="col-sm-10">
+										<h4>{{ optimization.name }} <a class="glyphicon glyphicon-chevron-down toggle" aria-hidden="true" v-on:click.prevent="desc_toggle(optimization.slug)" :id="'opt_item_toggle_' + optimization.slug"></a></h4>
+										<div :id="'opt_item_desc_' + optimization.slug" style="display: none" v-html="optimization.description"></div>
 									</div>
 									<div class="col-sm-2 padding-top-30">
 										<li class="tg-list-item">
@@ -154,10 +198,64 @@
 						</div>
 					</div>
 					<div class="col-sm-3">
-						<div class="box-element">
-							<p>x/x items enabled</p>	
+						<div class="opt-completed">	
+							<h4><span>Completed</span><br />Security<br />Optimization</h4>
+							<div class="row">
+								<div class="col-sm-6 col-sm-offset-3">
+									<div class="box-element" style="padding-top: 5px;">
+										<div class="circle" id="circles-opt-security"></div>
+									</div>
+								</div>
+							</div>
 						</div>
 					</div>
+				</div>
+				
+
+				<!-- Best Practices -->
+				<div class="row" v-show="sidenav == 'optbestp'" style="display: none">
+					<div class="col-sm-9">
+						<div class="box-element success">
+							<div class="padding-15">
+								<h3>Best Practices</h3>
+								<div class="row" v-for="item in best_practicies">
+									<div class="col-sm-12">
+										<h4>{{ item.title }} 
+											<span v-if="item.is_warning">
+												<span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+											</span>
+											<span v-else>
+												<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+											</span>
+										</h4>
+										<p v-html="item.description"></p>
+										<p><a :href="item.config_url">Configure now</a></p>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div class="col-sm-3">
+						<div class="opt-completed">	
+							<h4><span>Completed</span><br />Best<br />Practices</h4>
+							<div class="row">
+								<div class="col-sm-6 col-sm-offset-3">
+									<div class="box-element" style="padding-top: 5px;">
+										<div class="circle" id="circles-opt-bestp"></div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+
+
+				<!-- Results, when ready -->
+
+
+				<!-- update button -->
+				<div class="col-sm-9 text-right" style="padding-top: 1em;">
+					<a href="#" @click.prevent="updateOptimizations" class="cta-btn-green btn-xlg btn-lg cta-btn-green text-right">Update</a>
 				</div>
 			</div>
 		</div>
@@ -182,7 +280,7 @@
 									<h3>Page Load Speed</h3>
 								</div>
 								<div class="col-sm-4 text-right">
-									<p><a class="btn cta-btn-green" @click="pageSpeedCheck('page_speed_score')">Run check</a><br>
+									<p><a class="btn cta-btn-green" @click.prevent="pageSpeedCheck('page_speed_score')">Run check</a><br>
 									<span>Last Check: {{ last_check_date }}</span></p>
 								</div>
 							</div>
@@ -443,7 +541,7 @@
 									<div class="col-sm-12">
 									<ul>
 										<li v-for="recommendation in graphs.recommendations.list" :id="'rec_item_' + recommendation.lcv">
-											{{recommendation.display_text}} <a v-on:click='rec_toggle(recommendation.lcv)'><span :id="'rec_item_toggle_' + recommendation.lcv" class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span></a>
+											{{recommendation.display_text}} <a v-on:click.prevent='rec_toggle(recommendation.lcv)'><span :id="'rec_item_toggle_' + recommendation.lcv" class="glyphicon glyphicon-chevron-right toggle" aria-hidden="true"></span></a>
 											<span style="display:none" :id="'rec_item_desc_' + recommendation.lcv ">
 												<span v-html='recommendation.description'></span>
 											</span>

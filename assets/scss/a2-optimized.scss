@@ -88,6 +88,10 @@ $thishost: #009aca;
         color: $light  !important;
     }
 
+    .btn-xlg {
+        padding: 15px 60px;
+    }
+
     .bg-green {
         background-color: $green;
         padding-top: 15px;
@@ -288,6 +292,27 @@ $thishost: #009aca;
         padding-bottom: 15px;
     }
 
+    a.toggle {
+        color: $dark;
+        text-decoration: none;
+        &:hover {
+            color: $normal;
+            cursor: pointer;
+        }
+    }
+
+    .opt-completed {
+        text-align: center;
+        h4 {
+            font-size: 20px;
+            font-weight: 700;
+            line-height: 24px;
+        }
+        span {
+            color: $orange;
+        }
+    }
+
     #circles-ttfb,
     #circles-cls {
         .circles-text {
@@ -370,8 +395,6 @@ $thishost: #009aca;
     }
 
     /* checkboxes */
-
-
     .tg-list-item {
         margin: 0 2em;
         list-style: none;

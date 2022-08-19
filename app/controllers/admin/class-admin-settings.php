@@ -131,6 +131,14 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				A2_Optimized::PLUGIN_VERSION,
 				true
 			);
+			wp_localize_script(
+				'jquery',
+				'ajax',
+				[
+					'url' => admin_url('admin-ajax.php'),
+					'nonce' => wp_create_nonce('a2opt_ajax_nonce'),
+				]
+			);
 		}
 
 		/**

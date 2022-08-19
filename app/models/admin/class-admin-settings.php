@@ -44,9 +44,16 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			 */
 
 			add_action( 'wp_ajax_run_benchmarks', [$this, 'run_benchmarks'] );
+			add_action( 'wp_ajax_apply_optimizations', [$this, 'apply_optimizations'] );
 		}
 
+		/* Callback for run_benchmarks AJAX request */
 		public function run_benchmarks() {
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') ){ 
+				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
+				wp_die(); 
+			}
+			
 			$target_url = $_POST['target_url'];
 			$page = $_POST['a2_page'];
 			$run_checks = $_POST['run_checks'] !== 'false';
@@ -61,6 +68,35 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$opt_data = $this->get_optimization_benchmark();
 
 			$data = array_merge($frontend_data, $opt_data);
+			$data['result'] = 'success';
+
+
+			echo json_encode($data);
+			wp_die();
+		}
+
+		/* Callback for apply_optimizations AJAX request */
+		public function apply_optimizations() {
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') ){ 
+				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
+				wp_die(); 
+			}
+			
+			$data = [];
+
+			$optimizations = [];
+			foreach($_POST as $k => $value){
+				if(substr($k, 0, 4) === "opt-"){
+					$k = str_replace("opt-", "", $k);
+					$optimizations[$k] = $value;
+					$this->optimizations->apply_optimization($k, $value);
+				}
+			}
+
+			$data['post_data'] = $_POST;
+			$data['opt_object'] = $optimizations;
+
+			$data['result'] = 'success';
 
 			echo json_encode($data);
 			wp_die();
@@ -201,7 +237,8 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		public function get_opt_performance() {
 			$result = [];
 			$result['optimizations'] = $this->optimizations->get_optimizations();
-		
+			$result['best_practicies'] = $this->optimizations->get_best_practicies();
+
 			return $result;
 		}
 

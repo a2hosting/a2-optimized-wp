@@ -83,6 +83,9 @@
   box-shadow: 0px 4px 10px rgba(28, 28, 28, 0.25), 0px 4px 4px rgba(28, 28, 28, 0.25);
   color: #FFF !important;
 }
+#a2-optimized-wrapper .btn-xlg {
+  padding: 15px 60px;
+}
 #a2-optimized-wrapper .bg-green {
   background-color: #128413;
   padding-top: 15px;
@@ -230,6 +233,25 @@
 }
 #a2-optimized-wrapper .padding-bottom {
   padding-bottom: 15px;
+}
+#a2-optimized-wrapper a.toggle {
+  color: #1c1c1c;
+  text-decoration: none;
+}
+#a2-optimized-wrapper a.toggle:hover {
+  color: #5d5959;
+  cursor: pointer;
+}
+#a2-optimized-wrapper .opt-completed {
+  text-align: center;
+}
+#a2-optimized-wrapper .opt-completed h4 {
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 24px;
+}
+#a2-optimized-wrapper .opt-completed span {
+  color: #FC8C1E;
 }
 #a2-optimized-wrapper #circles-ttfb .circles-text,
 #a2-optimized-wrapper #circles-cls .circles-text {
