@@ -159,6 +159,25 @@
 										?>
 									</div>
 								</div>
+								<div class="row">
+									<div class="col-sm-12 text-center">
+										<p><a href="#" class="more-optimizations-toggle" @click.prevent="perf_more = 'true'">More Optimizations</a></p>
+									</div>
+								</div>
+								<div v-show="perf_more == 'true'" style="display:none;">
+									<div class="row" v-for="optimization in optimizations.performance" :key="optimization.slug">
+										<div class="col-sm-10">
+											<h4>{{ optimization.name }} <a class="glyphicon glyphicon-chevron-down toggle" aria-hidden="true" v-on:click.prevent="desc_toggle(optimization.slug)" :id="'opt_item_toggle_' + optimization.slug"></a></h4>
+											<div :id="'opt_item_desc_' + optimization.slug" style="display: none" v-html="optimization.description"></div>
+										</div>
+										<div class="col-sm-2 padding-top-30">
+											<li class="tg-list-item">
+												<input class="tgl tgl-ios" :id="'toggle-' + optimization.slug" :name="optimization.slug" v-model="optimization.configured" true-value="true" false-value="false" type="checkbox"/>
+												<label class="tgl-btn" :for="'toggle-' + optimization.slug"></label>
+											</li>
+										</div>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -218,7 +237,7 @@
 						<div class="box-element success">
 							<div class="padding-15">
 								<h3>Best Practices</h3>
-								<div class="row" v-for="item in best_practicies">
+								<div class="row" v-for="item in best_practices">
 									<div class="col-sm-12">
 										<h4>{{ item.title }} 
 											<span v-if="item.is_warning">
