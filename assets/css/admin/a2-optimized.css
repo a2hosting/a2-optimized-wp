@@ -56,6 +56,10 @@
   font-size: 26px;
   font-weight: 500;
 }
+#a2-optimized-wrapper h4.less-vertical-space {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
 #a2-optimized-wrapper #a2-optimized-header .search input {
   width: 100%;
   margin-top: 40px;
@@ -146,6 +150,14 @@
 #a2-optimized-wrapper .box-element.warn {
   border-color: rgba(252, 140, 30, 0.35);
 }
+#a2-optimized-wrapper .box-element.clear {
+  border: none;
+  box-shadow: none;
+}
+#a2-optimized-wrapper .box-element div.best-practices-status {
+  font-size: 14px;
+  margin-bottom: 1em;
+}
 #a2-optimized-wrapper #a2-optimized-optstatus .box-element .box-element {
   padding: 10px 0;
 }
@@ -166,6 +178,10 @@
 }
 #a2-optimized-wrapper #a2-optimized-serverperformance .box-element h4 {
   margin-bottom: 0;
+}
+#a2-optimized-wrapper span.small {
+  padding-top: 0px;
+  font-size: 50%;
 }
 #a2-optimized-wrapper .circles-text {
   font-weight: 700;

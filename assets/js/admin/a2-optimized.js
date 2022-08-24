@@ -265,6 +265,31 @@ Vue.component('graph-legend', {
 	template: "#graph-legend-template"
 });
 
+Vue.component('optimization-entry', {
+	props: {opt: Object },
+	data() {
+		return this.opt;
+	},
+	methods: {
+		desc_toggle: function(id){
+			var desc = document.getElementById('opt_item_desc_' + id);
+			var toggle = document.getElementById('opt_item_toggle_' + id);
+			
+			if(desc.style.display === 'none'){
+				desc.style.display = 'block';
+				toggle.classList.remove('glyphicon-chevron-down');
+				toggle.classList.add('glyphicon-chevron-up');
+			} else {
+				desc.style.display = 'none';
+				toggle.classList.add('glyphicon-chevron-down');
+				toggle.classList.remove('glyphicon-chevron-up');
+			}
+		},
+	
+	},
+	template: "#optimization-entry"
+});
+
 Vue.component('hosting-matchup', {
 	data() {
 		return page_data
@@ -291,20 +316,6 @@ Vue.component('optimizations-performance', {
 			var optsPerformace = generateCircle('circles-opt-perf', 40, 10, graphs.performance);
 			var optsSecurity = generateCircle('circles-opt-security', 40, 10, graphs.security);
 			var optsBestp = generateCircle('circles-opt-bestp', 40, 10, graphs.bestp);
-		},
-		desc_toggle: function(id){
-			var desc = document.getElementById('opt_item_desc_' + id);
-			var toggle = document.getElementById('opt_item_toggle_' + id);
-			
-			if(desc.style.display === 'none'){
-				desc.style.display = 'block';
-				toggle.classList.remove('glyphicon-chevron-down');
-				toggle.classList.add('glyphicon-chevron-up');
-			} else {
-				desc.style.display = 'none';
-				toggle.classList.add('glyphicon-chevron-down');
-				toggle.classList.remove('glyphicon-chevron-up');
-			}
 		},
 		updateOptimizations: function() {
 			page_data.showModal = true;
@@ -333,12 +344,34 @@ Vue.component('optimizations-performance', {
 				.then((response) => {
 					console.log('got ajax response');
 					console.log(response.data);
-					//page_data.optimizations = response.data.optimizations;
-					//page_data.other_optimizations = response.data.other_optimizations;
-					page_data.updateView++;
 					page_data.showModal = false;
-					page_data.showSuccess = true;
+					if (response.data.updated_data != null){
+						let updated = response.data.updated_data;
+						page_data.optimizations = updated.optimizations;
+						page_data.other_optimizations = updated.other_optimizations;
+						page_data.graphs = updated.graphs;
+						page_data.best_practices = updated.best_practices;
+						page_data.updateView++;
+						page_data.showSuccess = true;
+					}
+					else {
+						alert('invalid data received, please reload page');
+						page_data.showSuccess = false;
+						page_data.updateView++;
+					}
 				});
+		},
+		updateNavLinks: function(currentNav){
+			let sidenavDiv = document.getElementsByClassName('side-nav')[0];
+			let links = sidenavDiv.querySelectorAll('a');
+			links.forEach((link, index, array) => {
+				link.classList.remove('current');
+				if (link.name == currentNav){
+					link.classList.add('current');
+				}
+			});
+			this.sidenav = currentNav;
+			window.location.hash = '#' + currentNav;
 		}
 	},
 	template: "#optimizations-performance-template",
@@ -347,6 +380,14 @@ Vue.component('optimizations-performance', {
 
 		document.addEventListener("DOMContentLoaded", function () {
 			that.doCircles();
+			var hash = window.location.hash;
+			if (hash == ''){
+				hash = 'optperf';
+			}
+			else {
+				hash = hash.slice(1); // chop off # from beginning
+			}
+			that.updateNavLinks(hash);
 		});
 	},
 	props: ['updateChild'],
@@ -512,5 +553,3 @@ var app = new Vue({
 		}
 	},
 });
-
-

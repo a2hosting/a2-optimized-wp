@@ -47,6 +47,11 @@ $thishost: #009aca;
     h4 {
         font-size: 26px;
         font-weight: 500;
+
+        &.less-vertical-space {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
     }
 
     #a2-optimized-header {
@@ -166,6 +171,16 @@ $thishost: #009aca;
         &.warn {
             border-color: rgba($warn, 0.35);
         }
+        
+        &.clear {
+            border: none;
+            box-shadow: none;
+        }
+
+        div.best-practices-status {
+            font-size: 14px;
+            margin-bottom: 1em;
+        }
     }
 
     #a2-optimized-optstatus {
@@ -201,6 +216,11 @@ $thishost: #009aca;
                 margin-bottom: 0;
             }
         }
+    }
+
+    span.small {
+        padding-top: 0px;
+        font-size: 50%;
     }
 
     .circles-text {

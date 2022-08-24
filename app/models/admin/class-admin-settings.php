@@ -93,8 +93,9 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				}
 			}
 
+			$opt_perf = $this->get_opt_performance();
 			$data['post_data'] = $_POST;
-			$data['opt_object'] = $optimizations;
+			$data['updated_data'] = $opt_perf;
 
 			$data['result'] = 'success';
 
@@ -237,8 +238,73 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		public function get_opt_performance() {
 			$result = [];
 			$result['optimizations'] = $this->optimizations->get_optimizations();
-			$result['best_practicies'] = $this->optimizations->get_best_practicies();
+			$result['best_practices'] = $this->optimizations->get_best_practices();
 
+			$displayed_optimizations = [];
+			$other_optimizations = [];
+			$opt_counts = [];
+			$graphs = [];
+			$categories = ['performance', 'security', 'bestp'];
+			
+			/* Setup initial counts */
+			foreach($categories as $cat){
+				$opt_counts[$cat]['active'] = 0;
+				$opt_counts[$cat]['total'] = 0;
+			}
+
+			/* Assign optimizations to display area and determine which are configured */
+			foreach($result['optimizations'] as $k => $optimization){
+				foreach($categories as $cat){
+					if($optimization['category'] == $cat){
+						if(isset($optimization['optional'])){
+							$other_optimizations[$cat][$k] = $optimization;
+						} else {
+							$displayed_optimizations[$cat][$k] = $optimization;
+							if($optimization['configured']){
+								$opt_counts[$cat]['active']++;
+							}
+							$opt_counts[$cat]['total']++;
+						}
+					}
+				}
+			}
+
+			foreach($result['best_practices'] as $key => $item){
+				$color_class = 'warn';
+				if(!$item['status']['is_warning']){
+					$opt_counts['bestp']['active']++;
+					$color_class = 'success';
+				}
+				$result['best_practices'][$key]['color_class'] = $color_class;
+				$opt_counts['bestp']['total']++;
+			}
+
+			/* Determine circle colors */
+			foreach($categories as $cat){
+				$color_class = 'danger';
+				if($opt_counts[$cat]['active'] > 1){
+					$color_class = 'warn';
+				}
+				if($opt_counts[$cat]['active'] == $opt_counts[$cat]['total']){
+					$color_class = 'success';
+				}
+				if($opt_counts[$cat]['total'] == 0){
+					$opt_counts[$cat]['total'] = 1;	
+				}
+				$graphs[$cat] = [
+					'score' => ($opt_counts[$cat]['active'] / $opt_counts[$cat]['total']),
+					'max' => 1, //todo not being used?  otherwise, shouldn't it be $opt_counts[$cat]['total'] ?
+					'text' => $opt_counts[$cat]['active'] . "/" . $opt_counts[$cat]['total'],
+					'color_class' => $color_class,  
+				];
+			}
+
+
+			$result['graphs'] = $graphs;
+			$result['opt_counts'] = $opt_counts;
+			$result['optimizations'] = $displayed_optimizations;
+			$result['other_optimizations'] = $other_optimizations;
+			//print_r($result['optimizations']); wp_die();
 			return $result;
 		}
 

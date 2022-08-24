@@ -132,63 +132,6 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			
 			$data = $args['data'];
 
-			$displayed_optimizations = [];
-			$other_optimizations = [];
-			$opt_counts = [];
-			$graphs = [];
-			$categories = ['performance', 'security', 'bestp'];
-			
-			/* Setup initial counts */
-			foreach($categories as $cat){
-				$opt_counts[$cat]['active'] = 0;
-				$opt_counts[$cat]['total'] = 0;
-			}
-
-			/* Assign optimizations to display area and determine which are configured */
-			foreach($data['optimizations'] as $k => $optimization){
-				foreach($categories as $cat){
-					if($optimization['category'] == $cat){
-						if(isset($optimization['optional'])){
-							$other_optimizations[$cat][$k] = $optimization;
-						} else {
-							$displayed_optimizations[$cat][$k] = $optimization;
-							if($optimization['configured']){
-								$opt_counts[$cat]['active']++;
-							}
-							$opt_counts[$cat]['total']++;
-						}
-					}
-				}
-			}
-
-			foreach($data['best_practicies'] as $item){
-				if(!$item['is_warning']){
-					$opt_counts['bestp']['active']++;
-				}
-				$opt_counts['bestp']['total']++;
-			}
-
-			/* Determine circle colors */
-			foreach($categories as $cat){
-				$color_class = 'danger';
-				if($opt_counts[$cat]['active'] > 1){
-					$color_class = 'warn';
-				}
-				if($opt_counts[$cat]['active'] == $opt_counts[$cat]['total']){
-					$color_class = 'success';
-				}
-				if($opt_counts[$cat]['total'] == 0){
-					$opt_counts[$cat]['total'] = 1;	
-				}
-				$graphs[$cat] = [
-					'score' => ($opt_counts[$cat]['active'] / $opt_counts[$cat]['total']),
-					'max' => 1,
-					'text' => $opt_counts[$cat]['active'] . "/" . $opt_counts[$cat]['total'],
-					'color_class' => $color_class,  
-				];
-			}
-
-
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
@@ -199,16 +142,13 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 					'optperf_class' => 'current'
 				],
 				'sidenav' => 'optperf',
-				'opt_counts' => $opt_counts,
-				'optimizations' => $displayed_optimizations,
-				'other_optimizations' => $other_optimizations,
-				'best_practicies' => $data['best_practicies'],
-				'graphs' => $graphs,
-				'graph_data' => [],
-				'explanations' => [
-					'webperformance' => 'you want good performance for your web',
-					'serverperformance' => 'you want good performance for your server',
-				],
+				'perf_more' => 'false',
+				'sec_more' => 'false',
+				'opt_counts' => $data['opt_counts'],
+				'optimizations' => $data['optimizations'],
+				'other_optimizations' => $data['other_optimizations'],
+				'best_practices' => $data['best_practices'],
+				'graphs' => $data['graphs']
 			];
 			$data_json = json_encode($data);
 

@@ -19,6 +19,7 @@ class A2_Optimized_Optimizations {
             'a2_page_cache' => [
                 'name' => 'Page Caching',
                 'slug' => 'a2_page_cache',
+                'premium' => false,
                 'configured' => $this->is_active('a2_page_cache'),
                 'category' => 'performance',
                 'compatibility' => ['caching'],
@@ -27,6 +28,7 @@ class A2_Optimized_Optimizations {
             'a2_page_cache_gzip' => [
                 'name' => 'Gzip Compression',
                 'slug' => 'a2_page_gzip',
+                'premium' => false,
                 'configured' => $this->is_active('a2_page_cache_gzip'),
                 'category' => 'performance',
                 'compatibility' => ['caching'],
@@ -35,6 +37,7 @@ class A2_Optimized_Optimizations {
             'a2_object_cache' => [
                 'name' => 'Object Caching',
                 'slug' => 'a2_object_cache',
+                'premium' => false,
                 'configured' => $this->is_active('a2_object_cache'),
                 'category' => 'performance',
                 'compatibility' => ['caching'],
@@ -44,6 +47,7 @@ class A2_Optimized_Optimizations {
             'a2_page_cache_minify_html' => [
                 'name' => 'Minify HTML Pages',
                 'slug' => 'a2_page_cache_minify_html',
+                'premium' => false,
                 'category' => 'performance',
                 'configured' => $this->is_active('a2_page_cache_minify_html'),
                 'compatibility' => ['pagebuilder', 'jsmin'],
@@ -53,6 +57,7 @@ class A2_Optimized_Optimizations {
             'a2_page_cache_minify_jscss' => [
                 'name' => 'Minify Inline CSS and Javascript',
                 'slug' => 'a2_page_cache_minify_jscss',
+                'premium' => false,
                 'category' => 'performance',
                 'configured' => $this->is_active('a2_page_cache_minify_jscss'),
                 'compatibility' => ['pagebuilder', 'jsmin'],
@@ -63,6 +68,7 @@ class A2_Optimized_Optimizations {
             'a2_db_optimizations' => [
                 'name' => 'Schedule Automatic Database Optimizations',
                 'slug' => 'a2_db_optimizations',
+                'premium' => false,
                 'configured' => $this->is_active('a2_db_optimizations'),
                 'category' => 'performance',
                 'description' => 'Improve your database performance by enabling Automatic Database Optimizations. If enabled, will periodically clean the MySQL database of expired transients, trashed comments, spam comments, and optimize all tables. You may also select to remove post revisions and trashed posts from the Database Optimization Settings. This is safe to activate.<br/>
@@ -71,6 +77,7 @@ class A2_Optimized_Optimizations {
             'woo_cart_fragments' => [
                 'name' => 'Dequeue WooCommerce Cart Fragments AJAX calls',
                 'slug' => 'woo_cart_fragments',
+                'premium' => false,
                 'optional' => true,
                 'category' => 'performance',
                 'configured' => $this->is_active('woo_cart_fragments'),
@@ -79,14 +86,18 @@ class A2_Optimized_Optimizations {
             'xmlrpc_requests' => [
                 'name' => 'Block Unauthorized XML-RPC Requests',
                 'slug' => 'xmlrpc_requests',
+                'premium' => false,
                 'optional' => true,
                 'category' => 'security',
                 'configured' => $this->is_active('xmlrpc_requests'),
                 'description' => 'Improve the security of your WordPress website by enabling this option. This will completely disable XML-RPC services. XML-RPC API is safe and enabled by default on all WordPress websites. However, some WordPress security experts may advise you to disable it. Disabling it will basically close one more door that a potential hacker may try to exploit to hack your website.',
             ],
+            /*
+            TODO: rethink how we are presenting this to the user
             'regenerate_salts' => [
                 'name' => 'Regenerate wp-config salts',
                 'slug' => 'regenerate_salts',
+                'premium' => false,
                 'optional' => true,
                 'configured' => $this->is_active('regenerate_salts'),
                 'category' => 'security',
@@ -94,9 +105,11 @@ class A2_Optimized_Optimizations {
                 'last_updated' => true,
                 'update' => true,
             ],
+            */
             'htaccess' => [
                 'name' => 'Deny Direct Access to Configuration Files and Comment Form',
                 'slug' => 'htaccess',
+                'premium' => false,
                 'optional' => true,
                 'configured' => $this->is_active('htaccess'),
                 'category' => 'security',
@@ -106,6 +119,7 @@ class A2_Optimized_Optimizations {
             'lock_editing' => [
                 'name' => 'Lock Editing of Plugins and Themes from the WP Admin',
                 'slug' => 'lock_editing',
+                'premium' => false,
                 'configured' => $this->is_active('lock_editing'),
                 'category' => 'security',
                 'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-the-a2-optimized-plugin',
@@ -118,8 +132,8 @@ class A2_Optimized_Optimizations {
                 'category' => 'security',
                 'configured' => false,
                 'kb' => 'http://www.a2hosting.com/kb/security/application-security/wordpress-security#a-namemethodRenameLoginPageaMethod-3.3A-Change-the-WordPress-login-URL',
-                'description' => 'Improve the security of your WordPress website by enabling this option. This will change the URL of the login page for your WordPress website. This will make it more difficult for bad actors and bots to hack your website. This is safe to activate.<br /> 
-                Note: record the new login page URL so that you don\’t forget where to login.',
+                'description' => "Improve the security of your WordPress website by enabling this option. This will change the URL of the login page for your WordPress website. This will make it more difficult for bad actors and bots to hack your website. This is safe to activate.<br /> 
+                Note: record the new login page URL so that you don’t forget where to login.",
             ],
             'captcha' => [
                 'name' => 'CAPTCHA on comments and login',
@@ -190,49 +204,49 @@ class A2_Optimized_Optimizations {
         }
     }
 
-    public function get_best_practicies() {
+    public function get_best_practices() {
         //TODO: should this be the site health items instead?
         $response = [
             'posts_per_page' => [
                 'title' => 'Recent Post Limit',
                 'description' => 'The number of recent posts per page should be less than fifteen for most sites. This could slow down page loads.',
                 'config_url' => admin_url() . 'options-reading.php',
-                'is_warning' => $this->is_active('posts_per_page'),
+                'status' => $this->is_active('posts_per_page', false),
             ],
             'posts_per_rss' => [
                 'title' => 'RSS Post Limit',
                 'description' => 'The number of posts in the RSS feeds should be less than than 20 for most sites. This could slow down page loads.',
                 'config_url' => admin_url() . 'options-reading.php',
-                'is_warning' => $this->is_active('posts_per_rss'),
+                'status' => $this->is_active('posts_per_rss', false),
             ],
             'show_on_front' => [
                 'title' => 'Recent Posts showing on home page',
                 'description' => 'Speed up your home page by selecting a static page to display.',
                 'config_url' => admin_url() . 'options-reading.php',
-                'is_warning' => $this->is_active('show_on_front'),
+                'status' => $this->is_active('show_on_front', false),
             ],
             'permalink_structure' => [
                 'title' => 'Permalink Structure',
                 'description' => 'To fully optimize page caching, and get added SEO benefits, you should set a permalink structure other than "Default".',
                 'config_url' => admin_url() . 'options-permalink.php',
-                'is_warning' => $this->is_active('permalink_structure'),
+                'status' => $this->is_active('permalink_structure', false),
             ],
             'themes' => [
                 'title' => 'Unused Themes',
                 'description' => 'Unused, non-default themes should be deleted.  For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping#Theme_Housekeeping">WordPress Housekeeping</a>',
                 'config_url' => admin_url() . 'themes.php',
-                'is_warning' => $this->is_active('themes'),
+                'status' => $this->is_active('themes', false),
             ],
             'plugins' => [
                 'title' => 'Inactive Plugins',
                 'description' => 'Unused, inactive plugins should be deleted. WordPress will still check for updates on each plugin even if it is not active, which could slow down your site. For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping">WordPress Housekeeping</a>',
                 'config_url' => admin_url() . 'plugins.php',
-                'is_warning' => $this->is_active('plugins'),
+                'status' => $this->is_active('plugins', false),
             ],
             'a2_hosting' => [
                 'title' => 'Hosted with A2 Hosting',
                 'description' => 'Get faster page load times and more optimizations when you <a href="https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized" target="_blank">host with A2 Hosting</a>.',
-                'is_warning' => $this->is_active('a2_hosting'),
+                'status' => $this->is_active('a2_hosting', false),
                 'config_url' => 'https://www.a2hosting.com/wordpress-hosting?utm_source=A2%20Optimized&utm_medium=Referral&utm_campaign=A2%20Optimized'
             ],
         ];
@@ -324,92 +338,112 @@ class A2_Optimized_Optimizations {
         }
     }
 
-    public function is_active($optimization){
+    /***
+     * check if a given optimization is currently active
+     */
+    public function is_active($optimization, $value_only = true){
+        $result = [
+            'value' => false,
+            'is_warning' => false,
+            'current' => ''
+        ];
+
         switch ($optimization) {
             case 'a2_page_cache':
                 if(get_option('a2_cache_enabled') == '1'){
-                    return true;
+                    $result['value'] = true;
                 }
                 break;
             case 'a2_page_cache_gzip':
-                if (isset(A2_Optimized_Cache_Engine::$settings['compress_cache'])) {
-                    return true;
+                $settings = A2_Optimized_Cache::get_settings();
+                if ($settings['compress_cache']) {
+                    $result['value'] = true;
                 }
                 break;
             case 'a2_object_cache':
                 if (get_option('a2_object_cache_enabled') == 1 && file_exists( WP_CONTENT_DIR . '/object-cache.php')) {
-                    return true;
+                    $result['value'] = true;
                 }
                 break;
             case 'a2_page_cache_minify_html':
-                if (isset(A2_Optimized_Cache_Engine::$settings['minify_html'])) {
-                    return true;
+                $settings = A2_Optimized_Cache::get_settings();
+                if (isset($settings['minify_html'])) {
+                    $result['value'] = true;
                 }
                 break;
             case 'a2_page_cache_minify_jscss':
-                if (isset(A2_Optimized_Cache_Engine::$settings['minify_inline_css_js'])) {
-                    return true;
+                $settings = A2_Optimized_Cache::get_settings();
+                if (isset($settings['minify_inline_css_js'])) {
+                    $result['value'] = true;
                 }
                 break;
             case 'a2_db_optimizations':
                 $a2_db_opt = get_option('a2_db_optimizations');
                 if (isset($a2_db_opt['cron_active']) && $a2_db_opt['cron_active']) {
-                    return true;
+                    $result['value'] = true;
                 }
                 break;
             case 'woo_cart_fragments':
                 if(get_option('a2_wc_cart_fragments') == '1'){
-                    return true;
+                    $result['value'] = true;
                 }
                 break;
             case 'xmlrpc_requests':
                 if(get_option('a2_block_xmlrpc') == '1'){
-                    return true;
+                    $result['value'] = true;
                 }
                 break;
             case 'regenerate_salts':
                 if(get_option('a2_updated_regenerate-salts')){
                     $last_updated = strtotime(get_option('a2_updated_regenerate-salts'));
                     if ($last_updated > strtotime('-3 Months')) {
-                        return true;
+                        $result['value'] = true;
                     }
                 }
                 break;
             case 'htaccess':
                 $htaccess = file_get_contents(ABSPATH . '.htaccess');
                 if(strpos($htaccess, '# BEGIN WordPress Hardening') !== false && get_option('a2_optimized_deny_direct') == '1') {
-                    return true;
+                    $result['value'] = true;
                 }
                 break;
             case 'lock_editing':
                 $wpconfig = file_get_contents(ABSPATH . 'wp-config.php');
                 if (strpos($wpconfig, '// BEGIN A2 CONFIG') !== false && get_option('a2_optimized_lockdown') == '1') {
-                    return true;
+                    $result['value'] = true;
                 }
                 break;
             case 'no_mods':
                 if(get_option('a2_optimized_nomods')){
-                    return true;
+                    $result['value'] = true;
                 }
                 break;
             case 'posts_per_page':
-                if(get_option('posts_per_page') > 15){
-                    return true;
+                $ppp = get_option('posts_per_page');
+                $result['current'] = "{$ppp} recent posts per page";
+                if($ppp <= 15){
+                    $result['value'] = true;
                 }
                 break;
             case 'posts_per_rss':
-                if(get_option('posts_per_rss') > 20){
-                    return true;
+                $ppr = get_option('posts_per_rss');
+                $result['current'] = "{$ppr} posts from external feeds.";
+                if($ppr <= 20){
+                    $result['value'] = true;
                 }
                 break;
             case 'show_on_front':
-                if(get_option('show_on_front') == 'posts'){
-                    return true;
+                $sof = get_option('show_on_front');
+                $result['current'] = "Showing {$sof} on front page.";
+                if($sof != 'posts'){
+                    $result['value'] = true;
                 }
                 break;
             case 'permalink_structure':
-                if(get_option('permalink_structure') == ''){
-                    return true;
+                $ps = get_option('permalink_structure');
+                $result['current'] = empty($ps) ? "Permalink structure is not set." : "Permalink structure set to '{$ps}'";
+                if (!empty($ps)){
+                    $result['value'] = true;
                 }
                 break;
             case 'themes':
@@ -418,43 +452,57 @@ class A2_Optimized_Optimizations {
                 foreach ($themes as $theme_name => $theme) {
                     if (substr($theme_name, 0, 6) != 'twenty') {
                         // We don't want default themes to count towards our warning total
-                        $theme_count++;
+                        ++$theme_count;
                     }
                 }
                 switch ($theme_count) {
                     case 1:
-                        return false;
+                        $result['current'] = "One theme configured.";
+                        $result['value'] = true;
+                        break;
                     case 2:
                         $theme = wp_get_theme();
                         if ($theme->get('Template') != '') {
-                            return false;
+                            $result['current'] = "One child theme configured.";
+                            $result['value'] = true;
                         }
+                        break;
+                    default:
+                        $result['current'] = "{$theme_count} themes configured.";
+                        $result['value'] = false;
+                        break;
                 }
-                return true;
                 break;
             case 'plugins':
                 $plugins = get_plugins();
-                $plugin_count = 0;
+                $inactive_plugin_count = 0;
 
                 foreach ($plugins as $slug => $plugin) {
                     if (is_plugin_inactive($slug)) {
-                        $plugin_count++;
+                        $inactive_plugin_count++;
                     }
                 }
-                if($plugin_count > 4){
-                    return false;
+                $result['current'] = "{$inactive_plugin_count} inactive plugins.";
+                if($inactive_plugin_count <= 4){
+                    $result['value'] = true;
                 }
-                return true;
                 break;
             case 'a2_hosting':
-                if (is_dir('/opt/a2-optimized')) {
-                    return false;
+                $dir = '/opt/a2-optimized';
+                $exists = is_dir($dir);
+                $result['current'] = $exists ? "You are on A2 Hosting" : "You are not on an A2 Hosting server.";
+                if ($exists) {
+                    $result['value'] = true;
                 }
-                return true;
                 break;
+        }
 
-
-            
+        $result['is_warning'] = !$result['value'];
+        if ($value_only){
+            return $result['value'];
+        }
+        else {
+            return $result;
         }
     }
 
@@ -499,6 +547,11 @@ class A2_Optimized_Optimizations {
 
         // Rebuild cache settings file
         A2_Optimized_Cache_Disk::create_settings_file($cache_settings);
+        
+        /* Testing if saving works */
+        //$cache_settings = A2_Optimized_Cache::get_settings();
+        //echo json_encode($cache_settings);
+        
         return true;
     }
 
