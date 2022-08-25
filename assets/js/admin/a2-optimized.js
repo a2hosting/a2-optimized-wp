@@ -1,5 +1,6 @@
 function generateCircle(id, radius, width, graph_data) {
 	if (!graph_data) { return; }
+
 	let baseColor = palette[graph_data.color_class];
 
 	var circle_graph = Circles.create({
@@ -264,6 +265,31 @@ Vue.component('graph-legend', {
 	template: "#graph-legend-template"
 });
 
+Vue.component('optimization-entry', {
+	props: {opt: Object },
+	data() {
+		return this.opt;
+	},
+	methods: {
+		desc_toggle: function(id){
+			var desc = document.getElementById('opt_item_desc_' + id);
+			var toggle = document.getElementById('opt_item_toggle_' + id);
+			
+			if(desc.style.display === 'none'){
+				desc.style.display = 'block';
+				toggle.classList.remove('glyphicon-chevron-down');
+				toggle.classList.add('glyphicon-chevron-up');
+			} else {
+				desc.style.display = 'none';
+				toggle.classList.add('glyphicon-chevron-down');
+				toggle.classList.remove('glyphicon-chevron-up');
+			}
+		},
+	
+	},
+	template: "#optimization-entry"
+});
+
 Vue.component('hosting-matchup', {
 	data() {
 		return page_data
@@ -277,6 +303,98 @@ Vue.component('hosting-matchup', {
 			createBarGraph('overall_wordpress_canvas', webperf_meta);
 			createBarGraph('server_perf_canvas', serverperf_meta, true, true);
 		});
+	}
+});
+
+Vue.component('optimizations-performance', {
+	data() {
+		return page_data
+	},
+	methods: {
+		doCircles: function () {
+			let graphs = page_data.graphs;
+			var optsPerformace = generateCircle('circles-opt-perf', 40, 10, graphs.performance);
+			var optsSecurity = generateCircle('circles-opt-security', 40, 10, graphs.security);
+			var optsBestp = generateCircle('circles-opt-bestp', 40, 10, graphs.bestp);
+		},
+		updateOptimizations: function() {
+			page_data.showModal = true;
+			var params = new URLSearchParams();
+			params.append('action', 'apply_optimizations');
+			params.append('nonce', ajax.nonce);
+
+			for (let key in page_data.optimizations) {
+				for (let index in page_data.optimizations[key] ) {          
+					params.append('opt-' + index, page_data.optimizations[key][index]['configured']);
+				}
+			}
+			for (let key in page_data.other_optimizations) {
+				for (let index in page_data.other_optimizations[key] ) {          
+					params.append('opt-' + index, page_data.other_optimizations[key][index]['configured']);
+				}
+			}
+
+			axios
+				.post(ajax.url, params)
+				.catch((error) => {
+					alert('There was a problem getting benchmark data. See console log.');
+					console.log(error.message);
+					page_data.showModal = false;
+				})
+				.then((response) => {
+					console.log('got ajax response');
+					console.log(response.data);
+					page_data.showModal = false;
+					if (response.data.updated_data != null){
+						let updated = response.data.updated_data;
+						page_data.optimizations = updated.optimizations;
+						page_data.other_optimizations = updated.other_optimizations;
+						page_data.graphs = updated.graphs;
+						page_data.best_practices = updated.best_practices;
+						page_data.updateView++;
+						page_data.showSuccess = true;
+					}
+					else {
+						alert('invalid data received, please reload page');
+						page_data.showSuccess = false;
+						page_data.updateView++;
+					}
+				});
+		},
+		updateNavLinks: function(currentNav){
+			let sidenavDiv = document.getElementsByClassName('side-nav')[0];
+			let links = sidenavDiv.querySelectorAll('a');
+			links.forEach((link, index, array) => {
+				link.classList.remove('current');
+				if (link.name == currentNav){
+					link.classList.add('current');
+				}
+			});
+			this.sidenav = currentNav;
+			window.location.hash = '#' + currentNav;
+		}
+	},
+	template: "#optimizations-performance-template",
+	mounted() {
+		let that = this;
+
+		document.addEventListener("DOMContentLoaded", function () {
+			that.doCircles();
+			var hash = window.location.hash;
+			if (hash == ''){
+				hash = 'optperf';
+			}
+			else {
+				hash = hash.slice(1); // chop off # from beginning
+			}
+			that.updateNavLinks(hash);
+		});
+	},
+	props: ['updateChild'],
+	watch: {
+		updateChild: function () {
+			this.doCircles();
+		}
 	}
 });
 
@@ -408,25 +526,24 @@ var app = new Vue({
 			params.append('action', 'run_benchmarks');
 			params.append('a2_page', page);
 			params.append('run_checks', run_checks);
+			params.append('nonce', ajax.nonce);
+			
 			let strat = document.getElementById('server-perf-strategy-select');
 			if (strat) {
 				params.append('a2_performance_strategy', strat.value);
 			}
 
 			axios
-				.post(ajaxurl, params)
+				.post(ajax.url, params)
 				.catch((error) => {
 					alert('There was a problem getting benchmark data. See console log.');
 					console.log(error.message);
 					page_data.showModal = false;
 				})
 				.then((response) => {
-					//console.log('post finished, got data');
-					//console.log(response.data);
 					if (run_checks) {
 						page_data.last_check_date = 'just now';
-					}
-					else {
+					} else {
 						page_data.last_check_date = response.data.overall_score.last_check_date;
 					}
 					page_data.graphs = response.data;
@@ -436,5 +553,3 @@ var app = new Vue({
 		}
 	},
 });
-
-

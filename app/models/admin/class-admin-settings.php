@@ -4,8 +4,7 @@ namespace A2_Optimized\App\Models\Admin;
 use A2_Optimized\App\Models\Settings as Settings_Model;
 use A2_Optimized\App\Models\Admin\Base_Model;
 use A2_Optimized_Benchmark;
-
-//require_once(__DIR__ . '/../../../includes/A2_Optimized_Benchmark.php');
+use A2_Optimized_Optimizations;
 
 if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 	/**
@@ -17,6 +16,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 	 */
 	class Admin_Settings extends Base_Model {
 		private $benchmark;
+		private $optimizations;
 
 		/**
 		 * Constructor
@@ -26,6 +26,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		protected function __construct() {
 			$this->register_hook_callbacks();
 			$this->benchmark = new A2_Optimized_Benchmark();
+			$this->optimizations = new A2_Optimized_Optimizations();
 		}
 
 		/**
@@ -43,17 +44,21 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			 */
 
 			add_action( 'wp_ajax_run_benchmarks', [$this, 'run_benchmarks'] );
+			add_action( 'wp_ajax_apply_optimizations', [$this, 'apply_optimizations'] );
 		}
 
+		/* Callback for run_benchmarks AJAX request */
 		public function run_benchmarks() {
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') ){ 
+				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
+				wp_die(); 
+			}
+			
 			$target_url = $_POST['target_url'];
 			$page = $_POST['a2_page'];
 			$run_checks = $_POST['run_checks'] !== 'false';
 
-			//wp_die(json_encode($_POST));
-
 			$frontend_data = $this->get_frontend_benchmark($run_checks);
-
 
 			if ($page == 'server-performance') {
 				$strategy = 'pagespeed_' . $_POST['a2_performance_strategy'];
@@ -63,6 +68,36 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$opt_data = $this->get_optimization_benchmark();
 
 			$data = array_merge($frontend_data, $opt_data);
+			$data['result'] = 'success';
+
+
+			echo json_encode($data);
+			wp_die();
+		}
+
+		/* Callback for apply_optimizations AJAX request */
+		public function apply_optimizations() {
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') ){ 
+				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
+				wp_die(); 
+			}
+			
+			$data = [];
+
+			$optimizations = [];
+			foreach($_POST as $k => $value){
+				if(substr($k, 0, 4) === "opt-"){
+					$k = str_replace("opt-", "", $k);
+					$optimizations[$k] = $value;
+					$this->optimizations->apply_optimization($k, $value);
+				}
+			}
+
+			$opt_perf = $this->get_opt_performance();
+			$data['post_data'] = $_POST;
+			$data['updated_data'] = $opt_perf;
+
+			$data['result'] = 'success';
 
 			echo json_encode($data);
 			wp_die();
@@ -197,6 +232,79 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result['pagespeed_mobile'] = false;
 			}
 
+			return $result;
+		}
+
+		public function get_opt_performance() {
+			$result = [];
+			$result['optimizations'] = $this->optimizations->get_optimizations();
+			$result['best_practices'] = $this->optimizations->get_best_practices();
+
+			$displayed_optimizations = [];
+			$other_optimizations = [];
+			$opt_counts = [];
+			$graphs = [];
+			$categories = ['performance', 'security', 'bestp'];
+			
+			/* Setup initial counts */
+			foreach($categories as $cat){
+				$opt_counts[$cat]['active'] = 0;
+				$opt_counts[$cat]['total'] = 0;
+			}
+
+			/* Assign optimizations to display area and determine which are configured */
+			foreach($result['optimizations'] as $k => $optimization){
+				foreach($categories as $cat){
+					if($optimization['category'] == $cat){
+						if(isset($optimization['optional'])){
+							$other_optimizations[$cat][$k] = $optimization;
+						} else {
+							$displayed_optimizations[$cat][$k] = $optimization;
+							if($optimization['configured']){
+								$opt_counts[$cat]['active']++;
+							}
+							$opt_counts[$cat]['total']++;
+						}
+					}
+				}
+			}
+
+			foreach($result['best_practices'] as $key => $item){
+				$color_class = 'warn';
+				if(!$item['status']['is_warning']){
+					$opt_counts['bestp']['active']++;
+					$color_class = 'success';
+				}
+				$result['best_practices'][$key]['color_class'] = $color_class;
+				$opt_counts['bestp']['total']++;
+			}
+
+			/* Determine circle colors */
+			foreach($categories as $cat){
+				$color_class = 'danger';
+				if($opt_counts[$cat]['active'] > 1){
+					$color_class = 'warn';
+				}
+				if($opt_counts[$cat]['active'] == $opt_counts[$cat]['total']){
+					$color_class = 'success';
+				}
+				if($opt_counts[$cat]['total'] == 0){
+					$opt_counts[$cat]['total'] = 1;	
+				}
+				$graphs[$cat] = [
+					'score' => ($opt_counts[$cat]['active'] / $opt_counts[$cat]['total']),
+					'max' => 1, //todo not being used?  otherwise, shouldn't it be $opt_counts[$cat]['total'] ?
+					'text' => $opt_counts[$cat]['active'] . "/" . $opt_counts[$cat]['total'],
+					'color_class' => $color_class,  
+				];
+			}
+
+
+			$result['graphs'] = $graphs;
+			$result['opt_counts'] = $opt_counts;
+			$result['optimizations'] = $displayed_optimizations;
+			$result['other_optimizations'] = $other_optimizations;
+			//print_r($result['optimizations']); wp_die();
 			return $result;
 		}
 
@@ -377,17 +485,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			}
 
 			return $result;
-		}
-
-		private function format_backend_results($data) {
-			$output = "\n\rBackend Results\n\r";
-			$output .= "==========================\n\r";
-			$output .= 'Overall Score: ' . round($data['wordpress_db']['queries_per_second']) . "\n\r";
-			$output .= 'PHP: ' . $data['php']['total'] . "\n\r";
-			$output .= 'MySQL: ' . $data['mysql']['benchmark']['mysql_total'] . "\n\r";
-			$output .= 'Filesystem: ' . $data['filesystem'] . "\n\r";
-
-			return $output;
 		}
 
 		/**

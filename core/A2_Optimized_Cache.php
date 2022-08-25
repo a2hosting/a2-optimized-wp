@@ -1061,7 +1061,7 @@ final class A2_Optimized_Cache {
 					'<strong>Autoptimize</strong>',
 					sprintf(
 						'<a href="%s">%s</a>',
-						admin_url( 'options-general.php?page=a2-optimized-wp' ),
+						admin_url( 'admin.php?page=a2-optimized-wp' ),
 						esc_html__( 'A2 Optimized Settings', 'a2-optimized-wp' )
 					)
 				)
