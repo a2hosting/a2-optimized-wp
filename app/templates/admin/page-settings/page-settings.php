@@ -43,8 +43,8 @@
 	<div class="col-sm-12">
 		<div class="row">
 			<div class="col-sm-2 side-nav">
-				<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance" :class="nav.webperf_class">Web Performance</a></p>
-				<p><a href="options-general.php?page=a2-optimized&a2_page=hosting_matchup" :class="nav.hmatch_class">Hosting Matchup</a></p>
+				<p><a href="admin.php?page=a2-optimized&a2_page=server_performance" :class="nav.webperf_class">Web Performance</a></p>
+				<p><a href="admin.php?page=a2-optimized&a2_page=hosting_matchup" :class="nav.hmatch_class">Hosting Matchup</a></p>
 			</div>
 			<div class="col-sm-10 border-left" id="a2-optimized-hostingmatchup">
 				<div class="row">
@@ -684,7 +684,7 @@
 							<div class="col-sm-4"></div>
 						</div>
 					</div>
-				</div><!-- blah -->
+				</div>
 			</div>
 		</div>
 	</transition>
