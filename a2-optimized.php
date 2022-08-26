@@ -7,15 +7,14 @@
  * @package           A2_Optimized
  *
  * @wordpress-plugin
- * Plugin Name:       A2 Optimized
- * Plugin URI:        http://example.com/a2-optimized-uri/
- * Description:       This is a short description of what the plugin does. It's displayed in the WordPress admin area.
- * Version:           1.0.0
- * Author:            Your Name or Your Company
- * Author URI:        http://example.com/
- * License:           GPL-2.0+
- * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       a2-optimized
+ * Plugin Name: A2 Optimized WP
+ * Plugin URI: https://wordpress.org/plugins/a2-optimized/
+ * Version: 2.9.9
+ * Author: A2 Hosting
+ * Author URI: https://www.a2hosting.com/
+ * Description: A2 Optimized - WordPress Optimization Plugin
+ * Text Domain: a2-optimized
+ * License: GPLv3
  * Domain Path:       /languages
  */
 

@@ -549,8 +549,6 @@ class A2_Optimized_Optimizations {
         A2_Optimized_Cache_Disk::create_settings_file($cache_settings);
         
         /* Testing if saving works */
-        //$cache_settings = A2_Optimized_Cache::get_settings();
-        //echo json_encode($cache_settings);
         
         return true;
     }

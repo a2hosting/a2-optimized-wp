@@ -17,7 +17,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * @var string
 		 * @since 1.0.0
 		 */
-		private $min_php_version = '5.6';
+		private $min_php_version = A2OPT_MIN_PHP;
 
 		/**
 		 * Holds minimum wp version for plugin if not defined in `requirements.php`.
@@ -25,7 +25,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * @var string
 		 * @since 1.0.0
 		 */
-		private $min_wp_version = '4.8';
+		private $min_wp_version = A2OPT_MIN_WP;
 
 		/**
 		 * Holds the information whether plugin is compatible with Multisite or not.
