@@ -559,7 +559,7 @@ HTML;
 				add_action('admin_notices', [&$this, 'w3totalcache_plugin_notice']);
 			}
 			// Check for Wordfence and if WAF rules are setup correctly, show notice if not
-			if ($plugin_folder[0] == 'wordfence' && $this->wordfence_waf_check() === false && get_option['a2_notice_wordfence_waf'] != '1') {
+			if ($plugin_folder[0] == 'wordfence' && $this->wordfence_waf_check() === false && get_option('a2_notice_wordfence_waf') != '1') {
 				add_action('admin_notices', [&$this, 'wordfence_plugin_notice']);
 			}
 		}
