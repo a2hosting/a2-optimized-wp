@@ -67,21 +67,53 @@ $thishost: #009aca;
         }
     }
 
-    #a2-optimized-navigation {
+    .a2-optimized-navigation {
         margin-bottom: 100px;
 
         a {
             font-size: 20px;
             font-family: Raleway;
             font-weight: 700;
-            color: $dark;
+
+            &.current {
+                font-size: 24px;
+            }
         }
 
     }
 
-    a.current {
-        text-decoration: underline;
+    .side-nav {
+        p {
+            margin-top: 150px;
+            font-size: 18px;
+            font-weight: 500;
+            text-transform: uppercase;
+        }
+
+        .current {
+            font-size: 20px;
+        }
+
     }
+
+    a.navlink {
+        color: $dark;
+        text-decoration: none;
+
+        &.current {
+            text-decoration: underline;
+            color: $green;
+        }
+
+        &:hover {
+            border-width: 2px;
+            border-style: solid;
+            border-radius: 10px;
+            border-spacing: 5px;
+            text-decoration: none;
+        }
+    }
+
 
     .cta-btn-green {
         background-color: $green;
@@ -106,19 +138,6 @@ $thishost: #009aca;
 
     .border-left {
         border-left: 1px solid $dark;
-    }
-
-    .side-nav {
-        p {
-            margin-top: 150px;
-            font-size: 18px;
-            font-weight: 500;
-            text-transform: uppercase;
-        }
-
-        a {
-            color: $dark;
-        }
     }
 
     .box-element {
@@ -171,7 +190,7 @@ $thishost: #009aca;
         &.warn {
             border-color: rgba($warn, 0.35);
         }
-        
+
         &.clear {
             border: none;
             box-shadow: none;
@@ -215,6 +234,24 @@ $thishost: #009aca;
             h4 {
                 margin-bottom: 0;
             }
+        }
+    }
+
+    .opt-extra-settings-items {
+        h4 {
+            font-size: 22px;
+        }
+        .setting-item {
+            padding-left: 10px;
+            h4 {
+                font-size: 20px;
+            }
+        }
+        .row {
+            margin-bottom: 10px;
+        }
+        .desc {
+            color: $green;
         }
     }
 
@@ -315,6 +352,7 @@ $thishost: #009aca;
     a.toggle {
         color: $dark;
         text-decoration: none;
+
         &:hover {
             color: $normal;
             cursor: pointer;
@@ -323,11 +361,13 @@ $thishost: #009aca;
 
     .opt-completed {
         text-align: center;
+
         h4 {
             font-size: 20px;
             font-weight: 700;
             line-height: 24px;
         }
+
         span {
             color: $orange;
         }
@@ -942,6 +982,132 @@ $thishost: #009aca;
 
         100% {
             opacity: 1;
+        }
+    }
+
+
+    /*
+    .flipped {
+        .flip-card-front {
+            display: none;
+        }
+
+        .flip-card-back {
+            display: block;
+        }
+
+    }
+    */
+
+    .flip-card-inner.flip-start {
+        animation-duration: .25s;
+        animation-name: flipToFront1;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+    }
+
+    .flip-card-inner.flip-finish {
+        animation-duration: .25s;
+        animation-name: flipToFront2;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+    }
+
+    .flip-card-inner.flipped.flip-start {
+        animation-duration: .25s;
+        animation-name: flipToFront3;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+    }
+
+    .flip-card-inner.flipped.flip-finish {
+        animation-duration: .25s;
+        animation-name: flipToFront4;
+        animation-iteration-count: 1;
+        animation-fill-mode: forwards;
+    }
+
+
+    @keyframes flipToFront1 {
+        from {
+            transform: rotateY(0deg);
+        }
+
+        to {
+            transform: rotateY(90deg);
+        }
+    }
+
+    @keyframes flipToFront2 {
+        from {
+            transform: rotateY(90deg);
+        }
+
+        to {
+            transform: rotateY(180deg);
+        }
+    }
+
+    @keyframes flipToFront3 {
+        from {
+            transform: rotateY(180deg);
+        }
+
+        to {
+            transform: rotateY(270deg);
+        }
+    }
+
+    @keyframes flipToFront4 {
+        from {
+            transform: rotateY(270deg);
+        }
+
+        to {
+            transform: rotateY(360deg);
+        }
+    }
+
+    /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
+    .flip-card {
+        background-color: transparent;
+        perspective: 1000px;
+    }
+
+    /* This container is needed to position the front and back side */
+    .flip-card-inner {
+        position: relative;
+        /*
+        width: 100%;
+        height: 100%;
+        */
+        transition: transform 0.8s;
+        transform-style: preserve-3d;
+    }
+
+    /* Position the front and back side */
+    /*
+    .flip-card-front,
+    .flip-card-back {
+        width: 100%;
+        height: 100%;
+        */
+        /* Safari */
+        /*
+        -webkit-backface-visibility: hidden;
+        backface-visibility: hidden;
+    }
+    */
+
+    /* Style the back side */
+    .flip-card-back {
+
+        transform: rotateY(180deg);
+    }
+
+    .flipped {
+        &.flip-card-inner {
+            transform: rotateY(180deg);
         }
     }
 

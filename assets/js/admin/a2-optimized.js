@@ -257,6 +257,71 @@ Vue.component('info-button', {
 	}
 });
 
+addEventListener('animationend', onAnimationEnd);
+function onAnimationEnd(event) {
+	let elem = event.target;
+	if (event.animationName == 'flipToFront1') {
+		var front = elem.querySelector('.flip-card-front');
+		var back = elem.querySelector('.flip-card-back');
+		front.style.display = 'none';
+		back.style.display = 'block';
+
+		elem.classList.remove('flip-start');
+		elem.classList.add('flip-finish');
+	}
+	else if (event.animationName == 'flipToFront2') {
+		elem.classList.remove('flip-finish');
+		elem.classList.add('flipped');
+	}
+	else if (event.animationName == 'flipToFront3') {
+		var front = elem.querySelector('.flip-card-front');
+		var back = elem.querySelector('.flip-card-back');
+		front.style.display = 'block';
+		back.style.display = 'none';
+
+		elem.classList.remove('flip-start');
+		elem.classList.add('flip-finish');
+	}
+	else if (event.animationName == 'flipToFront4') {
+		elem.classList.remove('flip-finish');
+		elem.classList.remove('flipped');
+	}
+
+}
+
+Vue.component('flip-panel', {
+	props: {
+		content_id: String,
+		status_class: String,
+		additional_classes: String,
+	},
+	template: "#flip-panel-template",
+	data() {
+		return {
+			content_index: 0
+		}
+	},
+	methods: {
+		toggleFlipPanel: function (wrapperId, elem) {
+			var wrapper = document.getElementById(wrapperId);
+			var flip_inner = wrapper.querySelector('.flip-card-inner');
+
+			this.content_index++;
+			if (this.content_index > 1) {
+				this.content_index = 0;
+			}
+
+			flip_inner.classList.remove('flip-start');
+			flip_inner.classList.remove('flip-finish');
+
+			flip_inner.classList.add('flip-start');
+
+			if (this.content_index == 1) {
+			}
+		}
+	}
+});
+
 Vue.component('graph-legend', {
 	props: { metric: { type: String } },
 	data() {
@@ -266,16 +331,19 @@ Vue.component('graph-legend', {
 });
 
 Vue.component('optimization-entry', {
-	props: {opt: Object },
+	props: {
+		opt: Object,
+		wrapper_id: String
+	},
 	data() {
 		return this.opt;
 	},
 	methods: {
-		desc_toggle: function(id){
+		desc_toggle: function (id) {
 			var desc = document.getElementById('opt_item_desc_' + id);
 			var toggle = document.getElementById('opt_item_toggle_' + id);
-			
-			if(desc.style.display === 'none'){
+
+			if (desc.style.display === 'none') {
 				desc.style.display = 'block';
 				toggle.classList.remove('glyphicon-chevron-down');
 				toggle.classList.add('glyphicon-chevron-up');
@@ -285,9 +353,34 @@ Vue.component('optimization-entry', {
 				toggle.classList.remove('glyphicon-chevron-up');
 			}
 		},
-	
+		toggleExtraSettings: function (slug, event) {
+			this.$root.$emit('extra_settings_show', { slug: slug });
+			this.$parent.toggleFlipPanel(this.wrapper_id, event);
+		}
 	},
 	template: "#optimization-entry"
+});
+Vue.component('opt-extra-settings', {
+	props: {
+		extra_settings: Object,
+	},
+	data() {
+		return {
+			selected_slug: '',
+		}
+	},
+	computed: {
+		opt_group() {
+			return this.extra_settings[this.selected_slug];
+		}
+	},
+	template: "#opt-extra-settings-template",
+	mounted() {
+		this.$root.$on('extra_settings_show', data => {
+			this.selected_slug = data.slug;
+			console.log(data);
+		});
+	}
 });
 
 Vue.component('hosting-matchup', {
@@ -317,20 +410,38 @@ Vue.component('optimizations-performance', {
 			var optsSecurity = generateCircle('circles-opt-security', 40, 10, graphs.security);
 			var optsBestp = generateCircle('circles-opt-bestp', 40, 10, graphs.bestp);
 		},
-		updateOptimizations: function() {
+		updateOptimizations: function () {
 			page_data.showModal = true;
 			var params = new URLSearchParams();
 			params.append('action', 'apply_optimizations');
 			params.append('nonce', ajax.nonce);
 
 			for (let key in page_data.optimizations) {
-				for (let index in page_data.optimizations[key] ) {          
+				for (let index in page_data.optimizations[key]) {
 					params.append('opt-' + index, page_data.optimizations[key][index]['configured']);
 				}
 			}
 			for (let key in page_data.other_optimizations) {
-				for (let index in page_data.other_optimizations[key] ) {          
+				for (let index in page_data.other_optimizations[key]) {
 					params.append('opt-' + index, page_data.other_optimizations[key][index]['configured']);
+				}
+			}
+			for (let parent in page_data.extra_settings) { // a2_page_cache
+				for (let item in page_data.extra_settings[parent]['settings_sections']) { // site_clear
+					for (let subitem in page_data.extra_settings[parent]['settings_sections'][item]['settings']) { // clear_site_cache_on_changed_plugin
+						// Set the value
+						// Do we need the parent item?
+						console.log(subitem);
+						params.append('opt-' + subitem, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['value']);
+						
+						// If this item has extra_fields
+						if(page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem].hasOwnProperty('extra_fields')){
+							for (let extra_field in page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields']) { // cache_expiry_time
+								params.append('opt-' + extra_field, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields'][extra_field]['value']);
+								console.log(extra_field);
+							}
+						}
+					}
 				}
 			}
 
@@ -345,12 +456,13 @@ Vue.component('optimizations-performance', {
 					console.log('got ajax response');
 					console.log(response.data);
 					page_data.showModal = false;
-					if (response.data.updated_data != null){
+					if (response.data.updated_data != null) {
 						let updated = response.data.updated_data;
 						page_data.optimizations = updated.optimizations;
 						page_data.other_optimizations = updated.other_optimizations;
 						page_data.graphs = updated.graphs;
 						page_data.best_practices = updated.best_practices;
+						page_data.extra_settings = updated.extra_settings;
 						page_data.updateView++;
 						page_data.showSuccess = true;
 					}
@@ -361,17 +473,17 @@ Vue.component('optimizations-performance', {
 					}
 				});
 		},
-		updateNavLinks: function(currentNav){
+		updateNavLinks: function (currentNav) {
 			let sidenavDiv = document.getElementsByClassName('side-nav')[0];
 			let links = sidenavDiv.querySelectorAll('a');
 			links.forEach((link, index, array) => {
 				link.classList.remove('current');
-				if (link.name == currentNav){
+				if (link.name == currentNav) {
 					link.classList.add('current');
 				}
 			});
 			this.sidenav = currentNav;
-			window.location.hash = '#' + currentNav;
+			//window.location.hash = '#' + currentNav;
 		}
 	},
 	template: "#optimizations-performance-template",
@@ -381,7 +493,7 @@ Vue.component('optimizations-performance', {
 		document.addEventListener("DOMContentLoaded", function () {
 			that.doCircles();
 			var hash = window.location.hash;
-			if (hash == ''){
+			if (hash == '') {
 				hash = 'optperf';
 			}
 			else {
@@ -414,11 +526,11 @@ Vue.component('server-performance', {
 		pageSpeedCheck: function () {
 			this.$root.pageSpeedCheck('server-performance');
 		},
-		rec_toggle: function(id) {
+		rec_toggle: function (id) {
 			var desc = document.getElementById('rec_item_desc_' + id);
 			var toggle = document.getElementById('rec_item_toggle_' + id);
-			
-			if(desc.style.display === 'none'){
+
+			if (desc.style.display === 'none') {
 				desc.style.display = 'block';
 				toggle.classList.remove('glyphicon-chevron-right');
 				toggle.classList.add('glyphicon-chevron-down');
@@ -427,18 +539,13 @@ Vue.component('server-performance', {
 				toggle.classList.add('glyphicon-chevron-right');
 				toggle.classList.remove('glyphicon-chevron-down');
 			}
-			
+
 		},
 		drawGraphs: function () {
 			let perf = page_data.graphs;
 			var circles_ttfb = generateCircle('circles-ttfb', 40, 10, perf.ttfb);
 			var circles_cls = generateCircle('circles-cls', 40, 10, perf.cls);
 			var circles_overall = generateCircle('circles-overall_score', 60, 20, perf.overall_score);
-
-			//var offset_circles = jQuery('#circles-ttfb, #circles-cls, #circles-overall_score').find('.circles-text');
-			//offset_circles.css({ 'left': '-32px', 'top': '-10px', 'font-size': '36px' });
-			//var overall_circle = jQuery('#circles-overall_score').find('.circles-text');
-			//overall_circle.css({ 'left': '-32px', 'top': '-10px', 'font-size': '60px' });
 
 			var circles_lcp = generateCircle('circles-lcp', 35, 7, perf.lcp);
 			var circles_fid = generateCircle('circles-fid', 35, 7, perf.fid);
@@ -482,9 +589,9 @@ Vue.component('page-speed-score', {
 			var plsDesktop = generateCircle('circles-pls-desktop', 40, 10, graphs.pagespeed_desktop.overall_score);
 			//jQuery('#circles-pls-mobile .circles-text, #circles-pls-desktop .circles-text').css({ 'left': '-32px', 'top': '-10px', 'font-size': '50px' });
 
-			var optPerf = generateCircle('circles-opt-perf', 35, 7, graphs.opt_perf);
-			var optSec = generateCircle('circles-opt-sec', 35, 7, graphs.opt_security);
-			var optBP = generateCircle('circles-opt-bp', 35, 7, graphs.opt_bp);
+			var optPerf = generateCircle('circles-opt-perf', 35, 7, graphs.performance);
+			var optSec = generateCircle('circles-opt-sec', 35, 7, graphs.security);
+			var optBP = generateCircle('circles-opt-bestp', 35, 7, graphs.bestp);
 		}
 	},
 	template: "#page-speed-score-template",
@@ -527,7 +634,7 @@ var app = new Vue({
 			params.append('a2_page', page);
 			params.append('run_checks', run_checks);
 			params.append('nonce', ajax.nonce);
-			
+
 			let strat = document.getElementById('server-perf-strategy-select');
 			if (strat) {
 				params.append('a2_performance_strategy', strat.value);

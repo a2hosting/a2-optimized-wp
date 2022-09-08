@@ -9,9 +9,128 @@ class A2_Optimized_Optimizations {
     public function get_optimizations() {
 		$public_opts = $this->get_public_optimizations();
 		$private_opts = $this->get_private_optimizations();
+        $extra_settings = $this->get_extra_settings();
 
-		return array_merge($public_opts, $private_opts);
+        $result = array_merge($public_opts, $private_opts);
+
+        foreach($result as $k => $item){
+            if(array_key_exists($k, $extra_settings)){
+                $result[$k]['extra_setting'] = true;
+            }
+        }
+
+        $result['extra_settings'] = $extra_settings;
+
+        return $result;
 	}
+
+    public function get_extra_settings(){
+        $cache_settings = A2_Optimized_Cache::get_settings();
+        $cache_expires = $cache_settings['cache_expires'] ? 'true' : 'false';
+        $cache_expiry_time = $cache_settings['cache_expiry_time'];
+        $clear_on_saved_post = $cache_settings['clear_site_cache_on_saved_post'] ? 'true' : 'false';
+        $clear_on_saved_comment = $cache_settings['clear_site_cache_on_saved_comment'] ? 'true' : 'false';
+        $clear_on_changed_plugin = $cache_settings['clear_site_cache_on_changed_plugin'] ? 'true' : 'false'; 
+
+        $extra_settings = [
+            'a2_page_cache' => [
+                'title' => 'Cache Behavior',
+                'explanation' => 'Caching allows visitors to save copies of your web pages on their devices or browser.  When they return to your website in the future, your site files will load faster',
+                'settings_sections' => [
+                    'cache_expiration' => [
+                        'title' => '',
+                        'description' => '',
+                        'settings' => [
+                            'cache_expires' => [
+                                'name' => 'Cache Expires',
+                                'description' => 'Cache pages expire after (hours):',
+                                'label' => "Cached pages expire {$cache_expiry_time} hours after created",
+                                'input_type' => 'checkbox',
+                                'value' => $cache_expires,
+                                'extra_fields' => [
+                                    'cache_expiry_time' => [
+                                        'name' => 'Cache Expiry Time',
+                                        'label' => "Cached pages expire {$cache_expiry_time} hours after created",
+                                        'input_type' => 'number',
+                                        'value' => $cache_expiry_time
+                                    ],
+                                ]
+                            ],
+                        ]
+                    ],
+                    'site_clear' => [
+                        'title' => 'Clear Site Cache if:',
+                        'description' => '',
+                        'settings' => [
+                            'clear_site_cache_on_saved_post' => [
+                                'name' => 'Clear Site Cache on Saved Post',
+                                'description' => 'Post has been published, updated, spammed or trashed.',
+                                'explanation' => 'Only in place of the pages and/or associated cache',
+                                'label' => "Clear the site cache if any post type has been published, updated, or trashed (instead of only the page and/or associated cache).",
+                                'input_type' => 'checkbox',
+                                'value' => $clear_on_saved_post
+                            ],
+                            'clear_site_cache_on_saved_comment' => [
+                                'name' => 'Clear Site Cache on Saved Comment',
+                                'description' => 'Comment has been posted, updated, spammed or trashed.',
+                                'explanation' => 'This is instead of only caching the page',
+                                'label' => "Clear the site cache if a comment has been posted, updated, spammed, or trashed (instead of only the page cache).",
+                                'input_type' => 'checkbox',
+                                'value' => $clear_on_saved_comment
+                            ],
+                            'clear_site_cache_on_changed_plugin' => [
+                                'name' => 'Clear Site Cache on Changed Plugin',
+                                'description' => 'Plugin has been activated, updated or deactivated',
+                                'explanation' => '',
+                                'label' => "Clear the site cache if a plugin has been activated, updated, or deactivated.",
+                                'input_type' => 'checkbox',
+                                'value' => $clear_on_changed_plugin
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'a2_object_cache' => [
+                'title' => 'Memcached Object Cache Settings',
+                'explanation' => 'settings for the memcached object cache',
+                'settings_sections' => [
+                    'memcached_server' => [
+                        'title' => 'Memcached Server',
+                        'description' => '',
+                        'settings' => [
+                            'memcached_server' => [
+                                'name' => 'Server Address',
+                                'description' => '',
+                                'label' => "",
+                                'input_type' => 'text',
+                                'value' => 'localhost:5555',
+                            ]
+                        ]
+                    ]
+                ]
+            ],
+            'a2_db_optimizations' => [
+                'title' => 'Database Optimization Settings',
+                'explanation' => '',
+                'settings_sections' => [
+                    'item_1' => [
+                        'title' => 'Title',
+                        'description' => '',
+                        'settings' => [
+                            'item' => [
+                                'name' => 'name',
+                                'description' => '',
+                                'label' => "",
+                                'value' => true,
+                            ]
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        return $extra_settings;
+    }
 
     public function get_public_optimizations(){
 
@@ -92,8 +211,6 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('xmlrpc_requests'),
                 'description' => 'Improve the security of your WordPress website by enabling this option. This will completely disable XML-RPC services. XML-RPC API is safe and enabled by default on all WordPress websites. However, some WordPress security experts may advise you to disable it. Disabling it will basically close one more door that a potential hacker may try to exploit to hack your website.',
             ],
-            /*
-            TODO: rethink how we are presenting this to the user
             'regenerate_salts' => [
                 'name' => 'Regenerate wp-config salts',
                 'slug' => 'regenerate_salts',
@@ -105,7 +222,6 @@ class A2_Optimized_Optimizations {
                 'last_updated' => true,
                 'update' => true,
             ],
-            */
             'htaccess' => [
                 'name' => 'Deny Direct Access to Configuration Files and Comment Form',
                 'slug' => 'htaccess',
@@ -255,6 +371,8 @@ class A2_Optimized_Optimizations {
     }
 
     public function apply_optimization($optimization, $enable){
+        $cache_settings = A2_Optimized_Cache::get_settings();
+        
         switch ($optimization) {
             case 'a2_page_cache':
                 if($enable == 'true'){
@@ -297,6 +415,7 @@ class A2_Optimized_Optimizations {
                 } else {
                     A2_Optimized_DBOptimizations::set('cron_active', false);
                 }
+                return true;
                 break;
             case 'woo_cart_fragments':
                 if($enable == 'true'){
@@ -321,19 +440,55 @@ class A2_Optimized_Optimizations {
                 break;
             case 'htaccess':
                 if($enable == 'true'){
-                    return $this->set_deny_direct(true);
+                    $response = $this->set_deny_direct(true);
                 } else {
-                    return $this->set_deny_direct(false);
+                    $response = $this->set_deny_direct(false);
                 }
                 $this->write_htaccess();
+                return $repsonse;
                 break;
             case 'lock_editing':
                 if($enable == 'true'){
-                    return $this->set_lockdown(true);
+                    $this->write_wp_config();
+                    $response = $this->set_lockdown(true);
                 } else {
-                    return $this->set_lockdown(false);
+                    $this->write_wp_config();
+                    $response = $this->set_lockdown(false);
                 }
                 $this->write_wp_config();
+                return $repsonse;
+                break;
+
+            // Page cache extra settings
+            case 'cache_expires':
+            case 'clear_site_cache_on_saved_post':
+            case 'clear_site_cache_on_saved_comment':
+            case 'clear_site_cache_on_changed_plugin':
+                $cache_settings = A2_Optimized_Cache::get_settings();
+                if($enable == 'true'){
+                    $cache_settings[$optimization] = '1';
+                } else {
+                    $cache_settings[$optimization] = '0';
+                }
+                $updated = update_option('a2opt-cache', $cache_settings);
+                
+                A2_Optimized_Cache_Disk::create_settings_file($cache_settings);
+                return true;
+                break;
+            case 'cache_expiry_time':
+                $cache_settings = A2_Optimized_Cache::get_settings();
+                $expiry = intval($enable);
+                if(is_int($expiry) && $expiry > 0){
+                    if($expiry > 96){
+                        $expiry = '96';
+                    }
+                    $cache_settings[$optimization] = $expiry;
+                } else {
+                    $cache_settings[$optimization] = '0';
+                }
+                update_option('a2opt-cache', $cache_settings);
+                A2_Optimized_Cache_Disk::create_settings_file($cache_settings);
+                return true;
                 break;
         }
     }
@@ -547,9 +702,6 @@ class A2_Optimized_Optimizations {
 
         // Rebuild cache settings file
         A2_Optimized_Cache_Disk::create_settings_file($cache_settings);
-        
-        /* Testing if saving works */
-        
         return true;
     }
 
