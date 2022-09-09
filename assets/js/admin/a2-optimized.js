@@ -378,8 +378,26 @@ Vue.component('opt-extra-settings', {
 	mounted() {
 		this.$root.$on('extra_settings_show', data => {
 			this.selected_slug = data.slug;
-			console.log(data);
 		});
+	},
+	updated() {
+		this.adjustSettingVisibility();
+	},
+	methods:{
+		adjustSettingVisibility: function() {
+			// hide or show the redis/memcached server fields
+			let cache_type = page_data['extra_settings']['a2_object_cache']['settings_sections']['a2_optimized_objectcache_type']['settings']['a2_optimized_objectcache_type']['value'];
+
+			let memcached_server = document.getElementById('setting-memcached_server');
+			let redis_server = document.getElementById('setting-redis_server');
+
+			if (memcached_server){
+				memcached_server.style = cache_type == 'memcached' ? '' : 'display:none;'
+			}
+			if (redis_server){
+				redis_server.style = cache_type == 'redis' ? '' : 'display:none;'
+			}
+		}
 	}
 });
 
@@ -429,16 +447,12 @@ Vue.component('optimizations-performance', {
 			for (let parent in page_data.extra_settings) { // a2_page_cache
 				for (let item in page_data.extra_settings[parent]['settings_sections']) { // site_clear
 					for (let subitem in page_data.extra_settings[parent]['settings_sections'][item]['settings']) { // clear_site_cache_on_changed_plugin
-						// Set the value
-						// Do we need the parent item?
-						console.log(subitem);
 						params.append('opt-' + subitem, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['value']);
 						
 						// If this item has extra_fields
 						if(page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem].hasOwnProperty('extra_fields')){
 							for (let extra_field in page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields']) { // cache_expiry_time
 								params.append('opt-' + extra_field, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields'][extra_field]['value']);
-								console.log(extra_field);
 							}
 						}
 					}
@@ -448,7 +462,7 @@ Vue.component('optimizations-performance', {
 			axios
 				.post(ajax.url, params)
 				.catch((error) => {
-					alert('There was a problem getting benchmark data. See console log.');
+					alert('There was a problem getting optimization data. See console log.');
 					console.log(error.message);
 					page_data.showModal = false;
 				})

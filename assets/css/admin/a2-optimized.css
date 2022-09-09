@@ -15,33 +15,8 @@
   /* checkboxes */
   /* Spinner */
   /* Animations */
-  /*
-  .flipped {
-      .flip-card-front {
-          display: none;
-      }
-
-      .flip-card-back {
-          display: block;
-      }
-
-  }
-  */
   /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
   /* This container is needed to position the front and back side */
-  /* Position the front and back side */
-  /*
-  .flip-card-front,
-  .flip-card-back {
-      width: 100%;
-      height: 100%;
-      */
-  /* Safari */
-  /*
-      -webkit-backface-visibility: hidden;
-      backface-visibility: hidden;
-  }
-  */
   /* Style the back side */
 }
 #a2-optimized-wrapper h1,
@@ -325,6 +300,10 @@
 }
 #a2-optimized-wrapper .opt-completed span {
   color: #FC8C1E;
+}
+#a2-optimized-wrapper input.opt-setting-input {
+  margin-left: 20px;
+  width: 90%;
 }
 #a2-optimized-wrapper #circles-ttfb .circles-text,
 #a2-optimized-wrapper #circles-cls .circles-text {
@@ -872,10 +851,6 @@
 }
 #a2-optimized-wrapper .flip-card-inner {
   position: relative;
-  /*
-  width: 100%;
-  height: 100%;
-  */
   transition: transform 0.8s;
   transform-style: preserve-3d;
 }

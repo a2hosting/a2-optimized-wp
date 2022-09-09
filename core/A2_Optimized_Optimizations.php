@@ -14,9 +14,7 @@ class A2_Optimized_Optimizations {
         $result = array_merge($public_opts, $private_opts);
 
         foreach($result as $k => $item){
-            if(array_key_exists($k, $extra_settings)){
-                $result[$k]['extra_setting'] = true;
-            }
+            $result[$k]['extra_setting'] = array_key_exists($k, $extra_settings);
         }
 
         $result['extra_settings'] = $extra_settings;
@@ -31,6 +29,10 @@ class A2_Optimized_Optimizations {
         $clear_on_saved_post = $cache_settings['clear_site_cache_on_saved_post'] ? 'true' : 'false';
         $clear_on_saved_comment = $cache_settings['clear_site_cache_on_saved_comment'] ? 'true' : 'false';
         $clear_on_changed_plugin = $cache_settings['clear_site_cache_on_changed_plugin'] ? 'true' : 'false'; 
+        $memcached_server = get_option('a2_optimized_memcached_server');
+        $redis_server = get_option('a2_optimized_redis_server');
+        $cache_type = get_option('a2_optimized_objectcache_type');
+        $db_optimizations = get_option('a2_db_optimizations');
 
         $extra_settings = [
             'a2_page_cache' => [
@@ -42,14 +44,12 @@ class A2_Optimized_Optimizations {
                         'description' => '',
                         'settings' => [
                             'cache_expires' => [
-                                'name' => 'Cache Expires',
                                 'description' => 'Cache pages expire after (hours):',
                                 'label' => "Cached pages expire {$cache_expiry_time} hours after created",
                                 'input_type' => 'checkbox',
                                 'value' => $cache_expires,
                                 'extra_fields' => [
                                     'cache_expiry_time' => [
-                                        'name' => 'Cache Expiry Time',
                                         'label' => "Cached pages expire {$cache_expiry_time} hours after created",
                                         'input_type' => 'number',
                                         'value' => $cache_expiry_time
@@ -63,7 +63,6 @@ class A2_Optimized_Optimizations {
                         'description' => '',
                         'settings' => [
                             'clear_site_cache_on_saved_post' => [
-                                'name' => 'Clear Site Cache on Saved Post',
                                 'description' => 'Post has been published, updated, spammed or trashed.',
                                 'explanation' => 'Only in place of the pages and/or associated cache',
                                 'label' => "Clear the site cache if any post type has been published, updated, or trashed (instead of only the page and/or associated cache).",
@@ -71,7 +70,6 @@ class A2_Optimized_Optimizations {
                                 'value' => $clear_on_saved_post
                             ],
                             'clear_site_cache_on_saved_comment' => [
-                                'name' => 'Clear Site Cache on Saved Comment',
                                 'description' => 'Comment has been posted, updated, spammed or trashed.',
                                 'explanation' => 'This is instead of only caching the page',
                                 'label' => "Clear the site cache if a comment has been posted, updated, spammed, or trashed (instead of only the page cache).",
@@ -79,7 +77,6 @@ class A2_Optimized_Optimizations {
                                 'value' => $clear_on_saved_comment
                             ],
                             'clear_site_cache_on_changed_plugin' => [
-                                'name' => 'Clear Site Cache on Changed Plugin',
                                 'description' => 'Plugin has been activated, updated or deactivated',
                                 'explanation' => '',
                                 'label' => "Clear the site cache if a plugin has been activated, updated, or deactivated.",
@@ -91,19 +88,46 @@ class A2_Optimized_Optimizations {
                 ]
             ],
             'a2_object_cache' => [
-                'title' => 'Memcached Object Cache Settings',
-                'explanation' => 'settings for the memcached object cache',
+                'title' => 'Object Cache Settings',
+                'explanation' => 'settings for the on disk object cache',
                 'settings_sections' => [
+                    'a2_optimized_objectcache_type' => [
+                        'title' => '',
+                        'description' => '',
+                        'settings' => [
+                            'a2_optimized_objectcache_type' => [
+                                'description' => 'Object Cache Type',
+                                'label' => '',
+                                'input_type' => 'options',
+                                'input_options' => [
+                                    'Memcached' => 'memcached',
+                                    'Redis' => 'redis'
+                                ],
+                                'value' => $cache_type,
+                            ]
+                        ]
+                    ],
                     'memcached_server' => [
-                        'title' => 'Memcached Server',
+                        'title' => '',
                         'description' => '',
                         'settings' => [
                             'memcached_server' => [
-                                'name' => 'Server Address',
-                                'description' => '',
-                                'label' => "",
+                                'description' => 'Memcached Server',
+                                'label' => '',
                                 'input_type' => 'text',
-                                'value' => 'localhost:5555',
+                                'value' => $memcached_server,
+                            ]
+                        ]
+                    ],
+                    'redis_server' => [
+                        'title' => '',
+                        'description' => '',
+                        'settings' => [
+                            'redis_server' => [
+                                'description' => 'Redis Server',
+                                'label' => '',
+                                'input_type' => 'text',
+                                'value' => $redis_server,
                             ]
                         ]
                     ]
@@ -113,15 +137,75 @@ class A2_Optimized_Optimizations {
                 'title' => 'Database Optimization Settings',
                 'explanation' => '',
                 'settings_sections' => [
-                    'item_1' => [
-                        'title' => 'Title',
+                    'remove_revision_posts' => [
+                        'title' => '',
                         'description' => '',
                         'settings' => [
-                            'item' => [
-                                'name' => 'name',
-                                'description' => '',
+                            'remove_revision_posts' => [
+                                'description' => 'Delete all history of post revisions',
                                 'label' => "",
-                                'value' => true,
+                                'input_type' => 'checkbox',
+                                'value' => $db_optimizations['remove_revision_posts'] ? 'true' : 'false'
+                            ]
+                        ]
+                    ],
+                    'remove_trashed_posts' => [
+                        'title' => '',
+                        'description' => '',
+                        'settings' => [
+                            'remove_trashed_posts' => [
+                                'description' => 'Permanently delete all posts in trash',
+                                'label' => "",
+                                'input_type' => 'checkbox',
+                                'value' => $db_optimizations['remove_trashed_posts'] ? 'true' : 'false'
+                            ]
+                        ]
+                    ],
+                    'remove_spam_comments' => [
+                        'title' => '',
+                        'description' => '',
+                        'settings' => [
+                            'remove_spam_comments' => [
+                                'description' => 'Delete all comments marked as spam',
+                                'label' => "",
+                                'input_type' => 'checkbox',
+                                'value' => $db_optimizations['remove_spam_comments'] ? 'true' : 'false'
+                            ]
+                        ]
+                    ],
+                    'remove_trashed_comments' => [
+                        'title' => '',
+                        'description' => '',
+                        'settings' => [
+                            'remove_trashed_comments' => [
+                                'description' => 'Permanently delete all comments in trash',
+                                'label' => "",
+                                'input_type' => 'checkbox',
+                                'value' => $db_optimizations['remove_trashed_comments'] ? 'true' : 'false'
+                            ]
+                        ]
+                    ],
+                    'remove_expired_transients' => [
+                        'title' => '',
+                        'description' => '',
+                        'settings' => [
+                            'remove_expired_transients' => [
+                                'description' => 'Delete temporary data that has expired',
+                                'label' => "",
+                                'input_type' => 'checkbox',
+                                'value' => $db_optimizations['remove_expired_transients'] ? 'true' : 'false'
+                            ]
+                        ]
+                    ],
+                    'optimize_tables' => [
+                        'title' => '',
+                        'description' => '',
+                        'settings' => [
+                            'optimize_tables' => [
+                                'description' => 'Perform optimizations on all database tables',
+                                'label' => "",
+                                'input_type' => 'checkbox',
+                                'value' => $db_optimizations['optimize_tables'] ? 'true' : 'false'
                             ]
                         ]
                     ]
@@ -211,6 +295,7 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('xmlrpc_requests'),
                 'description' => 'Improve the security of your WordPress website by enabling this option. This will completely disable XML-RPC services. XML-RPC API is safe and enabled by default on all WordPress websites. However, some WordPress security experts may advise you to disable it. Disabling it will basically close one more door that a potential hacker may try to exploit to hack your website.',
             ],
+            /* TODO: if this is active, it happens every time something else saves, with is a problem
             'regenerate_salts' => [
                 'name' => 'Regenerate wp-config salts',
                 'slug' => 'regenerate_salts',
@@ -221,7 +306,7 @@ class A2_Optimized_Optimizations {
                 'description' => "Improve the security of your WordPress website by enabling this option. Generate new salt values for wp-config.php WordPress salts and security keys help secure your site's login process and the cookies that WordPress uses to authenticate users. There are security benefits to periodically changing your salts to make it even harder for malicious actors to access them. You may need to clear your browser cookies after activating this option. This will log out all users including yourself.",
                 'last_updated' => true,
                 'update' => true,
-            ],
+            ], */
             'htaccess' => [
                 'name' => 'Deny Direct Access to Configuration Files and Comment Form',
                 'slug' => 'htaccess',
@@ -295,17 +380,28 @@ class A2_Optimized_Optimizations {
             if (get_option('litespeed.conf.object') == 1) {
                 $optimizations['a2_object_cache']['configured'] = true;
                 $optimizations['a2_object_cache']['description'] .= '<br /><strong>This feature is provided by the LiteSpeed Cache plugin.</strong></p>';
-                unset($optimizations['a2_object_cache']['disable']);
+                $optimizations['a2_object_cache']['locked'] = true;
             }
         }
 
-        if (get_option('a2_optimized_memcached_invalid')) {
-            unset($optimizations['a2_object_cache']['enable']);
+        $optimizations['a2_object_cache']['disabled'] = false;
+        if (get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false) {
+            $optimizations['a2_object_cache']['disabled'] = true;
+            $optimizations['a2_object_cache']['disabled_desc'] = "Unable to connect to the specified Memcached or Redis server. Please check your connection information.";
         }
-            if (class_exists('A2_Optimized_Private_Optimizations')) {
-                $a2opt_priv = new A2_Optimized_Private_Optimizations();
-                // reserved for future use
+        
+        if (class_exists('A2_Optimized_Private_Optimizations')) {
+            $a2opt_priv = new A2_Optimized_Private_Optimizations();
+            // reserved for future use
+        }
+
+        foreach($optimizations as $k => $optimization){
+            // Disable A2 exclusive items
+            $optimizations[$k]['disabled'] = false;
+            if($optimization['premium']){
+                $optimizations[$k]['disabled'] = true;
             }
+        }
 
         return $optimizations;
     }
@@ -370,47 +466,47 @@ class A2_Optimized_Optimizations {
         return $response;
     }
 
-    public function apply_optimization($optimization, $enable){
+    public function apply_optimization($optimization, $value){
         $cache_settings = A2_Optimized_Cache::get_settings();
         
         switch ($optimization) {
             case 'a2_page_cache':
-                if($enable == 'true'){
+                if($value == 'true'){
                     return $this->enable_a2_page_cache();
                 } else {
                     return $this->disable_a2_page_cache();
                 }
                 break;
             case 'a2_page_cache_gzip':
-                if($enable == 'true'){
+                if($value == 'true'){
                     return $this->enable_a2_page_cache_gzip();
                 } else {
                     return $this->disable_a2_page_cache_gzip();
                 }
                 break;
             case 'a2_object_cache':
-                if($enable == 'true'){
+                if($value == 'true'){
                     return $this->enable_a2_object_cache();
                 } else {
                     return $this->disable_a2_object_cache();
                 }
                 break;
             case 'a2_page_cache_minify_html':
-                if($enable == 'true'){
+                if($value == 'true'){
                     return $this->enable_a2_page_cache_minify_html();
                 } else {
                     return $this->disable_a2_page_cache_minify_html();
                 }
                 break;
             case 'a2_page_cache_minify_jscss':
-                if($enable == 'true'){
+                if($value == 'true'){
                     return $this->enable_a2_page_cache_minify_jscss();
                 } else {
                     return $this->disable_a2_page_cache_minify_jscss();
                 }
                 break;
             case 'a2_db_optimizations':
-                if($enable == 'true'){
+                if($value == 'true'){
                     A2_Optimized_DBOptimizations::set('cron_active', true);
                 } else {
                     A2_Optimized_DBOptimizations::set('cron_active', false);
@@ -418,45 +514,45 @@ class A2_Optimized_Optimizations {
                 return true;
                 break;
             case 'woo_cart_fragments':
-                if($enable == 'true'){
+                if($value == 'true'){
                     return $this->enable_woo_cart_fragments();
                 } else {
                     return $this->disable_woo_cart_fragments();
                 }
                 break;
             case 'xmlrpc_requests':
-                if($enable == 'true'){
+                if($value == 'true'){
                     return $this->enable_xmlrpc_requests();
                 } else {
                     return $this->disable_xmlrpc_requests();
                 }
                 break;
             case 'regenerate_salts':
-                if($enable == 'true'){
+                if($value == 'true'){
                     // This is a fire once optimization
                     // TODO: UI considerations for this?
                     return $this->regenerate_wpconfig_salts();
                 }
                 break;
             case 'htaccess':
-                if($enable == 'true'){
-                    $response = $this->set_deny_direct(true);
+                if($value == 'true'){
+                    $this->set_deny_direct(true);
                 } else {
-                    $response = $this->set_deny_direct(false);
+                    $this->set_deny_direct(false);
                 }
                 $this->write_htaccess();
-                return $repsonse;
+                return true;
                 break;
             case 'lock_editing':
-                if($enable == 'true'){
+                if($value == 'true'){
                     $this->write_wp_config();
-                    $response = $this->set_lockdown(true);
+                    $this->set_lockdown(true);
                 } else {
                     $this->write_wp_config();
-                    $response = $this->set_lockdown(false);
+                    $this->set_lockdown(false);
                 }
                 $this->write_wp_config();
-                return $repsonse;
+                return true;
                 break;
 
             // Page cache extra settings
@@ -465,7 +561,7 @@ class A2_Optimized_Optimizations {
             case 'clear_site_cache_on_saved_comment':
             case 'clear_site_cache_on_changed_plugin':
                 $cache_settings = A2_Optimized_Cache::get_settings();
-                if($enable == 'true'){
+                if($value == 'true'){
                     $cache_settings[$optimization] = '1';
                 } else {
                     $cache_settings[$optimization] = '0';
@@ -477,7 +573,7 @@ class A2_Optimized_Optimizations {
                 break;
             case 'cache_expiry_time':
                 $cache_settings = A2_Optimized_Cache::get_settings();
-                $expiry = intval($enable);
+                $expiry = intval($value);
                 if(is_int($expiry) && $expiry > 0){
                     if($expiry > 96){
                         $expiry = '96';
@@ -490,6 +586,50 @@ class A2_Optimized_Optimizations {
                 A2_Optimized_Cache_Disk::create_settings_file($cache_settings);
                 return true;
                 break;
+            case 'a2_optimized_objectcache_type':
+                if ($value != 'redis' && $value != 'memcached'){
+                    return;
+                }
+                update_option('a2_optimized_objectcache_type', $value);
+                return true;
+                break;
+            case 'memcached_server':
+                if (empty($value)){
+                    return;
+                }
+                $a2_memcached_server = sanitize_text_field($value);
+                $validated_server_address = A2_Optimized_Cache::validate_object_cache($a2_memcached_server);
+                update_option('a2_optimized_memcached_server', $validated_server_address);
+                $this->write_wp_config();
+                return true;
+                break;
+            case 'redis_server':
+                if (empty($value)){
+                    return;
+                }
+                $a2_redis_server = sanitize_text_field($value);
+                $validated_server_address = A2_Optimized_Cache::validate_object_cache($a2_redis_server);
+                update_option('a2_optimized_redis_server', $validated_server_address);
+                $this->write_wp_config();
+                return true;
+                break;
+            case 'remove_revision_posts':
+            case 'remove_trashed_posts':
+            case 'remove_spam_comments':
+            case 'remove_trashed_comments':
+            case 'remove_expired_transients':
+            case 'optimize_tables':
+                    $db_optimizations = get_option('a2_db_optimizations');
+                if($value == 'true'){
+                    $db_optimizations[$optimization] = '1';
+                } else {
+                    $db_optimizations[$optimization] = '0';
+                }
+                $updated = update_option('a2_db_optimizations', $db_optimizations);
+                return true;
+                break;
+
+    
         }
     }
 

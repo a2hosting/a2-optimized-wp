@@ -373,6 +373,11 @@ $thishost: #009aca;
         }
     }
 
+    input.opt-setting-input {
+        margin-left:20px;
+        width: 90%;
+    }
+
     #circles-ttfb,
     #circles-cls {
         .circles-text {
@@ -985,20 +990,6 @@ $thishost: #009aca;
         }
     }
 
-
-    /*
-    .flipped {
-        .flip-card-front {
-            display: none;
-        }
-
-        .flip-card-back {
-            display: block;
-        }
-
-    }
-    */
-
     .flip-card-inner.flip-start {
         animation-duration: .25s;
         animation-name: flipToFront1;
@@ -1077,27 +1068,9 @@ $thishost: #009aca;
     /* This container is needed to position the front and back side */
     .flip-card-inner {
         position: relative;
-        /*
-        width: 100%;
-        height: 100%;
-        */
         transition: transform 0.8s;
         transform-style: preserve-3d;
     }
-
-    /* Position the front and back side */
-    /*
-    .flip-card-front,
-    .flip-card-back {
-        width: 100%;
-        height: 100%;
-        */
-        /* Safari */
-        /*
-        -webkit-backface-visibility: hidden;
-        backface-visibility: hidden;
-    }
-    */
 
     /* Style the back side */
     .flip-card-back {
