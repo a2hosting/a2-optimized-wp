@@ -16,7 +16,7 @@
 		<div class="flip-card-inner">
 			<div class="flip-card-front">
 				<div class="box-element" :class="[additional_classes, status_class]">
-					<div class="info-toggle-button">
+					<div v-if="!disable_show_button" class="info-toggle-button">
 						<span @click="toggleFlipPanel(content_id, $event);"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></span>
 					</div>
 					<slot name="content1"></slot>
@@ -173,7 +173,7 @@
 		</div>
 		<div class="col-sm-2 padding-top-30" >
 			<li class="tg-list-item">
-				<input class="tgl tgl-ios" :id="'toggle-' + slug" :name="slug" v-model="configured" true-value="true" false-value="false" type="checkbox"  :disabled="premium"/>
+				<input class="tgl tgl-ios" :id="'toggle-' + slug" :name="slug" v-model="configured" true-value="true" false-value="false" type="checkbox"  :disabled="disabled" />
 				<label class="tgl-btn" :for="'toggle-' + slug"></label>
 			</li>
 		</div>
@@ -199,7 +199,7 @@
 					<h4 v-if="section.title" class="less-vertical-space section-title">{{ section.title}}</h4>
 				</div>
 			</div>
-			<div v-for="(setting, setting_name) in section.settings" :key="setting_name" class="setting-item">
+			<div v-for="(setting, setting_name) in section.settings" :key="setting_name" :id="'setting-' + setting_name" class="setting-item">
 				<div class="row">
 					<div v-if="setting.extra_fields">
 						<div class="col-sm-6">
@@ -216,10 +216,17 @@
 							<h4 class="less-vertical-space setting-desc">{{ setting.description }}</h4>
 						</div>
 					</div>
-					<div class="col-sm-2">
+					<p v-if="setting.input_type == 'text'">
+						<input type="text" :id="'cb-' + setting_name" :name="setting_name" v-model="setting.value" class="opt-setting-input text-input"/>
+					</p>
+					<div v-else-if="setting.input_type == 'options'" class="col-sm-2">
+						<select :id="'select-' + setting_name" :name="setting_name" v-model="setting.value" @change="adjustSettingVisibility()">
+							<option v-for="(opt_value,label) in setting.input_options" :value="opt_value" :selected="opt_value == setting.value">{{ label }}</option>
+						</select>
+					</div>
+					<div v-else class="col-sm-2">
 						<li class="tg-list-item">
-							<input class="tgl tgl-ios" :id="'toggle-' + setting_name" :name="setting_name" 
-							true-value="true" false-value="false" v-model="setting.value" type="checkbox"/>
+							<input class="tgl tgl-ios" :id="'toggle-' + setting_name" :name="setting_name" 	true-value="true" false-value="false" v-model="setting.value" type="checkbox"/>
 							<label class="tgl-btn" :for="'toggle-' + setting_name"></label>
 						</li>
 					</div>
@@ -249,7 +256,8 @@
 					<div class="col-sm-9">
 						<flip-panel content_id="optimizations_performance_front" 
 							status_class="success" 
-							additional_classes="">
+							additional_classes=""
+							disable_show_button=true>
 							<template v-slot:content1>
 								<div class="padding-15">
 									<h3>Optimization Essentials</h3>
@@ -265,58 +273,6 @@
 							<template v-slot:content2>
 								<opt-extra-settings :extra_settings="extra_settings">
 								</opt-extra-settings>
-								<!--
-								<div v-for="(opt_group, slug) in extra_settings" :key="slug">
-									<div class="row header">
-										<div class="col-sm-8">
-											<h3>{{ opt_group.title }}</h3>
-										</div>
-									</div>
-									<div class="row">
-										<div class="col-sm-10 col-sm-offset-1">
-											<p>{{ opt_group.explanation }}</p>
-										</div>
-									</div>
-									<div v-for="section in opt_group.settings_sections" class="padding-15">
-										<div class="row">
-											<div class="col-sm-10">
-												<h4 v-if="section.title" class="less-vertical-space">{{ section.title}}</h4>
-											</div>
-										</div>
-										<div v-for="(setting, setting_name) in section.settings" :key="setting_name">
-											<div class="row">
-												<div v-if="setting.extra_fields">
-													<div class="col-sm-6">
-														<h4 class="less-vertical-space">{{ setting.description }}</h4>
-													</div>
-													<div class="col-sm-4">
-														<div v-for="(field, field_name) in setting.extra_fields">
-															<input :name="field_name" :id="field_name" :type="field.input_type" :value="field.value"></input>
-														</div>
-													</div>
-												</div>
-												<div v-else>
-													<div class="col-sm-10">
-														<h4 class="less-vertical-space">{{ setting.description }}</h4>
-													</div>
-												</div>
-												<div class="col-sm-2">
-													<li class="tg-list-item">
-														<input class="tgl tgl-ios" :id="'toggle-' + setting_name" :name="setting_name" 
-														true-value="true" false-value="false" type="checkbox"/>
-														<label class="tgl-btn" :for="'toggle-' + setting_name"></label>
-													</li>
-												</div>
-											</div>
-											<div class="row">
-												<div class="col-sm-10">
-													{{ setting.explanation }}
-												</div>
-											</div>
-										</div>
-									</div>
-								</div>
-								-->
 							</template>
 						</flip-panel>
 					</div>

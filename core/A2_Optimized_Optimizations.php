@@ -467,8 +467,6 @@ class A2_Optimized_Optimizations {
     }
 
     public function apply_optimization($optimization, $value){
-        $cache_settings = A2_Optimized_Cache::get_settings();
-        
         switch ($optimization) {
             case 'a2_page_cache':
                 if($value == 'true'){
@@ -662,13 +660,13 @@ class A2_Optimized_Optimizations {
                 break;
             case 'a2_page_cache_minify_html':
                 $settings = A2_Optimized_Cache::get_settings();
-                if (isset($settings['minify_html'])) {
+                if (isset($settings['minify_html']) && $settings['minify_html'] == 1) {
                     $result['value'] = true;
                 }
                 break;
             case 'a2_page_cache_minify_jscss':
                 $settings = A2_Optimized_Cache::get_settings();
-                if (isset($settings['minify_inline_css_js'])) {
+                if (isset($settings['minify_inline_css_js']) && $settings['minify_inline_css_js'] == 1) {
                     $result['value'] = true;
                 }
                 break;
@@ -966,7 +964,6 @@ class A2_Optimized_Optimizations {
      */
     public function disable_a2_page_cache_minify_html() {
         $cache_settings = A2_Optimized_Cache::get_settings();
-
         $cache_settings['minify_html'] = 0;
         $cache_settings['minify_inline_css_js'] = 0; // Need to disable css/js as well
 

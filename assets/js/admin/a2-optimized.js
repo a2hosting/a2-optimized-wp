@@ -294,6 +294,7 @@ Vue.component('flip-panel', {
 		content_id: String,
 		status_class: String,
 		additional_classes: String,
+		disable_show_button: {Boolean: false}
 	},
 	template: "#flip-panel-template",
 	data() {
@@ -419,7 +420,7 @@ Vue.component('hosting-matchup', {
 
 Vue.component('optimizations-performance', {
 	data() {
-		return page_data
+		return page_data;
 	},
 	methods: {
 		doCircles: function () {
@@ -477,14 +478,17 @@ Vue.component('optimizations-performance', {
 						page_data.graphs = updated.graphs;
 						page_data.best_practices = updated.best_practices;
 						page_data.extra_settings = updated.extra_settings;
-						page_data.updateView++;
+						page_data.mainkey++;
 						page_data.showSuccess = true;
 					}
 					else {
 						alert('invalid data received, please reload page');
+						page_data.mainkey++;
 						page_data.showSuccess = false;
-						page_data.updateView++;
 					}
+					this.$nextTick(function() { // wait until things are re-rendered from the mainkey++ update, and then trigger the circles re-render
+						page_data.updateView++;
+					});
 				});
 		},
 		updateNavLinks: function (currentNav) {

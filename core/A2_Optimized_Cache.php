@@ -1144,7 +1144,6 @@ final class A2_Optimized_Cache {
 			'minify_html' => (int) ( ! empty( $settings['minify_html'] ) ),
 			'minify_inline_css_js' => (int) ( ! empty( $settings['minify_inline_css_js'] ) ),
 		];
-
 		// add default system settings
 		$validated_settings = wp_parse_args( $validated_settings, self::get_default_settings( 'system' ) );
 
