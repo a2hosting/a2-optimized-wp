@@ -1180,7 +1180,7 @@ final class A2_Optimized_Cache {
 		}
 
 		switch ($object_cache_type) {
-			case 'memcached-disabled':
+			case 'memcached':
 				if (class_exists('Memcached')) {
 					$memcached = new Memcached;
 					if ( 'unix://' == substr( $server_address, 0, 7 ) ) {
