@@ -304,8 +304,8 @@ Vue.component('flip-panel', {
 	},
 	methods: {
 		toggleFlipPanel: function (wrapperId, elem) {
-			var wrapper = document.getElementById(wrapperId);
-			var flip_inner = wrapper.querySelector('.flip-card-inner');
+			let wrapper = document.getElementById(wrapperId);
+			let flip_inner = wrapper.querySelector('.flip-card-inner');
 
 			this.content_index++;
 			if (this.content_index > 1) {
@@ -341,8 +341,8 @@ Vue.component('optimization-entry', {
 	},
 	methods: {
 		desc_toggle: function (id) {
-			var desc = document.getElementById('opt_item_desc_' + id);
-			var toggle = document.getElementById('opt_item_toggle_' + id);
+			let desc = document.getElementById('opt_item_desc_' + id);
+			let toggle = document.getElementById('opt_item_toggle_' + id);
 
 			if (desc.style.display === 'none') {
 				desc.style.display = 'block';
@@ -425,13 +425,13 @@ Vue.component('optimizations-performance', {
 	methods: {
 		doCircles: function () {
 			let graphs = page_data.graphs;
-			var optsPerformace = generateCircle('circles-opt-perf', 40, 10, graphs.performance);
-			var optsSecurity = generateCircle('circles-opt-security', 40, 10, graphs.security);
-			var optsBestp = generateCircle('circles-opt-bestp', 40, 10, graphs.bestp);
+			let optsPerformace = generateCircle('circles-opt-perf', 40, 10, graphs.performance);
+			let optsSecurity = generateCircle('circles-opt-security', 40, 10, graphs.security);
+			let optsBestp = generateCircle('circles-opt-bestp', 40, 10, graphs.bestp);
 		},
 		updateOptimizations: function () {
 			page_data.showModal = true;
-			var params = new URLSearchParams();
+			let params = new URLSearchParams();
 			params.append('action', 'apply_optimizations');
 			params.append('nonce', ajax.nonce);
 
@@ -510,7 +510,7 @@ Vue.component('optimizations-performance', {
 
 		document.addEventListener("DOMContentLoaded", function () {
 			that.doCircles();
-			var hash = window.location.hash;
+			let hash = window.location.hash;
 			if (hash == '') {
 				hash = 'optperf';
 			}
@@ -545,8 +545,8 @@ Vue.component('server-performance', {
 			this.$root.pageSpeedCheck('server-performance');
 		},
 		rec_toggle: function (id) {
-			var desc = document.getElementById('rec_item_desc_' + id);
-			var toggle = document.getElementById('rec_item_toggle_' + id);
+			let desc = document.getElementById('rec_item_desc_' + id);
+			let toggle = document.getElementById('rec_item_toggle_' + id);
 
 			if (desc.style.display === 'none') {
 				desc.style.display = 'block';
@@ -561,17 +561,17 @@ Vue.component('server-performance', {
 		},
 		drawGraphs: function () {
 			let perf = page_data.graphs;
-			var circles_ttfb = generateCircle('circles-ttfb', 40, 10, perf.ttfb);
-			var circles_cls = generateCircle('circles-cls', 40, 10, perf.cls);
-			var circles_overall = generateCircle('circles-overall_score', 60, 20, perf.overall_score);
+			let circles_ttfb = generateCircle('circles-ttfb', 40, 10, perf.ttfb);
+			let circles_cls = generateCircle('circles-cls', 40, 10, perf.cls);
+			let circles_overall = generateCircle('circles-overall_score', 60, 20, perf.overall_score);
 
-			var circles_lcp = generateCircle('circles-lcp', 35, 7, perf.lcp);
-			var circles_fid = generateCircle('circles-fid', 35, 7, perf.fid);
-			var circles_fcp = generateCircle('circles-fcp', 35, 7, perf.fcp);
+			let circles_lcp = generateCircle('circles-lcp', 35, 7, perf.lcp);
+			let circles_fid = generateCircle('circles-fid', 35, 7, perf.fid);
+			let circles_fcp = generateCircle('circles-fcp', 35, 7, perf.fcp);
 
-			var line_graph_lcp = createLineGraph('line-graph-lcp', perf.lcp, 'circles-lcp');
-			var line_graph_fid = createLineGraph('line-graph-fid', perf.fid, 'circles-fid');
-			var line_graph_fcp = createLineGraph('line-graph-fcp', perf.fcp, 'circles-fcp');
+			let line_graph_lcp = createLineGraph('line-graph-lcp', perf.lcp, 'circles-lcp');
+			let line_graph_fid = createLineGraph('line-graph-fid', perf.fid, 'circles-fid');
+			let line_graph_fcp = createLineGraph('line-graph-fcp', perf.fcp, 'circles-fcp');
 		}
 	},
 	template: "#server-performance-template",
@@ -603,13 +603,12 @@ Vue.component('page-speed-score', {
 		},
 		doCircles: function () {
 			let graphs = page_data.graphs;
-			var plsMobile = generateCircle('circles-pls-mobile', 40, 10, graphs.pagespeed_mobile.overall_score);
-			var plsDesktop = generateCircle('circles-pls-desktop', 40, 10, graphs.pagespeed_desktop.overall_score);
-			//jQuery('#circles-pls-mobile .circles-text, #circles-pls-desktop .circles-text').css({ 'left': '-32px', 'top': '-10px', 'font-size': '50px' });
+			let plsMobile = generateCircle('circles-pls-mobile', 40, 10, graphs.pagespeed_mobile.overall_score);
+			let plsDesktop = generateCircle('circles-pls-desktop', 40, 10, graphs.pagespeed_desktop.overall_score);
 
-			var optPerf = generateCircle('circles-opt-perf', 35, 7, graphs.performance);
-			var optSec = generateCircle('circles-opt-sec', 35, 7, graphs.security);
-			var optBP = generateCircle('circles-opt-bestp', 35, 7, graphs.bestp);
+			let optPerf = generateCircle('circles-opt-perf', 35, 7, graphs.performance);
+			let optSec = generateCircle('circles-opt-sec', 35, 7, graphs.security);
+			let optBP = generateCircle('circles-opt-bestp', 35, 7, graphs.bestp);
 		}
 	},
 	template: "#page-speed-score-template",
@@ -628,7 +627,7 @@ Vue.component('page-speed-score', {
 	}
 });
 
-var app = new Vue({
+let app = new Vue({
 	el: '#a2-optimized-wrapper',
 	data: page_data,
 	methods: {
@@ -647,7 +646,7 @@ var app = new Vue({
 		},
 		pageSpeedCheck: function (page, run_checks = true) {
 			page_data.showModal = true;
-			var params = new URLSearchParams();
+			let params = new URLSearchParams();
 			params.append('action', 'run_benchmarks');
 			params.append('a2_page', page);
 			params.append('run_checks', run_checks);

@@ -1216,7 +1216,7 @@ final class A2_Optimized_Cache {
 				}
 
 				break;
-			case 'redis-disabled':
+			case 'redis':
 
 				if (class_exists('Redis')) {
 					$conn = new Redis() ;
