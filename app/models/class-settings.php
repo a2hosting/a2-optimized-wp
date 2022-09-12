@@ -118,6 +118,15 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 		public static function update_setting( $setting_name, $setting_value ) {
 			static::update_setting( [ $setting_name => $setting_value ] );
 		}
+
+		public static function get_nav_class($nav_data, $nav_token)
+		{
+			if (isset($nav_data[$nav_token])){
+				return $nav_data[$nav_token];
+			}
+			return '';
+		}
+
 	}
 
 }

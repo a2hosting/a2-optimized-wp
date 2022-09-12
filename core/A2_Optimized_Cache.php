@@ -1144,7 +1144,6 @@ final class A2_Optimized_Cache {
 			'minify_html' => (int) ( ! empty( $settings['minify_html'] ) ),
 			'minify_inline_css_js' => (int) ( ! empty( $settings['minify_inline_css_js'] ) ),
 		];
-
 		// add default system settings
 		$validated_settings = wp_parse_args( $validated_settings, self::get_default_settings( 'system' ) );
 
@@ -1174,7 +1173,6 @@ final class A2_Optimized_Cache {
 		if (!$server_address) {
 			return;
 		}
-		$options_manager = new A2_Optimized_OptionsManager;
 
 		$object_cache_type = '';
 		if (get_option('a2_optimized_objectcache_type')) {
@@ -1203,20 +1201,23 @@ final class A2_Optimized_Cache {
 					$memcached->addServers($instances);
 					$memcached_available = $memcached->getStats();
 					if ($memcached_available) {
-						$options_manager->write_wp_config();
+
 						delete_option('a2_optimized_memcached_invalid');
 						update_option('litespeed.conf.object-kind', 0);
 						update_option('litespeed.conf.object-host', $server_address);
 						update_option('litespeed.conf.object-post', 0);
 					} else {
+
 						update_option('a2_optimized_memcached_invalid', 'Unable to connect to Memcached Server');
 					}
 				} else {
+
 					update_option('a2_optimized_memcached_invalid', 'Missing Memcached extension');
 				}
 
 				break;
 			case 'redis':
+
 				if (class_exists('Redis')) {
 					$conn = new Redis() ;
 					$conn->connect( $server_address, 0 ) ;
