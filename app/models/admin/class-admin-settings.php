@@ -18,6 +18,8 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		private $benchmark;
 		private $optimizations;
 
+		const NOTIFICATIONS_KEY = 'a2_opt_notifications';
+
 		/**
 		 * Constructor
 		 *
@@ -45,6 +47,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 			add_action( 'wp_ajax_run_benchmarks', [$this, 'run_benchmarks'] );
 			add_action( 'wp_ajax_apply_optimizations', [$this, 'apply_optimizations'] );
+			add_action( 'wp_ajax_add_notification', [$this, 'add_notification'] );
 		}
 
 		/* Callback for run_benchmarks AJAX request */
@@ -65,16 +68,41 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$frontend_data = $frontend_data[$strategy];
 			}
 
-			$opt_data = $this->get_optimization_benchmark();
+			$opt_data = $this->get_opt_performance();
 
-			$data = array_merge($frontend_data, $opt_data);
-			$data['result'] = 'success';
-
+			$data = array_merge($frontend_data, $opt_data['graphs']);
 
 			echo json_encode($data);
 			wp_die();
 		}
 
+		//// notification functions //
+		public function get_notifications() {
+			$notifications = get_option(self::NOTIFICATIONS_KEY);
+			if (count($notifications) == 0){
+				$notifications = [];
+			}
+
+			return $notifications;
+
+		}
+		public function add_notification(){
+			$new_notification = $_POST['a2_notification_text'] ?? '';
+			if (!empty($new_notification)){
+				$notifications = $this->get_notifications();
+				$max_id = 0;
+				if (count($notifications) > 0){
+					$max_id = max(array_keys($notifications));
+				}
+				$new_id = $max_id + 1;
+
+				$notifications[$new_id] = $new_notification;
+				update_option(self::NOTIFICATIONS_KEY, $notifications);
+				echo json_encode($notifications);
+			}
+			wp_die();
+		}
+		////
 		/* Callback for apply_optimizations AJAX request */
 		public function apply_optimizations() {
 			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') ){ 
@@ -101,49 +129,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 			echo json_encode($data);
 			wp_die();
-		}
-
-		public function get_optimization_benchmark() {
-			$temp_graphs = [
-				'opt_perf' => [
-					'display_text' => 'Performance',
-					'metric_text' => '',
-					'thresholds' => [],
-					'explanation' => '',
-					'last_check_percent' => 0,
-					'last_check_dir' => 'none',
-					'score' => ((5 / 8) * 100),
-					'max' => 100,
-					'text' => '5/8',
-					'color_class' => 'warn',
-				],
-				'opt_security' => [
-					'display_text' => 'Security',
-					'metric_text' => '',
-					'thresholds' => [],
-					'explanation' => '',
-					'last_check_percent' => 0,
-					'last_check_dir' => 'none',
-					'score' => ((1 / 5) * 100),
-					'max' => 100,
-					'text' => '1/5',
-					'color_class' => 'danger',
-				],
-				'opt_bp' => [
-					'display_text' => 'Best Practices',
-					'metric_text' => '',
-					'thresholds' => [],
-					'explanation' => '',
-					'last_check_percent' => 0,
-					'last_check_dir' => 'none',
-					'score' => ((7 / 7) * 100),
-					'max' => 100,
-					'text' => '7/7',
-					'color_class' => 'success',
-				],
-			];
-
-			return $temp_graphs;
 		}
 
 		public function get_hosting_benchmark($run = false) {
@@ -175,17 +160,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$result['graphs']['webperformance'] = self::BENCHMARK_DISPLAY_DATA['webperformance'];
 			$result['graphs']['serverperformance'] = self::BENCHMARK_DISPLAY_DATA['serverperformance'];
 
-			//print_r(json_encode($bm));
-			//print_r('<br>');
-			//print_r(json_encode($baseline_benchmarks));
-			//print_r(json_encode($result));
-			//wp_die();
 			return $result;
 		}
 
 		public function get_frontend_benchmark($run = false) {
 			if ($run) {
-				//print_r("running benchmarks<br>");
 				$desktop_result = $this->benchmark->get_lighthouse_results('desktop');
 				$mobile_result = $this->benchmark->get_lighthouse_results('mobile');
 
@@ -239,6 +218,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$result = [];
 			$result['optimizations'] = $this->optimizations->get_optimizations();
 			$result['best_practices'] = $this->optimizations->get_best_practices();
+			$extra_settings = $result['optimizations']['extra_settings']; // has to be before $result['optimizations'] gets changed
 
 			$displayed_optimizations = [];
 			$other_optimizations = [];
@@ -255,7 +235,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			/* Assign optimizations to display area and determine which are configured */
 			foreach($result['optimizations'] as $k => $optimization){
 				foreach($categories as $cat){
-					if($optimization['category'] == $cat){
+					if(isset($optimization['category']) && $optimization['category'] == $cat){
 						if(isset($optimization['optional'])){
 							$other_optimizations[$cat][$k] = $optimization;
 						} else {
@@ -297,14 +277,15 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 					'text' => $opt_counts[$cat]['active'] . "/" . $opt_counts[$cat]['total'],
 					'color_class' => $color_class,  
 				];
+				$graphs[$cat] = array_merge($graphs[$cat], self::BENCHMARK_DISPLAY_DATA['optimizations'][$cat]);
+	
 			}
-
 
 			$result['graphs'] = $graphs;
 			$result['opt_counts'] = $opt_counts;
 			$result['optimizations'] = $displayed_optimizations;
 			$result['other_optimizations'] = $other_optimizations;
-			//print_r($result['optimizations']); wp_die();
+			$result['extra_settings'] = $extra_settings;
 			return $result;
 		}
 
@@ -376,6 +357,27 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				'explanation' => 'server perf explanation',
 				'color_class' => 'success'
 			],
+			'optimizations' => [
+				'performance' => [
+					'display_text' => 'Performance',
+					'metric_text' => "Optimizations that will help your performance.",
+					'legend_text' => '',
+					'explanation' => ''
+				],
+				'security' => [
+					'display_text' => 'Security',
+					'metric_text' => "Optimizations that will help your security.",
+					'legend_text' => '',
+					'explanation' => ''
+				],
+				'bestp' => [
+					'display_text' => 'Best Practices',
+					'metric_text' => "Optimizations that bring things in line with current best practices.",
+					'legend_text' => '',
+					'explanation' => ''
+				],
+			]
+
 		];
 
 		public const BENCHMARK_SCORE_PROFILES = [

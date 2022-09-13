@@ -257,6 +257,104 @@ Vue.component('info-button', {
 	}
 });
 
+addEventListener('animationend', onAnimationEnd);
+function onAnimationEnd(event) {
+	let elem = event.target;
+	if (event.animationName == 'flipToFront1') {
+		var front = elem.querySelector('.flip-card-front');
+		var back = elem.querySelector('.flip-card-back');
+		front.style.display = 'none';
+		back.style.display = 'block';
+
+		elem.classList.remove('flip-start');
+		elem.classList.add('flip-finish');
+	}
+	else if (event.animationName == 'flipToFront2') {
+		elem.classList.remove('flip-finish');
+		elem.classList.add('flipped');
+	}
+	else if (event.animationName == 'flipToFront3') {
+		var front = elem.querySelector('.flip-card-front');
+		var back = elem.querySelector('.flip-card-back');
+		front.style.display = 'block';
+		back.style.display = 'none';
+
+		elem.classList.remove('flip-start');
+		elem.classList.add('flip-finish');
+	}
+	else if (event.animationName == 'flipToFront4') {
+		elem.classList.remove('flip-finish');
+		elem.classList.remove('flipped');
+	}
+	else {
+		elem.classList.remove(event.animationName);
+	}
+}
+
+/**
+ * function used to trigger an animation.
+ * mostly used for testing out or demo-ing animations on demand
+ * @param {*} anim 
+ */
+function playAnim(anim){
+	let bell = document.getElementById("drop-bell-wrapper");
+	let animname = '';
+	switch (anim){
+		case '1':
+			animname = 'ringCycle1';
+			break;
+		case '2':
+			animname = 'ringCycle2';
+			break;
+		case '3':
+			animname = 'ringPulse';
+			break;
+	}
+
+	if (animname){
+		if (bell.classList.contains(animname)){
+			bell.classList.remove(animname);
+		}
+		else {
+			bell.classList.add(animname);
+		}
+	}
+}
+
+Vue.component('flip-panel', {
+	props: {
+		content_id: String,
+		status_class: String,
+		additional_classes: String,
+		disable_show_button: { Boolean: false }
+	},
+	template: "#flip-panel-template",
+	data() {
+		return {
+			content_index: 0
+		}
+	},
+	methods: {
+		toggleFlipPanel: function (wrapperId, elem) {
+			let wrapper = document.getElementById(wrapperId);
+			let flip_inner = wrapper.querySelector('.flip-card-inner');
+
+			this.content_index++;
+			if (this.content_index > 1) {
+				this.content_index = 0;
+			}
+
+			flip_inner.classList.remove('flip-start');
+			flip_inner.classList.remove('flip-finish');
+
+			flip_inner.classList.add('flip-start');
+
+			if (this.content_index == 1) {
+			}
+		}
+	}
+});
+
 Vue.component('graph-legend', {
 	props: { metric: { type: String } },
 	data() {
@@ -266,16 +364,19 @@ Vue.component('graph-legend', {
 });
 
 Vue.component('optimization-entry', {
-	props: {opt: Object },
+	props: {
+		opt: Object,
+		wrapper_id: String
+	},
 	data() {
 		return this.opt;
 	},
 	methods: {
-		desc_toggle: function(id){
-			var desc = document.getElementById('opt_item_desc_' + id);
-			var toggle = document.getElementById('opt_item_toggle_' + id);
-			
-			if(desc.style.display === 'none'){
+		desc_toggle: function (id) {
+			let desc = document.getElementById('opt_item_desc_' + id);
+			let toggle = document.getElementById('opt_item_toggle_' + id);
+
+			if (desc.style.display === 'none') {
 				desc.style.display = 'block';
 				toggle.classList.remove('glyphicon-chevron-down');
 				toggle.classList.add('glyphicon-chevron-up');
@@ -285,9 +386,52 @@ Vue.component('optimization-entry', {
 				toggle.classList.remove('glyphicon-chevron-up');
 			}
 		},
-	
+		toggleExtraSettings: function (slug, event) {
+			this.$root.$emit('extra_settings_show', { slug: slug });
+			this.$parent.toggleFlipPanel(this.wrapper_id, event);
+		}
 	},
 	template: "#optimization-entry"
+});
+Vue.component('opt-extra-settings', {
+	props: {
+		extra_settings: Object,
+	},
+	data() {
+		return {
+			selected_slug: '',
+		}
+	},
+	computed: {
+		opt_group() {
+			return this.extra_settings[this.selected_slug];
+		}
+	},
+	template: "#opt-extra-settings-template",
+	mounted() {
+		this.$root.$on('extra_settings_show', data => {
+			this.selected_slug = data.slug;
+		});
+	},
+	updated() {
+		this.adjustSettingVisibility();
+	},
+	methods: {
+		adjustSettingVisibility: function () {
+			// hide or show the redis/memcached server fields
+			let cache_type = page_data['extra_settings']['a2_object_cache']['settings_sections']['a2_optimized_objectcache_type']['settings']['a2_optimized_objectcache_type']['value'];
+
+			let memcached_server = document.getElementById('setting-memcached_server');
+			let redis_server = document.getElementById('setting-redis_server');
+
+			if (memcached_server) {
+				memcached_server.style = cache_type == 'memcached' ? '' : 'display:none;'
+			}
+			if (redis_server) {
+				redis_server.style = cache_type == 'redis' ? '' : 'display:none;'
+			}
+		}
+	}
 });
 
 Vue.component('hosting-matchup', {
@@ -308,36 +452,50 @@ Vue.component('hosting-matchup', {
 
 Vue.component('optimizations-performance', {
 	data() {
-		return page_data
+		return page_data;
 	},
 	methods: {
 		doCircles: function () {
 			let graphs = page_data.graphs;
-			var optsPerformace = generateCircle('circles-opt-perf', 40, 10, graphs.performance);
-			var optsSecurity = generateCircle('circles-opt-security', 40, 10, graphs.security);
-			var optsBestp = generateCircle('circles-opt-bestp', 40, 10, graphs.bestp);
+			let optsPerformace = generateCircle('circles-opt-perf', 40, 10, graphs.performance);
+			let optsSecurity = generateCircle('circles-opt-security', 40, 10, graphs.security);
+			let optsBestp = generateCircle('circles-opt-bestp', 40, 10, graphs.bestp);
 		},
-		updateOptimizations: function() {
+		updateOptimizations: function () {
 			page_data.showModal = true;
-			var params = new URLSearchParams();
+			let params = new URLSearchParams();
 			params.append('action', 'apply_optimizations');
 			params.append('nonce', ajax.nonce);
 
 			for (let key in page_data.optimizations) {
-				for (let index in page_data.optimizations[key] ) {          
+				for (let index in page_data.optimizations[key]) {
 					params.append('opt-' + index, page_data.optimizations[key][index]['configured']);
 				}
 			}
 			for (let key in page_data.other_optimizations) {
-				for (let index in page_data.other_optimizations[key] ) {          
+				for (let index in page_data.other_optimizations[key]) {
 					params.append('opt-' + index, page_data.other_optimizations[key][index]['configured']);
+				}
+			}
+			for (let parent in page_data.extra_settings) { // a2_page_cache
+				for (let item in page_data.extra_settings[parent]['settings_sections']) { // site_clear
+					for (let subitem in page_data.extra_settings[parent]['settings_sections'][item]['settings']) { // clear_site_cache_on_changed_plugin
+						params.append('opt-' + subitem, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['value']);
+
+						// If this item has extra_fields
+						if (page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem].hasOwnProperty('extra_fields')) {
+							for (let extra_field in page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields']) { // cache_expiry_time
+								params.append('opt-' + extra_field, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields'][extra_field]['value']);
+							}
+						}
+					}
 				}
 			}
 
 			axios
 				.post(ajax.url, params)
 				.catch((error) => {
-					alert('There was a problem getting benchmark data. See console log.');
+					alert('There was a problem getting optimization data. See console log.');
 					console.log(error.message);
 					page_data.showModal = false;
 				})
@@ -345,33 +503,37 @@ Vue.component('optimizations-performance', {
 					console.log('got ajax response');
 					console.log(response.data);
 					page_data.showModal = false;
-					if (response.data.updated_data != null){
+					if (response.data.updated_data != null) {
 						let updated = response.data.updated_data;
 						page_data.optimizations = updated.optimizations;
 						page_data.other_optimizations = updated.other_optimizations;
 						page_data.graphs = updated.graphs;
 						page_data.best_practices = updated.best_practices;
-						page_data.updateView++;
+						page_data.extra_settings = updated.extra_settings;
+						page_data.mainkey++;
 						page_data.showSuccess = true;
 					}
 					else {
 						alert('invalid data received, please reload page');
+						page_data.mainkey++;
 						page_data.showSuccess = false;
-						page_data.updateView++;
 					}
+					this.$nextTick(function () { // wait until things are re-rendered from the mainkey++ update, and then trigger the circles re-render
+						page_data.updateView++;
+					});
 				});
 		},
-		updateNavLinks: function(currentNav){
+		updateNavLinks: function (currentNav) {
 			let sidenavDiv = document.getElementsByClassName('side-nav')[0];
 			let links = sidenavDiv.querySelectorAll('a');
 			links.forEach((link, index, array) => {
 				link.classList.remove('current');
-				if (link.name == currentNav){
+				if (link.name == currentNav) {
 					link.classList.add('current');
 				}
 			});
 			this.sidenav = currentNav;
-			window.location.hash = '#' + currentNav;
+			//window.location.hash = '#' + currentNav;
 		}
 	},
 	template: "#optimizations-performance-template",
@@ -380,8 +542,8 @@ Vue.component('optimizations-performance', {
 
 		document.addEventListener("DOMContentLoaded", function () {
 			that.doCircles();
-			var hash = window.location.hash;
-			if (hash == ''){
+			let hash = window.location.hash;
+			if (hash == '') {
 				hash = 'optperf';
 			}
 			else {
@@ -414,11 +576,11 @@ Vue.component('server-performance', {
 		pageSpeedCheck: function () {
 			this.$root.pageSpeedCheck('server-performance');
 		},
-		rec_toggle: function(id) {
-			var desc = document.getElementById('rec_item_desc_' + id);
-			var toggle = document.getElementById('rec_item_toggle_' + id);
-			
-			if(desc.style.display === 'none'){
+		rec_toggle: function (id) {
+			let desc = document.getElementById('rec_item_desc_' + id);
+			let toggle = document.getElementById('rec_item_toggle_' + id);
+
+			if (desc.style.display === 'none') {
 				desc.style.display = 'block';
 				toggle.classList.remove('glyphicon-chevron-right');
 				toggle.classList.add('glyphicon-chevron-down');
@@ -427,26 +589,21 @@ Vue.component('server-performance', {
 				toggle.classList.add('glyphicon-chevron-right');
 				toggle.classList.remove('glyphicon-chevron-down');
 			}
-			
+
 		},
 		drawGraphs: function () {
 			let perf = page_data.graphs;
-			var circles_ttfb = generateCircle('circles-ttfb', 40, 10, perf.ttfb);
-			var circles_cls = generateCircle('circles-cls', 40, 10, perf.cls);
-			var circles_overall = generateCircle('circles-overall_score', 60, 20, perf.overall_score);
+			let circles_ttfb = generateCircle('circles-ttfb', 40, 10, perf.ttfb);
+			let circles_cls = generateCircle('circles-cls', 40, 10, perf.cls);
+			let circles_overall = generateCircle('circles-overall_score', 60, 20, perf.overall_score);
 
-			//var offset_circles = jQuery('#circles-ttfb, #circles-cls, #circles-overall_score').find('.circles-text');
-			//offset_circles.css({ 'left': '-32px', 'top': '-10px', 'font-size': '36px' });
-			//var overall_circle = jQuery('#circles-overall_score').find('.circles-text');
-			//overall_circle.css({ 'left': '-32px', 'top': '-10px', 'font-size': '60px' });
+			let circles_lcp = generateCircle('circles-lcp', 35, 7, perf.lcp);
+			let circles_fid = generateCircle('circles-fid', 35, 7, perf.fid);
+			let circles_fcp = generateCircle('circles-fcp', 35, 7, perf.fcp);
 
-			var circles_lcp = generateCircle('circles-lcp', 35, 7, perf.lcp);
-			var circles_fid = generateCircle('circles-fid', 35, 7, perf.fid);
-			var circles_fcp = generateCircle('circles-fcp', 35, 7, perf.fcp);
-
-			var line_graph_lcp = createLineGraph('line-graph-lcp', perf.lcp, 'circles-lcp');
-			var line_graph_fid = createLineGraph('line-graph-fid', perf.fid, 'circles-fid');
-			var line_graph_fcp = createLineGraph('line-graph-fcp', perf.fcp, 'circles-fcp');
+			let line_graph_lcp = createLineGraph('line-graph-lcp', perf.lcp, 'circles-lcp');
+			let line_graph_fid = createLineGraph('line-graph-fid', perf.fid, 'circles-fid');
+			let line_graph_fcp = createLineGraph('line-graph-fcp', perf.fcp, 'circles-fcp');
 		}
 	},
 	template: "#server-performance-template",
@@ -478,13 +635,12 @@ Vue.component('page-speed-score', {
 		},
 		doCircles: function () {
 			let graphs = page_data.graphs;
-			var plsMobile = generateCircle('circles-pls-mobile', 40, 10, graphs.pagespeed_mobile.overall_score);
-			var plsDesktop = generateCircle('circles-pls-desktop', 40, 10, graphs.pagespeed_desktop.overall_score);
-			//jQuery('#circles-pls-mobile .circles-text, #circles-pls-desktop .circles-text').css({ 'left': '-32px', 'top': '-10px', 'font-size': '50px' });
+			let plsMobile = generateCircle('circles-pls-mobile', 40, 10, graphs.pagespeed_mobile.overall_score);
+			let plsDesktop = generateCircle('circles-pls-desktop', 40, 10, graphs.pagespeed_desktop.overall_score);
 
-			var optPerf = generateCircle('circles-opt-perf', 35, 7, graphs.opt_perf);
-			var optSec = generateCircle('circles-opt-sec', 35, 7, graphs.opt_security);
-			var optBP = generateCircle('circles-opt-bp', 35, 7, graphs.opt_bp);
+			let optPerf = generateCircle('circles-opt-perf', 35, 7, graphs.performance);
+			let optSec = generateCircle('circles-opt-sec', 35, 7, graphs.security);
+			let optBP = generateCircle('circles-opt-bestp', 35, 7, graphs.bestp);
 		}
 	},
 	template: "#page-speed-score-template",
@@ -503,10 +659,25 @@ Vue.component('page-speed-score', {
 	}
 });
 
-var app = new Vue({
+let app = new Vue({
 	el: '#a2-optimized-wrapper',
 	data: page_data,
 	methods: {
+		addFakeNotif: function () {
+			let content = document.getElementById('fake_notif_text').value;
+			let params = new URLSearchParams();
+			params.append('action', 'add_notification');
+			params.append('a2_notification_text', content);
+			axios
+				.post(ajax.url, params)
+				.catch((error) => {
+					alert('There was a problem adding notification. See console log.');
+					console.log(error.message);
+				})
+				.then((response) => {
+					console.log(response);
+				});
+		},
 		toggleInfoDiv: function (metric) {
 			let data_div = document.querySelector('#graph-' + metric + ' .graph_data');
 			let explanation_div = document.querySelector('#graph-' + metric + ' .graph_info');
@@ -522,12 +693,12 @@ var app = new Vue({
 		},
 		pageSpeedCheck: function (page, run_checks = true) {
 			page_data.showModal = true;
-			var params = new URLSearchParams();
+			let params = new URLSearchParams();
 			params.append('action', 'run_benchmarks');
 			params.append('a2_page', page);
 			params.append('run_checks', run_checks);
 			params.append('nonce', ajax.nonce);
-			
+
 			let strat = document.getElementById('server-perf-strategy-select');
 			if (strat) {
 				params.append('a2_performance_strategy', strat.value);

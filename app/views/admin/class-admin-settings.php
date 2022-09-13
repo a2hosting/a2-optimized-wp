@@ -33,10 +33,13 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
+				'notifications' => $args['notifications'],
 				'content-element' => '<page-speed-score :update-Child="updateView" :key="mainkey"></page-speed-score>',
 				'home_url' => home_url(),
 				'nav' => [
-					'pls_class' => 'current'
+					'pls_class' => 'current',
+					'wsp_class' => '',
+					'opt_class' => ''
 				],
 				'last_check_date' => $last_check,
 				'explanations' => [
@@ -120,8 +123,6 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data['data_json'] = $data_json;
 			$args['data'] = $data;
 
-			//print_r($data['data_json']);
-			//wp_die();
 			echo $this->render_template(
 				'admin/page-settings/page-settings.php',
 				$args
@@ -148,6 +149,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'optimizations' => $data['optimizations'],
 				'other_optimizations' => $data['other_optimizations'],
 				'best_practices' => $data['best_practices'],
+				'extra_settings' => $data['extra_settings'],
 				'graphs' => $data['graphs']
 			];
 			$data_json = json_encode($data);
