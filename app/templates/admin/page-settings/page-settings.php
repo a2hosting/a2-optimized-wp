@@ -1,8 +1,11 @@
 <div class="wrap">
+	<button onclick="page_data.showModal = 1;">open modal 1</button>
+	<button onclick="page_data.showA2Only = 1;">open modal 2</button>
 
 <script> 
 	let page_data = <?php echo $data['data_json'] ?>;
 	page_data.showModal = false;
+	page_data.showA2Only = false;
 </script>
 
 <script type="text/x-template" id="info-button-template">
@@ -172,7 +175,7 @@
 			<a v-if="extra_setting" href="javascript:void(0)" @click="toggleExtraSettings(slug, $event)">Modify</a>
 		</div>
 		<div class="col-sm-2 padding-top-30" >
-			<li class="tg-list-item">
+			<li class="tg-list-item" @click="optimizationClicked(disabled)">
 				<input class="tgl tgl-ios" :id="'toggle-' + slug" :name="slug" v-model="configured" true-value="true" false-value="false" type="checkbox"  :disabled="disabled" />
 				<label class="tgl-btn" :for="'toggle-' + slug"></label>
 			</li>
@@ -761,9 +764,13 @@
 			<div class="modal-wrapper">
 				<div class="modal-container">
 
+					<div class="modal-top-bar">
+						<span v-show="show_close" class="glyphicon glyphicon-remove" style="font-size: 2em;" @click="$emit('close')"></span>
+					</div>
+
 					<div class="modal-header">
-						<slot name="header"></slot>
-						<!-- <span class="glyphicon glyphicon-remove" style="font-size: 2em;" @click="$emit('close')"></span> -->
+						<slot name="header">
+						</slot>
 					</div>
 
 					<div class="modal-body">
@@ -774,24 +781,24 @@
 
 					<div class="modal-footer">
 						<slot name="footer"></slot>
-						<div class="row">
-							<div class="col-sm-4"></div>
-							<div class="col-sm-4">
-								<div class="item-loader-container">
-									<div class="la-line-spin-fade-rotating la-2x la-dark">
-										<div></div>
-										<div></div>
-										<div></div>
-										<div></div>
-										<div></div>
-										<div></div>
-										<div></div>
-										<div></div>
-									</div>
-								</div> 
-							</div>
-							<div class="col-sm-4"></div>
+					</div>
+					<div v-if="show_busy=='true'" class="row">
+						<div class="col-sm-4"></div>
+						<div class="col-sm-4">
+							<div class="item-loader-container">
+								<div class="la-line-spin-fade-rotating la-2x la-dark">
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
+								</div>
+							</div> 
 						</div>
+						<div class="col-sm-4"></div>
 					</div>
 				</div>
 			</div>
@@ -800,7 +807,14 @@
 </script>
 
 	<div class="container-fluid"  id="a2-optimized-wrapper">
-		<modal v-if="showModal" @close="showModal = false">
+		<modal v-if="showModal" @close="showModal = false" show_busy=true>
+		</modal>
+		<modal v-if="showA2Only" @close="showA2Only = false" show_busy=false show_close=true>
+			<template v-slot:header><h3>Header tough talk</h3></template>
+			<template v-slot:body>
+				<span class="modal-dialog-text">No A2?  No dice for you!</span>
+			</template>
+			<template v-slot:footer><a class="btn cta-btn-green">Learn more</a></template>
 		</modal>
 		<div class="row" id="a2-optimized-header">
 			<div class="col-sm-6 title">
