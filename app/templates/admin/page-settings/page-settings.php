@@ -1,6 +1,4 @@
 <div class="wrap">
-	<button onclick="page_data.showModal = 1;">open modal 1</button>
-	<button onclick="page_data.showA2Only = 1;">open modal 2</button>
 
 <script> 
 	let page_data = <?php echo $data['data_json'] ?>;
