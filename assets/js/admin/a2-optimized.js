@@ -357,6 +357,11 @@ Vue.component('optimization-entry', {
 		toggleExtraSettings: function (slug, event) {
 			this.$root.$emit('extra_settings_show', { slug: slug });
 			this.$parent.toggleFlipPanel(this.wrapper_id, event);
+		},
+		optimizationClicked: function(isDisabled){
+			if (isDisabled){
+				page_data.showA2Only = true;
+			}
 		}
 	},
 	template: "#optimization-entry"
@@ -529,6 +534,10 @@ Vue.component('optimizations-performance', {
 });
 
 Vue.component("modal", {
+	props: {
+		show_busy: {Boolean: false},
+		show_close: {Boolean: false}
+	},
 	template: "#modal-template"
 });
 

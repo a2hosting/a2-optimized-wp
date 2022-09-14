@@ -332,7 +332,8 @@
   vertical-align: middle;
 }
 #a2-optimized-wrapper .modal-container {
-  width: 300px;
+  width: 500px;
+  max-width: 90%;
   margin: 0px auto;
   padding: 20px 30px;
   background-color: #fff;
@@ -341,15 +342,23 @@
   transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
 }
+#a2-optimized-wrapper .modal-top-bar {
+  text-align: right;
+}
 #a2-optimized-wrapper .modal-header h3 {
   margin-top: 0;
-  color: #42b983;
 }
 #a2-optimized-wrapper .modal-body {
   margin: 20px 0;
 }
+#a2-optimized-wrapper .modal-dialog-text {
+  color: #128413;
+}
 #a2-optimized-wrapper .modal-default-button {
   float: right;
+}
+#a2-optimized-wrapper .modal-footer {
+  text-align: right;
 }
 #a2-optimized-wrapper .modal-enter {
   opacity: 0;
