@@ -79,7 +79,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		//// notification functions //
 		public function get_notifications() {
 			$notifications = get_option(self::NOTIFICATIONS_KEY);
-			if (count($notifications) == 0){
+			if ($notifications && count($notifications) == 0){
 				$notifications = [];
 			}
 
