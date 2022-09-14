@@ -371,6 +371,20 @@
   -webkit-transform: scale(1.1);
   transform: scale(1.1);
 }
+#a2-optimized-wrapper .utility-icon {
+  width: 25px;
+  height: 25px;
+  display: inline;
+  float: left;
+}
+#a2-optimized-wrapper .utility-icon .dropdown-menu {
+  padding: 5px;
+  border-color: #128413;
+}
+#a2-optimized-wrapper #menu-bell {
+  right: 0;
+  left: initial;
+}
 #a2-optimized-wrapper .tg-list-item {
   margin: 0 2em;
   list-style: none;

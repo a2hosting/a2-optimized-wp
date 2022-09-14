@@ -822,9 +822,30 @@
 				<input type="text" value="<?php echo get_site_url(); ?>" />
 				<p class='small'>Data relates to your homepage</p>
 			</div>
-			<div class="col-sm-2 text-right utility">
-				<p><a href="#"><span class="glyphicon glyphicon-bell" aria-hidden="true"></span></a>
-				<a href="#"><span class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span></a></p>
+			<div class="col-sm-2 text-right">
+				<div class="utility-icon">
+					<a id="drop-bell" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<span id="drop-bell-wrapper" class="glyphicon glyphicon-bell notification-bell" aria-hidden="true"></span>
+					</a>
+					<ul id="menu-bell" class="dropdown-menu" aria-labelledby="drop-bell-wrapper">
+						<li v-for="(content, id) in notifications">
+							<div class="">
+								{{ content }}
+							</div>	
+						</li>
+					</ul>
+				</div>
+				<div class="utility-icon">
+					<a id="drop-links" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+						<span id="drop-links-wrapper" class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
+					</a>
+					<ul id="menu-links" class="dropdown-menu" aria-labelledby="drop-links-wrapper">
+						<li><a target="_blank" href="https://my.a2hosting.com/">A2 Client Area</a></li>
+						<li><a target="_blank" href="https://my.a2hosting.com/submitticket.php?action=support">A2 Client Support</a></li>
+						<li><a target="_blank" href="https://wordpress.org/support/plugin/a2-optimized-wp/">Wordpress Support</a></li>
+						<li><a target="_blank" href="https://www.a2hosting.com/kb/collections/wordpress-articles">Wordpress Knowledge Base</a></li>
+					</ul>
+				</div>
 			</div>
 			<div id="color-palette" style="display:none;">
 				<span class="success"></span>

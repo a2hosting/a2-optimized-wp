@@ -180,6 +180,13 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'all'
 			);
 			wp_enqueue_style(
+				A2_Optimized::PLUGIN_ID . '_animations-css',
+				A2_Optimized::get_plugin_url() . 'assets/css/admin/animate.min.css',
+				[],
+				A2_Optimized::PLUGIN_VERSION,
+				'all'
+			);
+			wp_enqueue_style(
 				A2_Optimized::PLUGIN_ID . '_fonts-css',
 				'https://fonts.googleapis.com/css?family=Raleway:300,500,700,900|Poppins:300,500,700,900',
 				[],
@@ -201,6 +208,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 					$page = $_REQUEST['a2_page'];
 				}
 				$run_benchmarks = false;
+				$notifications = $this->get_model()->get_notifications();
 				switch ($page) {
 					case 'server_performance':
 						$graphs = $this->get_model()->get_frontend_benchmark($run_benchmarks);
@@ -208,6 +216,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 							[
 								'page_title'    => A2_Optimized::PLUGIN_NAME,
 								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
+								'notifications' => $notifications,
 								'graphs' => $graphs['pagespeed_desktop'],
 								'run_benchmarks' => $run_benchmarks
 							]
@@ -220,6 +229,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 							[
 								'page_title'    => A2_Optimized::PLUGIN_NAME,
 								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
+								'notifications' => $notifications,
 								'data' => $data,
 								'run_benchmarks' => $run_benchmarks
 							]
@@ -232,6 +242,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 							[
 								'page_title'    => A2_Optimized::PLUGIN_NAME,
 								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
+								'notifications' => $notifications,
 								'data' => $data,
 							]
 						);
@@ -247,6 +258,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 							[
 								'page_title'    => A2_Optimized::PLUGIN_NAME,
 								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
+								'notifications' => $notifications,
 								'graphs' => $graphs,
 								'run_benchmarks' => $run_benchmarks
 							]

@@ -18,6 +18,8 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		private $benchmark;
 		private $optimizations;
 
+		const NOTIFICATIONS_KEY = 'a2_opt_notifications';
+
 		/**
 		 * Constructor
 		 *
@@ -45,6 +47,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 			add_action( 'wp_ajax_run_benchmarks', [$this, 'run_benchmarks'] );
 			add_action( 'wp_ajax_apply_optimizations', [$this, 'apply_optimizations'] );
+			add_action( 'wp_ajax_add_notification', [$this, 'add_notification'] );
 		}
 
 		/* Callback for run_benchmarks AJAX request */
@@ -73,6 +76,33 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			wp_die();
 		}
 
+		//// notification functions //
+		public function get_notifications() {
+			$notifications = get_option(self::NOTIFICATIONS_KEY);
+			if (count($notifications) == 0){
+				$notifications = [];
+			}
+
+			return $notifications;
+
+		}
+		public function add_notification(){
+			$new_notification = $_POST['a2_notification_text'] ?? '';
+			if (!empty($new_notification)){
+				$notifications = $this->get_notifications();
+				$max_id = 0;
+				if (count($notifications) > 0){
+					$max_id = max(array_keys($notifications));
+				}
+				$new_id = $max_id + 1;
+
+				$notifications[$new_id] = $new_notification;
+				update_option(self::NOTIFICATIONS_KEY, $notifications);
+				echo json_encode($notifications);
+			}
+			wp_die();
+		}
+		////
 		/* Callback for apply_optimizations AJAX request */
 		public function apply_optimizations() {
 			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') ){ 

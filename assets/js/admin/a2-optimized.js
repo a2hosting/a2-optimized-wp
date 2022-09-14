@@ -286,7 +286,39 @@ function onAnimationEnd(event) {
 		elem.classList.remove('flip-finish');
 		elem.classList.remove('flipped');
 	}
+	else {
+		elem.classList.remove(event.animationName);
+	}
+}
 
+/**
+ * function used to trigger an animation.
+ * mostly used for testing out or demo-ing animations on demand
+ * @param {*} anim 
+ */
+function playAnim(anim){
+	let bell = document.getElementById("drop-bell-wrapper");
+	let animname = '';
+	switch (anim){
+		case '1':
+			animname = 'ringCycle1';
+			break;
+		case '2':
+			animname = 'ringCycle2';
+			break;
+		case '3':
+			animname = 'ringPulse';
+			break;
+	}
+
+	if (animname){
+		if (bell.classList.contains(animname)){
+			bell.classList.remove(animname);
+		}
+		else {
+			bell.classList.add(animname);
+		}
+	}
 }
 
 Vue.component('flip-panel', {
@@ -640,6 +672,21 @@ let app = new Vue({
 	el: '#a2-optimized-wrapper',
 	data: page_data,
 	methods: {
+		addFakeNotif: function () {
+			let content = document.getElementById('fake_notif_text').value;
+			let params = new URLSearchParams();
+			params.append('action', 'add_notification');
+			params.append('a2_notification_text', content);
+			axios
+				.post(ajax.url, params)
+				.catch((error) => {
+					alert('There was a problem adding notification. See console log.');
+					console.log(error.message);
+				})
+				.then((response) => {
+					console.log(response);
+				});
+		},
 		toggleInfoDiv: function (metric) {
 			let data_div = document.querySelector('#graph-' + metric + ' .graph_data');
 			let explanation_div = document.querySelector('#graph-' + metric + ' .graph_info');

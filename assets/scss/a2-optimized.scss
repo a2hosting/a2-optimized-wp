@@ -471,9 +471,26 @@ $thishost: #009aca;
         transform: scale(1.1);
     }
 
+    .utility-icon {
+        width: 25px;
+        height: 25px;
+        display:inline;
+        float: left;
+
+        .dropdown-menu {
+            padding: 5px;
+            border-color: $green;
+        }
+    }
+    
+    #menu-bell {
+        right: 0;
+        left: initial;
+    }
+
     /* checkboxes */
     .tg-list-item {
-        margin: 0 2em;
+        margin:  0 2em;
         list-style: none;
     }
 

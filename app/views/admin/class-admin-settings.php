@@ -33,6 +33,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
+				'notifications' => $args['notifications'],
 				'content-element' => '<page-speed-score :update-Child="updateView" :key="mainkey"></page-speed-score>',
 				'home_url' => home_url(),
 				'nav' => [
