@@ -61,16 +61,27 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$page = $_POST['a2_page'];
 			$run_checks = $_POST['run_checks'] !== 'false';
 
-			$frontend_data = $this->get_frontend_benchmark($run_checks);
+			switch($page){
+				case 'server-performance':
+				case 'page-speed-score':
+					$frontend_data = $this->get_frontend_benchmark($run_checks);
 
-			if ($page == 'server-performance') {
-				$strategy = 'pagespeed_' . $_POST['a2_performance_strategy'];
-				$frontend_data = $frontend_data[$strategy];
+					if ($page == 'server-performance') {
+						$strategy = 'pagespeed_' . $_POST['a2_performance_strategy'];
+						$frontend_data = $frontend_data[$strategy];
+					}
+
+					$opt_data = $this->get_opt_performance();
+
+					$data = array_merge($frontend_data, $opt_data['graphs']);
+					break;
+				case 'hosting-matchup':
+					$hosting_data = $this->get_hosting_benchmark($run_checks);
+
+					$data = $hosting_data;
+					break;
 			}
 
-			$opt_data = $this->get_opt_performance();
-
-			$data = array_merge($frontend_data, $opt_data['graphs']);
 
 			echo json_encode($data);
 			wp_die();
@@ -132,6 +143,9 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		}
 
 		public function get_hosting_benchmark($run = false) {
+			if($run){
+				$this->benchmark->run_hosting_test_suite();
+			}
 			$backend_benchmarks = get_option('a2opt-benchmarks-hosting');
 			$baseline_benchmarks = $this->benchmark->get_baseline_results();
 
