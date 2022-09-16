@@ -86,6 +86,11 @@
 				<p><a href="admin.php?page=a2-optimized&a2_page=hosting_matchup" class="navlink" :class="nav.hmatch_class">Hosting Matchup</a></p>
 			</div>
 			<div class="col-sm-10 border-left" id="a2-optimized-hostingmatchup">
+				<div class="row padding-bottom">
+					<div class="col-sm-12">
+						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
+					</div>
+				</div>	
 				<div class="row">
 					<div class="col-sm-6">
 						<flip-panel content_id="graph-webperformance" 
@@ -828,11 +833,13 @@
 						<span id="drop-bell-wrapper" class="glyphicon glyphicon-bell notification-bell" aria-hidden="true"></span>
 					</a>
 					<ul id="menu-bell" class="dropdown-menu" aria-labelledby="drop-bell-wrapper">
+						<!-- comment until the notifications are ready
 						<li v-for="(content, id) in notifications">
 							<div class="">
 								{{ content }}
 							</div>	
 						</li>
+						-->
 					</ul>
 				</div>
 				<div class="utility-icon">

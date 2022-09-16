@@ -42,10 +42,7 @@ class A2_Optimized_Benchmark {
 			wp_die(__('There was a problem loading this page, you may not have the necessary permissions, or may need to <a href="' . get_option('siteurl') . '/wp-login.php">' . __('login') . '</a>.'));
 		}
 		
-		$existing_results = get_option('a2opt-benchmarks-hosting');
-		if(!$existing_results){
-			$existing_results = [];
-		}
+		$existing_results = [];
 		
 		try{
 			$results = [];

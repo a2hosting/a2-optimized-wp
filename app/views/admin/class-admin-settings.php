@@ -66,10 +66,10 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		}
 
 		public function admin_server_performance_page($args = []) {
-			$last_check = 'None';
+			$pagespeed_last_check = 'None';
 			$graphs = $args['graphs'];
 			if ($graphs) {
-				$last_check = $graphs['overall_score']['last_check_date'];
+				$pagespeed_last_check = $graphs['overall_score']['last_check_date'];
 			}
 
 			$data = [
@@ -81,7 +81,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 					'wsp_class' => 'current',
 					'webperf_class' => 'current'
 				],
-				'last_check_date' => $last_check,
+				'last_check_date' => $pagespeed_last_check,
 				'graphs' => $graphs,
 			];
 			$data_json = json_encode($data);

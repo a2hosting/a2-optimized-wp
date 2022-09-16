@@ -443,6 +443,11 @@ Vue.component('hosting-matchup', {
 	data() {
 		return page_data
 	},
+	methods: {
+		pageSpeedCheck: function () {
+			this.$root.pageSpeedCheck('hosting-matchup');
+		}
+	},
 	template: "#hosting-matchup-template",
 	mounted() {
 		document.addEventListener("DOMContentLoaded", function () {
@@ -726,7 +731,12 @@ let app = new Vue({
 					} else {
 						page_data.last_check_date = response.data.overall_score.last_check_date;
 					}
-					page_data.graphs = response.data;
+					if(page == 'hosting-matchup'){
+						page_data.graphs = response.data.graphs;
+						page_data.graph_data = response.data.graph_data;
+					} else {
+						page_data.graphs = response.data;
+					}
 					page_data.updateView++;
 					page_data.showModal = false;
 				});
