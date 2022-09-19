@@ -266,11 +266,16 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			foreach($result['best_practices'] as $key => $item){
 				$color_class = 'warn';
 				if(!$item['status']['is_warning']){
-					$opt_counts['bestp']['active']++;
 					$color_class = 'success';
 				}
 				$result['best_practices'][$key]['color_class'] = $color_class;
-				$opt_counts['bestp']['total']++;
+
+				if (!isset($item['slug'])){
+					$opt_counts['bestp']['total']++;
+					if ($color_class == 'success'){
+						$opt_counts['bestp']['active']++;
+					}
+				}
 			}
 
 			/* Determine circle colors */
