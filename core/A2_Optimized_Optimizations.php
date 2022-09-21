@@ -419,6 +419,12 @@ class A2_Optimized_Optimizations {
     public function get_best_practices() {
         //TODO: should this be the site health items instead?
         $response = [
+            'regenerate_salts' => [
+                'title' => 'Regenerate wp-config salts',
+                'slug' => 'regenerate_salts',
+                'description' => "Improve the security of your WordPress website by enabling this option. Generate new salt values for wp-config.php WordPress salts and security keys help secure your site's login process and the cookies that WordPress uses to authenticate users. There are security benefits to periodically changing your salts to make it even harder for malicious actors to access them. You may need to clear your browser cookies after activating this option. This will log out all users including yourself.",
+                'status' => $this->is_active('regenerate_salts', false),
+            ],
             'posts_per_page' => [
                 'title' => 'Recent Post Limit',
                 'description' => 'The number of recent posts per page should be less than fifteen for most sites. This could slow down page loads.',
@@ -688,9 +694,12 @@ class A2_Optimized_Optimizations {
                 break;
             case 'regenerate_salts':
                 if(get_option('a2_updated_regenerate-salts')){
-                    $last_updated = strtotime(get_option('a2_updated_regenerate-salts'));
+                    $last_updated_date = get_option('a2_updated_regenerate-salts');
+                    $last_updated = strtotime($last_updated_date);
+                    $result['current'] = "Salts last Regenerated on {$last_updated_date}";
                     if ($last_updated > strtotime('-3 Months')) {
                         $result['value'] = true;
+                        $result['is_warning'] = true;
                     }
                 }
                 break;

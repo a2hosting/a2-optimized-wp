@@ -471,31 +471,44 @@ Vue.component('optimizations-performance', {
 			let optsSecurity = generateCircle('circles-opt-security', 40, 10, graphs.security);
 			let optsBestp = generateCircle('circles-opt-bestp', 40, 10, graphs.bestp);
 		},
-		updateOptimizations: function () {
+		promptToUpdate: function (event, header, message, slug, value){
+			this.$parent.promptForAction(header, message, () => {
+				this.updateOptimizations(event, slug, value);
+				if (slug == 'regenerate_salts'){
+					window.location.href = page_data.login_url;
+				}
+			});
+		},
+		updateOptimizations: function (event, slug = "", value = "") {
 			page_data.showModal = true;
 			let params = new URLSearchParams();
 			params.append('action', 'apply_optimizations');
 			params.append('nonce', ajax.nonce);
 
-			for (let key in page_data.optimizations) {
-				for (let index in page_data.optimizations[key]) {
-					params.append('opt-' + index, page_data.optimizations[key][index]['configured']);
-				}
+			if (slug){
+				params.append('opt-' + slug, value);
 			}
-			for (let key in page_data.other_optimizations) {
-				for (let index in page_data.other_optimizations[key]) {
-					params.append('opt-' + index, page_data.other_optimizations[key][index]['configured']);
+			else{
+				for (let key in page_data.optimizations) {
+					for (let index in page_data.optimizations[key]) {
+						params.append('opt-' + index, page_data.optimizations[key][index]['configured']);
+					}
 				}
-			}
-			for (let parent in page_data.extra_settings) { // a2_page_cache
-				for (let item in page_data.extra_settings[parent]['settings_sections']) { // site_clear
-					for (let subitem in page_data.extra_settings[parent]['settings_sections'][item]['settings']) { // clear_site_cache_on_changed_plugin
-						params.append('opt-' + subitem, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['value']);
-						
-						// If this item has extra_fields
-						if(page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem].hasOwnProperty('extra_fields')){
-							for (let extra_field in page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields']) { // cache_expiry_time
-								params.append('opt-' + extra_field, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields'][extra_field]['value']);
+				for (let key in page_data.other_optimizations) {
+					for (let index in page_data.other_optimizations[key]) {
+						params.append('opt-' + index, page_data.other_optimizations[key][index]['configured']);
+					}
+				}
+				for (let parent in page_data.extra_settings) { // a2_page_cache
+					for (let item in page_data.extra_settings[parent]['settings_sections']) { // site_clear
+						for (let subitem in page_data.extra_settings[parent]['settings_sections'][item]['settings']) { // clear_site_cache_on_changed_plugin
+							params.append('opt-' + subitem, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['value']);
+							
+							// If this item has extra_fields
+							if(page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem].hasOwnProperty('extra_fields')){
+								for (let extra_field in page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields']) { // cache_expiry_time
+									params.append('opt-' + extra_field, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields'][extra_field]['value']);
+								}
 							}
 						}
 					}
@@ -740,6 +753,19 @@ let app = new Vue({
 					page_data.updateView++;
 					page_data.showModal = false;
 				});
+		},
+		promptForAction(header, message, yesAction = null, noAction = null){
+			if (!yesAction) {
+				return;  // no point calling this with no action to do, for now
+			}
+			page_data.yesNoDialog.header = header;
+			page_data.yesNoDialog.message = message;
+			page_data.yesNoDialog.yesAction = yesAction;
+			if (noAction){
+				page_data.yesNoDialog.noAction = noAction;
+			}
+
+			page_data.yesNoDialog.showYesNo = true;
 		}
 	},
 });

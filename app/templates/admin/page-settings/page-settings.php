@@ -2,8 +2,27 @@
 
 <script> 
 	let page_data = <?php echo $data['data_json'] ?>;
+	page_data.login_url = '<?php echo get_home_url() . "/wp-login.php" ?>';
 	page_data.showModal = false;
 	page_data.showA2Only = false;
+	page_data.yesNoDialog = {
+		showYesNo: false,
+		message: 'default',
+		doYes: () => {
+			if (page_data.yesNoDialog.yesAction){
+				page_data.yesNoDialog.yesAction();
+			}
+			page_data.yesNoDialog.showYesNo = false;
+		},
+		doNo: () => {
+			if (page_data.yesNoDialog.noAction){
+				page_data.yesNoDialog.noAction();
+			}
+			page_data.yesNoDialog.showYesNo = false;
+		},
+		noAction: null,
+		yesAction: null,
+	};
 </script>
 
 <script type="text/x-template" id="info-button-template">
@@ -342,7 +361,7 @@
 													<span v-if="item.status.is_warning" :class="item.color_class"> - WARNING</span>
 													<span v-else :class="item.color_class"> - GOOD</span>
 												</div>
-												<div class="col-sm-3 text-right">
+												<div v-if="!item.hasOwnProperty('slug')" class="col-sm-3 text-right">
 													<span v-if="item.status.is_warning">
 														<span class="glyphicon glyphicon-remove-circle"  :class="item.color_class" aria-hidden="true"></span>
 													</span>
@@ -350,6 +369,15 @@
 														<span class="glyphicon glyphicon-ok-circle"  :class="item.color_class" aria-hidden="true"></span>
 													</span>
 													<a :href="item.config_url" target="a2opt_config">Modify</a><br><span class="small">via wordpress</span>
+												</div>
+												<div v-else class="col-sm-3 text-right">
+													<span v-if="item.status.is_warning">
+														<span class="glyphicon glyphicon-remove-circle"  :class="item.color_class" aria-hidden="true"></span>
+													</span>
+													<span v-else>
+														<span class="glyphicon glyphicon-ok-circle"  :class="item.color_class" aria-hidden="true"></span>
+													</span>
+													<a href="" @click.prevent="promptToUpdate($event, 'Are you sure?', 'This will log you out.  Click Yes to proceed.', item.slug, 'true')" >Update</a>
 												</div>
 											</div>
 										</h4>
@@ -818,6 +846,15 @@
 				<span class="modal-dialog-text">No A2?  No dice for you!</span>
 			</template>
 			<template v-slot:footer><a class="btn cta-btn-green">Learn more</a></template>
+		</modal>
+		<modal v-if="yesNoDialog.showYesNo" @close="yesNoDialog.showYesNo = false" show_busy=false show_close=true>
+			<template v-slot:header><h3>{{ yesNoDialog.header }}</h3></template>
+			<template v-slot:body>
+				<span class="modal-dialog-text">{{ yesNoDialog.message }}</span>
+			</template>
+			<template v-slot:footer>
+				<a class="btn cta-btn-green" @click="yesNoDialog.doNo" >Cancel</a>
+				<a class="btn cta-btn-green" @click="yesNoDialog.doYes">Ok</a></template>
 		</modal>
 		<div class="row" id="a2-optimized-header">
 			<div class="col-sm-6 title">
