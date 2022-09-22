@@ -6,6 +6,16 @@ if (! defined('WPINC')) {
 
 class A2_Optimized_Optimizations {
 
+    public $private_opts;
+
+	public function __construct() {
+        $this->private_opts = false;
+        if(file_exists('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php')){
+            require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
+            $this->private_opts = new A2_Optimized_Private_Optimizations(); 
+        }
+    }
+
     public function get_optimizations() {
 		$public_opts = $this->get_public_optimizations();
 		$private_opts = $this->get_private_optimizations();
@@ -226,7 +236,7 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('a2_page_cache'),
                 'category' => 'performance',
                 'compatibility' => ['caching'],
-                'description' => 'Make your website faster by enabling Page Caching. This allows your website visitors to save copies of your web pages on their devices or browser. When they return to your website in the future, your site files will load faster. This is safe to activate.<br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Advanced Settings</a>',
+                'description' => 'Make your website faster by enabling Page Caching. This allows your website visitors to save copies of your web pages on their devices or browser. When they return to your website in the future, your site files will load faster. This is safe to activate.',
             ],
             'a2_page_cache_gzip' => [
                 'name' => 'Gzip Compression',
@@ -245,7 +255,7 @@ class A2_Optimized_Optimizations {
                 'category' => 'performance',
                 'compatibility' => ['caching'],
                 'description' => 'Make your website faster by enabling Object Caching. Object cache can serve cached items in less than a millisecond, such as images, files and metadata. This is safe to activate. 
-                    <strong>A supported object cache server and the corresponding PHP extension are required.</strong><br /><a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Object Cache Settings</a>',
+                    <strong>A supported object cache server and the corresponding PHP extension are required.</strong>',
             ],
             'a2_page_cache_minify_html' => [
                 'name' => 'Minify HTML Pages',
@@ -274,8 +284,7 @@ class A2_Optimized_Optimizations {
                 'premium' => false,
                 'configured' => $this->is_active('a2_db_optimizations'),
                 'category' => 'performance',
-                'description' => 'Improve your database performance by enabling Automatic Database Optimizations. If enabled, will periodically clean the MySQL database of expired transients, trashed comments, spam comments, and optimize all tables. You may also select to remove post revisions and trashed posts from the Database Optimization Settings. This is safe to activate.<br/>
-                <a href="admin.php?a2-page=cache_settings&page=A2_Optimized_Plugin_admin">Configure Database Optimization Settings</a>',
+                'description' => 'Improve your database performance by enabling Automatic Database Optimizations. If enabled, will periodically clean the MySQL database of expired transients, trashed comments, spam comments, and optimize all tables. You may also select to remove post revisions and trashed posts from the Database Optimization Settings. This is safe to activate.',
             ],
             'woo_cart_fragments' => [
                 'name' => 'Dequeue WooCommerce Cart Fragments AJAX calls',
@@ -295,18 +304,6 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('xmlrpc_requests'),
                 'description' => 'Improve the security of your WordPress website by enabling this option. This will completely disable XML-RPC services. XML-RPC API is safe and enabled by default on all WordPress websites. However, some WordPress security experts may advise you to disable it. Disabling it will basically close one more door that a potential hacker may try to exploit to hack your website.',
             ],
-            /* TODO: if this is active, it happens every time something else saves, with is a problem
-            'regenerate_salts' => [
-                'name' => 'Regenerate wp-config salts',
-                'slug' => 'regenerate_salts',
-                'premium' => false,
-                'optional' => true,
-                'configured' => $this->is_active('regenerate_salts'),
-                'category' => 'security',
-                'description' => "Improve the security of your WordPress website by enabling this option. Generate new salt values for wp-config.php WordPress salts and security keys help secure your site's login process and the cookies that WordPress uses to authenticate users. There are security benefits to periodically changing your salts to make it even harder for malicious actors to access them. You may need to clear your browser cookies after activating this option. This will log out all users including yourself.",
-                'last_updated' => true,
-                'update' => true,
-            ], */
             'htaccess' => [
                 'name' => 'Deny Direct Access to Configuration Files and Comment Form',
                 'slug' => 'htaccess',
@@ -391,15 +388,15 @@ class A2_Optimized_Optimizations {
         }
         
         if (class_exists('A2_Optimized_Private_Optimizations')) {
-            $a2opt_priv = new A2_Optimized_Private_Optimizations();
-            // reserved for future use
-        }
-
-        foreach($optimizations as $k => $optimization){
-            // Disable A2 exclusive items
-            $optimizations[$k]['disabled'] = false;
-            if($optimization['premium']){
-                $optimizations[$k]['disabled'] = true;
+            $private_optimizations = $this->private_opts->get_optimizations();
+            $optimizations = array_merge($optimizations, $private_optimizations);
+        } else {
+            foreach($optimizations as $k => $optimization){
+                // Disable A2 exclusive items
+                $optimizations[$k]['disabled'] = false;
+                if($optimization['premium']){
+                    $optimizations[$k]['disabled'] = true;
+                }
             }
         }
 
@@ -408,9 +405,7 @@ class A2_Optimized_Optimizations {
 
     protected function get_private_optimizations() {
         if (class_exists('A2_Optimized_Private_Optimizations')) {
-            $a2opt_priv = new A2_Optimized_Private_Optimizations();
-
-            return $a2opt_priv->get_optimizations();
+            return $this->private_opts->get_optimizations();
         } else {
             return [];
         }
@@ -632,8 +627,11 @@ class A2_Optimized_Optimizations {
                 $updated = update_option('a2_db_optimizations', $db_optimizations);
                 return true;
                 break;
+        }
 
-    
+        // Try private optimization
+        if (class_exists('A2_Optimized_Private_Optimizations')) {
+            return $this->private_opts->apply_optimization($optimization, $value);
         }
     }
 
@@ -926,9 +924,7 @@ class A2_Optimized_Optimizations {
     /* Is redis supported */
     private function is_redis_supported() {
         if (class_exists('A2_Optimized_Private_Optimizations') && is_plugin_active('litespeed-cache/litespeed-cache.php')) {
-            $a2opt_priv = new A2_Optimized_Private_Optimizations();
-
-            return $a2opt_priv->is_redis_supported();
+            return $this->private_opts->is_redis_supported();
         }
         update_option('a2_optimized_objectcache_type', 'memcached');
 

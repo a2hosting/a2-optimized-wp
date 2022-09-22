@@ -273,7 +273,7 @@
 				<p><a name='optperf' v-on:click.prevent="updateNavLinks('optperf')" class="navlink" :class="nav.optperf_class">Performance</a></p>
 				<p><a name='optsec' v-on:click.prevent="updateNavLinks('optsec')" class="navlink"  :class="nav.optsec_class" >Security</a></p>
 				<p><a name='optbestp' v-on:click.prevent="updateNavLinks('optbestp')" class="navlink"  :class="nav.optbestp_class">Best Practices</a></p>
-				<p><a name='optresults' v-on:click.prevent="updateNavLinks('optresults')" class="navlink"  :class="nav.optresult_class">Results</a></p>
+				<!-- <p><a name='optresults' v-on:click.prevent="updateNavLinks('optresults')" class="navlink"  :class="nav.optresult_class">Results</a></p> -->
 			</div>
 			<div class="col-sm-10 border-left" id="a2-optimized-opt_performance">
 				<!-- Performance -->
