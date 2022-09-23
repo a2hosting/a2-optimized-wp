@@ -512,7 +512,7 @@
 									</div>
 								</div>
 								<div class="col-sm-10 col-sm-offset-1 text-right">
-									<p><a href="#" class="cta-link">Go to Recommendations</a></p>
+									<p><a href="admin.php?page=a2-optimized&a2_page=optimizations" class="cta-link">Go to Recommendations</a></p>
 								</div>
 							</div>
 						</template>
