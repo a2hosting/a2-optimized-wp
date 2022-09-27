@@ -149,18 +149,31 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$backend_benchmarks = get_option('a2opt-benchmarks-hosting');
 			$baseline_benchmarks = $this->benchmark->get_baseline_results();
 
-			$bm = array_pop($backend_benchmarks);
-			$result = [];
-			$result['last_check_date'] = $bm['sysinfo']['time'];
-			$hostentry = [
-				'php' => $bm['php']['total'],
-				'mysql' => $bm['mysql']['benchmark']['mysql_total'],
-				'wordpress_db' => $bm['wordpress_db']['time'],
-				'filesystem' => $bm['filesystem'],
+			$result = [
+				'last_check_date' => 'None'
 			];
+			if ($backend_benchmarks){
+				$bm = array_pop($backend_benchmarks);
+				$result['last_check_date'] = $bm['sysinfo']['time'];
+				$hostentry = [
+					'php' => $bm['php']['total'],
+					'mysql' => $bm['mysql']['benchmark']['mysql_total'],
+					'wordpress_db' => $bm['wordpress_db']['time'],
+					'filesystem' => $bm['filesystem'],
+				];
+			}
+			else {
+				$hostentry = [
+					'php' => null,
+					'mysql' => null,
+					'wordpress_db' => null,
+					'filesystem' => null,
+				];
+			}
 			$hostentry = array_merge(self::BENCHMARK_DISPLAY_DATA['benchmark-host'], $hostentry);
-
+	
 			$result['graph_data']['host'] = $hostentry;
+	
 			foreach ($baseline_benchmarks as $key => $benchmark){
 				$entry = [
 					'php' => $benchmark['php']['total'],

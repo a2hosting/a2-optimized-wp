@@ -4,6 +4,7 @@
 
 #a2-optimized-wrapper {
   font-family: Poppins;
+  min-width: 1024px;
   /*
      * The following styles are auto-applied to elements with
      * transition="modal" when their visibility is toggled
@@ -54,6 +55,10 @@
 }
 #a2-optimized-wrapper h3 {
   font-size: 30px;
+}
+#a2-optimized-wrapper h3.less-vertical-space {
+  margin-top: 5px;
+  margin-bottom: 5px;
 }
 #a2-optimized-wrapper h4 {
   font-size: 26px;
@@ -215,6 +220,9 @@
   padding-top: 0px;
   font-size: 50%;
 }
+#a2-optimized-wrapper .hosting-matchup-graph-container {
+  min-width: 500px;
+}
 #a2-optimized-wrapper .circles-text {
   font-weight: 700;
 }
@@ -301,6 +309,12 @@
 #a2-optimized-wrapper .opt-completed span {
   color: #FC8C1E;
 }
+#a2-optimized-wrapper input[type=text] {
+  max-width: 100%;
+}
+#a2-optimized-wrapper input[type=number] {
+  max-width: 100%;
+}
 #a2-optimized-wrapper input.opt-setting-input {
   margin-left: 20px;
   width: 90%;
@@ -386,7 +400,7 @@
   left: initial;
 }
 #a2-optimized-wrapper .tg-list-item {
-  margin: 0 2em;
+  margin: 0 10px;
   list-style: none;
 }
 #a2-optimized-wrapper .tgl {
@@ -882,6 +896,17 @@
 }
 #a2-optimized-wrapper .flipped.flip-card-inner {
   transform: rotateY(180deg);
+}
+@media (max-width: 1366px) {
+  #a2-optimized-wrapper .box-element.hide-small {
+    border: none;
+    box-shadow: none;
+  }
+}
+@media (max-width: 1024px) {
+  #a2-optimized-wrapper #a2-optimized-optstatus, #a2-optimized-wrapper #a2-optimized-pagespeed {
+    min-width: 600px;
+  }
 }
 
 /*# sourceMappingURL=a2-optimized.css.map */
