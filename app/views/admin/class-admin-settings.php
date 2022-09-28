@@ -43,8 +43,13 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				],
 				'last_check_date' => $last_check,
 				'explanations' => [
-					'pagespeed' => 'The Performance score is a weighted average of the metric scores. Naturally, more heavily weighted metrics have a bigger effect on your overall Performance score. The metric scores are not visible in the report, but are calculated under the hood.',
-					'opt' => 'Vearious optimizations hand-selected to help keep your site fast, safe and secure.',
+					'pagespeed' => 'Our page load speed score is calculated by measuring how fast your website loads. The higher the score, the faster your website loads. You can visit the “Optimization Recommendations" section to see how you can improve your website\'s page load speed.',
+					'opt' => 'Our optimization status score shows how well your website performs in three categories:<br />
+						- Performance (page load speed)<br />
+						- Security (can your website be hacked)<br />
+						- Best Practices (speed & security)<br />
+						<br />	
+						Optimizing your website for these three categories will improve your user experience, improve conversion rates and prevent malicious people from accessing your website. ',
 				],
 				'graphs' => $args['graphs']
 			];
@@ -111,8 +116,10 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 					'hmatch_class' => 'current'
 				],
 				'explanations' => [
-					'webperformance' => 'you want good performance for your web',
-					'serverperformance' => 'you want good performance for your server',
+					'webperformance' => 'The web performance score measures how your current host performs compared to A2 Hosting. This web performance score looks at server speed and other metrics to determine how fast your website will load, based on which hosting company & plan you host your website with. <br />
+					The higher the score on the graph the faster your website will load. Not all hosting companies and plans use the same hardware. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them. ',
+					'serverperformance' => 'The higher the score on the graph, the faster your experience will be in the WordPress Admin dashboard and on pages that use dynamic content that can\'t be easily cached—like search forms and shopping carts. <br />
+					Not all hosting companies and plans use the same hardware. If your current host has a lower server performance score than A2 Hosting, then consider moving your websites to A2 Hosting. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them.',
 				],
 				'last_check_date' => $last_check,
 				'graphs' => $data['graphs'],

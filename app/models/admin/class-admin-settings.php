@@ -312,32 +312,40 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			'overall_score' => [
 				'display_text' => 'Overall Score',
 				'metric_text' => 'The Performance score is a weighted average of the metric scores.',
-				'explanation' => 'The Performance score is a weighted average of the metric scores. Naturally, more heavily weighted metrics have a bigger effect on your overall Performance score. The metric scores are not visible in the report, but are calculated under the hood.'
+				'explanation' => 'The overall score measures how your website scores overall when looking at all metrics. 
+				Metrics include: <br />
+				- Time to First Byte (TTFB)<br /> 
+				- Largest Contentful Paint (LCP)<br /> 
+				- First Input Delay (FID) <br />
+				- First Contentful Paint (FCP)<br /> 
+				- Cumulative Layout Shift (CLS)<br /> 
+				<br />
+				The higher your overall score, the better your website will perform.'
 			],
 			'ttfb' => [
 				'display_text' => 'Server Speed',
 				'metric_text' => 'Time to first Byte (TTFB)',
-				'explanation' => 'Time to First Byte (TTFB) is a foundational metric for measuring connection setup time and web server responsiveness in both the lab and the field. It helps identify when a web server is too slow to respond to requests. In the case of navigation requests—that is, requests for an HTML document—it precedes every other meaningful loading performance metric.'
+				'explanation' => 'Time to First Byte (TTFB) refers to the time between the browser requesting a page and when it receives the first byte of information from the server. The less time taken, the faster your website will load. For example, a website with a TTFB of 40 ms (milliseconds) will load faster than a website with a TTFB of 90 MLS.'
 			],
 			'fcp' => [
 				'display_text' => 'User Perception',
 				'metric_text' => 'First Contentful Paint (FCP)',
-				'explanation' => 'First Contentful Paint (FCP) is an important, user-centric metric for measuring perceived load speed because it marks the first point in the page load timeline where the user can see anything on the screen—a fast FCP helps reassure the user that something is happening.'
+				'explanation' => 'First Contentful Paint (FCP) measures the time taken for the browser to provide the first feedback to the user that the page is actually loading. The shorter the time, the faster your website will load.'
 			],
 			'lcp' => [
 				'display_text' => 'Page Load Speed',
 				'metric_text' => 'Largest Contentful Paint (LCP)',
-				'explanation' => 'Largest Contentful Paint (LCP) is an important, user-centric metric for measuring perceived load speed because it marks the point in the page load timeline when the page\'s main content has likely loaded—a fast LCP helps reassure the user that the page is useful.'
+				'explanation' => 'We measure a website’s page load speed with “Largest Contentful Paint” (LCP). LCP represents how quickly the main content of a web page is loaded. Specifically, LCP measures the time from when the user initiates loading the page until the largest image or text block is rendered within the viewable area of the browser window. The shorter the time, the faster your website will load.'
 			],
 			'fid' => [
 				'display_text' => 'Website Browser Speed',
 				'metric_text' => 'First Input Delay (FID)',
-				'explanation' => 'First Input Delay (FID) is an important, user-centric metric for measuring load responsiveness because it quantifies the experience users feel when trying to interact with unresponsive pages—a low FID helps ensure that the page is usable.'
+				'explanation' => 'First Input Delay (FID) measures the time from when a user first interacts with your site (i.e. when they click a link, tap on a button, or use a custom, JavaScript-powered control) to the time when the browser is actually able to respond to that interaction. Your website will load faster if you can shorten your FID time.'
 			],
 			'cls' => [
 				'display_text' => 'Visual Stability',
 				'metric_text' => 'Cumulative Layout Shift (CLS)',
-				'explanation' => 'Cumulative Layout Shift (CLS) is an important, user-centric metric for measuring visual stability because it helps quantify how often users experience unexpected layout shifts—a low CLS helps ensure that the page is delightful.'
+				'explanation' => 'Cumulative Layout Shift (CLS) is the unexpected shifting of webpage elements while the page is still loading. When elements suddenly change position while loading, it can cause the user to accidentally click the wrong link on your webpage resulting in a bad user experience. CLS is an important ranking factor for search engines such as Google, and a bad user experience can negatively impact your website\'s SEO.'
 			],
 			'recommendations' => [
 				'display_text' => 'Opportunity',
@@ -366,14 +374,17 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				'display_text' => 'Web Performance',
 				'metric_text' => 'How does your hosting provider compare to A2 Hosting?',
 				'legend_text' => "Overall Wordpress Execution Time",
-				'explanation' => 'web perf explanation',
+				'explanation' => 'The web performance score measures how your current host performs compared to A2 Hosting. This web performance score looks at server speed and other metrics to determine how fast your website will load, based on which hosting company & plan you host your website with. <br />
+
+				The higher the score on the graph the faster your website will load. Not all hosting companies and plans use the same hardware. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them. ',
 				'color_class' => 'success'
 			],
 			'serverperformance' => [
 				'display_text' => 'Server Performance',
 				'metric_text' => "How fast is your hosting provider compare to A2 Hosting's server?",
 				'legend_text' => "PHP, Mysql, and File I/O Response Time Comparison",
-				'explanation' => 'server perf explanation',
+				'explanation' => 'The higher the score on the graph, the faster your experience will be in the WordPress Admin dashboard and on pages that use dynamic content that can\'t be easily cached—like search forms and shopping carts. <br />
+				Not all hosting companies and plans use the same hardware. If your current host has a lower server performance score than A2 Hosting, then consider moving your websites to A2 Hosting. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them.',
 				'color_class' => 'success'
 			],
 			'optimizations' => [

@@ -236,7 +236,9 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('a2_page_cache'),
                 'category' => 'performance',
                 'compatibility' => ['caching'],
-                'description' => 'Make your website faster by enabling Page Caching. This allows your website visitors to save copies of your web pages on their devices or browser. When they return to your website in the future, your site files will load faster. This is safe to activate.',
+                'description' => '<strong>Benefit:</strong> Makes your site faster for your visitors.<br />
+                <strong>How-it-works:</strong> Allows site visitors to save copies of your web pages on their device or browser. When they return to your website in the future, your site files will load faster.<br /> 
+                <strong>What does it impact:</strong> Time to First Byte (TTFB)',
             ],
             'a2_page_cache_gzip' => [
                 'name' => 'Gzip Compression',
@@ -245,7 +247,9 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('a2_page_cache_gzip'),
                 'category' => 'performance',
                 'compatibility' => ['caching'],
-                'description' => 'Make your website faster by enabling GZIP Compression. This compresses all text files to make them smaller. This is safe to activate.',
+                'description' => '<strong>Benefit:</strong> Makes your site faster for visitors.<br />
+                <strong>How it works:</strong> Compresses all text files to make them smaller.<br />
+                <strong>What does it impact:</strong> Time to First Byte (TTFB)',
             ],
             'a2_object_cache' => [
                 'name' => 'Object Caching',
@@ -254,8 +258,9 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('a2_object_cache'),
                 'category' => 'performance',
                 'compatibility' => ['caching'],
-                'description' => 'Make your website faster by enabling Object Caching. Object cache can serve cached items in less than a millisecond, such as images, files and metadata. This is safe to activate. 
-                    <strong>A supported object cache server and the corresponding PHP extension are required.</strong>',
+                'description' => '<strong>Benefit:</strong> Makes your site faster.<br />
+                <strong>How-it-works:</strong> Serves cached items such as images, files, and metadata in less than a millisecond. You have the option to modify these settings to best suit your needs. <br /> 
+                Tap Modify to make changes.',
             ],
             'a2_page_cache_minify_html' => [
                 'name' => 'Minify HTML Pages',
@@ -264,7 +269,8 @@ class A2_Optimized_Optimizations {
                 'category' => 'performance',
                 'configured' => $this->is_active('a2_page_cache_minify_html'),
                 'compatibility' => ['pagebuilder', 'jsmin'],
-                'description' => 'Make your website faster by enabling Minify HTML Pages. This removes extra spaces, tabs and line breaks in the HTML to reduce the size of the files sent to the user. This is safe to activate.',
+                'description' => '<strong>Benefit:</strong> Increases your site’s speed by reducing the file size sent to site visitors.<br />
+                <strong>How it works:</strong> Removes extra spaces, tables, and line breaks in the HTML.',
                 'remove_link' => true
             ],
             'a2_page_cache_minify_jscss' => [
@@ -275,7 +281,9 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('a2_page_cache_minify_jscss'),
                 'compatibility' => ['pagebuilder', 'jsmin'],
                 'optional' => true,
-                'description' => 'Make your website faster by enabling this option. This removes extra spaces, tabs and line breaks in inline CSS and Javascript to reduce the size of the files sent to the user. Note: This may cause issues with some page builders or other Javascript heavy front end plugins/themes.',
+                'description' => '<strong>Benefit:</strong> Reduces the size of files sent to your customer.<br />
+                <strong>How it works:</strong> Removes extra spaces, tabs, and line breaks in inline CSS and Javascript.<br />
+                <strong>What to know:</strong> This may cause issues with some page builders or other Javascript-heavy front-end plugins/themes. ',
                 'remove_link' => true
             ],
             'a2_db_optimizations' => [
@@ -284,7 +292,10 @@ class A2_Optimized_Optimizations {
                 'premium' => false,
                 'configured' => $this->is_active('a2_db_optimizations'),
                 'category' => 'performance',
-                'description' => 'Improve your database performance by enabling Automatic Database Optimizations. If enabled, will periodically clean the MySQL database of expired transients, trashed comments, spam comments, and optimize all tables. You may also select to remove post revisions and trashed posts from the Database Optimization Settings. This is safe to activate.',
+                'description' => '<strong>Benefit:</strong> Improves your database performance<br />
+                <strong>How it works:</strong> Periodically cleans MySQL database of expired transients (a type of cached data used in WordPress) as well as trashed and spam comments. It will also optimize all tables. You can select to also remove post revisions and trashed posts from the Database Optimization Settings. You have the option to modify these settings to best suit your needs. <br />
+                Tap Modify to make changes.
+                ',
             ],
             'woo_cart_fragments' => [
                 'name' => 'Dequeue WooCommerce Cart Fragments AJAX calls',
@@ -293,7 +304,9 @@ class A2_Optimized_Optimizations {
                 'optional' => true,
                 'category' => 'performance',
                 'configured' => $this->is_active('woo_cart_fragments'),
-                'description' => "Make your WooCommerce website faster by enabling this option. This will disable WooCommerce Cart Fragments on your homepage. It will also enable the \"redirect to cart page\" option in WooCommerce. Often slow performance and errors on WooCommerce sites are caused by a high number of AJAX requests, as these requests are uncached. If you are running a WooCommerce site on WP Engine and notice a high number of AJAX requests, disabling Cart Fragments AJAX may help improve your site's stability. This is safe to activate.",
+                'description' => '<strong>Benefit:</strong> Makes your WooCommerce site faster<br />
+                <strong>How-it-works:</strong> Disables WooCommerce Cart Fragments on your homepage, and enables the "redirect to cart page" option in WooCommerce.<br />
+                <strong>What to know:</strong> Slow performance and errors on WooCommerce sites are caused by a high number of AJAX requests because they are  uncached. If you are running a WooCommerce site and notice a high number of AJAX requests, disabling Cart Fragments AJAX may help improve your site\'s stability. ',
             ],
             'xmlrpc_requests' => [
                 'name' => 'Block Unauthorized XML-RPC Requests',
@@ -302,7 +315,9 @@ class A2_Optimized_Optimizations {
                 'optional' => true,
                 'category' => 'security',
                 'configured' => $this->is_active('xmlrpc_requests'),
-                'description' => 'Improve the security of your WordPress website by enabling this option. This will completely disable XML-RPC services. XML-RPC API is safe and enabled by default on all WordPress websites. However, some WordPress security experts may advise you to disable it. Disabling it will basically close one more door that a potential hacker may try to exploit to hack your website.',
+                'description' => '<strong>Benefit:</strong> Improves the security of your website.<br />
+                <strong>How-it-works:</strong> Disables XML-RPC services. Although XML-RPC API is safe and is enabled by default, some WordPress security experts suggest disabling it.<br />
+                <strong>What to know:</strong> Closes one more door that a potential hacker may try to exploit to hack your website.',
             ],
             'htaccess' => [
                 'name' => 'Deny Direct Access to Configuration Files and Comment Form',
@@ -312,7 +327,9 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('htaccess'),
                 'category' => 'security',
                 'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-the-a2-optimized-plugin',
-                'description' => 'Improve the security of your WordPress website by enabling this option. This protects your configuration files by generating a Forbidden error to web users and bots when trying to access WordPress configuration files. Also prevents POST requests to the site not originating from a user on the site. Note: if you are using a plugin to allow remote posts and comments, disable this option.',
+                'description' => '<strong>Benefit:</strong> Protects your configuration files - parameters, options, settings, and preferences applied to an operating system.<br />
+                <strong>How-it-works:</strong> Generates a Forbidden error to web users and bots when trying to access WordPress configuration files.<br />
+                <strong>What to know:</strong> Prevents POST requests to the site not originating from a user on the site. If you are using a plugin to allow remote posts and comments, disable this option.',
             ],
             'lock_editing' => [
                 'name' => 'Lock Editing of Plugins and Themes from the WP Admin',
@@ -321,7 +338,8 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('lock_editing'),
                 'category' => 'security',
                 'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-the-a2-optimized-plugin',
-                'description' => 'Improve the security of your WordPress website by enabling this option. This prevents exploits that use the built in editing capabilities of the WP Admin. This is safe to activate.',
+                'description' => '<strong>Benefit:</strong> Improves the security of your website.<br />
+                <strong>How-it-works:</strong> Prevents misuse of the WordPress Admin built-in editing capabilities.',
             ],
             'hide_login' => [
                 'name' => 'Login URL Change',
@@ -330,8 +348,9 @@ class A2_Optimized_Optimizations {
                 'category' => 'security',
                 'configured' => false,
                 'kb' => 'http://www.a2hosting.com/kb/security/application-security/wordpress-security#a-namemethodRenameLoginPageaMethod-3.3A-Change-the-WordPress-login-URL',
-                'description' => "Improve the security of your WordPress website by enabling this option. This will change the URL of the login page for your WordPress website. This will make it more difficult for bad actors and bots to hack your website. This is safe to activate.<br /> 
-                Note: record the new login page URL so that you don’t forget where to login.",
+                'description' => '<strong>Benefit:</strong> Makes it more difficult for bad actors and bots to hack your website.<br />
+                <strong>How it works:</strong> Changes the URL of the login page for your WordPress website.<br />
+                <strong>What to know:</strong> Record the new login page URL so you don’t forget where to log in. ',
             ],
             'captcha' => [
                 'name' => 'CAPTCHA on comments and login',
@@ -339,7 +358,8 @@ class A2_Optimized_Optimizations {
                 'premium' => true,
                 'category' => 'security',
                 'configured' => false,
-                'description' => 'Improve the security of your WordPress website by enabling this option. This decreases spam and increases your site’s security by adding a CAPTCHA to comment forms and the login screen. Without a CAPTCHA, bots will easily be able to post comments to your blog or brute force login to your admin panel. This is safe to activate.',
+                'description' => '<strong>Benefit:</strong> Decreases spam and increase your site’s security. <br />
+                <strong>How-it-works:</strong> Adds CAPTCHA to comment forms and login screens to deter bots from posting comments to your blog or brute force login - a hacking method that uses trial and error to crack passwords, login credentials, and encryption keys - to your admin panel.',
             ],
             'compress_images' => [
                 'name' => 'Compress Images on Upload',
@@ -347,7 +367,8 @@ class A2_Optimized_Optimizations {
                 'premium' => true,
                 'category' => 'performance',
                 'configured' => false,
-                'description' => 'Make your website faster by enabling Compress Images On Upload. This will automatically compress images when you upload them to your website. This reduces their file size and makes your website load faster. This is safe to activate.',
+                'description' => '<strong>Benefit:</strong> Reduces the file size of your images to make your website load faster.<br />
+                <strong>How it works:</strong> Automatically compresses images when you upload them to your site.',
             ],
             'turbo' => [
                 'name' => 'Turbo Web Hosting',
@@ -356,7 +377,9 @@ class A2_Optimized_Optimizations {
                 'category' => 'performance',
                 'compatibility' => ['caching'],
                 'premium' => true,
-                'description' => 'Make your website faster by enabling Turbo Web Hosting. Turbo Web Hosting servers compile .htaccess files to make speed improvements. Any changes to .htaccess files are immediately re-compiled. Turbo Web Hosting servers have their own PHP API that provides speed improvements over FastCGI and PHP-FPM (FastCGI Process Manager). To serve static files, Turbo Web Hosting servers do not need to create a worker process as the user. Servers only create a worker process for PHP scripts, which results in faster performance. PHP OpCode Caching is enabled by default. Accounts are allocated 256 MB of memory toward OpCode caching. Turbo Web Hosting servers have a built-in caching engine for Full Page Cache and Edge Side Includes.',
+                'description' => '<strong>Benefit:</strong> Operates on a limited occupancy, upgraded server hardware with advanced caching software making the CPU (central processing unit) 40% faster and 20x faster page loads.<br /> 
+                <strong>How it works:</strong> Servers compile .htaccess files - a file that controls the high-level configuration of your website - to make speed improvements. Any changes to .htaccess files are immediately re-compiled. Turbo Web Hosting servers have their own PHP API that provides speed improvements.<br />
+                <strong>What to know:</strong> Turbo servers can handle 9X more traffic with 3X faster read/write speeds.',
             ],
         ];
 
@@ -417,7 +440,9 @@ class A2_Optimized_Optimizations {
             'regenerate_salts' => [
                 'title' => 'Regenerate wp-config salts',
                 'slug' => 'regenerate_salts',
-                'description' => "Improve the security of your WordPress website by enabling this option. Generate new salt values for wp-config.php WordPress salts and security keys help secure your site's login process and the cookies that WordPress uses to authenticate users. There are security benefits to periodically changing your salts to make it even harder for malicious actors to access them. You may need to clear your browser cookies after activating this option. This will log out all users including yourself.",
+                'description' => '<strong>Benefit:</strong> SALT Keys scramble your password to keep your site secure. By using SALT keys, you protect your account and passwords even if login cookies are compromised. <br />
+                <strong>How-it-works:</strong> Generates new salt values for wp-config.php WordPress salts and security keys.<br />
+                <strong>What to know:</strong> We recommend you change them every 3 months and will remind you via the Alarm Bell. This update will log out all users including yourself.',
                 'status' => $this->is_active('regenerate_salts', false),
             ],
             'posts_per_page' => [

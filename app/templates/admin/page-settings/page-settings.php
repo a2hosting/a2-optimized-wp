@@ -140,7 +140,7 @@
 								</div>
 								<div class="row">
 									<div class="col-sm-10 col-sm-offset-1">
-										<p>{{ graphs.webperformance.explanation}}</p>
+										<p><span v-html="graphs.webperformance.explanation"></span></p>
 									</div>
 								</div>
 							</template>
@@ -175,7 +175,7 @@
 								</div>
 								<div class="row">
 									<div class="col-sm-10 col-sm-offset-1">
-										<p>{{ explanations.serverperformance}}</p>
+										<p><span v-html="explanations.serverperformance"></span></p>
 									</div>
 								</div>
 							</template>
@@ -524,7 +524,7 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-10 col-sm-offset-1">
-									<p>{{ explanations.opt}}</p>
+									<span v-html="explanations.opt"></span>
 								</div>
 							</div>
 						</template>
@@ -676,7 +676,7 @@
 								<div class="row">
 									<div class="col-sm-12">
 										<h4>{{graphs.overall_score.display_text}}</h4>
-										<p>{{ graphs.overall_score.explanation}}</p>
+										<p><span v-html="graphs.overall_score.explanation"></span></p>
 									</div>
 								</div>
 							</template>
