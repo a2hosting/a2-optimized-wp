@@ -186,6 +186,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			}
 			$result['graphs']['webperformance'] = self::BENCHMARK_DISPLAY_DATA['webperformance'];
 			$result['graphs']['serverperformance'] = self::BENCHMARK_DISPLAY_DATA['serverperformance'];
+			$result['graphs']['tooltips'] = self::BENCHMARK_DISPLAY_DATA['hostingmatchup_tooltips'];
 
 			return $result;
 		}
@@ -419,6 +420,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 					'legend_text' => '',
 					'explanation' => ''
 				],
+			],
+			'hostingmatchup_tooltips' => [
+				'wordpress_db' => 'Wordpress Database Response Time',
+				'filesystem' => 'Server Disk Response Time',
+				'mysql' => 'MYSQL Query Response Time',
+				'php' => 'PHP Response Time'
 			]
 
 		];

@@ -76,7 +76,7 @@ function generateSingleBarGraphData(graph, dataPoint) {
 
 	});
 	graph_dataset[0] = {
-		label: dataPoint,
+		label: page_data.graphs.tooltips[dataPoint],
 		color: colors,
 		backgroundColor: bgColors,
 		hoverBackgroundColor: bgColors,
@@ -131,7 +131,7 @@ function generateStackedBarGraphData(graph, dataPoints = []) {
 
 		graph_dataset[metricIndex] =
 		{
-			label: data_labels[metricIndex],
+			label: page_data.graphs.tooltips[data_labels[metricIndex]],
 			color: colors[metricIndex],
 			backgroundColor: bgColors[metricIndex],
 			hoverBackgroundColor: bgColors[metricIndex],
