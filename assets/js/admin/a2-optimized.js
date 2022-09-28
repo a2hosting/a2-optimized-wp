@@ -115,7 +115,7 @@ function generateStackedBarGraphData(graph, dataPoints = []) {
 	dataPoints.forEach((dataPointName, metricIndex, array) => {
 
 		entryData = [];
-	
+
 		graph_products.forEach((el, prodIndex, array) => {
 			let data_entry = page_data.graph_data[el];
 
@@ -138,7 +138,7 @@ function generateStackedBarGraphData(graph, dataPoints = []) {
 			borderColor: borderColors[metricIndex],
 			data: entryData
 		}
-	
+
 	});
 
 
@@ -314,10 +314,10 @@ function onAnimationEnd(event) {
  * mostly used for testing out or demo-ing animations on demand
  * @param {*} anim 
  */
-function playAnim(anim){
+function playAnim(anim) {
 	let bell = document.getElementById("drop-bell-wrapper");
 	let animname = '';
-	switch (anim){
+	switch (anim) {
 		case '1':
 			animname = 'ringCycle1';
 			break;
@@ -329,8 +329,8 @@ function playAnim(anim){
 			break;
 	}
 
-	if (animname){
-		if (bell.classList.contains(animname)){
+	if (animname) {
+		if (bell.classList.contains(animname)) {
 			bell.classList.remove(animname);
 		}
 		else {
@@ -344,7 +344,7 @@ Vue.component('flip-panel', {
 		content_id: String,
 		status_class: String,
 		additional_classes: String,
-		disable_show_button: {Boolean: false}
+		disable_show_button: { Boolean: false }
 	},
 	template: "#flip-panel-template",
 	data() {
@@ -408,8 +408,8 @@ Vue.component('optimization-entry', {
 			this.$root.$emit('extra_settings_show', { slug: slug });
 			this.$parent.toggleFlipPanel(this.wrapper_id, event);
 		},
-		optimizationClicked: function(isDisabled){
-			if (isDisabled){
+		optimizationClicked: function (isDisabled) {
+			if (isDisabled) {
 				page_data.showA2Only = true;
 			}
 		}
@@ -439,18 +439,18 @@ Vue.component('opt-extra-settings', {
 	updated() {
 		this.adjustSettingVisibility();
 	},
-	methods:{
-		adjustSettingVisibility: function() {
+	methods: {
+		adjustSettingVisibility: function () {
 			// hide or show the redis/memcached server fields
 			let cache_type = page_data['extra_settings']['a2_object_cache']['settings_sections']['a2_optimized_objectcache_type']['settings']['a2_optimized_objectcache_type']['value'];
 
 			let memcached_server = document.getElementById('setting-memcached_server');
 			let redis_server = document.getElementById('setting-redis_server');
 
-			if (memcached_server){
+			if (memcached_server) {
 				memcached_server.style = cache_type == 'memcached' ? '' : 'display:none;'
 			}
-			if (redis_server){
+			if (redis_server) {
 				redis_server.style = cache_type == 'redis' ? '' : 'display:none;'
 			}
 		}
@@ -489,10 +489,10 @@ Vue.component('optimizations-performance', {
 			let optsSecurity = generateCircle('circles-opt-security', 40, 10, graphs.security);
 			let optsBestp = generateCircle('circles-opt-bestp', 40, 10, graphs.bestp);
 		},
-		promptToUpdate: function (event, header, message, slug, value){
+		promptToUpdate: function (event, header, message, slug, value) {
 			this.$parent.promptForAction(header, message, () => {
 				this.updateOptimizations(event, slug, value);
-				if (slug == 'regenerate_salts'){
+				if (slug == 'regenerate_salts') {
 					window.location.href = page_data.login_url;
 				}
 			});
@@ -503,10 +503,10 @@ Vue.component('optimizations-performance', {
 			params.append('action', 'apply_optimizations');
 			params.append('nonce', ajax.nonce);
 
-			if (slug){
+			if (slug) {
 				params.append('opt-' + slug, value);
 			}
-			else{
+			else {
 				for (let key in page_data.optimizations) {
 					for (let index in page_data.optimizations[key]) {
 						params.append('opt-' + index, page_data.optimizations[key][index]['configured']);
@@ -521,9 +521,9 @@ Vue.component('optimizations-performance', {
 					for (let item in page_data.extra_settings[parent]['settings_sections']) { // site_clear
 						for (let subitem in page_data.extra_settings[parent]['settings_sections'][item]['settings']) { // clear_site_cache_on_changed_plugin
 							params.append('opt-' + subitem, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['value']);
-							
+
 							// If this item has extra_fields
-							if(page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem].hasOwnProperty('extra_fields')){
+							if (page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem].hasOwnProperty('extra_fields')) {
 								for (let extra_field in page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields']) { // cache_expiry_time
 									params.append('opt-' + extra_field, page_data.extra_settings[parent]['settings_sections'][item]['settings'][subitem]['extra_fields'][extra_field]['value']);
 								}
@@ -559,7 +559,7 @@ Vue.component('optimizations-performance', {
 						page_data.mainkey++;
 						page_data.showSuccess = false;
 					}
-					this.$nextTick(function() { // wait until things are re-rendered from the mainkey++ update, and then trigger the circles re-render
+					this.$nextTick(function () { // wait until things are re-rendered from the mainkey++ update, and then trigger the circles re-render
 						page_data.updateView++;
 					});
 				});
@@ -603,8 +603,8 @@ Vue.component('optimizations-performance', {
 
 Vue.component("modal", {
 	props: {
-		show_busy: {Boolean: false},
-		show_close: {Boolean: false}
+		show_busy: { Boolean: false },
+		show_close: { Boolean: false }
 	},
 	template: "#modal-template"
 });
@@ -762,7 +762,7 @@ let app = new Vue({
 					} else {
 						page_data.last_check_date = response.data.overall_score.last_check_date;
 					}
-					if(page == 'hosting-matchup'){
+					if (page == 'hosting-matchup') {
 						page_data.graphs = response.data.graphs;
 						page_data.graph_data = response.data.graph_data;
 					} else {
@@ -772,14 +772,14 @@ let app = new Vue({
 					page_data.showModal = false;
 				});
 		},
-		promptForAction(header, message, yesAction = null, noAction = null){
+		promptForAction(header, message, yesAction = null, noAction = null) {
 			if (!yesAction) {
 				return;  // no point calling this with no action to do, for now
 			}
 			page_data.yesNoDialog.header = header;
 			page_data.yesNoDialog.message = message;
 			page_data.yesNoDialog.yesAction = yesAction;
-			if (noAction){
+			if (noAction) {
 				page_data.yesNoDialog.noAction = noAction;
 			}
 
