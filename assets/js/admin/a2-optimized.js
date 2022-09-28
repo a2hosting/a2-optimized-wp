@@ -95,34 +95,52 @@ function generateStackedBarGraphData(graph, dataPoints = []) {
 	let data_labels = [];
 	let graph_dataset = [];
 
-	graph_products.forEach((el, index2, array) => {
-		let colors = [];
-		let bgColors = [];
-		let borderColors = [];
-		let entryData = [];
-		graph_labels[index2] = page_data.graph_data[el].display_text;
-		dataPoints.forEach((dataPointName, index, array) => {
+	let entryData = [];
 
+	let colors = [];
+	let bgColors = [];
+	let borderColors = [];
+
+	// pre grab some info by product -> metric
+	graph_products.forEach((el, prodIndex, array) => {
+		graph_labels[prodIndex] = page_data.graph_data[el].display_text;
+		dataPoints.forEach((dataPointName, metricIndex, array) => {
+			let data_entry = page_data.graph_data[el];
+
+			data_labels[metricIndex] = dataPointName;
+		});
+	});
+
+	// get the rest of the info by metric -> product
+	dataPoints.forEach((dataPointName, metricIndex, array) => {
+
+		entryData = [];
+	
+		graph_products.forEach((el, prodIndex, array) => {
 			let data_entry = page_data.graph_data[el];
 
 			let value = parseFloat(data_entry[dataPointName]);
-			colors[index] = palette[data_entry.color_class];
-			bgColors[index] = palette[data_entry.color_class] + '80';
-			borderColors[index] = palette[data_entry.color_class] + '50';
-			entryData[index] = value;
-			data_labels[index] = dataPointName;
+			entryData[prodIndex] = value;
+
+			// re-use the product colors for the metric colors.  This will break if the number of products is ever != the number of metrics
+			colors[prodIndex] = palette[data_entry.color_class];
+			bgColors[prodIndex] = palette[data_entry.color_class] + '80';
+			borderColors[prodIndex] = palette[data_entry.color_class] + '50';
+
 		});
 
-		graph_dataset[index2] =
+		graph_dataset[metricIndex] =
 		{
-			label: data_labels[index2],
-			color: colors,
-			backgroundColor: bgColors,
-			hoverBackgroundColor: bgColors,
-			borderColor: borderColors,
+			label: data_labels[metricIndex],
+			color: colors[metricIndex],
+			backgroundColor: bgColors[metricIndex],
+			hoverBackgroundColor: bgColors[metricIndex],
+			borderColor: borderColors[metricIndex],
 			data: entryData
 		}
+	
 	});
+
 
 	return { title: set_title, labels: graph_labels, dataset: graph_dataset, show_legend: true, stack: true };
 }

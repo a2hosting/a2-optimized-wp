@@ -17,6 +17,8 @@ $thishost: #009aca;
 #a2-optimized-wrapper {
     font-family: Poppins;
 
+    min-width: 1024px;
+
     h1,
     h2,
     h3,
@@ -42,6 +44,10 @@ $thishost: #009aca;
 
     h3 {
         font-size: 30px;
+        &.less-vertical-space {
+            margin-top: 5px;
+            margin-bottom: 5px;
+        }
     }
 
     h4 {
@@ -260,6 +266,9 @@ $thishost: #009aca;
         font-size: 50%;
     }
 
+    .hosting-matchup-graph-container {
+        min-width: 500px;
+    }
     .circles-text {
         font-weight: 700;
     }
@@ -371,6 +380,13 @@ $thishost: #009aca;
         span {
             color: $orange;
         }
+    }
+    input[type='text']{
+        max-width: 100%;
+    }
+
+    input[type='number']{
+        max-width: 100%;
     }
 
     input.opt-setting-input {
@@ -490,7 +506,7 @@ $thishost: #009aca;
 
     /* checkboxes */
     .tg-list-item {
-        margin:  0 2em;
+        margin:  0 10px;
         list-style: none;
     }
 
@@ -1113,5 +1129,17 @@ $thishost: #009aca;
         }
     }
 
+    @media (max-width: 1366px) {
+        .box-element.hide-small {
+            border: none;
+            box-shadow: none;
+        }
+    }
+    @media (max-width: 1024px) {
+        #a2-optimized-optstatus,#a2-optimized-pagespeed {
+            min-width:600px;
+        }
+        
+    }
 
 }

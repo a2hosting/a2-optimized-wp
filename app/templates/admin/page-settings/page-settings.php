@@ -111,7 +111,7 @@
 					</div>
 				</div>	
 				<div class="row">
-					<div class="col-sm-6">
+					<div class="col-sm-6 hosting-matchup-graph-container">
 						<flip-panel content_id="graph-webperformance" 
 							status_class="success" 
 							additional_classes="">
@@ -146,7 +146,7 @@
 							</template>
 						</flip-panel>
 					</div>
-					<div class="col-sm-6">
+					<div class="col-sm-6 hosting-matchup-graph-container">
 						<flip-panel content_id="graph-serverperformance" 
 							status_class="success" 
 							additional_classes="">
@@ -189,14 +189,14 @@
 
 <script type="text/x-template" id="optimization-entry">
 	<div class="row">
-		<div class="col-sm-9">
+		<div class="col-md-8 col-lg-9 ">
 			<h4>{{ name }} <a class="glyphicon glyphicon-chevron-down toggle" aria-hidden="true" v-on:click.prevent="desc_toggle(slug)" :id="'opt_item_toggle_' + slug"></a></h4>
 			<div :id="'opt_item_desc_' + slug" style="display: none" v-html="description" class="desc"></div>
 		</div>
-		<div class="col-sm-1 padding-top-30">
+		<div class="col-md-1 col-lg-1  padding-top-30">
 			<a v-if="extra_setting" href="javascript:void(0)" @click="toggleExtraSettings(slug, $event)">Modify</a>
 		</div>
-		<div class="col-sm-2 padding-top-30" >
+		<div class="col-md-3 col-lg-2  padding-top-30" >
 			<li class="tg-list-item" @click="optimizationClicked(disabled)">
 				<input class="tgl tgl-ios" :id="'toggle-' + slug" :name="slug" v-model="configured" true-value="true" false-value="false" type="checkbox"  :disabled="disabled" />
 				<label class="tgl-btn" :for="'toggle-' + slug"></label>
@@ -209,47 +209,47 @@
 	<!-- <div v-for="(opt_group, slug) in extra_settings" :key="slug">-->
 	<div v-if="opt_group" :key="selected_slug">
 		<div class="row header">
-			<div class="col-sm-8">
+			<div class="col-lg-8">
 				<h3>{{ opt_group.title }}</h3>
 			</div>
 		</div>
 		<div class="row padding-15">
-			<div class="col-sm-10">
+			<div class="col-lg-10">
 				<p>{{ opt_group.explanation }}</p>
 			</div>
 		</div>
 		<div v-for="section in opt_group.settings_sections" class="padding-15 opt-extra-settings-items">
 			<div class="row">
-				<div class="col-sm-10">
+				<div class="col-lg-10">
 					<h4 v-if="section.title" class="less-vertical-space section-title">{{ section.title}}</h4>
 				</div>
 			</div>
 			<div v-for="(setting, setting_name) in section.settings" :key="setting_name" :id="'setting-' + setting_name" class="setting-item">
 				<div class="row">
 					<div v-if="setting.extra_fields">
-						<div class="col-sm-6">
+						<div class="col-md-6 col-lg-6">
 							<h4 class="less-vertical-space setting-desc-extra">{{ setting.description }}</h4>
 						</div>
-						<div class="col-sm-4">
+						<div class="col-md-3 col-lg-4">
 							<div v-for="(field, field_name) in setting.extra_fields">
 								<input :name="field_name" :id="field_name" :type="field.input_type" v-model="field.value"></input>
 							</div>
 						</div>
 					</div>
 					<div v-else>
-						<div class="col-sm-10">
+						<div class="col-md-9 col-lg-10">
 							<h4 class="less-vertical-space setting-desc">{{ setting.description }}</h4>
 						</div>
 					</div>
 					<p v-if="setting.input_type == 'text'">
 						<input type="text" :id="'cb-' + setting_name" :name="setting_name" v-model="setting.value" class="opt-setting-input text-input"/>
 					</p>
-					<div v-else-if="setting.input_type == 'options'" class="col-sm-2">
+					<div v-else-if="setting.input_type == 'options'" class="col-md-3 col-lg-2">
 						<select :id="'select-' + setting_name" :name="setting_name" v-model="setting.value" @change="adjustSettingVisibility()">
 							<option v-for="(opt_value,label) in setting.input_options" :value="opt_value" :selected="opt_value == setting.value">{{ label }}</option>
 						</select>
 					</div>
-					<div v-else class="col-sm-2">
+					<div v-else class="col-md-3 col-lg-2 text-right" >
 						<li class="tg-list-item">
 							<input class="tgl tgl-ios" :id="'toggle-' + setting_name" :name="setting_name" 	true-value="true" false-value="false" v-model="setting.value" type="checkbox"/>
 							<label class="tgl-btn" :for="'toggle-' + setting_name"></label>
@@ -257,7 +257,7 @@
 					</div>
 				</div>
 				<div class="row">
-					<div class="col-sm-10">
+					<div class="col-lg-10">
 						{{ setting.explanation }}
 					</div>
 				</div>
@@ -306,7 +306,7 @@
 							<h4><span>Completed</span><br />Performance<br />Optimization</h4>
 							<div class="row">
 								<div class="col-sm-6 col-sm-offset-3">
-									<div class="box-element" style="padding-top: 5px;">
+									<div class="box-element hide-small" style="padding-top: 5px;">
 										<div class="circle" id="circles-opt-perf"></div>
 									</div>
 								</div>
@@ -336,7 +336,7 @@
 							<h4><span>Completed</span><br />Security<br />Optimization</h4>
 							<div class="row">
 								<div class="col-sm-6 col-sm-offset-3">
-									<div class="box-element" style="padding-top: 5px;">
+									<div class="box-element hide-small" style="padding-top: 5px;">
 										<div class="circle" id="circles-opt-security"></div>
 									</div>
 								</div>
@@ -356,12 +356,12 @@
 									<div class="col-sm-12 box-element" :class="item.color_class">
 										<h4 class="less-vertical-space">
 											<div class="row">
-												<div class="col-sm-9">
+												<div class="col-sm-8 col-lg-9">
 													{{ item.title }}
 													<span v-if="item.status.is_warning" :class="item.color_class"> - WARNING</span>
 													<span v-else :class="item.color_class"> - GOOD</span>
 												</div>
-												<div v-if="!item.hasOwnProperty('slug')" class="col-sm-3 text-right">
+												<div v-if="!item.hasOwnProperty('slug')" class="col-md-4 col-lg-3 text-right">
 													<span v-if="item.status.is_warning">
 														<span class="glyphicon glyphicon-remove-circle"  :class="item.color_class" aria-hidden="true"></span>
 													</span>
@@ -370,7 +370,7 @@
 													</span>
 													<a :href="item.config_url" target="a2opt_config">Modify</a><br><span class="small">via wordpress</span>
 												</div>
-												<div v-else class="col-sm-3 text-right">
+												<div v-else class="col-md-4 col-lg-3 text-right">
 													<span v-if="item.status.is_warning">
 														<span class="glyphicon glyphicon-remove-circle"  :class="item.color_class" aria-hidden="true"></span>
 													</span>
@@ -395,7 +395,7 @@
 							<h4><span>Completed</span><br />Best<br />Practices</h4>
 							<div class="row">
 								<div class="col-sm-6 col-sm-offset-3">
-									<div class="box-element" style="padding-top: 5px;">
+									<div class="box-element hide-small" style="padding-top: 5px;">
 										<div class="circle" id="circles-opt-bestp"></div>
 									</div>
 								</div>
@@ -421,7 +421,7 @@
 	<div class="row">
 		<div class="col-sm-10 col-sm-offset-1">
 			<div class="row">
-				<div class="col-sm-6">
+				<div class="col-sm-6" id="a2-optimized-pagespeed">
 					<flip-panel content_id="graph-pagespeed" status_class="success">
 						<template v-slot:content1>
 							<div class="row header">
