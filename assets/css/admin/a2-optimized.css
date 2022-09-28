@@ -76,39 +76,61 @@
   margin-top: 0;
 }
 #a2-optimized-wrapper .a2-optimized-navigation {
-  margin-bottom: 100px;
+  /*margin-bottom: 100px; trying out other values */
+  margin-bottom: 20px;
 }
 #a2-optimized-wrapper .a2-optimized-navigation a {
   font-size: 20px;
   font-family: Raleway;
   font-weight: 700;
+  /*
+  &.current {
+      font-size: 24px;
+  }
+  */
 }
-#a2-optimized-wrapper .a2-optimized-navigation a.current {
-  font-size: 24px;
-}
-#a2-optimized-wrapper .side-nav p {
-  margin-top: 150px;
-  font-size: 18px;
-  font-weight: 500;
-  text-transform: uppercase;
-}
-#a2-optimized-wrapper .side-nav .current {
-  font-size: 20px;
-}
-#a2-optimized-wrapper a.navlink {
+#a2-optimized-wrapper .navlink-wrapper {
+  text-align: center;
   color: #1c1c1c;
-  text-decoration: none;
-}
-#a2-optimized-wrapper a.navlink.current {
-  text-decoration: underline;
-  color: #128413;
-}
-#a2-optimized-wrapper a.navlink:hover {
+  padding-top: 10px;
+  padding-bottom: 10px;
+  border-color: transparent;
   border-width: 2px;
   border-style: solid;
   border-radius: 10px;
   border-spacing: 5px;
+}
+#a2-optimized-wrapper .navlink-wrapper:hover {
+  border-color: #e0e0e0;
+  background-color: #e0e0e0;
+}
+#a2-optimized-wrapper .navlink-wrapper a.navlink {
   text-decoration: none;
+  color: #1c1c1c;
+  padding: 10px;
+}
+#a2-optimized-wrapper .navlink-wrapper.current {
+  background-color: #128413;
+  border-color: #128413;
+}
+#a2-optimized-wrapper .navlink-wrapper.current a.navlink {
+  color: white;
+}
+#a2-optimized-wrapper .side-nav .navlink-wrapper {
+  font-size: 16px;
+  padding-top: 20px;
+  padding-bottom: 20px;
+  padding-left: 0px;
+  padding-right: 0px;
+}
+#a2-optimized-wrapper .side-nav .navlink-wrapper:hover {
+  background-color: transparent;
+}
+#a2-optimized-wrapper .side-nav .navlink-wrapper.current {
+  background-color: transparent;
+}
+#a2-optimized-wrapper .side-nav .navlink-wrapper.current a.navlink {
+  color: #1c1c1c;
 }
 #a2-optimized-wrapper .cta-btn-green {
   background-color: #128413;
@@ -902,9 +924,13 @@
     border: none;
     box-shadow: none;
   }
+  #a2-optimized-wrapper .side-nav {
+    margin-bottom: 20px;
+  }
 }
 @media (max-width: 1024px) {
-  #a2-optimized-wrapper #a2-optimized-optstatus, #a2-optimized-wrapper #a2-optimized-pagespeed {
+  #a2-optimized-wrapper #a2-optimized-optstatus,
+#a2-optimized-wrapper #a2-optimized-pagespeed {
     min-width: 600px;
   }
 }

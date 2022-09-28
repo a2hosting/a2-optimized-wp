@@ -566,10 +566,11 @@ Vue.component('optimizations-performance', {
 		},
 		updateNavLinks: function (currentNav) {
 			let sidenavDiv = document.getElementsByClassName('side-nav')[0];
-			let links = sidenavDiv.querySelectorAll('a');
+			let links = sidenavDiv.querySelectorAll('.navlink-wrapper');
+			let idCheck = currentNav + '-wrapper';
 			links.forEach((link, index, array) => {
 				link.classList.remove('current');
-				if (link.name == currentNav) {
+				if (link.id == idCheck) {
 					link.classList.add('current');
 				}
 			});

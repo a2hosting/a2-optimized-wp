@@ -100,9 +100,13 @@
 <script type="text/x-template" id="hosting-matchup-template">
 	<div class="col-sm-12">
 		<div class="row">
-			<div class="col-sm-2 side-nav">
-				<p><a href="admin.php?page=a2-optimized&a2_page=server_performance" class="navlink" :class="nav.webperf_class">Web Performance</a></p>
-				<p><a href="admin.php?page=a2-optimized&a2_page=hosting_matchup" class="navlink" :class="nav.hmatch_class">Hosting Matchup</a></p>
+			<div class="col-md-10 col-lg-2 side-nav">
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.webperf_class">
+					<a href="admin.php?page=a2-optimized&a2_page=server_performance" class="navlink">Web Performance</a>
+				</div>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.hmatch_class">
+					<a href="admin.php?page=a2-optimized&a2_page=hosting_matchup" class="navlink">Hosting Matchup</a>
+				</div>
 			</div>
 			<div class="col-sm-10 border-left" id="a2-optimized-hostingmatchup">
 				<div class="row padding-bottom">
@@ -198,7 +202,7 @@
 		</div>
 		<div class="col-md-3 col-lg-2  padding-top-30" >
 			<li class="tg-list-item" @click="optimizationClicked(disabled)">
-				<input class="tgl tgl-ios" :id="'toggle-' + slug" :name="slug" v-model="configured" true-value="true" false-value="false" type="checkbox"  :disabled="disabled" />
+				<input class="tgl tgl-ios" :id="'toggle-' + slug" :name="slug" v-model="configured" true-value="true" false-value="false" type="checkbox" :disabled="disabled"/>
 				<label class="tgl-btn" :for="'toggle-' + slug"></label>
 			</li>
 		</div>
@@ -269,11 +273,20 @@
 <script type="text/x-template" id="optimizations-performance-template">
 	<div class="col-sm-12">
 		<div class="row">
-			<div class="col-sm-2 side-nav">
-				<p><a name='optperf' v-on:click.prevent="updateNavLinks('optperf')" class="navlink" :class="nav.optperf_class">Performance</a></p>
-				<p><a name='optsec' v-on:click.prevent="updateNavLinks('optsec')" class="navlink"  :class="nav.optsec_class" >Security</a></p>
-				<p><a name='optbestp' v-on:click.prevent="updateNavLinks('optbestp')" class="navlink"  :class="nav.optbestp_class">Best Practices</a></p>
-				<!-- <p><a name='optresults' v-on:click.prevent="updateNavLinks('optresults')" class="navlink"  :class="nav.optresult_class">Results</a></p> -->
+			<div class="col-md-10 col-lg-2 side-nav">
+				<div id='optperf-wrapper' class="col-md-3 col-lg-12 navlink-wrapper" :class="nav.optperf_class">
+					<a  v-on:click.prevent="updateNavLinks('optperf')" class="navlink">Performance</a>
+				</div>
+				<div id='optsec-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.optsec_class">
+					<a v-on:click.prevent="updateNavLinks('optsec')" class="navlink">Security</a>
+				</div>
+				<div  id='optbestp-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.optbestp_class">
+					<a v-on:click.prevent="updateNavLinks('optbestp')" class="navlink">Best Practices</a>
+				</div>
+				<!--
+				<div class="col-md-4 col-lg-12 navlink-wrapper" :class="nav.optresult_class">
+					<a name='optresults' v-on:click.prevent="updateNavLinks('optresults')" class="navlink">Results</a>
+				</div> -->
 			</div>
 			<div class="col-sm-10 border-left" id="a2-optimized-opt_performance">
 				<!-- Performance -->
@@ -537,10 +550,14 @@
 
 <script type="text/x-template" id="server-performance-template">
 	<div class="col-sm-12">
-		<div class="row" style="">
-			<div class="col-sm-2 side-nav">
-				<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance" class="navlink" :class="nav.webperf_class">Web Performance</a></p>
-				<p><a href="options-general.php?page=a2-optimized&a2_page=hosting_matchup" class="navlink" :class="nav.hmatch_class">Hosting Matchup</a></p>
+		<div class="row">
+			<div class="col-md-10 col-lg-2 side-nav">
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.webperf_class">
+					<a href="admin.php?page=a2-optimized&a2_page=server_performance" class="navlink">Web Performance</a>
+				</div>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.hmatch_class">
+					<a href="admin.php?page=a2-optimized&a2_page=hosting_matchup" class="navlink">Hosting Matchup</a>
+				</div>
 			</div>
 			<div class="col-sm-10 border-left" id="a2-optimized-serverperformance">
 				<div class="row padding-bottom">
@@ -899,16 +916,16 @@
 			</div>
 		</div>
 		<div class="row" id="a2-optimized-nav">
-			<div class="col-sm-10 col-sm-offset-1">
+			<div class="col-sm-11 col-sm-offset-1">
 				<div class="row a2-optimized-navigation" id="a2-optimized-navigation">
-					<div class="col-sm-4 text-center">
-						<p><a href="options-general.php?page=a2-optimized&a2_page=page_speed_score" class="navlink <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'pls_class') ?>">Page Load Speed Score</a></p>
+					<div class="col-sm-3 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'pls_class') ?>">
+						<a href="options-general.php?page=a2-optimized&a2_page=page_speed_score" class="navlink">Page Load Speed Score</a>
 					</div>
-					<div class="col-sm-4 text-center">
-						<p><a href="options-general.php?page=a2-optimized&a2_page=server_performance" class="navlink <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>">Website &amp; Server Performance</a></p>
+					<div class="col-sm-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>">
+						<a href="options-general.php?page=a2-optimized&a2_page=server_performance" class="navlink">Website &amp; Server Performance</a>
 					</div>
-					<div class="col-sm-4 text-center">
-						<p><a href="options-general.php?page=a2-optimized&a2_page=optimizations" class="navlink <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'opt_class') ?>">Optimization</a></p>
+					<div class="col-sm-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'opt_class') ?>">
+						<a href="options-general.php?page=a2-optimized&a2_page=optimizations" class="navlink">Optimization</a>
 					</div>
 				</div>
 			</div>
