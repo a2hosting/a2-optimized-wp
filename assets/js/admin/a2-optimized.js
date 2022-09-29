@@ -641,11 +641,11 @@ Vue.component('server-performance', {
 			let perf = page_data.graphs;
 			let circles_ttfb = generateCircle('circles-ttfb', 40, 10, perf.ttfb);
 			let circles_cls = generateCircle('circles-cls', 40, 10, perf.cls);
-			let circles_overall = generateCircle('circles-overall_score', 60, 20, perf.overall_score);
+			let circles_overall = generateCircle('circles-overall_score', 60, 10, perf.overall_score);
 
-			let circles_lcp = generateCircle('circles-lcp', 35, 7, perf.lcp);
-			let circles_fid = generateCircle('circles-fid', 35, 7, perf.fid);
-			let circles_fcp = generateCircle('circles-fcp', 35, 7, perf.fcp);
+			let circles_lcp = generateCircle('circles-lcp', 35, 10, perf.lcp);
+			let circles_fid = generateCircle('circles-fid', 35, 10, perf.fid);
+			let circles_fcp = generateCircle('circles-fcp', 35, 10, perf.fcp);
 
 			let line_graph_lcp = createLineGraph('line-graph-lcp', perf.lcp, 'circles-lcp');
 			let line_graph_fid = createLineGraph('line-graph-fid', perf.fid, 'circles-fid');
