@@ -100,7 +100,7 @@
 <script type="text/x-template" id="hosting-matchup-template">
 	<div class="col-sm-12">
 		<div class="row">
-			<div class="col-md-10 col-lg-2 side-nav">
+			<div class="col-md-12 col-lg-2 side-nav">
 				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.webperf_class">
 					<a href="admin.php?page=a2-optimized&a2_page=server_performance" class="navlink">Web Performance</a>
 				</div>
@@ -108,14 +108,14 @@
 					<a href="admin.php?page=a2-optimized&a2_page=hosting_matchup" class="navlink">Hosting Matchup</a>
 				</div>
 			</div>
-			<div class="col-sm-10 border-left" id="a2-optimized-hostingmatchup">
+			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-hostingmatchup">
 				<div class="row padding-bottom">
 					<div class="col-sm-12">
 						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
 					</div>
 				</div>	
 				<div class="row">
-					<div class="col-sm-6 hosting-matchup-graph-container">
+					<div class="col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-0 hosting-matchup-graph-container">
 						<flip-panel content_id="graph-webperformance" 
 							status_class="success" 
 							additional_classes="">
@@ -150,7 +150,7 @@
 							</template>
 						</flip-panel>
 					</div>
-					<div class="col-sm-6 hosting-matchup-graph-container">
+					<div class="col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-0 hosting-matchup-graph-container">
 						<flip-panel content_id="graph-serverperformance" 
 							status_class="success" 
 							additional_classes="">
@@ -273,7 +273,7 @@
 <script type="text/x-template" id="optimizations-performance-template">
 	<div class="col-sm-12">
 		<div class="row">
-			<div class="col-md-10 col-lg-2 side-nav">
+			<div class="col-md-12 col-lg-2 side-nav">
 				<div id='optperf-wrapper' class="col-md-3 col-lg-12 navlink-wrapper" :class="nav.optperf_class">
 					<a  v-on:click.prevent="updateNavLinks('optperf')" class="navlink">Performance</a>
 				</div>
@@ -288,7 +288,7 @@
 					<a name='optresults' v-on:click.prevent="updateNavLinks('optresults')" class="navlink">Results</a>
 				</div> -->
 			</div>
-			<div class="col-sm-10 border-left" id="a2-optimized-opt_performance">
+			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-opt_performance">
 				<!-- Performance -->
 				<div class="row" v-show="sidenav == 'optperf'">
 					<div class="col-sm-9">
@@ -432,7 +432,7 @@
 
 <script type="text/x-template" id="page-speed-score-template">
 	<div class="row">
-		<div class="col-sm-10 col-sm-offset-1">
+		<div class="col-md-10 col-md-offset-2 col-lg-10 col-lg-offset-1">
 			<div class="row">
 				<div class="col-sm-6" id="a2-optimized-pagespeed">
 					<flip-panel content_id="graph-pagespeed" status_class="success">
@@ -551,7 +551,7 @@
 <script type="text/x-template" id="server-performance-template">
 	<div class="col-sm-12">
 		<div class="row">
-			<div class="col-md-10 col-lg-2 side-nav">
+			<div class="col-md-12 col-lg-2 side-nav">
 				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.webperf_class">
 					<a href="admin.php?page=a2-optimized&a2_page=server_performance" class="navlink">Web Performance</a>
 				</div>
@@ -559,7 +559,7 @@
 					<a href="admin.php?page=a2-optimized&a2_page=hosting_matchup" class="navlink">Hosting Matchup</a>
 				</div>
 			</div>
-			<div class="col-sm-10 border-left" id="a2-optimized-serverperformance">
+			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-serverperformance">
 				<div class="row padding-bottom">
 					<div class="col-sm-12">
 						<select name="server-perf-strategy" id="server-perf-strategy-select" class="form-element" @change="strategyChanged($event)">
@@ -916,15 +916,15 @@
 			</div>
 		</div>
 		<div class="row" id="a2-optimized-nav">
-			<div class="col-sm-11 col-sm-offset-1">
+			<div class="col-md-12 col-lg-11 col-lg-offset-1">
 				<div class="row a2-optimized-navigation" id="a2-optimized-navigation">
-					<div class="col-sm-3 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'pls_class') ?>">
+					<div class="col-md-4 col-lg-3 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'pls_class') ?>">
 						<a href="options-general.php?page=a2-optimized&a2_page=page_speed_score" class="navlink">Page Load Speed Score</a>
 					</div>
-					<div class="col-sm-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>">
+					<div class="col-md-4 col-lg-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>">
 						<a href="options-general.php?page=a2-optimized&a2_page=server_performance" class="navlink">Website &amp; Server Performance</a>
 					</div>
-					<div class="col-sm-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'opt_class') ?>">
+					<div class="col-md-4 col-lg-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'opt_class') ?>">
 						<a href="options-general.php?page=a2-optimized&a2_page=optimizations" class="navlink">Optimization</a>
 					</div>
 				</div>

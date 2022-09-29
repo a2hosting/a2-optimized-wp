@@ -17,8 +17,6 @@ $thishost: #009aca;
 #a2-optimized-wrapper {
     font-family: Poppins;
 
-    min-width: 1024px;
-
     h1,
     h2,
     h3,
@@ -299,10 +297,6 @@ $thishost: #009aca;
         font-size: 50%;
     }
 
-    .hosting-matchup-graph-container {
-        min-width: 500px;
-    }
-
     .circles-text {
         font-weight: 700;
     }
@@ -526,11 +520,13 @@ $thishost: #009aca;
         width: 25px;
         height: 25px;
         display: inline;
-        float: left;
+        float: right;
 
         .dropdown-menu {
             padding: 5px;
             border-color: $green;
+            right: 0;
+            left: auto;
         }
     }
 
@@ -1164,6 +1160,7 @@ $thishost: #009aca;
         }
     }
 
+    /* when bootstrap 'lg' becomes 'md' */
     @media (max-width: 1366px) {
         .box-element.hide-small {
             border: none;
@@ -1172,17 +1169,29 @@ $thishost: #009aca;
 
         .side-nav {
             margin-bottom: 20px;
-
         }
-    }
 
-    @media (max-width: 1024px) {
+        .border-left {
+            border: none;
+        }
 
         #a2-optimized-optstatus,
         #a2-optimized-pagespeed {
             min-width: 600px;
         }
 
+        // fontsize for menu
+        .a2-optimized-navigation a {
+            font-size: 14px;
+        }
     }
+
+    /* added for the hosting matchup graphs that can't quite wait for 'md' to kick in to still look ok */
+    @media (max-width: 1440px) {
+        .hosting-matchup-graph-container {
+            min-width: 500px;
+        }
+    }
+
 
 }

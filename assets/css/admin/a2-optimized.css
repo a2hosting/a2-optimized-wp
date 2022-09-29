@@ -4,7 +4,6 @@
 
 #a2-optimized-wrapper {
   font-family: Poppins;
-  min-width: 1024px;
   /*
      * The following styles are auto-applied to elements with
      * transition="modal" when their visibility is toggled
@@ -19,6 +18,8 @@
   /* The flip card container - set the width and height to whatever you want. We have added the border property to demonstrate that the flip itself goes out of the box on hover (remove perspective if you don't want the 3D effect */
   /* This container is needed to position the front and back side */
   /* Style the back side */
+  /* when bootstrap 'lg' becomes 'md' */
+  /* added for the hosting matchup graphs that can't quite wait for 'md' to kick in to still look ok */
 }
 #a2-optimized-wrapper h1,
 #a2-optimized-wrapper h2,
@@ -242,9 +243,6 @@
   padding-top: 0px;
   font-size: 50%;
 }
-#a2-optimized-wrapper .hosting-matchup-graph-container {
-  min-width: 500px;
-}
 #a2-optimized-wrapper .circles-text {
   font-weight: 700;
 }
@@ -411,11 +409,13 @@
   width: 25px;
   height: 25px;
   display: inline;
-  float: left;
+  float: right;
 }
 #a2-optimized-wrapper .utility-icon .dropdown-menu {
   padding: 5px;
   border-color: #128413;
+  right: 0;
+  left: auto;
 }
 #a2-optimized-wrapper #menu-bell {
   right: 0;
@@ -927,11 +927,20 @@
   #a2-optimized-wrapper .side-nav {
     margin-bottom: 20px;
   }
-}
-@media (max-width: 1024px) {
+  #a2-optimized-wrapper .border-left {
+    border: none;
+  }
   #a2-optimized-wrapper #a2-optimized-optstatus,
 #a2-optimized-wrapper #a2-optimized-pagespeed {
     min-width: 600px;
+  }
+  #a2-optimized-wrapper .a2-optimized-navigation a {
+    font-size: 14px;
+  }
+}
+@media (max-width: 1440px) {
+  #a2-optimized-wrapper .hosting-matchup-graph-container {
+    min-width: 500px;
   }
 }
 
