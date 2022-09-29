@@ -18,10 +18,9 @@ class A2_Optimized_Optimizations {
 
     public function get_optimizations() {
 		$public_opts = $this->get_public_optimizations();
-		$private_opts = $this->get_private_optimizations();
         $extra_settings = $this->get_extra_settings();
 
-        $result = array_merge($public_opts, $private_opts);
+        $result = $public_opts;
 
         foreach($result as $k => $item){
             $result[$k]['extra_setting'] = array_key_exists($k, $extra_settings);
@@ -409,10 +408,20 @@ class A2_Optimized_Optimizations {
             $optimizations['a2_object_cache']['disabled'] = true;
             $optimizations['a2_object_cache']['disabled_desc'] = "Unable to connect to the specified Memcached or Redis server. Please check your connection information.";
         }
-        
+
         if (class_exists('A2_Optimized_Private_Optimizations')) {
             $private_optimizations = $this->private_opts->get_optimizations();
-            $optimizations = array_merge($optimizations, $private_optimizations);
+            // pull any fields from opt to private opt that may be missing
+            $new_optimizations = array_merge($optimizations, $private_optimizations);
+            foreach ($new_optimizations as $key => $opt){
+                if (!isset($opt['description'])){
+                    $new_optimizations[$key]['description'] = $optimizations[$key]['description'];
+                }
+                $new_optimizations[$key]['disabled'] = false; // no disabling when using the private optimizations class
+            }
+
+            $optimizations = $new_optimizations;
+
         } else {
             foreach($optimizations as $k => $optimization){
                 // Disable A2 exclusive items

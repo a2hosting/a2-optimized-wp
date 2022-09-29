@@ -44,6 +44,7 @@ $thishost: #009aca;
 
     h3 {
         font-size: 30px;
+
         &.less-vertical-space {
             margin-top: 5px;
             margin-bottom: 5px;
@@ -74,50 +75,78 @@ $thishost: #009aca;
     }
 
     .a2-optimized-navigation {
-        margin-bottom: 100px;
+        /*margin-bottom: 100px; trying out other values */
+        margin-bottom: 20px;
 
         a {
             font-size: 20px;
             font-family: Raleway;
             font-weight: 700;
-
+            /*
             &.current {
                 font-size: 24px;
             }
+            */
         }
 
+    }
+
+    .navlink-wrapper {
+        text-align: center;
+        color: $dark;
+        padding-top: 10px;
+        padding-bottom: 10px;
+
+        border-color: transparent;
+        border-width: 2px;
+        border-style: solid;
+        border-radius: 10px;
+        border-spacing: 5px;
+
+        &:hover {
+            border-color: $semilight;
+            background-color: $semilight;
+        }
+
+        a.navlink {
+            text-decoration: none;
+            color: $dark;
+            padding: 10px;
+        }
+
+        &.current {
+            background-color: $green;
+            border-color: $green;
+
+            a.navlink {
+                color: white;
+            }
+
+        }
     }
 
     .side-nav {
-        p {
-            margin-top: 150px;
-            font-size: 18px;
-            font-weight: 500;
-            text-transform: uppercase;
+        .navlink-wrapper {
+            font-size: 16px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            padding-left: 0px;
+            padding-right: 0px;
+
+            &:hover {
+                background-color: transparent;
+            }
+
+            &.current {
+                background-color: transparent;
+
+                a.navlink {
+                    color: $dark;
+                }
+            }
+
         }
 
-        .current {
-            font-size: 20px;
-        }
-
-    }
-
-    a.navlink {
-        color: $dark;
-        text-decoration: none;
-
-        &.current {
-            text-decoration: underline;
-            color: $green;
-        }
-
-        &:hover {
-            border-width: 2px;
-            border-style: solid;
-            border-radius: 10px;
-            border-spacing: 5px;
-            text-decoration: none;
-        }
     }
 
 
@@ -247,15 +276,19 @@ $thishost: #009aca;
         h4 {
             font-size: 22px;
         }
+
         .setting-item {
             padding-left: 10px;
+
             h4 {
                 font-size: 20px;
             }
         }
+
         .row {
             margin-bottom: 10px;
         }
+
         .desc {
             color: $green;
         }
@@ -269,6 +302,7 @@ $thishost: #009aca;
     .hosting-matchup-graph-container {
         min-width: 500px;
     }
+
     .circles-text {
         font-weight: 700;
     }
@@ -381,16 +415,17 @@ $thishost: #009aca;
             color: $orange;
         }
     }
-    input[type='text']{
+
+    input[type='text'] {
         max-width: 100%;
     }
 
-    input[type='number']{
+    input[type='number'] {
         max-width: 100%;
     }
 
     input.opt-setting-input {
-        margin-left:20px;
+        margin-left: 20px;
         width: 90%;
     }
 
@@ -490,7 +525,7 @@ $thishost: #009aca;
     .utility-icon {
         width: 25px;
         height: 25px;
-        display:inline;
+        display: inline;
         float: left;
 
         .dropdown-menu {
@@ -498,7 +533,7 @@ $thishost: #009aca;
             border-color: $green;
         }
     }
-    
+
     #menu-bell {
         right: 0;
         left: initial;
@@ -506,7 +541,7 @@ $thishost: #009aca;
 
     /* checkboxes */
     .tg-list-item {
-        margin:  0 10px;
+        margin: 0 10px;
         list-style: none;
     }
 
@@ -1134,12 +1169,20 @@ $thishost: #009aca;
             border: none;
             box-shadow: none;
         }
-    }
-    @media (max-width: 1024px) {
-        #a2-optimized-optstatus,#a2-optimized-pagespeed {
-            min-width:600px;
+
+        .side-nav {
+            margin-bottom: 20px;
+
         }
-        
+    }
+
+    @media (max-width: 1024px) {
+
+        #a2-optimized-optstatus,
+        #a2-optimized-pagespeed {
+            min-width: 600px;
+        }
+
     }
 
 }
