@@ -107,6 +107,7 @@ $thishost: #009aca;
         }
 
         a.navlink {
+            cursor: pointer;
             text-decoration: none;
             color: $dark;
             padding: 10px;
@@ -312,6 +313,12 @@ $thishost: #009aca;
         width: 100%;
     }
 
+    .graph-card {
+        p.sub-heading {
+            margin-top: 0px;
+        }
+    }
+
     .graph-card-centered {
         text-align: center;
     }
@@ -366,6 +373,10 @@ $thishost: #009aca;
 
     .text-center {
         text-align: center;
+    }
+
+    .line-height-15 {
+        line-height: 15px;
     }
 
     span.danger {

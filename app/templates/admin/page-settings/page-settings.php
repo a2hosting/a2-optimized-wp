@@ -374,8 +374,8 @@
 													<span v-if="item.status.is_warning" :class="item.color_class"> - WARNING</span>
 													<span v-else :class="item.color_class"> - GOOD</span>
 												</div>
-												<div v-if="!item.hasOwnProperty('slug')" class="col-md-4 col-lg-3 text-right">
-													<span v-if="item.status.is_warning">
+												<div v-if="!item.hasOwnProperty('slug')" class="col-md-4 col-lg-3 text-right line-height-15">
+	 												<span v-if="item.status.is_warning">
 														<span class="glyphicon glyphicon-remove-circle"  :class="item.color_class" aria-hidden="true"></span>
 													</span>
 													<span v-else>
@@ -574,7 +574,7 @@
 								<div class="row">
 									<div class="col-sm-8">
 										<h4>{{graphs.ttfb.display_text}}</h4>
-										<p>{{graphs.ttfb.metric_text}}</p>
+										<p class="sub-heading">{{graphs.ttfb.metric_text}}</p>
 									</div>
 								</div>
 								<div class="row">
@@ -608,7 +608,7 @@
 								<div class="row">
 									<div class="col-sm-10">
 										<h4>{{graphs.lcp.display_text}}</h4>
-										<p>{{graphs.lcp.metric_text}}</p>
+										<p class="sub-heading">{{graphs.lcp.metric_text}}</p>
 									</div>
 								</div>
 								<div class="row">
@@ -637,7 +637,7 @@
 								<div class="row">
 									<div class="col-sm-12">
 										<h4>{{graphs.fid.display_text}}</h4>
-										<p>{{graphs.fid.metric_text}}</p>
+										<p class="sub-heading">{{graphs.fid.metric_text}}</p>
 									</div>
 								</div>
 								<div class="row">
@@ -733,7 +733,7 @@
 								<div class="row">
 									<div class="col-sm-10">
 										<h4>{{graphs.fcp.display_text}}</h4>
-										<p>{{graphs.fcp.metric_text}}</p>
+										<p class="sub-heading">{{graphs.fcp.metric_text}}</p>
 									</div>
 								</div>
 								<div class="row">
@@ -762,7 +762,7 @@
 								<div class="row">
 									<div class="col-sm-10">
 										<h4>{{graphs.cls.display_text}}</h4>
-										<p>{{graphs.cls.metric_text}}</p>
+										<p class="sub-heading">{{graphs.cls.metric_text}}</p>
 									</div>
 								</div>
 								<div class="row">

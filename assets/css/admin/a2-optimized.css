@@ -106,6 +106,7 @@
   background-color: #e0e0e0;
 }
 #a2-optimized-wrapper .navlink-wrapper a.navlink {
+  cursor: pointer;
   text-decoration: none;
   color: #1c1c1c;
   padding: 10px;
@@ -255,6 +256,9 @@
   height: 40px;
   width: 100%;
 }
+#a2-optimized-wrapper .graph-card p.sub-heading {
+  margin-top: 0px;
+}
 #a2-optimized-wrapper .graph-card-centered {
   text-align: center;
 }
@@ -296,6 +300,9 @@
 }
 #a2-optimized-wrapper .text-center {
   text-align: center;
+}
+#a2-optimized-wrapper .line-height-15 {
+  line-height: 15px;
 }
 #a2-optimized-wrapper span.danger {
   color: #ED1111;
