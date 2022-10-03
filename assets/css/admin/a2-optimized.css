@@ -282,9 +282,11 @@
 }
 #a2-optimized-wrapper .info-toggle-button {
   position: absolute;
-  right: 15px;
-  top: 15px;
+  right: 5px;
+  top: 5px;
+  font-size: 20px;
   z-index: 100;
+  cursor: pointer;
 }
 #a2-optimized-wrapper .text-left {
   text-align: left;
