@@ -36,7 +36,7 @@
 		<div class="flip-card-inner">
 			<div class="flip-card-front">
 				<div class="box-element" :class="[additional_classes, status_class]">
-					<div v-if="!disable_show_button" class="info-toggle-button">
+					<div v-if="!disable_show_button" class="info-toggle-button" title="More Information">
 						<span @click="toggleFlipPanel(content_id, $event);"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></span>
 					</div>
 					<slot name="content1"></slot>
@@ -44,7 +44,7 @@
 			</div>
 			<div class="flip-card-back" style="display:none;">
 				<div class="box-element" :class="[additional_classes, status_class]">
-					<div class="info-toggle-button">
+					<div class="info-toggle-button" title="Close">
 						<span @click="toggleFlipPanel(content_id, $event);"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span></span>
 					</div>
 					<slot name="content2"></slot>
@@ -476,10 +476,6 @@
 								<div class="col-sm-8">
 									<h3>Page Load Speed</h3>
 								</div>
-								<div class="col-sm-4 text-right">
-									<p><a class="btn cta-btn-green" @click.prevent="pageSpeedCheck('page_speed_score')">Run check</a><br>
-									<span>Last Check: {{ last_check_date }}</span></p>
-								</div>
 							</div>
 							<div class="row">
 								<div class="col-sm-10 col-sm-offset-1">
@@ -493,7 +489,7 @@
 							<p>Data pulled from Google PageSpeed Insights</p>
 						</div>
 						<div class="col-sm-5 text-right">
-							<p>Compare with <a href="https://gtmetrix.com/" target="_blank">GTMetrix</a></p>
+							<p>Compare with <a href="https://gtmetrix.com/?url=<?php echo home_url(); ?>" target="_blank">GTMetrix</a></p>
 						</div>
 					</div>
 				</div>
@@ -874,16 +870,12 @@
 				<a class="btn cta-btn-green" @click="yesNoDialog.doYes">Ok</a></template>
 		</modal>
 		<div class="row" id="a2-optimized-header">
-			<div class="col-sm-6 title">
+			<div class="col-sm-10 title">
 				<h2>Optimization <span class='normal'>Dashboard</span></h2>
-			</div>
-			<div class="col-sm-4 search">
-				<input type="text" value="<?php echo get_site_url(); ?>" />
-				<p class='small'>Data relates to your homepage</p>
 			</div>
 			<div class="col-sm-2 text-right">
 				<div class="utility-icon">
-					<a id="drop-bell" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<a id="drop-bell" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="Alerts">
 						<span id="drop-bell-wrapper" class="glyphicon glyphicon-bell notification-bell" aria-hidden="true"></span>
 					</a>
 					<ul id="menu-bell" class="dropdown-menu" aria-labelledby="drop-bell-wrapper">
@@ -897,7 +889,7 @@
 					</ul>
 				</div>
 				<div class="utility-icon">
-					<a id="drop-links" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+					<a id="drop-links" href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false" title="More Information">
 						<span id="drop-links-wrapper" class="glyphicon glyphicon-option-vertical" aria-hidden="true"></span>
 					</a>
 					<ul id="menu-links" class="dropdown-menu" aria-labelledby="drop-links-wrapper">
