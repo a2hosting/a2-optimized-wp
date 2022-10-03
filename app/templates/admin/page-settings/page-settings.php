@@ -306,6 +306,11 @@
 										</div>
 									</div>
 									<optimization-entry v-show="perf_more == 'true'"  v-for="optimization in other_optimizations.performance" :key="optimization.slug" :opt="optimization" wrapper_id="optimizations_performance_front"></optimization-entry>
+									<div class="row" v-show="perf_more == 'true'">
+										<div class="col-sm-12 text-center">
+											<p><a href="#" class="more-optimizations-toggle" @click.prevent="perf_more = 'false'">Less Optimizations</a></p>
+										</div>
+									</div>
 								</div>
 							</template>
 							<template v-slot:content2>
@@ -341,6 +346,11 @@
 									</div>
 								</div>
 								<optimization-entry v-show="sec_more == 'true'" v-for="optimization in other_optimizations.security" :key="optimization.slug" :opt="optimization"></optimization-entry>
+								<div class="row" v-show="sec_more == 'true'">
+									<div class="col-sm-12 text-center">
+										<p><a href="#" class="more-optimizations-toggle" @click.prevent="sec_more = 'false'">Less Optimizations</a></p>
+									</div>
+								</div>
 							</div>
 						</div>
 					</div>
@@ -911,13 +921,13 @@
 			<div class="col-md-12 col-lg-11 col-lg-offset-1">
 				<div class="row a2-optimized-navigation" id="a2-optimized-navigation">
 					<div class="col-md-4 col-lg-3 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'pls_class') ?>">
-						<a href="options-general.php?page=a2-optimized&a2_page=page_speed_score" class="navlink">Page Load Speed Score</a>
+						<a href="admin.php?page=a2-optimized&a2_page=page_speed_score" class="navlink">Page Load Speed Score</a>
 					</div>
 					<div class="col-md-4 col-lg-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>">
-						<a href="options-general.php?page=a2-optimized&a2_page=server_performance" class="navlink">Website &amp; Server Performance</a>
+						<a href="admin.php?page=a2-optimized&a2_page=server_performance" class="navlink">Website &amp; Server Performance</a>
 					</div>
 					<div class="col-md-4 col-lg-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'opt_class') ?>">
-						<a href="options-general.php?page=a2-optimized&a2_page=optimizations" class="navlink">Optimization</a>
+						<a href="admin.php?page=a2-optimized&a2_page=optimizations" class="navlink">Optimization</a>
 					</div>
 				</div>
 			</div>
