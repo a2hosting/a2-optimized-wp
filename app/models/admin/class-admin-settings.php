@@ -432,15 +432,15 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 		public const BENCHMARK_SCORE_PROFILES = [
 			//higher is better [low/med/high] so we will invert the score when checking
-			'overall_score' => ['success'=>100,  'warn'=>89, 'danger'=>49, 'max'=>100],
-			'overall_score_inverted' => ['success'=>0, 'warn'=>11, 'danger'=>51],
+			'overall_score' => ['success'=>100,  'warn'=>89, 'danger'=>49, 'max'=>100, 'decimalplaces'=>0],
+			'overall_score_inverted' => ['success'=>0, 'warn'=>11, 'danger'=>51, 'decimalplaces'=>0],
 
 			//lower is better [high/med/low]
-			'fcp' => ['success'=> 1999, 'warn'=>3999, 'danger'=>6000, 'max'=>6000],
-			'ttfb' => ['success'=> 99, 'warn'=>599, 'danger'=>1000, 'max'=>1000],
-			'cls' => ['success'=> 0.1, 'warn'=>0.25, 'danger'=>1, 'max'=>1],
-			'lcp' => ['success'=> 2499, 'warn'=>3999, 'danger'=>6000, 'max'=>6000],
-			'fid' => ['success'=> 99, 'warn'=>299, 'danger'=>1000, 'max'=>1000],
+			'fcp' => ['success'=> 1999, 'warn'=>3999, 'danger'=>6000, 'max'=>6000, 'decimalplaces'=>0],
+			'ttfb' => ['success'=> 99, 'warn'=>599, 'danger'=>1000, 'max'=>1000, 'decimalplaces'=>0],
+			'cls' => ['success'=> 0.1, 'warn'=>0.25, 'danger'=>1, 'max'=>1, 'decimalplaces'=>2],
+			'lcp' => ['success'=> 2499, 'warn'=>3999, 'danger'=>6000, 'max'=>6000, 'decimalplaces'=>0],
+			'fid' => ['success'=> 99, 'warn'=>299, 'danger'=>1000, 'max'=>1000, 'decimalplaces'=>0],
 		];
 
 		public function get_score_status_and_thresholds($metric, $score) {
@@ -480,6 +480,8 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
 				*/
 
+				$decimalplaces = self::BENCHMARK_SCORE_PROFILES[$metric]['decimalplaces'];
+				$latest_score = round($latest_score, $decimalplaces);
 				$data = [
 					'last_check_date' => $last_check_date,
 					'score' => $latest_score,
