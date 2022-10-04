@@ -924,7 +924,7 @@
 						<a href="admin.php?page=a2-optimized&a2_page=page_speed_score" class="navlink">Page Load Speed Score</a>
 					</div>
 					<div class="col-md-4 col-lg-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>">
-						<a href="admin.php?page=a2-optimized&a2_page=server_performance" class="navlink">Website &amp; Server Performance</a>
+						<a href="#" class="navlink" v-on:click.prevent="loadBenchmarkPage">Website &amp; Server Performance</a>
 					</div>
 					<div class="col-md-4 col-lg-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'opt_class') ?>">
 						<a href="admin.php?page=a2-optimized&a2_page=optimizations" class="navlink">Optimization</a>

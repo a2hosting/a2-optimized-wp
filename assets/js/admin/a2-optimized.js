@@ -785,6 +785,13 @@ let app = new Vue({
 			}
 
 			page_data.yesNoDialog.showYesNo = true;
-		}
+		},
+		loadBenchmarkPage(){
+			if(page_data.graphs.pagespeed_desktop == false && page_data.graphs.pagespeed_mobile == false){
+				this.pageSpeedCheck('page-speed-score', true);
+			} else {
+				window.location.href = "admin.php?page=a2-optimized&a2_page=server_performance";
+			}
+		}	
 	},
 });

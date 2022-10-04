@@ -472,7 +472,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$result = [];
 			foreach ($metrics as $metric) {
 				$latest_score = $latest['scores'][$metric];
-				$previous_score = $previous['scores'][$metric];
+				if(is_array($previous) && is_array($previous['scores'])){
+					$previous_score = $previous['scores'][$metric];
+				} else {
+					$previous_score = 0;
+				}
 				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
 				/*
 				$latest_score = rand(0, $status_info['thresholds']['max']);
