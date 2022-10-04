@@ -864,11 +864,25 @@
 		<modal v-if="showModal" @close="showModal = false" show_busy=true>
 		</modal>
 		<modal v-if="showA2Only" @close="showA2Only = false" show_busy=false show_close=true>
-			<template v-slot:header><h3>Header tough talk</h3></template>
+			<template v-slot:header><h3 class="text-center" >The feature is not supported on your current hosting environment</h3></template>
 			<template v-slot:body>
-				<span class="modal-dialog-text">No A2?  No dice for you!</span>
+				<p>At A2 Hosting, our servers are built around providing unbeatable speed.  As such, A2 Optimized is configured with speed in mind, and works best when installed on our servers where we can make your site lighting fast!</p>
+				<p>As an A2 Hosting customer, you get access to the following features for Free:</p>
+				<div class="row">
+					<div class="col-sm-2"></div>
+					<div class="col-sm-8">
+						<ul class="bullet-points">
+							<li>Object Caching</li>
+							<li>Login URL Change</li>
+							<li>Compress Images on upload</li>
+							<li>Turbo web hosting</li>
+						</ul>
+					</div>
+					<div class="col-sm-2"></div>
+				</div>
+				<p>Join the A2 family and get access to these amazing speed-enhancing features to give your site the ultimate speed boost.  Best of all, we offer FREE website migration</p>
 			</template>
-			<template v-slot:footer><a class="btn cta-btn-green">Learn more</a></template>
+			<template v-slot:footer><a href="https://www.a2hosting.com/hosting" target="_blank" class="btn cta-btn-green">Get Started</a></template>
 		</modal>
 		<modal v-if="yesNoDialog.showYesNo" @close="yesNoDialog.showYesNo = false" show_busy=false show_close=true>
 			<template v-slot:header><h3>{{ yesNoDialog.header }}</h3></template>
