@@ -867,7 +867,7 @@
 			<template v-slot:header><h3 class="text-center" >This feature is not supported on your current hosting environment</h3></template>
 			<template v-slot:body>
 				<p>At A2 Hosting, our servers are built around providing unbeatable speed.  As such, A2 Optimized is configured with speed in mind, and works best when installed on our servers where we can make your site lighting fast!</p>
-				<p>Join the A2 family and get access to these amazing speed-enhancing features to give your site the ultimate speed boost. Best of all we offer FREE* website migration!</p>
+				<p>As an A2 Hosting customer, you get access to the following features for Free*:</p>
 				<div class="row">
 					<div class="col-sm-2"></div>
 					<div class="col-sm-8">
@@ -880,7 +880,7 @@
 					</div>
 					<div class="col-sm-2"></div>
 				</div>
-				<p>Join the A2 family and get access to these amazing speed-enhancing features to give your site the ultimate speed boost.  Best of all, we offer FREE website migration</p>
+				<p>Join the A2 family and get access to these amazing speed-enhancing features to give your site the ultimate speed boost.  Best of all we offer FREE* website migration!</p>
 			</template>
 			<template v-slot:footer>
 				<p><small>* Features are not available on Startup or Drive plans.</small></p>
