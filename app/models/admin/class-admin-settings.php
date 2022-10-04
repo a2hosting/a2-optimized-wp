@@ -519,20 +519,22 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$lcv = 0;
 				$pattern = "/\[([^]]*)\] *\(([^)]*)\)/i";
                 $replacement = '<a href="$2" target="_blank">$1</a>';
-				foreach ($latest['scores']['audit_result'] as $audit) {
-					$display_value = '';
-					$description = preg_replace($pattern, $replacement, $audit['description']);
-					if(isset($audit['displayValue'])){
-						$description .= '<br />' . $audit['displayValue'];
-					}
-					$audits[] = [
-						'lcv' => $lcv,
-						'display_text' => $audit['title'],
-						'description' => $description,
-					];
-					++$lcv;
-					if ($lcv > 4) {
-						break;
+				if(is_array($latest['scores']) && is_array($latest['scores']['audit_result'])){
+					foreach ($latest['scores']['audit_result'] as $audit) {
+						$display_value = '';
+						$description = preg_replace($pattern, $replacement, $audit['description']);
+						if(isset($audit['displayValue'])){
+							$description .= '<br />' . $audit['displayValue'];
+						}
+						$audits[] = [
+							'lcv' => $lcv,
+							'display_text' => $audit['title'],
+							'description' => $description,
+						];
+						++$lcv;
+						if ($lcv > 4) {
+							break;
+						}
 					}
 				}
 				$result['recommendations'] = [
