@@ -1170,7 +1170,7 @@ final class A2_Optimized_Cache {
 	 */
 
 	public static function validate_object_cache($server_address) {
-		if (!$server_address) {
+		if (!$server_address || strtolower($server_address) === 'false') {
 			return;
 		}
 
