@@ -613,7 +613,7 @@ Vue.component('optimizations-performance', {
 	watch: {
 		updateChild: function () {
 			this.doCircles();
-		},
+		}
 	}
 });
 
