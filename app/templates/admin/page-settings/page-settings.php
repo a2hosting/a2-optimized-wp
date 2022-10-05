@@ -201,7 +201,7 @@
 			<a v-if="extra_setting" href="javascript:void(0)" @click="toggleExtraSettings(slug, $event)">Modify</a>
 		</div>
 		<div class="col-md-3 col-lg-2  padding-top-30" >
-			<li class="tg-list-item" @click="optimizationClicked(disabled)">
+			<li class="tg-list-item" @click="optimizationClicked(disabled)" @change="settingToggled($event)">
 				<input class="tgl tgl-ios" :id="'toggle-' + slug" :name="slug" v-model="configured" true-value="true" false-value="false" type="checkbox" :disabled="disabled"/>
 				<label class="tgl-btn" :for="'toggle-' + slug"></label>
 			</li>
@@ -210,7 +210,6 @@
 </script>
 
 <script type="text/x-template" id="opt-extra-settings-template">
-	<!-- <div v-for="(opt_group, slug) in extra_settings" :key="slug">-->
 	<div v-if="opt_group" :key="selected_slug">
 		<div class="row header">
 			<div class="col-lg-8">
@@ -241,21 +240,22 @@
 						</div>
 					</div>
 					<div v-else>
-						<div class="col-md-9 col-lg-10">
+						<div class="col-md-9">
 							<h4 class="less-vertical-space setting-desc">{{ setting.description }}</h4>
 						</div>
 					</div>
 					<p v-if="setting.input_type == 'text'">
 						<input type="text" :id="'cb-' + setting_name" :name="setting_name" v-model="setting.value" class="opt-setting-input text-input"/>
 					</p>
-					<div v-else-if="setting.input_type == 'options'" class="col-md-3 col-lg-2">
+					<div v-else-if="setting.input_type == 'options'" class="col-md-3">
 						<select :id="'select-' + setting_name" :name="setting_name" v-model="setting.value" @change="adjustSettingVisibility()">
 							<option v-for="(opt_value,label) in setting.input_options" :value="opt_value" :selected="opt_value == setting.value">{{ label }}</option>
 						</select>
 					</div>
-					<div v-else class="col-md-3 col-lg-2 text-right" >
+					<div v-else class="col-md-3 col-lg-2 text-right" :class="setting.extra_fields ? '' : 'col-lg-offset-1'">
 						<li class="tg-list-item">
-							<input class="tgl tgl-ios" :id="'toggle-' + setting_name" :name="setting_name" 	true-value="true" false-value="false" v-model="setting.value" type="checkbox"/>
+							<input class="tgl tgl-ios" :id="'toggle-' + setting_name" :name="setting_name" 	
+							true-value="true" false-value="false" v-model="setting.value" type="checkbox"/>
 							<label class="tgl-btn" :for="'toggle-' + setting_name"></label>
 						</li>
 					</div>
@@ -274,13 +274,13 @@
 	<div class="col-sm-12">
 		<div class="row">
 			<div class="col-md-12 col-lg-2 side-nav">
-				<div id='optperf-wrapper' class="col-md-3 col-lg-12 navlink-wrapper" :class="nav.optperf_class">
+				<div id='optperf-wrapper' class="col-md-3 col-lg-12 navlink-wrapper" :class="[sidenav == 'optperf' ? 'current' : '']">
 					<a  v-on:click.prevent="updateNavLinks('optperf')" class="navlink">Performance</a>
 				</div>
-				<div id='optsec-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.optsec_class">
+				<div id='optsec-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="[sidenav == 'optsec' ? 'current' : '']">
 					<a v-on:click.prevent="updateNavLinks('optsec')" class="navlink">Security</a>
 				</div>
-				<div  id='optbestp-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.optbestp_class">
+				<div  id='optbestp-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="[sidenav == 'optbestp' ? 'current' : '']">
 					<a v-on:click.prevent="updateNavLinks('optbestp')" class="navlink">Best Practices</a>
 				</div>
 				<!--
@@ -867,20 +867,20 @@
 			<template v-slot:header><h3 class="text-center" >This feature is not supported on your current hosting environment</h3></template>
 			<template v-slot:body>
 				<p>At A2 Hosting, our servers are built around providing unbeatable speed.  As such, A2 Optimized is configured with speed in mind, and works best when installed on our servers where we can make your site lighting fast!</p>
-				<p>As an A2 Hosting customer, you get access to the following features for Free*:</p>
+				<p>As an A2 Hosting customer, you get access to the following features for Free:</p>
 				<div class="row">
 					<div class="col-sm-2"></div>
 					<div class="col-sm-8">
 						<ul class="bullet-points">
-							<li>Object Caching</li>
+							<li>Object Caching*</li>
 							<li>Login URL Change</li>
 							<li>Compress Images on upload</li>
-							<li>Turbo web hosting</li>
+							<li>Turbo web hosting*</li>
 						</ul>
 					</div>
 					<div class="col-sm-2"></div>
 				</div>
-				<p>Join the A2 family and get access to these amazing speed-enhancing features to give your site the ultimate speed boost.  Best of all we offer FREE* website migration!</p>
+				<p>Join the A2 family and get access to these amazing speed-enhancing features to give your site the ultimate speed boost.  Best of all we offer FREE website migration!</p>
 			</template>
 			<template v-slot:footer>
 				<p><small>* Features are not available on Startup or Drive plans.</small></p>
@@ -898,7 +898,9 @@
 		</modal>
 		<div class="row" id="a2-optimized-header">
 			<div class="col-sm-10 title">
-				<h2>Optimization <span class='normal'>Dashboard</span></h2>
+			<img srcset=" <?php echo get_home_url(); ?>/wp-content/plugins/a2-optimized-wp/assets/images/admin/a2opt-logo-2022-2x.png 2x, <?php echo get_home_url(); ?>/wp-content/plugins/a2-optimized-wp/assets/images/admin/a2opt-logo-2022.png 1x " src="<?php echo get_home_url(); ?>/wp-content/plugins/a2-optimized-wp/assets/images/admin/a2opt-logo-2022.png" >
+
+				<!-- <h2>Optimization <span class='normal'>Dashboard</span></h2> -->
 			</div>
 			<div class="col-sm-2 text-right">
 				<div class="utility-icon">
