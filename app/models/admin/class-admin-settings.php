@@ -247,6 +247,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$result['optimizations'] = $this->optimizations->get_optimizations();
 			$result['best_practices'] = $this->optimizations->get_best_practices();
 			$extra_settings = $result['optimizations']['extra_settings']; // has to be before $result['optimizations'] gets changed
+			$settings_tethers = $result['optimizations']['settings_tethers'];
 
 			$displayed_optimizations = [];
 			$other_optimizations = [];
@@ -319,6 +320,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$result['optimizations'] = $displayed_optimizations;
 			$result['other_optimizations'] = $other_optimizations;
 			$result['extra_settings'] = $extra_settings;
+			$result['settings_tethers'] =$settings_tethers;
 			return $result;
 		}
 
