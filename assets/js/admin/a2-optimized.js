@@ -590,17 +590,7 @@ Vue.component('optimizations-performance', {
 				});
 		},
 		updateNavLinks: function (currentNav) {
-			let sidenavDiv = document.getElementsByClassName('side-nav')[0];
-			let links = sidenavDiv.querySelectorAll('.navlink-wrapper');
-			let idCheck = currentNav + '-wrapper';
-			links.forEach((link, index, array) => {
-				link.classList.remove('current');
-				if (link.id == idCheck) {
-					link.classList.add('current');
-				}
-			});
 			this.sidenav = currentNav;
-			//window.location.hash = '#' + currentNav;
 		}
 	},
 	template: "#optimizations-performance-template",
