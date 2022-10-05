@@ -157,6 +157,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'other_optimizations' => $data['other_optimizations'],
 				'best_practices' => $data['best_practices'],
 				'extra_settings' => $data['extra_settings'],
+				'settings_tethers' => $data['settings_tethers'],
 				'graphs' => $data['graphs']
 			];
 			$data_json = json_encode($data);

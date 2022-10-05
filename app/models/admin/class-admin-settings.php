@@ -477,12 +477,18 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				} else {
 					$previous_score = 0;
 				}
-				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
+
 				/*
+				// round test
+				$latest_score += 0.14234636236256256;
+				$previous_score += 0.0990809856203465203;
+				// color test
 				$latest_score = rand(0, $status_info['thresholds']['max']);
 				$previous_score = rand(0, $status_info['thresholds']['max']);
-				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
 				*/
+
+				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
+
 
 				$decimalplaces = self::BENCHMARK_SCORE_PROFILES[$metric]['decimalplaces'];
 				$latest_score = round($latest_score, $decimalplaces);
@@ -506,6 +512,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 						$direction='up';
 					}
 					$diff = abs($diff);
+					$diff = round($diff, $decimalplaces);
 					$percent_change = $diff; // i'm not really sure what formula they want us to use for this
 				}
 				$data['last_check_percent'] = $percent_change;
