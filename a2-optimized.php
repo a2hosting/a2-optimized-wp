@@ -87,6 +87,15 @@ function run_a2_optimized() {
 
 	register_activation_hook( __FILE__, [ new A2_Optimized\App\Activator(), 'activate' ] );
 	register_deactivation_hook( __FILE__, [ new A2_Optimized\App\Deactivator(), 'deactivate' ] );
+
+	if (get_option('a2_cache_enabled') == 1) {
+		if(in_array('litespeed-cache/litespeed-cache.php', apply_filters('active_plugins', get_option('active_plugins')))){ 
+			A2_Optimized_Cache_Disk::clean();
+			update_option('a2_cache_enabled', 0);
+		} else {
+			add_action('plugins_loaded', [ 'A2_Optimized_Cache', 'init' ]);
+		}
+	}
 }
 
 run_a2_optimized();

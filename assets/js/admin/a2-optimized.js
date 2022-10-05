@@ -412,6 +412,31 @@ Vue.component('optimization-entry', {
 			if (isDisabled) {
 				page_data.showA2Only = true;
 			}
+		},
+		settingToggled: function(event) {
+			let changed = event.target;
+			let changedSlug = changed.name;
+			let changedValue = changed.checked ? 'on' : 'off';
+
+			if (page_data.settings_tethers[changedValue][changedSlug]){
+				page_data.settings_tethers[changedValue][changedSlug].forEach((tethered_slug, index, array) => {
+					let newValue = changed.checked;
+					if (page_data.optimizations.performance[tethered_slug]){
+						page_data.optimizations.performance[tethered_slug].configured = newValue;
+					}
+					else if (page_data.optimizations.security[tethered_slug]){
+						page_data.optimizations.security[tethered_slug].configured = newValue;
+					}
+					else if (page_data.other_optimizations.performance[tethered_slug]){
+						page_data.other_optimizations.performance[tethered_slug].configured = newValue;
+					}
+					else if (page_data.other_optimizations.security[tethered_slug]){
+						page_data.other_optimizations.security[tethered_slug].configured = newValue;
+					}
+
+				});
+			}
+
 		}
 	},
 	template: "#optimization-entry"
@@ -598,7 +623,7 @@ Vue.component('optimizations-performance', {
 	watch: {
 		updateChild: function () {
 			this.doCircles();
-		}
+		},
 	}
 });
 
