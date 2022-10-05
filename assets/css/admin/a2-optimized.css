@@ -90,6 +90,9 @@
   }
   */
 }
+#a2-optimized-wrapper ul.bullet-points {
+  list-style-type: disc;
+}
 #a2-optimized-wrapper .navlink-wrapper {
   text-align: center;
   color: #1c1c1c;
