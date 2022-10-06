@@ -83,21 +83,12 @@
   /*margin-bottom: 100px; trying out other values */
   margin-bottom: 20px;
 }
-#a2-optimized-wrapper .a2-optimized-navigation a {
-  font-size: 20px;
-  font-family: Raleway;
-  font-weight: 700;
-  /*
-  &.current {
-      font-size: 24px;
-  }
-  */
-}
 #a2-optimized-wrapper ul.bullet-points {
   list-style-type: disc;
 }
-#a2-optimized-wrapper .navlink-wrapper {
+#a2-optimized-wrapper .navlink-button {
   text-align: center;
+  width: 100%;
   color: #1c1c1c;
   padding-top: 10px;
   padding-bottom: 10px;
@@ -106,39 +97,39 @@
   border-style: solid;
   border-radius: 10px;
   border-spacing: 5px;
+  background-color: transparent;
+  cursor: pointer;
+  text-decoration: none;
+  font-size: 20px;
+  font-family: Raleway;
+  font-weight: 700;
 }
-#a2-optimized-wrapper .navlink-wrapper:hover {
+#a2-optimized-wrapper .navlink-button:hover {
   border-color: #e0e0e0;
   background-color: #e0e0e0;
 }
-#a2-optimized-wrapper .navlink-wrapper a.navlink {
-  cursor: pointer;
-  text-decoration: none;
-  color: #1c1c1c;
-  padding: 10px;
-}
-#a2-optimized-wrapper .navlink-wrapper.current {
+#a2-optimized-wrapper .navlink-button.current {
   background-color: #128413;
   border-color: #128413;
-}
-#a2-optimized-wrapper .navlink-wrapper.current a.navlink {
   color: white;
 }
-#a2-optimized-wrapper .side-nav .navlink-wrapper {
+#a2-optimized-wrapper .side-nav .navlink-button {
   font-size: 16px;
   padding-top: 20px;
   padding-bottom: 20px;
   padding-left: 0px;
   padding-right: 0px;
 }
-#a2-optimized-wrapper .side-nav .navlink-wrapper:hover {
+#a2-optimized-wrapper .side-nav .navlink-button:hover {
   background-color: transparent;
 }
-#a2-optimized-wrapper .side-nav .navlink-wrapper.current {
+#a2-optimized-wrapper .side-nav .navlink-button.current {
   background-color: transparent;
-}
-#a2-optimized-wrapper .side-nav .navlink-wrapper.current a.navlink {
   color: #1c1c1c;
+}
+#a2-optimized-wrapper .side-nav .navlink-wrapper {
+  padding-left: 0px;
+  padding-right: 0px;
 }
 #a2-optimized-wrapper .cta-btn-green {
   background-color: #128413;
@@ -939,8 +930,14 @@
     border: none;
     box-shadow: none;
   }
+  #a2-optimized-wrapper .navlink-button {
+    font-size: 14px;
+  }
   #a2-optimized-wrapper .side-nav {
     margin-bottom: 20px;
+  }
+  #a2-optimized-wrapper .side-nav .navlink-button {
+    font-size: 16px;
   }
   #a2-optimized-wrapper .border-left {
     border: none;
@@ -948,9 +945,6 @@
   #a2-optimized-wrapper #a2-optimized-optstatus,
 #a2-optimized-wrapper #a2-optimized-pagespeed {
     min-width: 600px;
-  }
-  #a2-optimized-wrapper .a2-optimized-navigation a {
-    font-size: 14px;
   }
 }
 @media (max-width: 1440px) {
