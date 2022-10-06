@@ -75,25 +75,15 @@ $thishost: #009aca;
     .a2-optimized-navigation {
         /*margin-bottom: 100px; trying out other values */
         margin-bottom: 20px;
-
-        a {
-            font-size: 20px;
-            font-family: Raleway;
-            font-weight: 700;
-            /*
-            &.current {
-                font-size: 24px;
-            }
-            */
-        }
-
     }
 
     ul.bullet-points {
         list-style-type: disc; 
     }
-    .navlink-wrapper {
+
+    .navlink-button {
         text-align: center;
+        width:100%;
         color: $dark;
         padding-top: 10px;
         padding-bottom: 10px;
@@ -103,32 +93,32 @@ $thishost: #009aca;
         border-style: solid;
         border-radius: 10px;
         border-spacing: 5px;
+        background-color: transparent;
+
+        cursor: pointer;
+        text-decoration: none;
+
+        font-size: 20px;
+        font-family: Raleway;
+        font-weight: 700;
 
         &:hover {
             border-color: $semilight;
             background-color: $semilight;
         }
 
-        a.navlink {
-            cursor: pointer;
-            text-decoration: none;
-            color: $dark;
-            padding: 10px;
-        }
 
         &.current {
             background-color: $green;
             border-color: $green;
 
-            a.navlink {
-                color: white;
-            }
+            color: white;
 
         }
     }
 
     .side-nav {
-        .navlink-wrapper {
+        .navlink-button {
             font-size: 16px;
             padding-top: 20px;
             padding-bottom: 20px;
@@ -141,12 +131,15 @@ $thishost: #009aca;
 
             &.current {
                 background-color: transparent;
-
-                a.navlink {
-                    color: $dark;
-                }
+                color: $dark;
             }
 
+        }
+
+
+        .navlink-wrapper {
+            padding-left: 0px;
+            padding-right: 0px;
         }
 
     }
@@ -1182,9 +1175,15 @@ $thishost: #009aca;
             border: none;
             box-shadow: none;
         }
+        .navlink-button {
+            font-size: 14px;
+        }
 
         .side-nav {
             margin-bottom: 20px;
+            .navlink-button {
+                font-size: 16px;
+            }
         }
 
         .border-left {
@@ -1196,10 +1195,6 @@ $thishost: #009aca;
             min-width: 600px;
         }
 
-        // fontsize for menu
-        .a2-optimized-navigation a {
-            font-size: 14px;
-        }
     }
 
     /* added for the hosting matchup graphs that can't quite wait for 'md' to kick in to still look ok */

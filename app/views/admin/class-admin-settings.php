@@ -34,7 +34,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'mainkey' => 1,
 				'updateView' => 0,
 				'notifications' => $args['notifications'],
-				'content-element' => '<page-speed-score :update-Child="updateView" :key="mainkey"></page-speed-score>',
+				'content-element' => '<page-speed-score @nav-change-url="loadPageByUrl" :update-Child="updateView" :key="mainkey"></page-speed-score>',
 				'home_url' => home_url(),
 				'nav' => [
 					'pls_class' => 'current',
@@ -80,7 +80,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
-				'content-element' => '<server-performance :update-Child="updateView" :key="mainkey"></server-performance>',
+				'content-element' => '<server-performance @nav-change-url="loadPageByUrl" :update-Child="updateView" :key="mainkey"></server-performance>',
 				'home_url' => home_url(),
 				'nav' => [
 					'wsp_class' => 'current',
@@ -109,7 +109,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
-				'content-element' => '<hosting-matchup :update-Child="updateView" :key="mainkey"></hosting-matchup>',
+				'content-element' => '<hosting-matchup @nav-change-url="loadPageByUrl" :update-Child="updateView" :key="mainkey"></hosting-matchup>',
 				'home_url' => home_url(),
 				'nav' => [
 					'wsp_class' => 'current',
@@ -143,7 +143,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
-				'content-element' => '<optimizations-performance :update-Child="updateView" :key="mainkey"></optimizations-performance>',
+				'content-element' => '<optimizations-performance @nav-change-url="loadPageByUrl" :update-Child="updateView" :key="mainkey"></optimizations-performance>',
 				'home_url' => home_url(),
 				'nav' => [
 					'opt_class' => 'current',
@@ -165,61 +165,6 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data['data_json'] = $data_json;
 			$args['data'] = $data;
 			
-			echo $this->render_template(
-				'admin/page-settings/page-settings.php',
-				$args
-			); // WPCS: XSS OK.
-		}
-
-		public function admin_settings_page($args = []) {
-			$data = [
-				'content-element' => '<page-speed-score></page-speed-score>',
-				'home_url' => home_url(),
-				'nav' => [
-					'pls_class' => 'current'
-				],
-				'explanations' => [
-					'pagespeed' => 'super detailed information about pagespeed',
-					'opt' => 'super detailed information about opt',
-				],
-				'graphs' => [
-					'pagespeed_mobile' => [
-						'score' => 56,
-						'max' => 100,
-						'text' => '56',
-						'color_class' => 'danger',
-						'change' => '<p><span class="danger"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> 20%</span> Since Last Check</p>',
-					],
-					'pagespeed_desktop' => [
-						'score' => 93,
-						'max' => 100,
-						'text' => '93',
-						'color_class' => 'success',
-						'change' => '<p>&nbsp;</p>',
-					],
-					'opt_perf' => [
-						'score' => 38,
-						'max' => 100,
-						'text' => '3/8',
-						'color_class' => 'success',
-					],
-					'opt_security' => [
-						'score' => 20,
-						'max' => 100,
-						'text' => '1/5',
-						'color_class' => 'danger',
-					],
-					'opt_bp' => [
-						'score' => 0,
-						'max' => 100,
-						'text' => '0/7',
-						'color_class' => 'danger',
-					],
-				],
-			];
-			$data_json = json_encode($data);
-			$data['data_json'] = $data_json;
-			$args['data'] = $data;
 			echo $this->render_template(
 				'admin/page-settings/page-settings.php',
 				$args

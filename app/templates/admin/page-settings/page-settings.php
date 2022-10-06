@@ -101,11 +101,13 @@
 	<div class="col-sm-12">
 		<div class="row">
 			<div class="col-md-12 col-lg-2 side-nav">
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.webperf_class">
-					<a href="admin.php?page=a2-optimized&a2_page=server_performance" class="navlink">Web Performance</a>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=server_performance')" 
+					class="navlink-button"  :class="nav.webperf_class">Web Performance</button>
 				</div>
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.hmatch_class">
-					<a href="admin.php?page=a2-optimized&a2_page=hosting_matchup" class="navlink">Hosting Matchup</a>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
+					class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
 				</div>
 			</div>
 			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-hostingmatchup">
@@ -274,14 +276,17 @@
 	<div class="col-sm-12">
 		<div class="row">
 			<div class="col-md-12 col-lg-2 side-nav">
-				<div id='optperf-wrapper' class="col-md-3 col-lg-12 navlink-wrapper" :class="[sidenav == 'optperf' ? 'current' : '']">
-					<a  v-on:click.prevent="updateNavLinks('optperf')" class="navlink">Performance</a>
+				<div id='optperf-wrapper' class="col-md-3 col-lg-12 navlink-wrapper">
+					<button type="button" v-on:click.prevent="updateNavLinks('optperf')" 
+					class="navlink-button" :class="[sidenav == 'optperf' ? 'current' : '']">Performance</button>
 				</div>
-				<div id='optsec-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="[sidenav == 'optsec' ? 'current' : '']">
-					<a v-on:click.prevent="updateNavLinks('optsec')" class="navlink">Security</a>
+				<div id='optsec-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" v-on:click.prevent="updateNavLinks('optsec')" 
+					class="navlink-button" :class="[sidenav == 'optsec' ? 'current' : '']">Security</button>
 				</div>
-				<div  id='optbestp-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="[sidenav == 'optbestp' ? 'current' : '']">
-					<a v-on:click.prevent="updateNavLinks('optbestp')" class="navlink">Best Practices</a>
+				<div  id='optbestp-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" v-on:click.prevent="updateNavLinks('optbestp')" 
+					class="navlink-button" :class="[sidenav == 'optbestp' ? 'current' : '']">Performance</button>
 				</div>
 				<!--
 				<div class="col-md-4 col-lg-12 navlink-wrapper" :class="nav.optresult_class">
@@ -558,11 +563,13 @@
 	<div class="col-sm-12">
 		<div class="row">
 			<div class="col-md-12 col-lg-2 side-nav">
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.webperf_class">
-					<a href="admin.php?page=a2-optimized&a2_page=server_performance" class="navlink">Web Performance</a>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=server_performance')" 
+					class="navlink-button"  :class="nav.webperf_class">Web Performance</button>
 				</div>
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper" :class="nav.hmatch_class">
-					<a href="admin.php?page=a2-optimized&a2_page=hosting_matchup" class="navlink">Hosting Matchup</a>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
+					class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
 				</div>
 			</div>
 			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-serverperformance">
@@ -939,14 +946,17 @@
 		<div class="row" id="a2-optimized-nav">
 			<div class="col-md-12 col-lg-11 col-lg-offset-1">
 				<div class="row a2-optimized-navigation" id="a2-optimized-navigation">
-					<div class="col-md-4 col-lg-3 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'pls_class') ?>">
-						<a href="admin.php?page=a2-optimized&a2_page=page_speed_score" class="navlink">Page Load Speed Score</a>
+					<div class="col-md-4 col-lg-3">
+						<button type="button" class="navlink-button <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'pls_class') ?>" 
+						@click="loadPageByUrl('admin.php?page=a2-optimized&a2_page=page_speed_score')">Page Load Speed Score</button>
 					</div>
-					<div class="col-md-4 col-lg-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>">
-						<a href="#" class="navlink" v-on:click.prevent="loadBenchmarkPage">Website &amp; Server Performance</a>
+					<div class="col-md-4 col-lg-3 col-lg-offset-1">
+						<button type="button" href="#" class="navlink-button <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>" 
+						v-on:click.prevent="loadBenchmarkPage">Website &amp; Server Performance</button>
 					</div>
-					<div class="col-md-4 col-lg-3 col-lg-offset-1 text-center navlink-wrapper <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'opt_class') ?>">
-						<a href="admin.php?page=a2-optimized&a2_page=optimizations" class="navlink">Optimization</a>
+					<div class="col-md-4 col-lg-3 col-lg-offset-1">
+						<button type="button" class="navlink-button <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'opt_class') ?>" 
+						@click="loadPageByUrl('admin.php?page=a2-optimized&a2_page=optimizations')">Optimization</button>
 					</div>
 				</div>
 			</div>
