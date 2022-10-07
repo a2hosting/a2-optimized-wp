@@ -7,7 +7,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Model' ) ) {
 	/**
 	 * Abstract class to define/implement base methods for model classes
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/models
 	 */
@@ -16,7 +16,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Model' ) ) {
 		/**
 		 * Provides access to a single instance of a module using the singleton pattern
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 * @return object
 		 */
 		public static function get_instance() {

@@ -13,7 +13,7 @@ if ( ! trait_exists( 'Base_Registry' ) ) {
 	 * If you have not heard about the term Registry before, think of hashmaps.
 	 * So creating registry means creating hashmaps to store objects.
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/Core/Registry
 	 * @author     Your Name <email@example.com>
@@ -33,7 +33,7 @@ if ( ! trait_exists( 'Base_Registry' ) ) {
 		 * @param string $key Key to be used to map with Object.
 		 * @param mixed  $value Object to Store.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function set( $key, $value ) {
 			if ( ! is_string( $key ) ) {
@@ -47,7 +47,7 @@ if ( ! trait_exists( 'Base_Registry' ) ) {
 		 *
 		 * @param string $key Key of the object to restore.
 		 * @return mixed
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function get( $key ) {
 			if ( ! is_string( $key ) ) {
@@ -65,7 +65,7 @@ if ( ! trait_exists( 'Base_Registry' ) ) {
 		 * Returns all objects
 		 *
 		 * @return array
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function get_all_objects() {
 			return static::$stored_objects;

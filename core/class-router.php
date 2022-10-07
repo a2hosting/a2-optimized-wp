@@ -8,7 +8,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 	/**
 	 * Class Responsible for registering Routes
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/controllers
 	 */
@@ -18,7 +18,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 * Holds List of Models used for 'Model Only' Routes
 		 *
 		 * @var array
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private static $models = [];
 
@@ -26,21 +26,21 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 * Holds Model, View & Controllers triad for All routes except 'Model Only' Routes
 		 *
 		 * @var array
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		private static $mvc_components = [];
 
 		/**
 		 * This constant is used to register late frontend routes
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		const REGISTER_LATE_FRONTEND_ROUTES = true;
 
 		/**
 		 * Constructor
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function __construct() {
 			$this->register_hook_callbacks();
@@ -49,7 +49,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		/**
 		 * Register callbacks for actions and filters
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		protected function register_hook_callbacks() {
 			add_action( 'init', array( $this, 'register_generic_model_only_routes' ) );
@@ -63,7 +63,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 * Register Generic `Model Only` Routes
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function register_generic_model_only_routes() {
 			$this->register_model_only_routes();
@@ -73,7 +73,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 * Register Late Frontend `Model Only` Routes
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function register_late_frontend_model_only_routes() {
 			$this->register_model_only_routes( self::REGISTER_LATE_FRONTEND_ROUTES );
@@ -83,7 +83,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 * Register Generic Routes
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function register_generic_routes() {
 			$this->register_routes();
@@ -93,7 +93,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 * Register Late Frontend Routes
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function register_late_frontend_routes() {
 			$this->register_routes( self::REGISTER_LATE_FRONTEND_ROUTES );
@@ -102,7 +102,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		/**
 		 * Returns List of commonly/mostly used Route types
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 * @return array
 		 */
 		public function generic_route_types() {
@@ -122,7 +122,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		/**
 		 * Returns list of Route types belonging to Frontend but registered late
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 * @return array
 		 */
 		public function late_frontend_route_types() {
@@ -140,7 +140,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 *
 		 * @param string $type Type of route to be registered.
 		 * @return Router Returns `Router` object.
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function register_route_of_type( $type ) {
 			if ( in_array( $type, $this->late_frontend_route_types() ) && did_action( 'wp' ) ) {
@@ -160,7 +160,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 *
 		 * @param mixed $model Model to be associated with the Route. Could be String or callback.
 		 * @return mixed
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function with_just_model( $model ) {
 			if ( false === $model ) {
@@ -178,7 +178,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 *
 		 * @param mixed $controller Controller to be associated with the Route. Could be String or callback.
 		 * @return string
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function build_controller_unique_id( $controller ) {
 			$prefix = mt_rand() . '_';
@@ -210,7 +210,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 *
 		 * @param mixed $controller Controller to be associated with the Route. Could be String or callback.
 		 * @return object Returns Router Object
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function with_controller( $controller ) {
 			if ( false === $controller ) {
@@ -231,7 +231,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 *
 		 * @param mixed $model Model to be associated with the Route. Could be String or callback.
 		 * @return object Returns Router Object
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function with_model( $model ) {
 			if ( isset( static::$mvc_components[ $this->route_type_to_register ][ $this->current_controller ]['controller'] ) ) {
@@ -245,7 +245,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 *
 		 * @param mixed $view View to be associated with the Route. Could be String or callback.
 		 * @return object Returns Router Object
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function with_view( $view ) {
 			if ( isset( static::$mvc_components[ $this->route_type_to_register ][ $this->current_controller ]['controller'] ) ) {
@@ -259,7 +259,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 *
 		 * @param boolean $register_late_frontend_routes Whether to register late frontend routes.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function register_routes( $register_late_frontend_routes = false ) {
 			if ( $register_late_frontend_routes ) {
@@ -287,7 +287,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 * @param array  $mvc_component Model-View-Controller triads for all registered routes.
 		 * @param string $route_type Route Type.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function dispatch( $mvc_component, $route_type ) {
 			$model = false;
@@ -337,7 +337,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 *
 		 * @param boolean $register_late_frontend_routes Whether to register late frontend routes.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function register_model_only_routes( $register_late_frontend_routes = false ) {
 			if ( $register_late_frontend_routes && empty( $route_types = $this->late_frontend_route_types() ) ) { // @codingStandardsIgnoreLine.
@@ -361,7 +361,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 * @param mixed  $model Model to be associated with the Route. Could be String or callback.
 		 * @param string $route_type Route Type.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function dispatch_only_model( $model, $route_type ) {
 			if ( false === $model ) {
@@ -392,7 +392,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 * @param string $mvc_component_type Could be between 'model', 'view' or 'controller'.
 		 * @param string $route_type Could be 'admin' or 'frontend'.
 		 * @return string Retuns Full Qualified Class Name.
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function get_fully_qualified_class_name( $class, $mvc_component_type, $route_type ) {
 
@@ -415,7 +415,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Router' ) ) {
 		 *
 		 * @param string $route_type Route Type to identify.
 		 * @return boolean
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function is_request( $route_type ) {
 			switch ( $route_type ) {

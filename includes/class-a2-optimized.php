@@ -13,7 +13,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 	/**
 	 * The main plugin class
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/includes
 	 */
@@ -22,7 +22,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		/**
 		 * Holds instance of this class
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 * @access   private
 		 * @var      A2_Optimized    $instance    Instance of this class.
 		 */
@@ -31,7 +31,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		/**
 		 * Main plugin path /wp-content/plugins/<plugin-folder>/.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 * @access   private
 		 * @var      string    $plugin_path    Main path.
 		 */
@@ -40,7 +40,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		/**
 		 * Absolute plugin url <wordpress-root-folder>/wp-content/plugins/<plugin-folder>/.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 * @access   private
 		 * @var      string    $plugin_url    Main path.
 		 */
@@ -50,14 +50,14 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		/**
 		 * The unique identifier of this plugin.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		const PLUGIN_ID         = 'a2-optimized';
 
 		/**
 		 * The name identifier of this plugin.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		const PLUGIN_NAME       = 'A2 Optimized';
 
@@ -65,9 +65,9 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		/**
 		 * The current version of the plugin.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
-		const PLUGIN_VERSION    = '1.0.0';
+		const PLUGIN_VERSION    = '3.0.0';
 
 		/**
 		 * Define the core functionality of the plugin.
@@ -76,7 +76,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		 *
 		 * @param mixed $router_class_name Name of the Router class to load. Otherwise false.
 		 * @param mixed $routes File that contains list of all routes. Otherwise false.
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function __construct( $router_class_name = false, $routes = false ) {
 			self::$plugin_path = plugin_dir_path( dirname( __FILE__ ) );
@@ -96,7 +96,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		/**
 		 * Get plugin's absolute path.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public static function get_plugin_path() {
 			return isset( self::$plugin_path ) ? self::$plugin_path : plugin_dir_path( dirname( __FILE__ ) );
@@ -105,7 +105,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		/**
 		 * Get plugin's absolute url.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public static function get_plugin_url() {
 			return isset( self::$plugin_url ) ? self::$plugin_url : plugin_dir_url( dirname( __FILE__ ) );
@@ -117,7 +117,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		 * Uses the i18n class in order to set the domain and to register the hook
 		 * with WordPress.
 		 *
-		 * @since    1.0.0.0
+		 * @since    3.0.0
 		 */
 		private function set_locale() {
 			$plugin_i18n = new i18n();
@@ -132,7 +132,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		 * @param mixed $router_class_name Name of the Router class to load.
 		 * @param mixed $routes File that contains list of all routes.
 		 * @throws \InvalidArgumentException If Router class or Routes file is not found.
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 * @return void
 		 */
 		private function init_router( $router_class_name, $routes ) {
@@ -155,7 +155,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		/**
 		 * Returns all controller objects used for current requests
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 * @return object
 		 */
 		private function get_all_controllers() {
@@ -165,7 +165,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		/**
 		 * Returns all model objecs used for current requests
 		 *
-		 * @since   1.0.0
+		 * @since   3.0.0
 		 * @return object
 		 */
 		private function get_all_models() {
@@ -178,7 +178,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		 * Only to be used by third party developers.
 		 *
 		 * @return array
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function get_settings() {
 			return Settings::get_settings();
@@ -191,7 +191,7 @@ if ( ! class_exists( 'A2_Optimized' ) ) {
 		 *
 		 * @param string $setting_name Setting to be retrieved.
 		 * @return mixed
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function get_setting( $setting_name ) {
 			return Settings::get_setting( $setting_name );

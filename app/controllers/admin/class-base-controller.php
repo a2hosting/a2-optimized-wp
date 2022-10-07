@@ -8,7 +8,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Base_Controller' ) ) {
 	/**
 	 * Blueprint for Admin related Controllers. All Admin Controllers should extend this Base_Controller
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/controllers/admin
 	 */
@@ -27,7 +27,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Base_Controller' ) ) {
 		 * The purpose of this method is to set the convention that first place to
 		 * find add_action/add_filter is register_hook_callbacks method.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		abstract protected function register_hook_callbacks();
 	}

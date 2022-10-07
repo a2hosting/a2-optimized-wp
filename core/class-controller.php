@@ -7,7 +7,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Controller' ) ) {
 	/**
 	 * Abstract class to define/implement base methods for all controller classes
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/controllers
 	 */
@@ -17,7 +17,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Controller' ) ) {
 		 * Holds Model object
 		 *
 		 * @var Object
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		protected $model;
 
@@ -25,7 +25,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Controller' ) ) {
 		 * Holds View Object
 		 *
 		 * @var Object
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		protected $view;
 
@@ -35,7 +35,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Controller' ) ) {
 		 * @param mixed $model_class_name Model Class to be associated with the controller.
 		 * @param mixed $view_class_name View Class to be associated with the controller.
 		 * @return object
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public static function get_instance( $model_class_name = false, $view_class_name = false ) {
 			$classname = get_called_class();
@@ -76,7 +76,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Controller' ) ) {
 		 * current controller class name in the routes.php
 		 *
 		 * @return object
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		protected function get_model() {
 			return $this->model;
@@ -90,7 +90,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Controller' ) ) {
 		 * current controller class name in the routes.php
 		 *
 		 * @return object
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		protected function get_view() {
 			return $this->view;
@@ -101,7 +101,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Controller' ) ) {
 		 *
 		 * @param Model $model Model object to be associated with the current controller object.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		protected function set_model( Model $model ) {
 			$this->model = $model;
@@ -112,7 +112,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Controller' ) ) {
 		 *
 		 * @param View $view View object to be associated with the current controller object.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		protected function set_view( View $view ) {
 			$this->view = $view;

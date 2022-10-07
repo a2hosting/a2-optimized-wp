@@ -10,7 +10,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 	/**
 	 * Model class that implements Plugin Admin Settings
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/models/admin
 	 */
@@ -23,7 +23,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		/**
 		 * Constructor
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		protected function __construct() {
 			$this->register_hook_callbacks();
@@ -34,7 +34,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		/**
 		 * Register callbacks for actions and filters
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		protected function register_hook_callbacks() {
 			/**
@@ -559,7 +559,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		/**
 		 * Register settings
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function register_settings() {
 			// The settings container.
@@ -574,7 +574,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		 * Validates submitted setting values before they get saved to the database.
 		 *
 		 * @param array $input Settings Being Saved.
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 * @return array
 		 */
 		public function sanitize($input) {
@@ -589,7 +589,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		/**
 		 * Returns the option key used to store the settings in database
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 * @return string
 		 */
 		public function get_plugin_settings_option_key() {
@@ -600,7 +600,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		 * Retrieves all of the settings from the database
 		 *
 		 * @param string $setting_name Setting to be retrieved.
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 * @return array
 		 */
 		public function get_setting($setting_name) {

@@ -3,7 +3,7 @@
  * Main Plugin File
  *
  * @link              http://example.com
- * @since             1.0.0
+ * @since             3.0.0
  * @package           A2_Optimized
  *
  * @wordpress-plugin
@@ -35,7 +35,7 @@ define( 'A2OPT_DIR', __DIR__ );
  * Creates/Maintains the object of Requirements Checker Class
  *
  * @return \A2_Optimized\Includes\Requirements_Checker
- * @since 1.0.0
+ * @since 3.0.0
  */
 function plugin_requirements_checker() {
 	static $requirements_checker = null;
@@ -52,7 +52,7 @@ function plugin_requirements_checker() {
 /**
  * Begins execution of the plugin.
  *
- * @since    1.0.0
+ * @since    3.0.0
  */
 function run_a2_optimized() {
 	// If Plugins Requirements are not met.
@@ -79,7 +79,7 @@ function run_a2_optimized() {
 	 * then kicking off the plugin from this point in the file does
 	 * not affect the page life cycle.
 	 *
-	 * @since    1.0.0
+	 * @since    3.0.0
 	 */
 	$router_class_name = apply_filters( 'a2_optimized_router_class_name', '\A2_Optimized\Core\Router' );
 	$routes = apply_filters( 'a2_optimized_routes_file', plugin_dir_path( __FILE__ ) . 'routes.php' );

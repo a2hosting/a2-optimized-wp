@@ -9,7 +9,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 	/**
 	 * View class to load all templates related to Plugin's Admin Settings Page
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/views/admin
 	 */
@@ -19,7 +19,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 *
 		 * @param  array $args Arguments passed by `markup_settings_page` method from `A2_Optimized\App\Controllers\Admin\Admin_Settings` controller.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function admin_pagespeed_page($args = []) {
 			$last_check = 'None';
@@ -176,7 +176,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 *
 		 * @param  array $args Arguments passed by `markup_section_headers` method from  `A2_Optimized\App\Controllers\Admin\Admin_Settings` controller.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function section_headers($args = []) {
 			echo $this->render_template(
@@ -190,7 +190,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 *
 		 * @param  array $args Arguments passed by `markup_fields` method from `A2_Optimized\App\Controllers\Admin\Admin_Settings` controller.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function markup_fields($args = []) {
 			echo $this->render_template(

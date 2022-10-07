@@ -7,7 +7,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Base_Model' ) ) {
 	/**
 	 * Blueprint for Admin related Models. All Admin Models should extend this Base_Model
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/Models/Admin
 	 */
@@ -35,7 +35,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Base_Model' ) ) {
 		 * class when it is a 'Model only' route. This is not a rule, it
 		 * is just my opinion when I would define this method.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		protected function register_hook_callbacks(){}
 

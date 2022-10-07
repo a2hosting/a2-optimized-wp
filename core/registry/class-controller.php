@@ -7,7 +7,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Controller' ) ) {
 	 *
 	 * Maintains the list of all controllers objects
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/Core/Registry
 	 * @author     Your Name <email@example.com>

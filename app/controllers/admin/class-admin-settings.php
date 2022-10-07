@@ -9,7 +9,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 	/**
 	 * Controller class that implements Plugin Admin Settings configurations
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/controllers/admin
 	 */
@@ -18,28 +18,28 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 * Holds suffix for dynamic add_action called on settings page.
 		 *
 		 * @var string
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private static $hook_suffix = 'toplevel_page_' . A2_Optimized::PLUGIN_ID;
 
 		/**
 		 * Slug of the Settings Page
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public const SETTINGS_PAGE_SLUG = A2_Optimized::PLUGIN_ID;
 
 		/**
 		 * Capability required to access settings page
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public const REQUIRED_CAPABILITY = 'manage_options';
 
 		/**
 		 * Register callbacks for actions and filters
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function register_hook_callbacks() {
 			// Create Menu.
@@ -65,7 +65,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		/**
 		 * Create menu for Plugin inside Settings menu
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function plugin_menu() {
 			// @codingStandardsIgnoreStart.
@@ -89,7 +89,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		/**
 		 * Register the JavaScript for the admin area.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function enqueue_scripts() {
 			/**
@@ -151,7 +151,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		/**
 		 * Register the JavaScript for the admin area.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function enqueue_styles() {
 			/**
@@ -198,7 +198,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		/**
 		 * Creates the markup for the Settings page
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function markup_settings_page() {
 			if (current_user_can(static::REQUIRED_CAPABILITY)) {
@@ -273,7 +273,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		/**
 		 * Registers settings sections and fields
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function register_fields() {
 			// Add Settings Page Section.
@@ -304,7 +304,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 * @param array $section Array containing information Section Id, Section
 		 *                       Title & Section Callback.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function markup_section_headers($section) {
 			$this->view->section_headers(
@@ -321,7 +321,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 * @param array $field_args Field arguments passed in `add_settings_field`
 		 *                          function.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function markup_fields($field_args) {
 			$field_id = $field_args['id'];
@@ -341,7 +341,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 * @param array $links The links currently mapped to the plugin.
 		 * @return array
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function add_plugin_action_links($links) {
 			$settings_link = '<a href="options-general.php?page=' . static::SETTINGS_PAGE_SLUG . '">' . __('Settings', A2_Optimized::PLUGIN_ID) . '</a>';

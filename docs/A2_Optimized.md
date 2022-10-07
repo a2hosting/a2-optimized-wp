@@ -34,7 +34,7 @@ Constants
 
 ### PLUGIN_VERSION
 
-    const PLUGIN_VERSION = '1.0.0'
+    const PLUGIN_VERSION = '3.0.0'
 
 
 

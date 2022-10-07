@@ -5,7 +5,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 	/**
 	 * Class Responsible for registering Route Types supported by the Application
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/Route_Types
 	 */
@@ -17,7 +17,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 		 *
 		 * This route type is registered on `init` hook.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		const ANY = 'any';
 
@@ -27,7 +27,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 		 *
 		 * This route type is registered on `init` hook.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		const ADMIN = 'admin';
 
@@ -37,7 +37,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 		 *
 		 * This route type is registered on `init` hook.
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		const ADMIN_WITH_POSSIBLE_AJAX = 'admin_with_possible_ajax';
 
@@ -47,7 +47,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 		 *
 		 * This route type is registered on `init` hook.
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		const AJAX = 'ajax';
 
@@ -57,7 +57,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 		 *
 		 * This route type is registered on `init` hook.
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		const CRON = 'cron';
 
@@ -67,7 +67,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 		 *
 		 * This route type is registered on `init` hook.
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		const FRONTEND = 'frontend';
 
@@ -77,7 +77,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 		 *
 		 * This route type is registered on `init` hook.
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		const FRONTEND_WITH_POSSIBLE_AJAX = 'frontend_with_possible_ajax';
 
@@ -111,7 +111,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 		 *      ->with_view( 'Sample_Shortcode' );
 		 * </code>
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		const LATE_FRONTEND = 'late_frontend';
 
@@ -146,7 +146,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Route_Type' ) ) {
 		 *      ->with_view( 'Sample_View' );
 		 * </code>
 		 *
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		const LATE_FRONTEND_WITH_POSSIBLE_AJAX = 'late_frontend_with_possible_ajax';
 

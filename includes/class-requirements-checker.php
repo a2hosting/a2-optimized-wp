@@ -5,7 +5,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 	/**
 	 * Checks whether plugin's requirements are being met or not
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/Includes
 	 */
@@ -15,7 +15,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Holds minimum php version for plugin if not defined in `requirements.php`.
 		 *
 		 * @var string
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private $min_php_version = A2OPT_MIN_PHP;
 
@@ -23,7 +23,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Holds minimum wp version for plugin if not defined in `requirements.php`.
 		 *
 		 * @var string
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private $min_wp_version = A2OPT_MIN_WP;
 
@@ -31,7 +31,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Holds the information whether plugin is compatible with Multisite or not.
 		 *
 		 * @var boolean
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private $is_multisite_compatible = false;
 
@@ -39,7 +39,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Holds list of required plugins to be installed and active for our plugin to work
 		 *
 		 * @var array
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private $required_plugins = [];
 
@@ -47,7 +47,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Holds Error messages if dependencies are not met
 		 *
 		 * @var array
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private $errors = [];
 
@@ -55,7 +55,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Constructor
 		 *
 		 * @param array $requirements_data Requirements Data mentioned in `requirements.php`.
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function __construct( $requirements_data ) {
 			if ( isset( $requirements_data['min_php_version'] ) ) {
@@ -79,7 +79,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Checks if Installed PHP Version is higher than required PHP Version
 		 *
 		 * @return boolean
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function is_php_version_dependency_met() {
 			$is_required_php_version_installed = version_compare( PHP_VERSION, $this->min_php_version, '>=' );
@@ -100,7 +100,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Checks if Installed WP Version is higher than required WP Version
 		 *
 		 * @return boolean
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function is_wp_version_dependency_met() {
 			global $wp_version;
@@ -122,7 +122,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Checks if Multisite Dependencies are met
 		 *
 		 * @return boolean
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function is_wp_multisite_dependency_met() {
 			$is_wp_multisite_dependency_met = is_multisite() && ( false === $this->is_multisite_compatible ) ? false : true;
@@ -143,7 +143,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * @param string $a2_optimized Name of the plugin.
 		 * @param string $plugin_slug Slug of the plugin.
 		 * @return boolean
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function is_plugin_active( $a2_optimized, $plugin_slug ) {
 			require_once( ABSPATH . 'wp-admin/includes/plugin.php' );
@@ -165,7 +165,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 *
 		 * @param string $plugin_slug Plugin Slug of whose version needs to be retrieved.
 		 * @return string Plugin Version
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function get_plugin_version( $plugin_slug ) {
 			$plugin_file_path = WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $plugin_slug;
@@ -190,7 +190,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * @param string $plugin_slug Plugin Slug.
 		 * @param string $min_plugin_version Minimum version required of the plugin.
 		 * @return boolean
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function is_required_plugin_version_active( $a2_optimized, $plugin_slug, $min_plugin_version ) {
 			$installed_plugin_version = $this->get_plugin_version( $plugin_slug );
@@ -212,7 +212,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Checks whether all required plugins are installed & active with proper versions.
 		 *
 		 * @return boolean
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function are_required_plugins_dependency_met() {
 			$plugin_dependency_met = true;
@@ -257,7 +257,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * @param string $error_message Error Message.
 		 * @param string $supportive_information Supportive Information to be displayed along with Error Message in brackets.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		private function add_error_notice( $error_message, $supportive_information ) {
 			$this->errors[] = (object) [
@@ -270,7 +270,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		 * Checks if all plugins requirements are met or not
 		 *
 		 * @return boolean
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public function requirements_met() {
 			$requirements_met = true;
@@ -297,7 +297,7 @@ if ( ! class_exists( 'Requirements_Checker' ) ) {
 		/**
 		 * Prints an error that the system requirements weren't met.
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function show_requirements_errors() {
 			$errors = $this->errors;

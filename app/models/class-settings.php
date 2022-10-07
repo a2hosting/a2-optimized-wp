@@ -8,7 +8,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 	/**
 	 * Implements operations related to Plugin Settings.
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/Models
 	 */
@@ -20,7 +20,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 		 * Holds all Settings
 		 *
 		 * @var array
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		protected static $settings;
 
@@ -28,7 +28,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 		 * Returns the Option name/key saved in the database
 		 *
 		 * @return string
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function get_plugin_settings_option_key() {
 			return Settings::SETTINGS_NAME;
@@ -38,7 +38,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 		 * Helper method that retuns all Saved Settings related to Plugin
 		 *
 		 * @return array
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function get_settings() {
 			if ( ! isset( static::$settings ) ) {
@@ -53,7 +53,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 		 *
 		 * @param string $setting_name Setting to be retrieved.
 		 * @return mixed
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function get_setting( $setting_name ) {
 			$all_settings = static::get_settings();
@@ -65,7 +65,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 		 * Helper method to delete all settings related to plugin
 		 *
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function delete_settings() {
 			static::$settings = [];
@@ -77,7 +77,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 		 *
 		 * @param string $setting_name Setting to be Deleted.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function delete_setting( $setting_name ) {
 			$all_settings = static::get_settings();
@@ -94,7 +94,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 		 *
 		 * @param array $new_settings New Setting Values to store.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function update_settings( $new_settings ) {
 			$all_settings = static::get_settings();
@@ -113,7 +113,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Settings' ) ) {
 		 * @param string $setting_name Setting to be Updated.
 		 * @param mixed  $setting_value New value to set for that setting.
 		 * @return void
-		 * @since 1.0.0
+		 * @since 3.0.0
 		 */
 		public static function update_setting( $setting_name, $setting_value ) {
 			static::update_setting( [ $setting_name => $setting_value ] );

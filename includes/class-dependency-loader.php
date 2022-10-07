@@ -8,7 +8,7 @@ if ( ! class_exists( 'Dependency_Loader' ) ) {
 	/**
 	 * Includes all methods required for loading Plugin Dependencies
 	 *
-	 * @since      1.0.0
+	 * @since      3.0.0
 	 * @package    A2_Optimized
 	 * @subpackage A2_Optimized/includes
 	 * @author     Your Name <email@example.com>
@@ -22,7 +22,7 @@ if ( ! class_exists( 'Dependency_Loader' ) ) {
 		 * `require_once` that path. It works with Class as well as with Traits.
 		 *
 		 * @param string $class Class need to be loaded.
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 */
 		public function load_dependencies( $class ) {
 			$parts = explode( '\\', $class );
@@ -62,7 +62,7 @@ if ( ! class_exists( 'Dependency_Loader' ) ) {
 		/**
 		 * Load All Registry Class Files
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 * @return void
 		 */
 		protected function load_registries() {
@@ -74,7 +74,7 @@ if ( ! class_exists( 'Dependency_Loader' ) ) {
 		/**
 		 * Load Core MVC Classes
 		 *
-		 * @since    1.0.0
+		 * @since    3.0.0
 		 * @return void
 		 */
 		protected function load_core() {
@@ -87,7 +87,7 @@ if ( ! class_exists( 'Dependency_Loader' ) ) {
 		/**
 		 * Method responsible to call all the dependencies
 		 *
-		 * @since 1.0.01
+		 * @since 3.0.01
 		 */
 		protected function autoload_dependencies() {
 			$this->load_core();

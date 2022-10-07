@@ -6,7 +6,7 @@ use A2_Optimized as A2_Optimized;
 /**
  * Class Responsible for Loading Templates
  *
- * @since      1.0.0
+ * @since      3.0.0
  * @package    A2_Optimized
  * @subpackage A2_Optimized/views
  * @author     Sumit P <sumit.pore@gmail.com>
