@@ -76,6 +76,9 @@
 #a2-optimized-wrapper #a2-optimized-header .search p.small {
   margin-top: 0;
 }
+#a2-optimized-wrapper #a2-optimized-header .title img {
+  padding-bottom: 50px;
+}
 #a2-optimized-wrapper .a2-optimized-navigation {
   /*margin-bottom: 100px; trying out other values */
   margin-bottom: 20px;
