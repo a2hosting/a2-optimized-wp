@@ -286,7 +286,7 @@
 				</div>
 				<div  id='optbestp-wrapper' class="col-md-3 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
 					<button type="button" v-on:click.prevent="updateNavLinks('optbestp')" 
-					class="navlink-button" :class="[sidenav == 'optbestp' ? 'current' : '']">Performance</button>
+					class="navlink-button" :class="[sidenav == 'optbestp' ? 'current' : '']">Best Practices</button>
 				</div>
 				<!--
 				<div class="col-md-4 col-lg-12 navlink-wrapper" :class="nav.optresult_class">
