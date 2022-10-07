@@ -195,7 +195,8 @@ function createBarGraph(canvasId, graph_metadata) {
 function createLineGraph(elemId, graphData, circleId) {
 	if (!graphData) { return; }
 	let lineDiv = document.getElementById(elemId);
-	let bodyRect = document.body.getBoundingClientRect();
+	if (!lineDiv) {return;}
+	//let bodyRect = document.body.getBoundingClientRect();
 	let rect = lineDiv.getBoundingClientRect();
 	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	svg.setAttribute("width", rect.width);
@@ -338,6 +339,22 @@ function playAnim(anim) {
 		}
 	}
 }
+
+Vue.component('speed-metric-card', {
+	props: {
+		metric_name: String,
+		metric: Object,
+		show_line: { type: String, default: 'true' },
+		show_wave: { type: String, default: 'true'  },
+		show_legend: { type: String, default: 'true'  },
+	},
+	template: "#speed-metric-card-template",
+	data() {
+		return {
+
+		}
+	},
+});
 
 Vue.component('flip-panel', {
 	props: {
