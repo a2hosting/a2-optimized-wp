@@ -60,7 +60,12 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'plugin_action_links_' . A2_Optimized::PLUGIN_ID . '/' . A2_Optimized::PLUGIN_ID . '.php',
 				[ $this, 'add_plugin_action_links' ]
 			);
+
+			add_filter('submenu_file', [ $this, 'highlight_active_submenu' ]);
+
+
 		}
+
 
 		/**
 		 * Create menu for Plugin inside Settings menu
@@ -83,7 +88,47 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				$icon_data_uri,
 				'3' // menu position
 			);
+
+			add_submenu_page(
+				'a2-optimized',
+				'Page Load Speed Score', // phpcs:ignore
+				'Page Load Speed Score', // phpcs:ignore
+				'manage_options',
+				'admin.php?page=a2-optimized'
+			);	
+			add_submenu_page(
+				'a2-optimized',
+				'Website and Server Performance', // phpcs:ignore
+				'Website and Server Performance', // phpcs:ignore
+				'manage_options',
+				'admin.php?page=a2-optimized&amp;a2_page=server_performance'
+			);	
+			add_submenu_page(
+				'a2-optimized',
+				'Optimization', // phpcs:ignore
+				'Optimization', // phpcs:ignore
+				'manage_options',
+				'admin.php?page=a2-optimized&amp;a2_page=optimizations'
+			);
+			remove_submenu_page('a2-optimized','a2-optimized'); //Removes duplicated top level item	
+
 			// @codingStandardsIgnoreEnd.
+		}
+		
+		/**
+		 * Highlights the current active submenu 
+		 *
+		 * @since    3.0.0
+		 */
+		function highlight_active_submenu($submenu_file){
+			if (isset($_GET['page']) && $_GET['page'] == 'a2-optimized') {
+				if(!isset($_GET['a2_page']) || $_GET['a2_page'] == 'page_speed_score'){
+					return 'admin.php?page=a2-optimized';
+				} else {
+					return 'admin.php?page=a2-optimized&amp;a2_page=' . $_GET['a2_page'];
+				}
+			}
+			return $submenu_file;
 		}
 
 		/**
