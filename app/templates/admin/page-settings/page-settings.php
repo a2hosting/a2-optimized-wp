@@ -96,6 +96,51 @@
 	</div>
 </script>
 
+<script type="text/x-template" id="speed-metric-card-template">
+<flip-panel :content_id="'graph-' + metric_name" 
+	:status_class="metric.color_class" 
+	:additional_classes="'normal graph-card ' + (show_wave == 'true' ? 'wave-bg ' : '')">
+	<template v-slot:content1>
+		<div class="row">
+			<div class="col-sm-10">
+				<h4>{{metric.display_text}}</h4>
+				<p class="sub-heading">{{metric.metric_text}}</p>
+			</div>
+		</div>
+		<div v-if="show_line == 'true'" class="row">
+			<div class="col-sm-10">
+				<div class="circle" :id="'circles-' + metric_name"></div>
+				<div class="line-graph" :id="'line-graph-' + metric_name"></div>
+			</div>
+		</div>
+		<div v-else class="row">
+			<div class="col-sm-6">
+				<div class="circle" :id="'circles-' + metric_name"></div>
+			</div>
+			<div class="col-sm-6">
+				<span class="glyphicon" :class="['glyphicon-arrow-' + metric.last_check_dir,metric.color_class]" style="font-size: 2em;"></span>
+				<br>
+				<span :class="metric.color_class">{{metric.last_check_percent}}</span>
+				<span>vs <br> last check</span>
+			</div>
+		</div>
+		<div v-if="show_legend == 'true'" class="row">
+			<graph-legend :metric='metric_name'></graph-legend>
+		</div>
+		<div v-if="show_wave == 'true'" class="row graph-card_bottom" style="min-height: 50px;">
+			&nbsp;
+		</div>
+	</template>
+	<template v-slot:content2>
+		<div class="row">
+			<div class="col-sm-10">
+				<h4>{{metric.display_text}}</h4>
+				<p>{{metric.explanation}}</p>
+			</div>
+		</div>
+	</template>
+</flip-panel>
+</script>
 
 <script type="text/x-template" id="hosting-matchup-template">
 	<div class="col-sm-12">
@@ -584,98 +629,9 @@
 				</div>
 				<div class="row">
 					<div class="col-sm-4"> <!-- using graphs.ttfb -->
-						<flip-panel content_id="graph-ttfb" 
-						:status_class="graphs.ttfb.color_class" 
-						additional_classes="normal graph-card wave-bg">
-							<template v-slot:content1>
-								<div class="row">
-									<div class="col-sm-8">
-										<h4>{{graphs.ttfb.display_text}}</h4>
-										<p class="sub-heading">{{graphs.ttfb.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-6">
-										<div class="circle" id="circles-ttfb"></div>
-									</div>
-									<div class="col-sm-6">
-										<span class="glyphicon" :class="['glyphicon-arrow-' + graphs.ttfb.last_check_dir, graphs.ttfb.color_class]" style="font-size: 2em;"></span>
-										<br>
-										<span :class="graphs.ttfb.color_class">{{graphs.ttfb.last_check_percent}}</span>
-										<span>vs <br> last check</span>
-									</div>
-								</div>
-								<div class="row graph-card_bottom" style="min-height: 50px;">
-									&nbsp;
-								</div>
-							</template>
-							<template v-slot:content2>
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.ttfb.display_text}}</h4>
-										<p>{{ graphs.ttfb.explanation}}</p>
-									</div>
-								</div>
-							</template>
-						</flip-panel>
-						<flip-panel content_id="graph-lcp" 
-						:status_class="graphs.lcp.color_class" 
-						additional_classes="normal graph-card">
-							<template v-slot:content1>
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.lcp.display_text}}</h4>
-										<p class="sub-heading">{{graphs.lcp.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-10">
-										<div class="circle" id="circles-lcp"></div>
-										<div class="line-graph" id="line-graph-lcp"></div>
-									</div>
-								</div>
-								<div class="row">
-									<graph-legend metric='lcp'></graph-legend>
-								</div>
-							</template>
-							<template v-slot:content2>
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.lcp.display_text}}</h4>
-										<p>{{ graphs.lcp.explanation}}</p>
-									</div>
-								</div>
-							</template>
-						</flip-panel>
-						<flip-panel content_id="graph-fid" 
-						:status_class="graphs.fid.color_class" 
-						additional_classes="normal graph-card">
-							<template v-slot:content1>
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.fid.display_text}}</h4>
-										<p class="sub-heading">{{graphs.fid.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-10">
-										<div class="circle" id="circles-fid"></div>
-										<div class="line-graph" id="line-graph-fid"></div>
-									</div>
-								</div>
-								<div class="row">
-									<graph-legend metric='fid'></graph-legend>
-								</div>
-							</template>
-							<template v-slot:content2>
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.fid.display_text}}</h4>
-										<p>{{ graphs.fid.explanation}}</p>
-									</div>
-								</div>
-							</template>
-						</flip-panel>
+						<speed-metric-card metric_name="ttfb" :metric="graphs.ttfb" show_line=false></speed-metric-card>
+						<speed-metric-card metric_name="lcp" :metric="graphs.lcp" show_wave=false></speed-metric-card>
+						<speed-metric-card metric_name="fid" :metric="graphs.fid" show_wave=false></speed-metric-card>
 					</div>
 					<div class="col-sm-4 bg-green">
 						<flip-panel content_id="graph-overall_score" 
@@ -743,72 +699,8 @@
 						</flip-panel>
 					</div>
 					<div class="col-sm-4">
-						<flip-panel content_id="graph-fcp" 
-							:status_class="graphs.fcp.color_class" 
-							additional_classes="normal graph-card">
-							<template v-slot:content1>
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.fcp.display_text}}</h4>
-										<p class="sub-heading">{{graphs.fcp.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-10">
-										<div class="circle" id="circles-fcp"></div>
-										<div class="line-graph" id="line-graph-fcp"></div>
-									</div>
-								</div>
-								<div class="row">
-									<graph-legend metric='fcp'></graph-legend>
-								</div>
-							</template>
-							<template v-slot:content2>
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.fcp.display_text}}</h4>
-										<p>{{ graphs.fcp.explanation}}</p>
-									</div>
-								</div>
-							</template>
-						</flip-panel>
-						<flip-panel content_id="graph-cls" 
-							:status_class="graphs.cls.color_class" 
-							additional_classes="normal graph-card wave-bg">
-							<template v-slot:content1>
-								<div class="row">
-									<div class="col-sm-10">
-										<h4>{{graphs.cls.display_text}}</h4>
-										<p class="sub-heading">{{graphs.cls.metric_text}}</p>
-									</div>
-								</div>
-								<div class="row">
-									<div class="col-sm-6">
-										<div class="circle" id="circles-cls"></div>
-									</div>
-									<div class="col-sm-6">
-										<span class="glyphicon" :class="['glyphicon-arrow-' + graphs.cls.last_check_dir,graphs.cls.color_class]" style="font-size: 2em;"></span>
-										<br>
-										<span :class="graphs.cls.color_class">{{graphs.cls.last_check_percent}}</span>
-										<span>vs <br> last check</span>
-									</div>
-								</div>
-								<div class="row">
-									<graph-legend metric='cls'></graph-legend>
-								</div>
-								<div class="row graph-card_bottom" style="min-height: 50px;">
-									&nbsp;
-								</div>
-							</template>
-							<template v-slot:content2>
-								<div class="row">
-									<div class="col-sm-12">
-										<h4>{{graphs.cls.display_text}}</h4>
-										<p>{{ graphs.cls.explanation}}</p>
-									</div>
-								</div>
-							</template>
-						</flip-panel>
+						<speed-metric-card metric_name="fcp" :metric="graphs.fcp" show_wave=false show_line=true></speed-metric-card>
+						<speed-metric-card metric_name="cls" :metric="graphs.cls" show_line=false></speed-metric-card>
 						<div class="text-center">
 							<a href="#" class="btn btn-lg cta-btn-green text-right">Improve Score</a>
 						</div>

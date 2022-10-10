@@ -207,20 +207,23 @@
 #a2-optimized-wrapper #a2-optimized-serverperformance .box-element .row {
   padding: 0 10px;
 }
-#a2-optimized-wrapper #a2-optimized-serverperformance .box-element.wave-bg.success {
+#a2-optimized-wrapper #a2-optimized-serverperformance .box-element h4 {
+  margin-bottom: 0;
+}
+#a2-optimized-wrapper #a2-optimized-serverperformance .flip-card-front .wave-bg.success {
   background: url("../../images/admin/wave-success.png") no-repeat bottom;
   background-size: 110%, 75%;
 }
-#a2-optimized-wrapper #a2-optimized-serverperformance .box-element.wave-bg.warn {
+#a2-optimized-wrapper #a2-optimized-serverperformance .flip-card-front .wave-bg.warn {
   background: url("../../images/admin/wave-warn.png") no-repeat bottom;
   background-size: 110%;
 }
-#a2-optimized-wrapper #a2-optimized-serverperformance .box-element.wave-bg.danger {
+#a2-optimized-wrapper #a2-optimized-serverperformance .flip-card-front .wave-bg.danger {
   background: url("../../images/admin/wave-danger.png") no-repeat bottom;
   background-size: 110%;
 }
-#a2-optimized-wrapper #a2-optimized-serverperformance .box-element h4 {
-  margin-bottom: 0;
+#a2-optimized-wrapper #a2-optimized-serverperformance .flip-card-back .wave-bg {
+  background: none;
 }
 #a2-optimized-wrapper .opt-extra-settings-items h4 {
   font-size: 22px;
