@@ -196,7 +196,6 @@ function createLineGraph(elemId, graphData, circleId) {
 	if (!graphData) { return; }
 	let lineDiv = document.getElementById(elemId);
 	if (!lineDiv) {return;}
-	//let bodyRect = document.body.getBoundingClientRect();
 	let rect = lineDiv.getBoundingClientRect();
 	var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
 	svg.setAttribute("width", rect.width);
