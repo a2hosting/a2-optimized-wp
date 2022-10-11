@@ -154,7 +154,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			];
 			if ($backend_benchmarks){
 				$bm = array_pop($backend_benchmarks);
-				$result['last_check_date'] = $bm['sysinfo']['time'];
+				$result['last_check_date'] = human_time_diff(strtotime($bm['sysinfo']['time'])) . " ago";
 				$hostentry = [
 					'php' => $bm['php']['total'],
 					'mysql' => $bm['mysql']['benchmark']['mysql_total'],
@@ -495,7 +495,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$decimalplaces = self::BENCHMARK_SCORE_PROFILES[$metric]['decimalplaces'];
 				$latest_score = round($latest_score, $decimalplaces);
 				$data = [
-					'last_check_date' => $last_check_date,
+					'last_check_date' => human_time_diff(strtotime($last_check_date)) . " ago",
 					'score' => $latest_score,
 					'max' => $status_info['thresholds']['max'],
 					'text' => "{$latest_score}",
