@@ -159,7 +159,7 @@
 				<div class="row padding-bottom">
 					<div class="col-sm-12">
 						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
-						<p v-if="graph_data.host.filesystem == null">Click Run Check to see how your hosting is doing</p>
+						<p v-if="last_check_date == 'None'">Click Run Check to see how your hosting is doing</p>
 					</div>
 				</div>	
 				<div class="row">
