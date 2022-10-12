@@ -114,7 +114,7 @@ class A2_Optimized_CLI {
 	 */
 
 	public function enable($args, $assoc_args) {
-		$options_manager = new A2_Optimized_OptionsManager;
+		$optimizations = new A2_Optimized_Optimizations;
 		$to_enable = $args[0];
 
 		$site_type = 'Site';
@@ -124,51 +124,51 @@ class A2_Optimized_CLI {
 
 		switch ($to_enable) {
 			case 'page_cache':
-				$options_manager->enable_a2_page_cache();
+				$optimizations->enable_a2_page_cache();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Page Cache enabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'object_cache':
-				$options_manager->enable_a2_object_cache();
+				$optimizations->enable_a2_object_cache();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Object Cache enabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'gzip':
-				$options_manager->enable_a2_page_cache_gzip();
+				$optimizations->enable_a2_page_cache_gzip();
 
 				return WP_CLI::success(esc_html__( $site_type . ' GZIP enabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'html_min':
-				$options_manager->enable_a2_page_cache_minify_html();
+				$optimizations->enable_a2_page_cache_minify_html();
 
 				return WP_CLI::success(esc_html__( $site_type . ' HTML Minify enabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'cssjs_min':
-				$options_manager->enable_a2_page_cache_minify_jscss();
+				$optimizations->enable_a2_page_cache_minify_jscss();
 
 				return WP_CLI::success(esc_html__( $site_type . ' JS/CSS Minify enabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'xmlrpc':
-				$options_manager->enable_xmlrpc_requests();
+				$optimizations->enable_xmlrpc_requests();
 
 				return WP_CLI::success(esc_html__( $site_type . ' XML-RPC Request Blocking enabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'htaccess':
-				$options_manager->set_deny_direct(true);
-				$options_manager->write_htaccess();
+				$optimizations->set_deny_direct(true);
+				$optimizations->write_htaccess();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Deny Direct Access to .htaccess enabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'lock_plugins':
-				$options_manager->set_lockdown(true);
-				$options_manager->write_wp_config();
+				$optimizations->set_lockdown(true);
+				$optimizations->write_wp_config();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Lock editing of Plugins and Themes enabled.', 'a2-optimized-wp' ));
 
@@ -201,7 +201,7 @@ class A2_Optimized_CLI {
 	 */
 
 	public function disable($args, $assoc_args) {
-		$options_manager = new A2_Optimized_OptionsManager;
+		$optimizations = new A2_Optimized_Optimizations;
 
 		$to_disable = $args[0];
 
@@ -211,51 +211,51 @@ class A2_Optimized_CLI {
 		}
 		switch ($to_disable) {
 			case 'page_cache':
-				$options_manager->disable_a2_page_cache();
+				$optimizations->disable_a2_page_cache();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Page Cache disabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'object_cache':
-				$options_manager->disable_a2_object_cache();
+				$optimizations->disable_a2_object_cache();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Object Cache disabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'gzip':
-				$options_manager->disable_a2_page_cache_gzip();
+				$optimizations->disable_a2_page_cache_gzip();
 
 				return WP_CLI::success(esc_html__( $site_type . ' GZIP disabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'html_min':
-				$options_manager->disable_a2_page_cache_minify_html();
+				$optimizations->disable_a2_page_cache_minify_html();
 
 				return WP_CLI::success(esc_html__( $site_type . ' HTML Minify disabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'cssjs_min':
-				$options_manager->disable_a2_page_cache_minify_jscss();
+				$optimizations->disable_a2_page_cache_minify_jscss();
 
 				return WP_CLI::success(esc_html__( $site_type . ' JS/CSS Minify disabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'xmlrpc':
-				$options_manager->disable_xmlrpc_requests();
+				$optimizations->disable_xmlrpc_requests();
 
 				return WP_CLI::success(esc_html__( $site_type . ' XML-RPC Request Blocking disabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'htaccess':
-				$options_manager->set_deny_direct(false);
-				$options_manager->write_htaccess();
+				$optimizations->set_deny_direct(false);
+				$optimizations->write_htaccess();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Deny Direct Access to .htaccess disabled.', 'a2-optimized-wp' ));
 
 				break;
 			case 'lock_plugins':
-				$options_manager->set_lockdown(false);
-				$options_manager->write_wp_config();
+				$optimizations->set_lockdown(false);
+				$optimizations->write_wp_config();
 
 				return WP_CLI::success(esc_html__( $site_type . ' Lock editing of Plugins and Themes disabled.', 'a2-optimized-wp' ));
 
@@ -273,8 +273,8 @@ class A2_Optimized_CLI {
 
 		update_option('a2_optimized_memcached_server', $server_address);
 
-		$options_manager = new A2_Optimized_OptionsManager;
-		$options_manager->write_wp_config();
+		$optimizations = new A2_Optimized_Optimizations;
+		$optimizations->write_wp_config();
 
 		return WP_CLI::success(esc_html__( $site_type . ' Memcached server updated.', 'a2-optimized-wp' ));
 	}
@@ -685,18 +685,16 @@ class A2_Optimized_CLI {
 	 */
 
 	public function recommendations($args, $assoc_args) {
-		$options_manager = new A2_Optimized_OptionsManager;
-		$opts = new A2_Optimized_Optimizations($options_manager);
-
+		$opts = new A2_Optimized_Optimizations;
 		$action = $args[0];
 
-		$output = '';
+		$output = 'Recommendations are coming soon.';
 
+		/*
 		switch ($action) {
 			case 'show':
 				$output .= "We would enable the following optimizations:\n";
 				$optimizations = $opts->get_recommended_optimizations();
-				/* Run tests for each item */
 				foreach ($optimizations as $k => $optimization) {
 					if (isset($optimization['is_configured'])) {
 						$optimizations[$k]['is_configured']($optimizations[$k]);
@@ -735,6 +733,7 @@ class A2_Optimized_CLI {
 
 				break;
 		}
+		*/
 
 		echo $output;
 	}
