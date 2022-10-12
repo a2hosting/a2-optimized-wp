@@ -235,41 +235,35 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result['pagespeed_desktop'] = $this->get_graph_data($desktop_check_date, $last_desktop, $prev_desktop);
 				$result['pagespeed_mobile'] = $this->get_graph_data($mobile_check_date, $last_mobile, $prev_mobile);
 			} else {
-				$desktop_json = 
-'{
-	"strategy": "desktop",
-	"description": null,
-	"scores": {
-		"fcp": 0,
-		"lcp": 0,
-		"cls": 0,
-		"fid": 0,
-		"ttfb": 0,
-		"audit_result": {
-		},
-		"overall_score": 0
-	}
-}
-';
-				$mobile_json = 
-'{
-	"strategy": "mobile",
-	"description": null,
-	"scores": {
-		"fcp": 0,
-		"lcp": 0,
-		"cls": 0,
-		"fid": 0,
-		"ttfb": 0,
-		"audit_result": {
-		},
-		"overall_score": 0
-	}
-}
-';
+				$desktop = [
+					"strategy" => "desktop",
+					"description" => null,
+					"scores" => [
+						"fcp" => 0,
+						"lcp" => 0,
+						"cls" => 0,
+						"fid" => 0,
+						"ttfb" => 0,
+						"audit_result" => [],
+						"overall_score" => 0
+					]
+				];
 
-				$result['pagespeed_desktop'] = $this->get_graph_data('None', json_decode($desktop_json, true), null);
-				$result['pagespeed_mobile'] = $this->get_graph_data('None', json_decode($mobile_json, true), null);
+				$mobile = [
+					"strategy" => "mobile",
+					"description" => null,
+					"scores" => [
+						"fcp" => 0,
+						"lcp" => 0,
+						"cls" => 0,
+						"fid" => 0,
+						"ttfb" => 0,
+						"audit_result" => [],
+						"overall_score" => 0
+					]
+				];
+				$result['pagespeed_desktop'] = $this->get_graph_data('None', $desktop, null);
+				$result['pagespeed_mobile'] = $this->get_graph_data('None', $mobile, null);
 			}
 
 			return $result;
