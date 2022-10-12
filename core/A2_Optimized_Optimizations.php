@@ -580,8 +580,6 @@ class A2_Optimized_Optimizations {
                 break;
             case 'regenerate_salts':
                 if($value == 'true'){
-                    // This is a fire once optimization
-                    // TODO: UI considerations for this?
                     return $this->regenerate_wpconfig_salts();
                 }
                 break;
