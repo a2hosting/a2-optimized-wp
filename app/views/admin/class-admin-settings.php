@@ -34,7 +34,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'mainkey' => 1,
 				'updateView' => 0,
 				'notifications' => $args['notifications'],
-				'content-element' => '<page-speed-score @nav-change-url="loadPageByUrl" :update-Child="updateView" :key="mainkey"></page-speed-score>',
+				'content-element' => '<page-speed-score @nav-change-url="loadSubPage" :update-Child="updateView" :key="mainkey"></page-speed-score>',
 				'home_url' => home_url(),
 				'nav' => [
 					'pls_class' => 'current',
@@ -80,7 +80,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
-				'content-element' => '<server-performance @nav-change-url="loadPageByUrl" :update-Child="updateView" :key="mainkey"></server-performance>',
+				'content-element' => '<server-performance @nav-change-url="loadSubPage" :update-Child="updateView" :key="mainkey"></server-performance>',
 				'home_url' => home_url(),
 				'nav' => [
 					'wsp_class' => 'current',
@@ -109,7 +109,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
-				'content-element' => '<hosting-matchup @nav-change-url="loadPageByUrl" :update-Child="updateView" :key="mainkey"></hosting-matchup>',
+				'content-element' => '<hosting-matchup @nav-change-url="loadSubPage" :update-Child="updateView" :key="mainkey"></hosting-matchup>',
 				'home_url' => home_url(),
 				'nav' => [
 					'wsp_class' => 'current',
@@ -143,7 +143,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
-				'content-element' => '<optimizations-performance @nav-change-url="loadPageByUrl" :update-Child="updateView" :key="mainkey"></optimizations-performance>',
+				'content-element' => '<optimizations-performance @nav-change-url="loadSubPage" :update-Child="updateView" :key="mainkey"></optimizations-performance>',
 				'home_url' => home_url(),
 				'nav' => [
 					'opt_class' => 'current',

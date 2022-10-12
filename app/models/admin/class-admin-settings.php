@@ -154,7 +154,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			];
 			if ($backend_benchmarks){
 				$bm = array_pop($backend_benchmarks);
-				$result['last_check_date'] = human_time_diff(strtotime($bm['sysinfo']['time'])) . " ago";
+				$result['last_check_date'] = $this->get_readable_last_check_date($bm['sysinfo']['time']);
 				$hostentry = [
 					'php' => $bm['php']['total'],
 					'mysql' => $bm['mysql']['benchmark']['mysql_total'],
@@ -235,8 +235,41 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result['pagespeed_desktop'] = $this->get_graph_data($desktop_check_date, $last_desktop, $prev_desktop);
 				$result['pagespeed_mobile'] = $this->get_graph_data($mobile_check_date, $last_mobile, $prev_mobile);
 			} else {
-				$result['pagespeed_desktop'] = false;
-				$result['pagespeed_mobile'] = false;
+				$desktop_json = 
+'{
+	"strategy": "desktop",
+	"description": null,
+	"scores": {
+		"fcp": 0,
+		"lcp": 0,
+		"cls": 0,
+		"fid": 0,
+		"ttfb": 0,
+		"audit_result": {
+		},
+		"overall_score": 0
+	}
+}
+';
+				$mobile_json = 
+'{
+	"strategy": "mobile",
+	"description": null,
+	"scores": {
+		"fcp": 0,
+		"lcp": 0,
+		"cls": 0,
+		"fid": 0,
+		"ttfb": 0,
+		"audit_result": {
+		},
+		"overall_score": 0
+	}
+}
+';
+
+				$result['pagespeed_desktop'] = $this->get_graph_data('None', json_decode($desktop_json, true), null);
+				$result['pagespeed_mobile'] = $this->get_graph_data('None', json_decode($mobile_json, true), null);
 			}
 
 			return $result;
@@ -248,6 +281,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$result['best_practices'] = $this->optimizations->get_best_practices();
 			$extra_settings = $result['optimizations']['extra_settings']; // has to be before $result['optimizations'] gets changed
 			$settings_tethers = $result['optimizations']['settings_tethers'];
+
 
 			$displayed_optimizations = [];
 			$other_optimizations = [];
@@ -468,6 +502,15 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			];
 		}
 
+		public function get_readable_last_check_date($last_check_date){
+			if ($last_check_date == 'None'){
+				return $last_check_date;
+			}
+			else {
+				return human_time_diff(strtotime($last_check_date)) . " ago";
+			}
+		}
+
 		public function get_graph_data($last_check_date, $latest, $previous) {
 			$metrics = ['overall_score', 'fcp', 'ttfb', 'cls','lcp', 'fid'];
 
@@ -490,12 +533,15 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				*/
 
 				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
+				if ($last_check_date == 'None'){
+					$status_info['status'] = 'empty';
+				}
 
 
 				$decimalplaces = self::BENCHMARK_SCORE_PROFILES[$metric]['decimalplaces'];
 				$latest_score = round($latest_score, $decimalplaces);
 				$data = [
-					'last_check_date' => human_time_diff(strtotime($last_check_date)) . " ago",
+					'last_check_date' =>  $this->get_readable_last_check_date($last_check_date),
 					'score' => $latest_score,
 					'max' => $status_info['thresholds']['max'],
 					'text' => "{$latest_score}",

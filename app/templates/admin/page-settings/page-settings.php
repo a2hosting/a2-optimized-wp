@@ -159,6 +159,7 @@
 				<div class="row padding-bottom">
 					<div class="col-sm-12">
 						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
+						<p v-if="graph_data.host.filesystem == null">Click Run Check to see how your hosting is doing</p>
 					</div>
 				</div>	
 				<div class="row">
@@ -243,6 +244,7 @@
 		<div class="col-md-8 col-lg-9 ">
 			<h4>{{ name }} <a class="glyphicon glyphicon-chevron-down toggle" aria-hidden="true" v-on:click.prevent="desc_toggle(slug)" :id="'opt_item_toggle_' + slug"></a></h4>
 			<div :id="'opt_item_desc_' + slug" style="display: none" v-html="description" class="desc"></div>
+			<div :id="'opt_item_error_' + slug" v-if="error" v-html="error" style="border: 2px solid red;"></div>
 		</div>
 		<div class="col-md-1 col-lg-1  padding-top-30">
 			<a v-if="extra_setting" href="javascript:void(0)" @click="toggleExtraSettings(slug, $event)">Modify</a>
@@ -508,6 +510,7 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-11 col-sm-offset-1">
+									<p v-if="last_check_date == 'None'">Click Run Check to see how your hosting is doing</p>
 									<div v-if="graphs.pagespeed_mobile" class="col-sm-5 box-element" :class="graphs.pagespeed_mobile.overall_score.color_class">
 										<p class='box-title'>Mobile</p>
 										<div class="circle" id="circles-pls-mobile"></div>
@@ -625,6 +628,7 @@
 							<option value="mobile">Mobile</option>
 						</select>
 						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
+						<p v-if="last_check_date == 'None'">Click Run Check to see how your hosting is doing</p>
 					</div>
 				</div>
 				<div class="row">
@@ -633,7 +637,7 @@
 						<speed-metric-card metric_name="lcp" :metric="graphs.lcp" show_wave=false></speed-metric-card>
 						<speed-metric-card metric_name="fid" :metric="graphs.fid" show_wave=false></speed-metric-card>
 					</div>
-					<div class="col-sm-4 bg-green">
+					<div class="col-sm-4" :class="last_check_date == 'None' ? 'bg-empty' : 'bg-green'">
 						<flip-panel content_id="graph-overall_score" 
 							:status_class="graphs.overall_score.color_class" 
 							additional_classes="normal graph-card-centered">
@@ -831,6 +835,7 @@
 				<span class="warn"></span>
 				<span class="danger"></span>
 				<span class="thishost"></span>
+				<span class="empty"></span>
 			</div>
 		</div>
 		<div class="row" id="a2-optimized-nav">
@@ -838,15 +843,15 @@
 				<div class="row a2-optimized-navigation" id="a2-optimized-navigation">
 					<div class="col-md-4 col-lg-3">
 						<button type="button" class="navlink-button <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'pls_class') ?>" 
-						@click="loadPageByUrl('admin.php?page=a2-optimized&a2_page=page_speed_score')">Page Load Speed Score</button>
+						@click="loadSubPage('page_speed_score')">Page Load Speed Score</button>
 					</div>
 					<div class="col-md-4 col-lg-3 col-lg-offset-1">
-						<button type="button" href="#" class="navlink-button <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>" 
-						v-on:click.prevent="loadBenchmarkPage">Website &amp; Server Performance</button>
+						<button type="button" class="navlink-button <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'wsp_class') ?>" 
+						v-on:click.prevent="loadSubPage('server_performance')">Website &amp; Server Performance</button>
 					</div>
 					<div class="col-md-4 col-lg-3 col-lg-offset-1">
 						<button type="button" class="navlink-button <?php echo A2_Optimized\App\Models\Settings::get_nav_class($data['nav'], 'opt_class') ?>" 
-						@click="loadPageByUrl('admin.php?page=a2-optimized&a2_page=optimizations')">Optimization</button>
+						@click="loadSubPage('optimizations')">Optimization</button>
 					</div>
 				</div>
 			</div>

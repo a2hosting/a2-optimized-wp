@@ -8,6 +8,7 @@ $light: #FFF;
 $success: $green;
 $danger: #ED1111;
 $warn: $orange;
+$empty: $semidark;
 $thishost: #009aca;
 
 #wpwrap {
@@ -164,11 +165,15 @@ $thishost: #009aca;
         padding: 15px 60px;
     }
 
-    .bg-green {
+    .bg-green, .bg-empty {
         background-color: $green;
         padding-top: 15px;
         padding-bottom: 5px;
         border-radius: 10px;
+    }
+
+    .bg-empty {
+        background-color: $empty;
     }
 
     .border-left {
@@ -226,6 +231,10 @@ $thishost: #009aca;
             border-color: rgba($warn, 0.35);
         }
 
+        &.empty {
+            border-color: rgba($empty, 0.35);
+        }
+
         &.clear {
             border: none;
             box-shadow: none;
@@ -269,6 +278,10 @@ $thishost: #009aca;
                 &.danger {
                     background: url("../../images/admin/wave-danger.png") no-repeat bottom;
                     background-size: 110%;
+                }
+                &.empty {
+                    background: url("../../images/admin/wave-empty.png") no-repeat bottom;
+                    background-size: 110%, 75%;
                 }
             }
 
@@ -402,6 +415,10 @@ $thishost: #009aca;
 
     span.thishost {
         color: $thishost;
+    }
+
+    span.empty {
+        color: $empty;
     }
 
     .padding-bottom {

@@ -142,11 +142,14 @@
 #a2-optimized-wrapper .btn-xlg {
   padding: 15px 60px;
 }
-#a2-optimized-wrapper .bg-green {
+#a2-optimized-wrapper .bg-green, #a2-optimized-wrapper .bg-empty {
   background-color: #128413;
   padding-top: 15px;
   padding-bottom: 5px;
   border-radius: 10px;
+}
+#a2-optimized-wrapper .bg-empty {
+  background-color: #333;
 }
 #a2-optimized-wrapper .border-left {
   border-left: 1px solid #1c1c1c;
@@ -193,6 +196,9 @@
 #a2-optimized-wrapper .box-element.warn {
   border-color: rgba(252, 140, 30, 0.35);
 }
+#a2-optimized-wrapper .box-element.empty {
+  border-color: rgba(51, 51, 51, 0.35);
+}
 #a2-optimized-wrapper .box-element.clear {
   border: none;
   box-shadow: none;
@@ -221,6 +227,10 @@
 #a2-optimized-wrapper #a2-optimized-serverperformance .flip-card-front .wave-bg.danger {
   background: url("../../images/admin/wave-danger.png") no-repeat bottom;
   background-size: 110%;
+}
+#a2-optimized-wrapper #a2-optimized-serverperformance .flip-card-front .wave-bg.empty {
+  background: url("../../images/admin/wave-empty.png") no-repeat bottom;
+  background-size: 110%, 75%;
 }
 #a2-optimized-wrapper #a2-optimized-serverperformance .flip-card-back .wave-bg {
   background: none;
@@ -315,6 +325,9 @@
 }
 #a2-optimized-wrapper span.thishost {
   color: #009aca;
+}
+#a2-optimized-wrapper span.empty {
+  color: #333;
 }
 #a2-optimized-wrapper .padding-bottom {
   padding-bottom: 15px;
