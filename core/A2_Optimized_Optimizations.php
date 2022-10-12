@@ -113,6 +113,18 @@ class A2_Optimized_Optimizations {
                 ]
             ];
         }
+        else {
+            // override the object cache settings with the litespeed values
+            $litespeed_cache_type = get_option('litespeed.conf.object-kind');
+            if ($litespeed_cache_type == 1){
+                $cache_type = 'redis';
+                $redis_server = get_option('litespeed.conf.object-host');
+            }
+            else {
+                $cache_type = 'memcached';
+                $memcached_server = get_option('litespeed.conf.object-host');
+            }
+        }
 
         $extra_settings['a2_object_cache'] = [
             'title' => 'Object Cache Settings',
@@ -246,6 +258,7 @@ class A2_Optimized_Optimizations {
 
         $optimizations = [
             'a2_page_cache' => [
+                'error' => '',
                 'name' => 'Page Caching',
                 'slug' => 'a2_page_cache',
                 'premium' => false,
@@ -257,6 +270,7 @@ class A2_Optimized_Optimizations {
                 <strong>What does it impact:</strong> Time to First Byte (TTFB)',
             ],
             'a2_page_cache_gzip' => [
+                'error' => '',
                 'name' => 'Gzip Compression',
                 'slug' => 'a2_page_cache_gzip',
                 'premium' => false,
@@ -268,6 +282,7 @@ class A2_Optimized_Optimizations {
                 <strong>What does it impact:</strong> Time to First Byte (TTFB)',
             ],
             'a2_object_cache' => [
+                'error' => '',
                 'name' => 'Object Caching',
                 'slug' => 'a2_object_cache',
                 'premium' => false,
@@ -279,6 +294,7 @@ class A2_Optimized_Optimizations {
                 Tap Modify to make changes.',
             ],
             'a2_page_cache_minify_html' => [
+                'error' => '',
                 'name' => 'Minify HTML Pages',
                 'slug' => 'a2_page_cache_minify_html',
                 'premium' => false,
@@ -290,6 +306,7 @@ class A2_Optimized_Optimizations {
                 'remove_link' => true
             ],
             'a2_page_cache_minify_jscss' => [
+                'error' => '',
                 'name' => 'Minify Inline CSS and Javascript',
                 'slug' => 'a2_page_cache_minify_jscss',
                 'premium' => false,
@@ -303,6 +320,7 @@ class A2_Optimized_Optimizations {
                 'remove_link' => true
             ],
             'a2_db_optimizations' => [
+                'error' => '',
                 'name' => 'Schedule Automatic Database Optimizations',
                 'slug' => 'a2_db_optimizations',
                 'premium' => false,
@@ -314,6 +332,7 @@ class A2_Optimized_Optimizations {
                 ',
             ],
             'woo_cart_fragments' => [
+                'error' => '',
                 'name' => 'Dequeue WooCommerce Cart Fragments AJAX calls',
                 'slug' => 'woo_cart_fragments',
                 'premium' => false,
@@ -325,6 +344,7 @@ class A2_Optimized_Optimizations {
                 <strong>What to know:</strong> Slow performance and errors on WooCommerce sites are caused by a high number of AJAX requests because they are  uncached. If you are running a WooCommerce site and notice a high number of AJAX requests, disabling Cart Fragments AJAX may help improve your site\'s stability. ',
             ],
             'xmlrpc_requests' => [
+                'error' => '',
                 'name' => 'Block Unauthorized XML-RPC Requests',
                 'slug' => 'xmlrpc_requests',
                 'premium' => false,
@@ -336,6 +356,7 @@ class A2_Optimized_Optimizations {
                 <strong>What to know:</strong> Closes one more door that a potential hacker may try to exploit to hack your website.',
             ],
             'htaccess' => [
+                'error' => '',
                 'name' => 'Deny Direct Access to Configuration Files and Comment Form',
                 'slug' => 'htaccess',
                 'premium' => false,
@@ -348,6 +369,7 @@ class A2_Optimized_Optimizations {
                 <strong>What to know:</strong> Prevents POST requests to the site not originating from a user on the site. If you are using a plugin to allow remote posts and comments, disable this option.',
             ],
             'lock_editing' => [
+                'error' => '',
                 'name' => 'Lock Editing of Plugins and Themes from the WP Admin',
                 'slug' => 'lock_editing',
                 'premium' => false,
@@ -358,6 +380,7 @@ class A2_Optimized_Optimizations {
                 <strong>How-it-works:</strong> Prevents misuse of the WordPress Admin built-in editing capabilities.',
             ],
             'hide_login' => [
+                'error' => '',
                 'name' => 'Login URL Change',
                 'slug' => 'hide_login',
                 'premium' => true,
@@ -369,6 +392,7 @@ class A2_Optimized_Optimizations {
                 <strong>What to know:</strong> Record the new login page URL so you don’t forget where to log in. ',
             ],
             'captcha' => [
+                'error' => '',
                 'name' => 'CAPTCHA on comments and login',
                 'slug' => 'captcha',
                 'premium' => true,
@@ -378,6 +402,7 @@ class A2_Optimized_Optimizations {
                 <strong>How-it-works:</strong> Adds CAPTCHA to comment forms and login screens to deter bots from posting comments to your blog or brute force login - a hacking method that uses trial and error to crack passwords, login credentials, and encryption keys - to your admin panel.',
             ],
             'compress_images' => [
+                'error' => '',
                 'name' => 'Compress Images on Upload',
                 'slug' => 'compress_images',
                 'premium' => true,
@@ -387,6 +412,7 @@ class A2_Optimized_Optimizations {
                 <strong>How it works:</strong> Automatically compresses images when you upload them to your site.',
             ],
             'turbo' => [
+                'error' => '',
                 'name' => 'Turbo Web Hosting',
                 'slug' => 'turbo',
                 'configured' => false,
@@ -421,19 +447,21 @@ class A2_Optimized_Optimizations {
             unset($optimizations['a2_page_cache']);
         }
 
-        $optimizations['a2_object_cache']['disabled'] = false;
-        if (get_option('a2_optimized_memcached_invalid') || get_option('a2_optimized_memcached_server') == false) {
-            $optimizations['a2_object_cache']['disabled'] = true;
-            $optimizations['a2_object_cache']['disabled_desc'] = "Unable to connect to the specified Memcached or Redis server. Please check your connection information.";
-        }
-
         if (class_exists('A2_Optimized_Private_Optimizations')) {
             $private_optimizations = $this->private_opts->get_optimizations();
-            // pull any fields from opt to private opt that may be missing
+            // pull any fields from opt to private opt that may be missing.
             $new_optimizations = array_merge($optimizations, $private_optimizations);
+            $preserve_keys = ['description', 'error'];
             foreach ($new_optimizations as $key => $opt){
-                if (!isset($opt['description'])){
-                    $new_optimizations[$key]['description'] = $optimizations[$key]['description'];
+                foreach ($preserve_keys as $preserve){
+                    if (!isset($opt[$preserve])){
+                        if (array_key_exists($key, $optimizations)){
+                            $new_optimizations[$key][$preserve] = $optimizations[$key][$preserve];
+                        }
+                        else {
+                            $new_optimizations[$key][$preserve] = '';
+                        }
+                    }
                 }
                 $new_optimizations[$key]['disabled'] = false; // no disabling when using the private optimizations class
             }
@@ -448,6 +476,12 @@ class A2_Optimized_Optimizations {
                     $optimizations[$k]['disabled'] = true;
                 }
             }
+        }
+
+        $invalid = get_option('a2_optimized_memcached_invalid');
+        if ($invalid) {
+            $optimizations['a2_object_cache']['configured'] = false;
+            $optimizations['a2_object_cache']['error'] = "Unable to update object cache: {$invalid}. Please check your connection information.";
         }
 
         return $optimizations;
@@ -643,7 +677,9 @@ class A2_Optimized_Optimizations {
                 return true;
                 break;
             case 'memcached_server':
-                if (empty($value)){
+                $cache_type = get_option('a2_optimized_objectcache_type');
+
+                if ($cache_type != 'memcached' || empty($value)){
                     return;
                 }
                 $a2_memcached_server = sanitize_text_field($value);
@@ -656,7 +692,8 @@ class A2_Optimized_Optimizations {
                 return true;
                 break;
             case 'redis_server':
-                if (empty($value)){
+                $cache_type = get_option('a2_optimized_objectcache_type');
+                if ($cache_type != 'redis' || empty($value)){
                     return;
                 }
                 $a2_redis_server = sanitize_text_field($value);

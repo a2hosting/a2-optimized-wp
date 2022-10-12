@@ -817,15 +817,9 @@ let app = new Vue({
 
 			page_data.yesNoDialog.showYesNo = true;
 		},
-		loadPageByUrl(url){
-			window.location.href = url;
-		},
-		loadBenchmarkPage(){
-			if(page_data.graphs.pagespeed_desktop == false && page_data.graphs.pagespeed_mobile == false){
-				this.pageSpeedCheck('page-speed-score', true);
-			} else {
-				window.location.href = "admin.php?page=a2-optimized&a2_page=server_performance";
-			}
+		loadSubPage(page){
+			let base_url = 'admin.php?page=a2-optimized&a2_page=';
+			window.location.href = base_url + page;
 		},
 	}
 });
