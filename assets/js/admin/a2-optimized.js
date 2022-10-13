@@ -147,6 +147,10 @@ function generateStackedBarGraphData(graph, dataPoints = []) {
 
 function createBarGraph(canvasId, graph_metadata) {
 	const targetCanvas = document.getElementById(canvasId);
+	var oldChart = Chart.getChart(targetCanvas);
+	if (oldChart){
+		oldChart.destroy();
+	}
 
 	var chart = new Chart(targetCanvas, {
 		type: 'bar',
@@ -505,16 +509,25 @@ Vue.component('hosting-matchup', {
 	methods: {
 		pageSpeedCheck: function () {
 			this.$root.pageSpeedCheck('hosting-matchup');
-		}
-	},
-	template: "#hosting-matchup-template",
-	mounted() {
-		document.addEventListener("DOMContentLoaded", function () {
+		},
+		renderGraphs: function() {
 			let webperf_meta = generateSingleBarGraphData(page_data.graphs['webperformance'], 'wordpress_db');
 			let serverperf_meta = generateStackedBarGraphData(page_data.graphs['serverperformance'], ['php', 'mysql', 'filesystem']);
 
 			createBarGraph('overall_wordpress_canvas', webperf_meta);
 			createBarGraph('server_perf_canvas', serverperf_meta, true, true);
+		}
+	},
+	template: "#hosting-matchup-template",
+	mounted() {
+		let that = this;
+
+		this.$root.$on('render_hosting_matchup_graphs', () => {
+			this.renderGraphs();
+		});
+
+		document.addEventListener("DOMContentLoaded", function () {
+			that.renderGraphs();
 		});
 	}
 });
@@ -781,6 +794,7 @@ let app = new Vue({
 				params.append('a2_performance_strategy', strat.value);
 			}
 
+			let that = this;
 			axios
 				.post(ajax.url, params)
 				.catch((error) => {
@@ -797,6 +811,8 @@ let app = new Vue({
 					if (page == 'hosting-matchup') {
 						page_data.graphs = response.data.graphs;
 						page_data.graph_data = response.data.graph_data;
+
+						that.$root.$emit('render_hosting_matchup_graphs');
 					} else {
 						page_data.graphs = response.data;
 					}
