@@ -28,7 +28,6 @@ class A2_Optimized_SiteHealth {
 		add_filter( 'debug_information', array( $this, 'add_debug_section' ) );
 		add_filter( 'site_status_tests', array( $this, 'add_site_status_items' ) );
 
-		add_action( 'site_health_tab_content', array( $this, 'add_button_to_site_health_info_tab' ) );
 	}
 
 
@@ -102,10 +101,6 @@ class A2_Optimized_SiteHealth {
 			'test' => array( $this, 'a2opt_php_memory_test' ),
 		);
 		
-		$tests['direct']['a2_optimized_object_cache'] = array(
-			'label' => 'Using an object cache',
-			'test' => array( $this, 'a2opt_object_cache_test' ),
-		);
 		
 		if (is_plugin_active('woocommerce/woocommerce.php')) {
 			$tests['direct']['a2_optimized_cart_fragments'] = array(
@@ -469,35 +464,6 @@ class A2_Optimized_SiteHealth {
 	}
 	
 	/**
-	 * Check if using an object cache
-	 *
-	 * @return array Array with added A2 Optimized items.
-	 */
-	public function a2opt_object_cache_test() {
-		$result = array(
-			'label' => __( 'Using an object cache' ),
-			'status' => 'good', // Default "passing" section
-			'badge' => array(
-				'label' => __( 'Performance' ),
-				'color' => 'orange',
-			),
-			'description' => sprintf(
-				'<p>%s</p>',
-				__( 'Store frequently used database queries and WordPress objects in Memcached.' )
-			),
-			'actions' => '',
-			'test' => 'object_cache',
-		);
-
-		if (!wp_using_ext_object_cache()) { // 128mb
-			$result['status'] = 'recommended';
-			$result['label'] = ( 'Start using an object cache' );
-		}
-
-		return $result;
-	}
-	
-	/**
 	 * Check number of unused plugins
 	 *
 	 * @return array Array with added A2 Optimized items.
@@ -739,16 +705,6 @@ class A2_Optimized_SiteHealth {
 		$a2_optimized['fields']['php_memory'] = array(
 			'label' => 'PHP Memory Limit',
 			'value' => ini_get('memory_limit')
-		);
-		
-		/* Using Object Cache */
-		$object_cache = 'No';
-		if (wp_using_ext_object_cache()) {
-			$object_cache = 'Yes';
-		}
-		$a2_optimized['fields']['object_cache'] = array(
-			'label' => 'Object Caching Enabled',
-			'value' => $object_cache
 		);
 		
 		/* Frontend Benchmarks */

@@ -96,6 +96,9 @@ function run_a2_optimized() {
 			add_action('plugins_loaded', [ 'A2_Optimized_Cache', 'init' ]);
 		}
 	}
+    if(is_admin()){
+		new A2_Optimized_SiteHealth();
+	}
 }
 
 run_a2_optimized();
