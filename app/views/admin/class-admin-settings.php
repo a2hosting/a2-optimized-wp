@@ -14,6 +14,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 	 * @subpackage A2_Optimized/views/admin
 	 */
 	class Admin_Settings extends View {
+		const EVENT_LISTENERS = '@nav-change-url="loadSubPage"';
 		/**
 		 * Prints Settings Page.
 		 *
@@ -34,7 +35,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'mainkey' => 1,
 				'updateView' => 0,
 				'notifications' => $args['notifications'],
-				'content-element' => '<page-speed-score @nav-change-url="loadSubPage" :update-Child="updateView" :key="mainkey"></page-speed-score>',
+				'content-element' => '<page-speed-score :update-Child="updateView" :key="mainkey" ' . self::EVENT_LISTENERS . '></page-speed-score>',
 				'home_url' => home_url(),
 				'nav' => [
 					'pls_class' => 'current',
@@ -80,7 +81,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
-				'content-element' => '<server-performance @nav-change-url="loadSubPage" :update-Child="updateView" :key="mainkey"></server-performance>',
+				'content-element' => '<server-performance :update-Child="updateView" :key="mainkey" ' . self::EVENT_LISTENERS . '></server-performance>',
 				'home_url' => home_url(),
 				'nav' => [
 					'wsp_class' => 'current',
@@ -109,7 +110,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
-				'content-element' => '<hosting-matchup @nav-change-url="loadSubPage" :update-Child="updateView" :key="mainkey"></hosting-matchup>',
+				'content-element' => '<hosting-matchup :update-Child="updateView" :key="mainkey" ' . self::EVENT_LISTENERS . '></hosting-matchup>',
 				'home_url' => home_url(),
 				'nav' => [
 					'wsp_class' => 'current',
@@ -143,7 +144,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,
-				'content-element' => '<optimizations-performance @nav-change-url="loadSubPage" :update-Child="updateView" :key="mainkey"></optimizations-performance>',
+				'content-element' => '<optimizations-performance :update-Child="updateView" :key="mainkey" ' . self::EVENT_LISTENERS . '></optimizations-performance>',
 				'home_url' => home_url(),
 				'nav' => [
 					'opt_class' => 'current',
