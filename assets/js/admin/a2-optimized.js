@@ -752,6 +752,15 @@ Vue.component('page-speed-score', {
 let app = new Vue({
 	el: '#a2-optimized-wrapper',
 	data: page_data,
+	mounted() {
+		document.addEventListener("DOMContentLoaded", function () {
+			if (page_data.last_check_date && page_data.last_check_date == 'None'){
+				setTimeout(() => {
+					page_data.show_coaching = true;
+				}, 2000);
+			}
+		});
+	},
 	methods: {
 		addFakeNotif: function () {
 			let content = document.getElementById('fake_notif_text').value;
@@ -836,6 +845,6 @@ let app = new Vue({
 		loadSubPage(page){
 			let base_url = 'admin.php?page=a2-optimized&a2_page=';
 			window.location.href = base_url + page;
-		},
+		}
 	}
 });

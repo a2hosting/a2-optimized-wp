@@ -3,6 +3,7 @@
 <script> 
 	let page_data = <?php echo $data['data_json'] ?>;
 	page_data.login_url = '<?php echo get_home_url() . "/wp-login.php" ?>';
+	page_data.show_coaching = false;
 	page_data.showModal = false;
 	page_data.showA2Only = false;
 	page_data.yesNoDialog = {
@@ -156,12 +157,17 @@
 				</div>
 			</div>
 			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-hostingmatchup">
-				<div class="row padding-bottom">
+				<div class="row">
 					<div class="col-sm-12">
 						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
-						<p v-if="last_check_date == 'None'">Click Run Check to see how your hosting is doing</p>
 					</div>
-				</div>	
+				</div>
+				<div v-if="show_coaching" class="row">
+					<div class="col-sm-12">
+						<div class="notice notice-warning"><p>Click Run Check to see the overall performance of your site.</p></div>
+					</div>
+				</div>
+				<div class="row padding-bottom"></div>
 				<div class="row">
 					<div class="col-md-6 col-md-offset-3 col-lg-6 col-lg-offset-0 hosting-matchup-graph-container">
 						<flip-panel content_id="graph-webperformance" 
@@ -509,8 +515,12 @@
 								</div>
 							</div>
 							<div class="row">
+								<div class="col-sm-10 col-sm-offset-1">
+									<div v-if="show_coaching" class="notice notice-warning">
+										<p>Click Run Check to see how fast your page loads. The higher the score the better!</p>
+									</div>
+								</div>
 								<div class="col-sm-11 col-sm-offset-1">
-									<p v-if="last_check_date == 'None'">Click Run Check to see how your hosting is doing</p>
 									<div v-if="graphs.pagespeed_mobile" class="col-sm-5 box-element" :class="graphs.pagespeed_mobile.overall_score.color_class">
 										<p class='box-title'>Mobile</p>
 										<div class="circle" id="circles-pls-mobile"></div>
@@ -621,16 +631,21 @@
 				</div>
 			</div>
 			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-serverperformance">
-				<div class="row padding-bottom">
+				<div class="row">
 					<div class="col-sm-12">
 						<select name="server-perf-strategy" id="server-perf-strategy-select" class="form-element" @change="strategyChanged($event)">
 							<option selected value="desktop">Desktop</option>
 							<option value="mobile">Mobile</option>
 						</select>
 						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
-						<p v-if="last_check_date == 'None'">Click Run Check to see how your hosting is doing</p>
 					</div>
 				</div>
+				<div v-if="show_coaching" class="row">
+					<div class="col-sm-12">
+						<div class="notice notice-warning"><p>Click Run Check to see how fast your page loads.</p></div>
+					</div>
+				</div>
+				<div class="row padding-bottom"></div>
 				<div class="row">
 					<div class="col-sm-4"> <!-- using graphs.ttfb -->
 						<speed-metric-card metric_name="ttfb" :metric="graphs.ttfb" show_line=false></speed-metric-card>
@@ -706,7 +721,7 @@
 						<speed-metric-card metric_name="fcp" :metric="graphs.fcp" show_wave=false show_line=true></speed-metric-card>
 						<speed-metric-card metric_name="cls" :metric="graphs.cls" show_line=false></speed-metric-card>
 						<div class="text-center">
-							<a href="#" class="btn btn-lg cta-btn-green text-right">Improve Score</a>
+							<a href="admin.php?page=a2-optimized&a2_page=optimizations" class="btn btn-lg cta-btn-green text-right">Improve Score</a>
 						</div>
 					</div>
 				</div>
