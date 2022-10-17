@@ -2,7 +2,17 @@
 /.git
 /.github
 /node_modules
+/assets/scss
+/assets/bootstrap/config.json
+/docs
 
 .distignore
+.editorconfig
 .gitignore
 .gitattributes
+.php_cs.cache
+.phpcs.xml.dist
+create-zip.sh
+deploy.sh
+README.md
+a2-optimized-wp.zip
