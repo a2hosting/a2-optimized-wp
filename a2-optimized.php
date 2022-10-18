@@ -98,6 +98,23 @@ function run_a2_optimized() {
 	}
     if(is_admin()){
 		new A2_Optimized_SiteHealth();
+		if (defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT) {
+			add_action('admin_menu', ['A2_Optimized_Optimizations', 'addLockedEditor'], 100, 100);
+		}
+	}
+	if (get_option('A2_Optimized_Plugin_recaptcha', 0) == 1 && !is_admin()) {
+		add_action('woocommerce_login_form', ['A2_Optimized_Optimizations', 'login_captcha']);
+		add_action('login_form', ['A2_Optimized_Optimizations', 'login_captcha']);
+		add_filter('authenticate', ['A2_Optimized_Optimizations', 'captcha_authenticate'], 1, 3);
+		add_action('comment_form_after_fields', ['A2_Optimized_Optimizations', 'comment_captcha']);
+		add_filter('preprocess_comment', ['A2_Optimized_Optimizations', 'captcha_comment_authenticate'], 1, 3);
+	}
+
+	$optimizations = new A2_Optimized_Optimizations;
+
+	if ($optimizations->is_xmlrpc_request() && get_option('a2_block_xmlrpc')) {
+		$optimizations->block_xmlrpc_request();
+		add_filter('xmlrpc_methods', ['A2_Optimized_Optimizations', 'remove_xmlrpc_methods']);
 	}
 }
 
