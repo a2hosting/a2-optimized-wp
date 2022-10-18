@@ -45,23 +45,23 @@ class A2_Optimized_SiteData {
         // Prepare the resposne.
         $response = wp_remote_post(
             self::A2_URL,
-            array(
+            [
                 'timeout' => 10,
-                'headers' => array(
+                'headers' => [
                     'X-auth-token' => $this->get_auth_token(),
-                ),
+                ],
                 'sslverify' => false,
                 'body' => [
                     'action' => 'site_report',
                     'hash' => md5(home_url()),
                     'data' => $data
                 ],
-            )
+            ]
         );
 
         // Retry if the request fails.
         if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
-            return wp_schedule_single_event( strtotime( '+' . rand( 12, 24 ) . ' hours' ), 'a2_sitedata_cron', array( 1 ) );
+            return wp_schedule_single_event( strtotime( '+' . rand( 12, 24 ) . ' hours' ), 'a2_sitedata_cron', [1] );
         }
 
         update_option('a2_sitedata_lastsent', time());
@@ -118,14 +118,14 @@ class A2_Optimized_SiteData {
     private function refresh_auth_token(){
         $response = wp_remote_post(
             self::A2_URL,
-            array(
+            [
                 'timeout' => 10,
                 'body' => [
                     'action' => 'get_auth_token',
                     'hash' => md5(home_url())
                 ],
                 'sslverify' => false,
-            )
+            ]
         );
 
         if ( 200 !== wp_remote_retrieve_response_code( $response ) ) {
@@ -165,7 +165,7 @@ class A2_Optimized_SiteData {
         $provider = 'Unknown';
         // A list of hosting provider headers.
         // See more: https://github.com/rviscomi/ismyhostfastyet/blob/main/ttfb.sql
-        $host_headers = array(
+        $host_headers = [
             'zoneos'                           => 'Zone.eu',
             'seravo'                           => 'Seravo',
             'wordpress.com'                    => 'Automattic',
@@ -178,7 +178,7 @@ class A2_Optimized_SiteData {
             'alproxy'                          => 'AlwaysData',
             'flywheel'                         => 'Flywheel',
             'c2hhcmVkLmJsdWVob3N0LmNvbQ=='     => 'Bluehost',
-        );
+        ];
 
         $response = wp_remote_get( get_home_url() );
 
