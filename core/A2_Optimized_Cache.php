@@ -1179,6 +1179,8 @@ final class A2_Optimized_Cache {
 			$object_cache_type = get_option('a2_optimized_objectcache_type');
 		}
 
+		$address_valid = false;
+
 		switch ($object_cache_type) {
 			case 'memcached':
 				if (class_exists('Memcached')) {
@@ -1201,17 +1203,17 @@ final class A2_Optimized_Cache {
 					$memcached->addServers($instances);
 					$memcached_available = $memcached->getStats();
 					if ($memcached_available) {
-
-						delete_option('a2_optimized_memcached_invalid');
 						update_option('litespeed.conf.object-kind', 0);
 						update_option('litespeed.conf.object-host', $server_address);
 						update_option('litespeed.conf.object-port', 0);
+						
+						delete_option('a2_optimized_memcached_invalid');
+						
+						$address_valid = true;
 					} else {
-
 						update_option('a2_optimized_memcached_invalid', 'Unable to connect to Memcached Server');
 					}
 				} else {
-
 					update_option('a2_optimized_memcached_invalid', 'Missing Memcached extension');
 				}
 
@@ -1231,6 +1233,8 @@ final class A2_Optimized_Cache {
 						update_option('litespeed.conf.object-port', 0);
 
 						delete_option('a2_optimized_memcached_invalid');
+						
+						$address_valid = true;
 					} else {
 						update_option('a2_optimized_memcached_invalid', 'Unable to connect to Redis Server');
 					}
@@ -1241,6 +1245,10 @@ final class A2_Optimized_Cache {
 				break;
 		}
 
-		return $server_address;
+		if($address_valid){
+			return $server_address;
+		} else {
+			return false;
+		}
 	}
 }
