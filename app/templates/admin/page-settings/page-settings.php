@@ -2,7 +2,7 @@
 
 <script> 
 	let page_data = <?php echo $data['data_json'] ?>;
-	page_data.login_url = '<?php echo get_home_url() . "/wp-login.php" ?>';
+	page_data.login_url = '<?php echo esc_url(get_home_url()) . "/wp-login.php" ?>';
 	page_data.show_coaching = false;
 	page_data.showModal = false;
 	page_data.showA2Only = false;
@@ -816,7 +816,7 @@
 		</modal>
 		<div class="row" id="a2-optimized-header">
 			<div class="col-sm-10 title">
-				<img srcset=" <?php echo get_home_url(); ?>/wp-content/plugins/a2-optimized-wp/assets/images/admin/a2opt-logo-2022-2x.png 2x, <?php echo get_home_url(); ?>/wp-content/plugins/a2-optimized-wp/assets/images/admin/a2opt-logo-2022.png 1x " src="<?php echo get_home_url(); ?>/wp-content/plugins/a2-optimized-wp/assets/images/admin/a2opt-logo-2022.png" >
+				<img srcset=" <?php echo esc_url(get_home_url()); ?>/wp-content/plugins/a2-optimized-wp/assets/images/admin/a2opt-logo-2022-2x.png 2x, <?php echo esc_url(get_home_url()); ?>/wp-content/plugins/a2-optimized-wp/assets/images/admin/a2opt-logo-2022.png 1x " src="<?php echo esc_url(get_home_url()); ?>/wp-content/plugins/a2-optimized-wp/assets/images/admin/a2opt-logo-2022.png" >
 			</div>
 			<div class="col-sm-2 text-right">
 				<div class="utility-icon">

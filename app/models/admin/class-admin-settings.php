@@ -18,7 +18,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		private $benchmark;
 		private $optimizations;
 
-		const NOTIFICATIONS_KEY = 'a2_opt_notifications';
+		public const NOTIFICATIONS_KEY = 'a2_opt_notifications';
 
 		/**
 		 * Constructor
@@ -52,7 +52,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 		/* Callback for run_benchmarks AJAX request */
 		public function run_benchmarks() {
-			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') ){ 
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ){ 
 				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
 				wp_die(); 
 			}
@@ -97,8 +97,13 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			return $notifications;
 
 		}
+
 		public function add_notification(){
-			$new_notification = $_POST['a2_notification_text'] ?? '';
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ){ 
+				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
+				wp_die(); 
+			}
+			$new_notification = esc_html($_POST['a2_notification_text']) ?? '';
 			if (!empty($new_notification)){
 				$notifications = $this->get_notifications();
 				$max_id = 0;
@@ -116,7 +121,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		////
 		/* Callback for apply_optimizations AJAX request */
 		public function apply_optimizations() {
-			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') ){ 
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ){ 
 				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
 				wp_die(); 
 			}
@@ -133,7 +138,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			}
 
 			$opt_perf = $this->get_opt_performance();
-			$data['post_data'] = $_POST;
+			
 			$data['updated_data'] = $opt_perf;
 
 			$data['result'] = 'success';

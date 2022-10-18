@@ -404,16 +404,19 @@ final class A2_Optimized_Cache_Disk {
 
 		// get new settings file
 		$new_settings_file = self::get_settings_file();
+		$htaccess_file = self::$settings_dir . '/.htaccess';
 
 		// make directory if necessary
 		if ( ! wp_mkdir_p( dirname( $new_settings_file ) ) ) {
 			wp_die( 'Unable to create directory.' );
 		}
 
+		$home_url = parse_url(home_url());
+
 		// add new settings file contents
 		$new_settings_file_contents = '<?php' . PHP_EOL;
 		$new_settings_file_contents .= '/**' . PHP_EOL;
-		$new_settings_file_contents .= ' * A2 Optimized Cache settings for ' . home_url() . PHP_EOL;
+		$new_settings_file_contents .= ' * A2 Optimized Cache settings for ' . str_replace(['*', '/', '\\'], '', $home_url['host']) . PHP_EOL;
 		$new_settings_file_contents .= ' *' . PHP_EOL;
 		$new_settings_file_contents .= ' * @since      1.5.0' . PHP_EOL;
 		$new_settings_file_contents .= ' * @change     1.5.0' . PHP_EOL;
@@ -424,6 +427,11 @@ final class A2_Optimized_Cache_Disk {
 		$new_settings_file_contents .= 'return ' . var_export( $settings, true ) . ';';
 
 		file_put_contents( $new_settings_file, $new_settings_file_contents );
+
+		// create .htaccess
+		$htaccess_contents = 'order deny,allow' . PHP_EOL;
+		$htaccess_contents .= 'deny from all' . PHP_EOL;
+		file_put_contents( $htaccess_file, $htaccess_contents );
 
 		update_option('a2opt-cache', $settings);
 
