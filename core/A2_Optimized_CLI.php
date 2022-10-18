@@ -305,6 +305,19 @@ class A2_Optimized_CLI {
 	}
 
 	/**
+	 * Returns a site health report for the current site
+	 */
+	public function send_report_data($args, $assoc_args) {
+
+		$a2opt_sitedata = new A2_Optimized_SiteData();
+
+		$a2opt_sitedata->send_sitedata();
+			
+		echo "Sent site data report\n\r";
+
+	}
+
+	/**
 	 * This command is for pruning the number of benchmark results in the WP options.
 	 * Interfaces with A2_Optimized_Benchmark class
 	 *
