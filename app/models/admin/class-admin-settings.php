@@ -18,7 +18,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		private $benchmark;
 		private $optimizations;
 
-		public const NOTIFICATIONS_KEY = 'a2_opt_notifications';
+		const NOTIFICATIONS_KEY = 'a2_opt_notifications';
 
 		/**
 		 * Constructor
