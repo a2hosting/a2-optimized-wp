@@ -9,7 +9,7 @@
  * @wordpress-plugin
  * Plugin Name: A2 Optimized WP
  * Plugin URI: https://wordpress.org/plugins/a2-optimized/
- * Version: 2.9.9
+ * Version: 2.9.0
  * Author: A2 Hosting
  * Author URI: https://www.a2hosting.com/
  * Description: A2 Optimized - WordPress Optimization Plugin
@@ -23,13 +23,38 @@ if ( ! defined( 'WPINC' ) ) {
 	die;
 }
 
-define( 'A2OPT_VERSION', '3.0' );
-define( 'A2OPT_FULL_VERSION', '3.0' );
+define( 'A2OPT_VERSION', '2.9' );
+define( 'A2OPT_FULL_VERSION', '2.9.0' );
 define( 'A2OPT_MIN_PHP', '5.6' );
 define( 'A2OPT_MIN_WP', '5.1' );
 define( 'A2OPT_FILE', __FILE__ );
 define( 'A2OPT_BASE', plugin_basename( __FILE__ ) );
 define( 'A2OPT_DIR', __DIR__ );
+
+/* Begin Private Repo additions */
+DEFINE( 'RKV_UPDATE_URL', 'https://wp-plugins.a2hosting.com' );
+DEFINE( 'RKV_ITEM', 'A2 Optimized for WordPress' );
+DEFINE( 'RKV_VERS', '2.9.0' );
+
+if ( ! class_exists( 'RKV_Remote_Updater' ) ) {
+	include( 'RKV_Remote_Updater.php' );
+}
+add_action ( 'admin_init', 'rkv_auto_updater' );
+
+/**
+ * load our auto updater function
+ */
+function rkv_auto_updater() {
+	// Setup the updater
+	$updater = new RKV_Remote_Updater( RKV_UPDATE_URL, __FILE__, array(
+		'item' => RKV_ITEM,
+		'version' => RKV_VERS,
+		'unique' => 'ncdxLvJX6MmPVLAm',
+		)
+	);
+}
+/* End Private Repo additions */
+
 
 /**
  * Creates/Maintains the object of Requirements Checker Class
