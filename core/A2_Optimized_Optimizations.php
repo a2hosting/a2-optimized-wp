@@ -15,7 +15,7 @@ class A2_Optimized_Optimizations {
             $this->private_opts = new A2_Optimized_Private_Optimizations(); 
         }
     }
-
+    
     public function get_optimizations() {
 		$public_opts = $this->get_public_optimizations();
         $extra_settings = $this->get_extra_settings();
@@ -1407,4 +1407,184 @@ PHP;
             exit;
         }
     }
+
+    /*
+	 *	XML-RPC Functions
+	 */
+
+	/* Is this a xmlrpc request? */
+	public function is_xmlrpc_request() {
+		return defined('XMLRPC_REQUEST') && XMLRPC_REQUEST;
+	}
+
+	/* Block this xmlrpc request unless other criteria are met */
+	private function block_xmlrpc_request() {
+		if ($this->client_is_automattic()) {
+			return;
+		}
+
+		if ($this->clientip_whitelisted()) {
+			return;
+		}
+
+		if (!headers_sent()) {
+			header('Connection: close');
+			header('Content-Type: text/xml');
+			header('Date: ' . date('r'));
+		}
+		echo '<?xml version="1.0"?><methodResponse><fault><value><struct><member><name>faultCode</name><value><int>405</int></value></member><member><name>faultString</name><value><string>XML-RPC is disabled</string></value></member></struct></value></fault></methodResponse>';
+		exit;
+	}
+
+	/* Stop advertising we accept certain requests */
+    public static function remove_xmlrpc_methods() {
+        if ($this->client_is_automattic()) {
+			return $xml_rpc_methods;
+		}
+
+		if ($this->clientip_whitelisted()) {
+			return $xml_rpc_methods;
+		}
+
+		unset($xml_rpc_methods['pingback.ping']); // block pingbacks
+		unset($xml_rpc_methods['pingback.extensions.getPingbacks']); // block pingbacks
+
+		return $xml_rpc_methods;
+    }
+
+    public function clientip_whitelisted() {
+		// For future consideration
+		return false;
+	}
+
+	/* Checks if a Automattic plugin is installed
+		Checks if IP making request if from Automattic
+		https://jetpack.com/support/hosting-faq/
+	*/
+	public function client_is_automattic() {
+		//check for jetpack / akismet / vaultpress
+		if (
+			!is_plugin_active('jetpack/jetpack.php')
+			&& !is_plugin_active('akismet/akismet.php')
+			&& !is_plugin_active('vaultpress/vaultpress.php')) {
+			return false;
+		}
+
+		$ip_address = $_SERVER['REMOTE_ADDR'];
+		if ($this->is_ip_in_range(
+			$ip_address,
+			[
+				'122.248.245.244', // Jetpack
+				'54.217.201.243', // Jetpack
+				'54.232.116.4', // Jetpack
+				['195.234.108.0', '195.234.111.255'], // Jetpack
+				['192.0.64.1', '192.0.127.255'], // VaultPress range
+				//array('192.0.80.0', '192.0.95.255'), // Akismet (covered by VaultPress range)
+				//array('192.0.96.0', '192.0.111.255'), // Akismet
+				//array('192.0.112.0', '192.0.127.255'), // Akismet
+			]
+		)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/* Use ip2long to do comparisons */
+	public function is_ip_in_range($ip_address, $range_array) {
+		$ip_long = ip2long($ip_address);
+		foreach ($range_array as $item) {
+			if (is_array($item)) {
+				$ip_low = ip2long($item[0]);
+				$ip_hi = ip2long($item[1]);
+				if ($ip_long <= $ip_hi && $ip_low <= $ip_long) {
+					return true;
+				}
+			} else {
+				if ($ip_long == ip2long($item)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	public static function addLockedEditor() {
+		require_once(ABSPATH . 'wp-admin/includes/plugin.php');
+	}
+
+    public static function login_captcha() {
+		if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')) {
+			include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
+
+			$a2_recaptcha = get_option('A2_Optimized_Plugin_recaptcha');
+			if ($a2_recaptcha == 1) {
+				$captcha = a2recaptcha_get_html();
+                ?>
+                <style>
+                  .g-recaptcha{
+                    position: relative;
+                    top: -6px;
+                    left: -15px;
+                  }
+                </style>
+
+                <?php 
+                echo $captcha;
+			}
+		}
+	}
+
+	public static function comment_captcha() {
+		if (!current_user_can('moderate_comments') && file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')){
+            include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
+
+            $a2_recaptcha = get_option('A2_Optimized_Plugin_recaptcha');
+            if ($a2_recaptcha == 1) {
+                $captcha = a2recaptcha_get_html();
+                echo $captcha;
+            }
+		}
+	}
+
+	public static function captcha_authenticate($user, $username, $password) {
+		if ($username != '' && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)) {
+			$a2_recaptcha = get_option('A2_Optimized_Plugin_recaptcha');
+			if ($a2_recaptcha == 1) {
+				if (file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php')) {
+					include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
+					$resp = a2recaptcha_check_answer($_POST['g-recaptcha-response']);
+
+					if (!empty($username)) {
+						if (!$resp) {
+							remove_filter('authenticate', 'wp_authenticate_username_password', 20);
+							return new WP_Error('recaptcha_error', "<strong>The reCAPTCHA wasn't entered correctly. Please try again.</strong>");
+						}
+					}
+				}
+			}
+		}
+	}
+
+	public static function captcha_comment_authenticate($commentdata) {
+		if (!current_user_can('moderate_comments') && file_exists('/opt/a2-optimized/wordpress/recaptchalib_v2.php') && !(defined('XMLRPC_REQUEST') && XMLRPC_REQUEST)){
+            include_once('/opt/a2-optimized/wordpress/recaptchalib_v2.php');
+
+            $a2_recaptcha = get_option('A2_Optimized_Plugin_recaptcha');
+            if ($a2_recaptcha == 1) {
+                $resp = a2recaptcha_check_answer($_POST['g-recaptcha-response']);
+
+                if (!empty($commentdata)) {
+                    if (!$resp) {
+                        wp_die("<strong>The reCAPTCHA wasn't entered correctly. Please use your browsers back button and try again.</strong>");
+                    }
+                } else {
+                    wp_die('<strong>There was an error. Please try again.</strong>');
+                }
+            }
+		}
+
+		return $commentdata;
+	}
 }
