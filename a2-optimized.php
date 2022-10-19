@@ -122,7 +122,7 @@ function run_a2_optimized() {
 		}
 	}
     if(is_admin()){
-		new A2_Optimized_SiteHealth();
+		new A2_Optimized_SiteHealth;
 		if (defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT) {
 			add_action('admin_menu', ['A2_Optimized_Optimizations', 'addLockedEditor'], 100, 100);
 		}
@@ -135,6 +135,7 @@ function run_a2_optimized() {
 		add_filter('preprocess_comment', ['A2_Optimized_Optimizations', 'captcha_comment_authenticate'], 1, 3);
 	}
 
+	new A2_Optimized_SiteData;
 	$optimizations = new A2_Optimized_Optimizations;
 
 	if ($optimizations->is_xmlrpc_request() && get_option('a2_block_xmlrpc')) {

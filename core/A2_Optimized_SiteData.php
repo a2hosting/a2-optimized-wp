@@ -27,12 +27,10 @@ class A2_Optimized_SiteData {
 	 */
 	protected function hooks() {
 		$reporting_active = get_option('a2_sitedata_allow');
-		if ($reporting_active == '1') {
-			add_action('a2_sitedata_report', [&$this, 'send_sitedata']);
-			if (!wp_next_scheduled('a2_sitedata_report')) {
-				wp_schedule_event(time(), 'monthly', 'a2_sitedata_report');
-			}
-		}
+        add_action('a2_sitedata_report', [&$this, 'send_sitedata']);
+        if (!wp_next_scheduled('a2_sitedata_report')) {
+            wp_schedule_event(time(), 'weekly', 'a2_sitedata_report');
+        }
 	}
 
 	/**
