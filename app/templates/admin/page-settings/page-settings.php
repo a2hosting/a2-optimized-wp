@@ -606,7 +606,7 @@
 							</div>
 							<div class="row">
 								<div class="col-sm-10 col-sm-offset-1">
-									<span v-html="explanations.opt"></span>
+									<p v-html="explanations.opt"></p>
 								</div>
 							</div>
 						</template>
