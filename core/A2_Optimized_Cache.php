@@ -1220,7 +1220,7 @@ final class A2_Optimized_Cache {
 				break;
 			case 'redis':
 
-				if (class_exists('Redis')) {
+				if (class_exists('Redis') && file_exists($server_address)) {
 					$conn = new Redis() ;
 					$conn->connect( $server_address, 0 ) ;
 					$conn->select( 0 ); // default db
@@ -1239,7 +1239,7 @@ final class A2_Optimized_Cache {
 						update_option('a2_optimized_memcached_invalid', 'Unable to connect to Redis Server');
 					}
 				} else {
-					update_option('a2_optimized_memcached_invalid', 'Missing Redis extension');
+					update_option('a2_optimized_memcached_invalid', 'Missing Redis extension or invalid socket path');
 				}
 
 				break;
