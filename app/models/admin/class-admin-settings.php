@@ -425,14 +425,14 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				'legend_text' => "Overall Wordpress Execution Time",
 				'explanation' => 'The web performance score measures how your current host performs compared to A2 Hosting. This web performance score looks at server speed and other metrics to determine how fast your website will load, based on which hosting company & plan you host your website with. <br />
 
-				The higher the score on the graph the faster your website will load. Not all hosting companies and plans use the same hardware. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them. ',
+				The lower the score on the graph the faster your website will load. Not all hosting companies and plans use the same hardware. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them. ',
 				'color_class' => 'success'
 			],
 			'serverperformance' => [
 				'display_text' => 'Server Performance',
 				'metric_text' => "How fast is your hosting provider compare to A2 Hosting's server?",
 				'legend_text' => "PHP, Mysql, and File I/O Response Time Comparison",
-				'explanation' => 'The higher the score on the graph, the faster your experience will be in the WordPress Admin dashboard and on pages that use dynamic content that can\'t be easily cached—like search forms and shopping carts. <br />
+				'explanation' => 'The lower the scores on the graph, the faster your experience will be in the WordPress Admin dashboard and on pages that use dynamic content that can\'t be easily cached—like search forms and shopping carts. <br />
 				Not all hosting companies and plans use the same hardware. If your current host has a lower server performance score than A2 Hosting, then consider moving your websites to A2 Hosting. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them.',
 				'color_class' => 'success'
 			],

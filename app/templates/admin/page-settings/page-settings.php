@@ -5,6 +5,15 @@
 	page_data.login_url = '<?php echo esc_url(get_home_url()) . "/wp-login.php" ?>';
 	page_data.show_coaching = false;
 	page_data.showModal = false;
+	page_data.modalMsg = '';
+	page_data.openModal = function(msg){
+		page_data.showModal = true;
+		page_data.modalMsg = msg;
+	}
+	page_data.closeModal = function(){
+		page_data.showModal = false;
+		page_data.modalMsg = '';
+	}
 	page_data.showA2Only = false;
 	page_data.yesNoDialog = {
 		showYesNo: false,
@@ -233,7 +242,7 @@
 								</div>
 								<div class="row">
 									<div class="col-sm-10 col-sm-offset-1">
-										<p><span v-html="explanations.serverperformance"></span></p>
+										<p><span v-html="graphs.serverperformance.explanation"></span></p>
 									</div>
 								</div>
 							</template>
@@ -269,11 +278,6 @@
 		<div class="row header">
 			<div class="col-lg-8">
 				<h3>{{ opt_group.title }}</h3>
-			</div>
-		</div>
-		<div class="row padding-15">
-			<div class="col-lg-10">
-				<p>{{ opt_group.explanation }}</p>
 			</div>
 		</div>
 		<div v-for="section in opt_group.settings_sections" class="padding-15 opt-extra-settings-items">
@@ -742,12 +746,12 @@
 
 					<div class="modal-header">
 						<slot name="header">
+							<p>{{modalMsg}}</p>
 						</slot>
 					</div>
 
 					<div class="modal-body">
 						<slot name="body">
-							<p>It'll just take a few moments to update your scores</p>
 						</slot>
 					</div>
 
