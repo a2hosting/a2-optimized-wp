@@ -7,7 +7,7 @@
 	page_data.showModal = false;
 	page_data.modalMsg = '';
 	page_data.openModal = function(msg){
-		page_data.showModal =true;
+		page_data.showModal = true;
 		page_data.modalMsg = msg;
 	}
 	page_data.closeModal = function(){
