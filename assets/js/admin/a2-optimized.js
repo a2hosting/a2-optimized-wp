@@ -552,7 +552,7 @@ Vue.component('optimizations-performance', {
 			});
 		},
 		updateOptimizations: function (event, slug = "", value = "") {
-			page_data.showModal = true;
+			page_data.openModal('Updating Optimizations...');
 			let params = new URLSearchParams();
 			params.append('action', 'apply_optimizations');
 			params.append('nonce', ajax.nonce);
@@ -592,12 +592,12 @@ Vue.component('optimizations-performance', {
 				.catch((error) => {
 					alert('There was a problem getting optimization data. See console log.');
 					console.log(error.message);
-					page_data.showModal = false;
+					page_data.closeModal();
 				})
 				.then((response) => {
 					console.log('got ajax response');
 					console.log(response.data);
-					page_data.showModal = false;
+					page_data.closeModal();
 					if (response.data.updated_data != null) {
 						let updated = response.data.updated_data;
 						page_data.optimizations = updated.optimizations;
@@ -650,6 +650,9 @@ Vue.component("modal", {
 	props: {
 		show_busy: { Boolean: false },
 		show_close: { Boolean: false }
+	},
+	data() {
+		return page_data;
 	},
 	template: "#modal-template"
 });
@@ -791,7 +794,8 @@ let app = new Vue({
 			}
 		},
 		pageSpeedCheck: function (page, run_checks = true) {
-			page_data.showModal = true;
+			let msg = run_checks ? 'It will just take a few moments to update your scores ... ' : 'Loading in scores ... '
+			page_data.openModal(msg);
 			let params = new URLSearchParams();
 			params.append('action', 'run_benchmarks');
 			params.append('a2_page', page);
@@ -809,7 +813,7 @@ let app = new Vue({
 				.catch((error) => {
 					alert('There was a problem getting benchmark data. See console log.');
 					console.log(error.message);
-					page_data.showModal = false;
+					page_data.closeModal();
 				})
 				.then((response) => {
 					if (run_checks) {
@@ -826,7 +830,7 @@ let app = new Vue({
 						page_data.graphs = response.data;
 					}
 					page_data.updateView++;
-					page_data.showModal = false;
+					page_data.closeModal();
 				});
 		},
 		promptForAction(header, message, yesAction = null, noAction = null) {
