@@ -1210,9 +1210,11 @@ final class A2_Optimized_Cache {
 						update_option('litespeed.conf.object-post', 0);
 					} else {
 						update_option('a2_optimized_memcached_invalid', 'Unable to connect to Memcached Server');
+						return false;
 					}
 				} else {
 					update_option('a2_optimized_memcached_invalid', 'Missing Memcached extension');
+					return false;
 				}
 
 				break;
@@ -1232,9 +1234,11 @@ final class A2_Optimized_Cache {
 						delete_option('a2_optimized_memcached_invalid');
 					} else {
 						update_option('a2_optimized_memcached_invalid', 'Unable to connect to Redis Server');
+						return false;
 					}
 				} else {
 					update_option('a2_optimized_memcached_invalid', 'Missing Redis extension');
+					return false;
 				}
 
 				break;

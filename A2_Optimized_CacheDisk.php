@@ -413,7 +413,7 @@ final class A2_Optimized_Cache_Disk {
 		// add new settings file contents
 		$new_settings_file_contents = '<?php' . PHP_EOL;
 		$new_settings_file_contents .= '/**' . PHP_EOL;
-		$new_settings_file_contents .= ' * A2 Optimized Cache settings for ' . home_url() . PHP_EOL;
+		$new_settings_file_contents .= ' * A2 Optimized Cache settings ' . PHP_EOL;
 		$new_settings_file_contents .= ' *' . PHP_EOL;
 		$new_settings_file_contents .= ' * @since      1.5.0' . PHP_EOL;
 		$new_settings_file_contents .= ' * @change     1.5.0' . PHP_EOL;
