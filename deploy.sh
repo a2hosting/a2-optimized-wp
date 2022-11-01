@@ -69,8 +69,9 @@ create-zip.sh
 .editorconfig
 .php_cs.cache
 .phpcs.xml.dist
-docs/
-.github/
+docs
+assets/scss
+.github
 .git
 .gitattributes
 .gitignore" "$SVNPATH/trunk/"
