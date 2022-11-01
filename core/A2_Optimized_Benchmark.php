@@ -314,7 +314,7 @@ class A2_Optimized_Benchmark {
 	 * @param int $count Optional number of times to run test 
 	 * @return array Time taken for test and number of queries per second 
 	 */
-	public function run_wordpress_benchmarks($count = 250){
+	public function run_wordpress_benchmarks($count = 500){
 		global $wpdb;
 
 		// dummy text to insert into database
@@ -358,7 +358,7 @@ class A2_Optimized_Benchmark {
 	 * @param int $count Optional number of times to run test 
 	 * @return array Time taken for test and number of queries per second 
 	 */
-	public function run_filesystem_benchmarks($count = 20){
+	public function run_filesystem_benchmarks($count = 1){
 		// Make sure tmp folder is empty and we can write to it
 		if(!$this->clean_tmp_folder()){
 			return false;
@@ -628,38 +628,38 @@ class A2_Optimized_Benchmark {
 			'name' => 'A2 Hosting Turbo Boost',
 			'php' => [
 				'benchmark' => [
-					'math' => '0.323',
-					'string' => '0.501',
-					'loop' => '0.468',
-					'ifelse' => '0.502',
+					'math' => '0.079',
+					'string' => '0.199',
+					'loop' => '0.311',
+					'ifelse' => '0.432',
 				],
-				'total' => '1.927',
+				'total' => '1.022',
 			],
-			'mysql' => '2.5',
+			'mysql' => '1.762',
 			'wordpress_db' => [
-				'time' => '5',
-				'queries_per_second' => '190',
+				'time' => '1.375',
+				'queries_per_second' => '1455',
 			],
-			'filesystem' => '1.4',
+			'filesystem' => '1.503',
 		];
 		
 		$results['a2hosting-mwp'] = [
 			'name' => 'A2 Hosting Managed WordPress',
 			'php' => [
 				'benchmark' => [
-					'math' => '0.213',
-					'string' => '0.356',
-					'loop' => '0.356',
-					'ifelse' => '0.408',
+					'math' => '0.068',
+					'string' => '0.193',
+					'loop' => '0.261',
+					'ifelse' => '0.422',
 				],
-				'total' => '1.333',
+				'total' => '0.945',
 			],
-			'mysql' => '1.6',
+			'mysql' => '1.751',
 			'wordpress_db' => [
-				'time' => '.7',
-				'queries_per_second' => '1450',
+				'time' => '1.125',
+				'queries_per_second' => '1778',
 			],
-			'filesystem' => '0.9',
+			'filesystem' => '2.338',
 		];
 
 		return $results;
