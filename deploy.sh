@@ -52,8 +52,8 @@ echo "Tagging new version in git"
 git tag -a "$NEWVERSION1" -m "Tagging version $NEWVERSION1"
 
 echo "Pushing latest commit to github, with tags"
-#git push github master
-#git push github master --tags
+git push github-public master
+git push github-public master --tags
 
 echo
 echo "Creating local copy of SVN repo ..."
@@ -65,7 +65,15 @@ git checkout-index -a -f --prefix=$SVNPATH/trunk/
 echo "Ignoring github specific files and deployment script"
 svn propset svn:ignore "deploy.sh
 README.md
+create-zip.sh
+.editorconfig
+.php_cs.cache
+.phpcs.xml.dist
+docs
+assets/scss
+.github
 .git
+.gitattributes
 .gitignore" "$SVNPATH/trunk/"
 
 echo "Changing directory to SVN and committing to trunk"
