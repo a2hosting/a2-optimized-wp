@@ -1,7 +1,7 @@
 # A2 Optimized WP - Turbocharge and secure your WordPress site
 
 Contributors: a2hosting, supersoju
-Tags: Speed, Optimize, Secure, Fast, LiteSpeed, LSCache, A2, Hosting
+Tags: a2 hosting, cache, caching, speed, fast, optimize, site performance, image optimization, image compression, site security, seo, gzip compression, minify code, code minification
 Requires at least: 5.1
 Tested up to: 6.1
 Stable tag: 3.0.0

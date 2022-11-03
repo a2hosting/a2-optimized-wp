@@ -1,6 +1,6 @@
 === A2 Optimized WP - Turbocharge and secure your WordPress site ===
 Contributors: a2hosting, supersoju
-Tags: Speed, Optimize, Secure, Fast, LiteSpeed, LSCache, A2, Hosting
+Tags: a2 hosting, cache, caching, speed, fast, optimize, site performance, image optimization, image compression, site security, seo, gzip compression, minify code, code minification
 Requires at least: 5.1
 Tested up to: 6.1
 Stable tag: 3.0.0
@@ -120,11 +120,11 @@ Our plugin is optimized to work best in the A2 Hosting environment, so items mar
 == Installation ==
 
 1. Upload a2-optimized into the wp-content/plugins/ directory
-1. Activate the plugin through the 'Plugins' menu in WordPress
-1. Click 'A2 Optimized' in the admin menu
-1. Click buttons to enable optimizations
-1. Check out warnings that A2 Optimized has detected that may be slowing down your site
-1. Check out Best practices recommendations that may help you identify issues that may be slowing down your site.
+2. Activate the plugin through the 'Plugins' menu in WordPress
+3. Click 'A2 Optimized' in the admin menu
+4. Click buttons to enable optimizations
+5. Check out warnings that A2 Optimized has detected that may be slowing down your site
+6. Check out Best practices recommendations that may help you identify issues that may be slowing down your site.
 
 
 == Frequently Asked Questions ==
