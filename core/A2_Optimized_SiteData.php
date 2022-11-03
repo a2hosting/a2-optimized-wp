@@ -27,20 +27,22 @@ class A2_Optimized_SiteData {
 	 */
 	protected function hooks() {
 		$reporting_active = get_option('a2_sitedata_allow');
-        add_action('a2_sitedata_report', [&$this, 'send_sitedata']);
-        if (!wp_next_scheduled('a2_sitedata_report')) {
-            wp_schedule_event(time(), 'weekly', 'a2_sitedata_report');
-        }
-        
-        $existing_benchmarks = get_option('a2opt-benchmarks-hosting');
-        if($existing_benchmarks && is_array($existing_benchmarks)){
-            // If we have existing benchmarks, run then again on update
-            $last_benchmark_version = get_option('a2_last_benchmark_ver');
-            if(!$last_benchmark_version || version_compare(A2OPT_FULL_VERSION, $last_benchmark_version, '>')){
-                update_option('a2_last_benchmark_ver', A2OPT_FULL_VERSION);
-                $benchmarks = new A2_Optimized_Benchmark;
-                $benchmarks->run_hosting_test_suite();
-                $this->send_sitedata();
+        if($reporting_active == "1"){
+            add_action('a2_sitedata_report', [&$this, 'send_sitedata']);
+            if (!wp_next_scheduled('a2_sitedata_report')) {
+                wp_schedule_event(time(), 'weekly', 'a2_sitedata_report');
+            }
+            
+            $existing_benchmarks = get_option('a2opt-benchmarks-hosting');
+            if($existing_benchmarks && is_array($existing_benchmarks)){
+                // If we have existing benchmarks, run then again on update
+                $last_benchmark_version = get_option('a2_last_benchmark_ver');
+                if(!$last_benchmark_version || version_compare(A2OPT_FULL_VERSION, $last_benchmark_version, '>')){
+                    update_option('a2_last_benchmark_ver', A2OPT_FULL_VERSION);
+                    $benchmarks = new A2_Optimized_Benchmark;
+                    $benchmarks->run_hosting_test_suite();
+                    $this->send_sitedata();
+                }
             }
         }
 	}

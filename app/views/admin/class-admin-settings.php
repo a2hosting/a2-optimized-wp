@@ -31,6 +31,15 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				$last_check = $graphs['pagespeed_mobile']['overall_score']['last_check_date'];
 			}
 
+			if(isset($_GET['data-collection'])){
+				if($_GET['data-collection'] == 'yes'){
+					update_option('a2_sitedata_allow', '1');
+				}
+				if($_GET['data-collection'] == 'no'){
+					update_option('a2_sitedata_allow', '2');
+				}
+			}
+
 			$data = [
 				'mainkey' => 1,
 				'updateView' => 0,

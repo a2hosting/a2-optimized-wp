@@ -1,5 +1,4 @@
 <div class="wrap">
-
 <script> 
 	let page_data = <?php echo $data['data_json'] ?>;
 	page_data.login_url = '<?php echo esc_url(get_home_url()) . "/wp-login.php" ?>';
@@ -857,6 +856,16 @@
 				<span class="empty"></span>
 			</div>
 		</div>
+		<?php $reporting_active = get_option('a2_sitedata_allow');
+		if(!$reporting_active){ ?>
+		<div class="row">
+			<div class="notice notice-warning">
+				<p><strong>Help Us Get You the Best Performance Possible</strong></p>
+				<p>A2 Hosting would like to collect technical data about your installation. This data will be used to make sure that the A2 Optimized plugin works seamlessly on the widest possible range of WordPress sites. A full list of the data that is collected can be found <a href="https://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/information-collected-by-the-a2-optimized-wp-plugin" target="_blank">here</a>.</p>
+				<p><a href="admin.php?page=a2-optimized&data-collection=yes" class="btn btn-primary">Yes, I would like to help</a>&nbsp;<a href="admin.php?page=a2-optimized&data-collection=no" class="btn btn-default">No, thank you</a></p>
+			</div>
+		</div>
+		<?php }; ?>
 		<div class="row" id="a2-optimized-nav">
 			<div class="col-md-12 col-lg-11 col-lg-offset-1">
 				<div class="row a2-optimized-navigation" id="a2-optimized-navigation">
