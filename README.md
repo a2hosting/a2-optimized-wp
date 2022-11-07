@@ -1,10 +1,10 @@
-# A2 Optimized WP
+# A2 Optimized WP - Turbocharge and secure your WordPress site
 
-Contributors: A2BCool, a2hosting, dmatteson, sputala
-Tags: Speed, Optimize, Secure, Fast, LiteSpeed, LSCache, A2, Hosting
+Contributors: a2hosting, supersoju
+Tags: a2 hosting, cache, caching, speed, fast, optimize, site performance, image optimization, image compression, site security, seo, gzip compression, minify code, code minification
 Requires at least: 5.1
 Tested up to: 6.1
-Stable tag: 2.9
+Stable tag: 3.0.0
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -13,93 +13,110 @@ Make your site faster and more secure with a few clicks of a button.
 
 ## Description
 
-A2 Optimized is designed to make it *quick and easy* to *speed up* and secure your website by installing and configuring several well known, stable optimizations with a few quick clicks.
+Boosting performance and securing your WordPress site has never been easier with the A2 Optimized WP plugin from [A2 Hosting](https://www.a2hosting.com/). Get customized desktop and mobile performance scores for your site, including:
 
-A2 Optimized has broken it down into the most valuable optimizations and will automatically configure your site for what works best in most shared hosting environments.
+* Server speed (Time to First Byte)
+* Page load speed (Largest Contentful Paint)
+* User perception (First Contentful Paint)
+* Visual stability (Cumulative Layout Shift)
+* Website browser speed (First Input Delay)
 
-### Free Optimizations
+Using these scores, A2 Optimized WP generates specific, personalized recommendations for improving your site:
 
-**Disk Based Page Caching**:
+* Performance
+* Security
+* Best practices compliance
 
-* Page Caching stores full copies of pages on the disk so that php code and database queries can be skipped by the web server.
-* Object Caching stores commonly used elements such as menus / widgets and forms in memory to speed up page rendering.
+With just a few clicks you’ll give your WordPress site the boost it needs with stable, industry-proven optimizations and improvements.
 
-**Minify HTML Pages**:
+### Performance optimizations
 
-* Remove excess white space and comments from html pages to compress their size.
-* This provides for minor improvements in page load time.
+Our plugin is optimized to work best in the A2 Hosting environment, so items marked with an asterisk (*) are only available for sites hosted at A2 Hosting. If you are not an A2 Hosting customer, [join today](https://www.a2hosting.com)!
 
-**Minify Inline CSS and Javascript**:
+**Page caching**
+* Allows site visitors to save copies of your web pages on their device or browser. When they return to your website in the future, your site files load faster.
+* This optimization improves Time to First Byte (TTFB) and reduces bandwidth usage.
 
-* Further reduce the size of cached pages by optimizing inline CSS and Javascript.
-* Can provide significant speed improvements for page loads.
+**Gzip compression**
+* Turns on Gzip compression to make text files smaller.
+* This optimization improves Time to First Byte (TTFB) and reduces bandwidth usage.
 
-**Gzip Compression**:
+**Redis object caching (*)**
+* Stores commonly used elements such as menus, widgets, and database sets in memory.
+* This optimization improves Time to First Byte (TTFB).
 
-* Turns on gzip compression for cached pages.
-* Ensures that files are compressed before transfering them.
-* Can provide significant speed improvements for page loads.
-* Reduces bandwidth required to serve web pages.
+**Minify HTML pages**
+* Removes extra spaces, tabs, comments, and line breaks from HTML pages.
+* This optimization improves First Contentful Paint (FCP) and First Input Delay (FID).
 
-**Scheduled Database Optimizations**:
+**Automatic database optimizations**
+* Periodically cleans MySQL databases of expired transients (a type of cached data used in WordPress) as well as trashed and spam comments. Also optimizes database tables.
+* This optimization improves Time to First Byte (TTFB) for uncached pages.
 
-If enabled, will periodically perform the following database operations:
-* Remove expired transients
-* Remove Trashed comments
-* Remove spam comments
-* Optimize all tables
-* Remove post revisions (not enabled by default)
-* Remove trashed posts (not enabled by default)
+**Compress images on upload (*)**
+* Automatically compresses images when they are uploaded to your site.
+* This optimization improves First Contentful Paint (FCP), Largest Contentful Paint (LCP), and First Input Delay (FID).
 
-**Deny Direct Access to Configuration Files and Comment Form**:
+**Turbo Web Hosting (*)**
+*Takes advantage of A2 Hosting’s Turbo Web Hosting platform to provide faster serving of static files, pre-compiled .htaccess files for improved performance, PHP opcode caching, and more.
+*This optimization can improve multiple benchmarks.
 
-* Enables WordPress hardening rules in .htaccess to prevent browser access to certain files.
-* Prevents bots from submitting to comment forms.
-* Note: Turn this off if you use systems that post to the comment form without visiting the page.
+**Use system cron instead of WordPress cron (*)**
+* Replaces the WordPress virtual "cron job" with a genuine, system-defined cron job.
+* This optimization reduces the load on WordPress and ensures scheduled tasks run at precise, correct intervals.
 
-**Lock Editing of Plugins and Themes from the WP Admin**:
+**Minify inline CSS and JavaScript**
+* Removes extra spaces, tabs, comments, and line breaks from inline CSS and JavaScript.
+* This optimization improves First Contentful Paint (FCP) and First Input Delay (FID).
 
-* Turns off the file editor in the wp-admin.
-* Prevents plugins and themes from being tampered with from the wp-admin.
+**Disable WooCommerce AJAX Cart Fragments**
+* Disables WooCommerce AJAX Cart Fragments on your homepage and enables the "redirect to cart page" option.
+* This optimization improves WooCommerce performance.
 
-**Disable XML-RPC Services**:
+### Security optimizations
 
-* XML-RPC is a frequent target for bot attacks and can cause site slow down even when unsuccessful.
-* WordPress related services such as Jetpack are whitelisted and continue to work as expected.
+Our plugin is optimized to work best in the A2 Hosting environment, so items marked with an asterisk (*) are only available for sites hosted at A2 Hosting. If you are not an A2 Hosting customer, [join today](https://www.a2hosting.com)!
 
-### A2 Hosting Exclusive Optimizations
+**Lock editing of plugins and themes from wp-admin**
+* Prevents misuse of built-in editing capabilities for the WordPress admin.
 
-*These one-click optimizations are only available while hosted at A2 Hosting.*
+**Change login URL (*)**
+* Changes the login page URL from the default wp-login.php to a random URL.
+* Helps prevent bots from brute-force attacking your login page.
 
-**Login URL Change**:
+**Add CAPTCHA for comments and login (*)**
+* Adds a CAPTCHA to comment forms and login pages to deter bots from posting spam comments and running brute-force attacks..
 
-* Move the login page from the default wp-login.php to a random URL.
-* Prevents bots from automatically brute-force attacking wp-login.php.
+**Block unauthorized XML-RPC requests**
+* Rejects XML-RPC requests except for whitelisted services, such as Jetpack.
 
-**reCAPTCHA on comments and login**:
+**Deny direct access to configuration files**
+* Displays a “403 Forbidden” error when visitors or bots try to access WordPress configuration files.
 
-* Provides google reCAPTCHA on both the Login form and comments.
-* Prevents bots from automatically brute-force attacking wp-login.php.
-* Prevents bots from automatically spamming comments.
+### Best practices recommendations
+**Regenerate wp-config salts**
+* Generates new values for wp-config.php salts and security keys for increased security.
 
-**Compress Images on Upload**:
+**Recent post limit**
+*Checks the number of recent posts per page, which should be less than 15 for most sites.
 
-* Enables and configures Image Optimizer.
-* Compresses images that are uploaded to save bandwidth.
-* Improves page load times: especially on sites with many images.
+**RSS post limit**
+* Checks the number of posts in RSS feeds, which should be less than 20 for most sites.
 
-**Turbo Web Hosting**:
+**Recent posts showing on home page**
+* Checks whether the home page displays recent posts, and offers to use a static page instead for faster performance.
 
-* Take advantage of A2 Hosting's Turbo Web Hosting platform.
-* Faster serving of static files.
-* Pre-compiled .htaccess files on the web server for improved performance.
-* PHP OpCode cache enabled by default
-* Custom php engine that is faster than Fast-CGI and FPM
+**Permalink structure**
+* Checks that the permalink structure is configured to fully optimize page caching and get additional SEO benefits.
 
-**Memcached Object Cache**:
+**Unused themes**
+* Checks if there are any non-default, unused themes that should be deleted.
 
-* Secure and Faster Memcached using Unix socket files.
-* Significant improvement in page load times, especially on pages that can not use full page cache such as wp-admin.
+**Inactive plugins**
+* Checks if there are any inactive plugins that should be deleted.
+
+**Hosted with A2 Hosting**
+* Checks if your site is hosted with [A2 Hosting](https://www.a2hosting.com/) for faster page load times and more optimizations.
 
 
 ## Installation
@@ -109,7 +126,7 @@ If enabled, will periodically perform the following database operations:
 1. Click 'A2 Optimized' in the admin menu
 1. Click buttons to enable optimizations
 1. Check out warnings that A2 Optimized has detected that may be slowing down your site
-1. Check out Advanced Optimizations that may help you identify plugins that may be slowing down your site.
+1. Check out Best practices recommendations that may help you identify issues that may be slowing down your site.
 
 
 ## Frequently Asked Questions
@@ -117,12 +134,11 @@ If enabled, will periodically perform the following database operations:
 ### How does A2 Optimized speed up my site?
 
 Caching is the fastest and easiest way to speed up a dynamic website.
-A2 Optimized will install and configure disk based caching with the click of a few buttons.
+A2 Optimized will install and configure the best available caching method with the click of a few buttons.
 
 ### Does A2 Optimized make all sites faster?
 
 A2 Optimized will speed up most sites; however, not all plugins and themes are compatible with all optimizations.
-
 If your site is slower after enabling caching in A2 Optimized, talk to a developer about finding better solutions for the plugins that you are using.
 
 ### Can I use A2 Optimized with WordFence?
@@ -134,6 +150,12 @@ A2 Optimized is compatible with most of the features in WordFence, however you s
 Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hosting provides a few more tools for speeding up your site when hosted on an A2 Hosting server.
 
 ## Changelog
+
+### 3.0.0
+* Fresh new UI
+* Front-end and Back-end benchmarks
+* Compare your performance against A2 Hosting's Turbo and Managed WordPress plans
+* Find new recommendations on areas where you could further improve your performance
 
 ### 2.1.4.6
 * Better compatibility with LiteSpeed Cache
@@ -281,8 +303,8 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 ## Screenshots
 
-1. A2 Optimized Optimizations Page
-1. A2 Optimized Warnings Page
-1. A2 Optimized Advanced Optimizations Page
-1. About A2 Optimized Page
+1. A2 Optimized Performance Dashboard
+2. A2 Optimized Front End Performance Recommendations
+3. A2 Optimized Backend Benchmark Results
+4. A2 Optimized Optimizations panel
 
