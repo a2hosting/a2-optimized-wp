@@ -1239,26 +1239,25 @@ class A2_Optimized_Optimizations {
         } else {
             update_option('a2_optimized_lockdown', '1');
         }
+        $this->write_htaccess();
     }
 
     public function set_nomods($lockdown = true) {
         if ($lockdown == false) {
             delete_option('a2_optimized_nomods');
-            $this->write_htaccess();
         } else {
             update_option('a2_optimized_nomods', '1');
-            $this->write_htaccess();
         }
+        $this->write_htaccess();
     }
 
     public function set_deny_direct($deny = true) {
         if ($deny == false) {
             update_option('a2_optimized_deny_direct', '0');
-            $this->write_htaccess();
         } else {
             update_option('a2_optimized_deny_direct', '1');
-            $this->write_htaccess();
         }
+        $this->write_htaccess();
     }
 
     public function write_htaccess() {
