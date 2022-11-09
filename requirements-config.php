@@ -11,7 +11,7 @@ return [
 
 	'min_wp_version' => '5.1',  // Minimum WordPress Version.
 
-	'is_multisite_compatible' => false, // True if our plugin is Multisite Compatible.
+	'is_multisite_compatible' => true, // True if our plugin is Multisite Compatible.
 
 	'required_plugins' => [ // Plugins on which our plugin is dependent on.
 
