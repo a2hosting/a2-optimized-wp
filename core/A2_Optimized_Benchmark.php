@@ -38,10 +38,6 @@ class A2_Optimized_Benchmark {
 	 */
 
 	public function run_hosting_test_suite($result_desc = null) {
-		if (!current_user_can('manage_options') && !defined( 'WP_CLI' )) {
-			wp_die(__('There was a problem loading this page, you may not have the necessary permissions, or may need to <a href="' . get_option('siteurl') . '/wp-login.php">' . __('login') . '</a>.'));
-		}
-		
 		$existing_results = [];
 		
 		try{
