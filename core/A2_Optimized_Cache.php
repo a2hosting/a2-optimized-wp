@@ -1000,8 +1000,8 @@ final class A2_Optimized_Cache {
 			return;
 		}
 
-		// check advanced-cache.php drop-in
-		if ( ! file_exists( WP_CONTENT_DIR . '/advanced-cache.php' ) && is_plugin_active('litespeed-cache/litespeed-cache.php')) {
+		// check advanced-cache.php drop-in exists
+		if ( ! file_exists( WP_CONTENT_DIR . '/advanced-cache.php' ) && !is_plugin_active('litespeed-cache/litespeed-cache.php') && get_option('a2_cache_enabled') == 1) {
 			echo sprintf(
 				'<div class="notice notice-warning"><p>%s</p></div>',
 				sprintf(
@@ -1013,6 +1013,16 @@ final class A2_Optimized_Cache {
 					'<code>wp-content</code>'
 				)
 			);
+		}
+
+		// check advanced-cache.php drop-in is ours
+		if (file_exists( WP_CONTENT_DIR . '/advanced-cache.php' ) && !is_plugin_active('litespeed-cache/litespeed-cache.php') && get_option('a2_cache_enabled') == 1) {
+			$existing_hash = md5(WP_CONTENT_DIR . '/advanced-cache.php');
+			$plugin_hash = md5(A2OPT_DIR . '/advanced-cache.php');
+			if($plugin_hash != $existing_hash){
+				@unlink( WP_CONTENT_DIR . '/advanced-cache.php' );
+				A2_Optimized_Cache_Disk::setup();
+			}
 		}
 
 		// check permalink structure
