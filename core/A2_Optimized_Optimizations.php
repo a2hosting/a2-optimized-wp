@@ -1239,6 +1239,7 @@ class A2_Optimized_Optimizations {
         } else {
             update_option('a2_optimized_lockdown', '1');
         }
+        $this->write_htaccess();
     }
 
     public function set_nomods($lockdown = true) {
@@ -1247,14 +1248,16 @@ class A2_Optimized_Optimizations {
         } else {
             update_option('a2_optimized_nomods', '1');
         }
+        $this->write_htaccess();
     }
 
     public function set_deny_direct($deny = true) {
         if ($deny == false) {
-            delete_option('a2_optimized_deny_direct');
+            update_option('a2_optimized_deny_direct', '0');
         } else {
             update_option('a2_optimized_deny_direct', '1');
         }
+        $this->write_htaccess();
     }
 
     public function write_htaccess() {
@@ -1274,11 +1277,13 @@ class A2_Optimized_Optimizations {
             $home_path = "/{$home_path[1]}/";
         }
 
+        $htaccess = file_get_contents(ABSPATH . '.htaccess');
         $a2hardening = '';
 
-        if ($this->is_active('htaccess')) {
-            $a2hardening = <<<APACHE
+        $deny_direct = get_option('a2_optimized_deny_direct');
 
+        if ($deny_direct == '1' && strpos($htaccess, '# BEGIN WordPress Hardening') == false ) {
+            $a2hardening = <<<APACHE
 # BEGIN WordPress Hardening
 <FilesMatch "^.*(error_log|wp-config\.php|php.ini|\.[hH][tT][aApP].*)$">
 Order deny,allow
@@ -1301,17 +1306,15 @@ Deny from all
     RewriteRule (.*) - [F,L]
 </IfModule>
 # END WordPress Hardening
+
 APACHE;
         }
-
-        $htaccess = file_get_contents(ABSPATH . '.htaccess');
 
         $pattern = "/[\r\n]*# BEGIN WordPress Hardening.*# END WordPress Hardening[\r\n]*/msiU";
         $htaccess = preg_replace($pattern, '', $htaccess);
 
         $htaccess = <<<HTACCESS
-$a2hardening
-$htaccess
+$a2hardening $htaccess
 HTACCESS;
 
         //Write the rules to .htaccess
