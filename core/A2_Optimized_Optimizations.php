@@ -1421,7 +1421,7 @@ PHP;
 	}
 
 	/* Block this xmlrpc request unless other criteria are met */
-	private function block_xmlrpc_request() {
+	public function block_xmlrpc_request() {
 		if ($this->client_is_automattic()) {
 			return;
 		}
@@ -1440,12 +1440,12 @@ PHP;
 	}
 
 	/* Stop advertising we accept certain requests */
-    public static function remove_xmlrpc_methods() {
-        if ($this->client_is_automattic()) {
+    public static function remove_xmlrpc_methods($xml_rpc_methods) {
+        if (self::client_is_automattic()) {
 			return $xml_rpc_methods;
 		}
 
-		if ($this->clientip_whitelisted()) {
+		if (self::clientip_whitelisted()) {
 			return $xml_rpc_methods;
 		}
 
@@ -1455,7 +1455,7 @@ PHP;
 		return $xml_rpc_methods;
     }
 
-    public function clientip_whitelisted() {
+    public static function clientip_whitelisted() {
 		// For future consideration
 		return false;
 	}
@@ -1464,17 +1464,9 @@ PHP;
 		Checks if IP making request if from Automattic
 		https://jetpack.com/support/hosting-faq/
 	*/
-	public function client_is_automattic() {
-		//check for jetpack / akismet / vaultpress
-		if (
-			!is_plugin_active('jetpack/jetpack.php')
-			&& !is_plugin_active('akismet/akismet.php')
-			&& !is_plugin_active('vaultpress/vaultpress.php')) {
-			return false;
-		}
-
+	public static function client_is_automattic() {
 		$ip_address = $_SERVER['REMOTE_ADDR'];
-		if ($this->is_ip_in_range(
+		if (self::is_ip_in_range(
 			$ip_address,
 			[
 				'122.248.245.244', // Jetpack
@@ -1494,7 +1486,7 @@ PHP;
 	}
 
 	/* Use ip2long to do comparisons */
-	public function is_ip_in_range($ip_address, $range_array) {
+	public static function is_ip_in_range($ip_address, $range_array) {
 		$ip_long = ip2long($ip_address);
 		foreach ($range_array as $item) {
 			if (is_array($item)) {
