@@ -27,14 +27,14 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 		 *
 		 * @since    3.0.0
 		 */
-		public const SETTINGS_PAGE_SLUG = A2_Optimized::PLUGIN_ID;
+		const SETTINGS_PAGE_SLUG = A2_Optimized::PLUGIN_ID;
 
 		/**
 		 * Capability required to access settings page
 		 *
 		 * @since 3.0.0
 		 */
-		public const REQUIRED_CAPABILITY = 'manage_options';
+		const REQUIRED_CAPABILITY = 'manage_options';
 
 		/**
 		 * Register callbacks for actions and filters
