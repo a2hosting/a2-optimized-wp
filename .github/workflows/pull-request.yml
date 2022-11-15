@@ -1,0 +1,49 @@
+name: PHP Syntax Linter
+
+on:
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    name: Run syntax linters
+    runs-on: ubuntu-latest
+    steps:
+      - name: "Checking out the project..."
+        uses: actions/checkout@v2
+      - name: "PHP Syntax Checker 5.6"
+        uses: StephaneBour/actions-php-lint@5.6
+        with:
+          dir: './'
+      - name: "PHP Syntax Checker 7.0"
+        uses: StephaneBour/actions-php-lint@7.0
+        with:
+          dir: './'
+      - name: "PHP Syntax Checker 7.1"
+        uses: StephaneBour/actions-php-lint@7.1
+        with:
+          dir: './'
+      - name: "PHP Syntax Checker 7.2"
+        uses: StephaneBour/actions-php-lint@7.2
+        with:
+          dir: './'
+      - name: "PHP Syntax Checker 7.3"
+        uses: StephaneBour/actions-php-lint@7.3
+        with:
+          dir: './'
+      - name: "PHP Syntax Checker 7.4"
+        uses: StephaneBour/actions-php-lint@7.4
+        with:
+          dir: './'
+      - name: "PHP Syntax Checker 8.0"
+        uses: StephaneBour/actions-php-lint@8.0
+        with:
+          dir: './'
+      - name: "PHP Syntax Checker 8.1"
+        uses: StephaneBour/actions-php-lint@8.1
+        with:
+          dir: './'
+      - name: "PHP Syntax Checker 8.2"
+        run: |
+          docker pull overtrue/phplint:8.2
+          docker run --rm -t -v "${PWD}":/workdir overtrue/phplint:8.2 ./
