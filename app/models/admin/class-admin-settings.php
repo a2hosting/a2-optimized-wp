@@ -103,7 +103,10 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
 				wp_die(); 
 			}
-			$new_notification = esc_html($_POST['a2_notification_text']) ?? '';
+			$new_notification = '';
+			if(isset($_POST) && isset($_POST['a2_notification_text'])){
+				$new_notification = esc_html($_POST['a2_notification_text']);
+			}
 			if (!empty($new_notification)){
 				$notifications = $this->get_notifications();
 				$max_id = 0;
@@ -357,7 +360,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			return $result;
 		}
 
-		public const BENCHMARK_DISPLAY_DATA = [
+		const BENCHMARK_DISPLAY_DATA = [
 			'overall_score' => [
 				'display_text' => 'Overall Score',
 				'metric_text' => 'The Performance score is a weighted average of the metric scores.',
@@ -465,7 +468,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 		];
 
-		public const BENCHMARK_SCORE_PROFILES = [
+		const BENCHMARK_SCORE_PROFILES = [
 			//higher is better [low/med/high] so we will invert the score when checking
 			'overall_score' => ['success'=>100,  'warn'=>89, 'danger'=>49, 'max'=>100, 'decimalplaces'=>0],
 			'overall_score_inverted' => ['success'=>0, 'warn'=>11, 'danger'=>51, 'decimalplaces'=>0],
