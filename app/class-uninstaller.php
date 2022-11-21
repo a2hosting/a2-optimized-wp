@@ -9,14 +9,10 @@ namespace A2_Optimized\App;
  * @since      3.0.0
  * @package    A2_Optimized
  * @subpackage A2_Optimized/App
- * @author     Your Name <email@example.com>
  */
 class Uninstaller {
 
 	/**
-	 * Short Description. (use period)
-	 *
-	 * Long Description.
 	 *
 	 * @since    3.0.0
 	 */
