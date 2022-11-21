@@ -336,7 +336,7 @@ class A2_Optimized_SiteHealth {
 	 */
 	public function a2opt_phpopcache_test() {
 		$result = array(
-			'label' => __( 'Site Caching is enabled' ),
+			'label' => __( 'PHP OpCaching is enabled' ),
 			'status' => 'good', // Default "passing" section
 			'badge' => array(
 				'label' => __( 'Performance' ),
@@ -347,7 +347,7 @@ class A2_Optimized_SiteHealth {
 				__( 'Your site is cached and fast!' )
 			),
 			'actions' => '',
-			'test' => 'caching_enabled',
+			'test' => 'opcaching_enabled',
 		);
 
 		if(function_exists('opcache_get_status')){
@@ -575,22 +575,25 @@ class A2_Optimized_SiteHealth {
 	 */
 	public function a2opt_gzip_test() {
 		$result = array(
-			'label' => __( 'Dequeue WooCommerce Cart Fragments AJAX calls' ),
-			'status' => 'good', // Default "passing" section
+			'label' => __( 'You should enable GZIP compression' ),
+			'status' => 'recommended', // Default "failing" section
 			'badge' => array(
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
 			),
 			'description' => sprintf(
 				'<p>%s</p>',
-				__( 'Disable WooCommerce Cart Fragments on your homepage.' )
+				__( 'Compresses all text files to make them smaller.' )
 			),
 			'actions' => '',
-			'test' => 'cart_fragments',
+			'test' => 'gzip_compression',
 		);
 
-		if (!A2_Optimized_Cache_Engine::$settings['compress_cache'] && !is_plugin_active('litespeed-cache/litespeed-cache.php')) {
-			$result['status'] = 'recommended';
+		if(is_plugin_active('litespeed-cache/litespeed-cache.php')){
+			$result['status'] = 'good';
+		}
+		else if(get_option('a2_cache_enabled') == 1 && A2_Optimized_Cache_Engine::$settings['compress_cache']) {
+			$result['status'] = 'good';
 		}
 
 		return $result;
