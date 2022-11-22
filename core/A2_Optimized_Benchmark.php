@@ -621,42 +621,50 @@ class A2_Optimized_Benchmark {
 		$results = [];
 
 		$results['a2hosting-turbo'] = [
-			'name' => 'A2 Hosting Turbo Boost',
+			'name' => 'Turbo Max',
+			'explanation' => 'Fastest Shared',
 			'php' => [
 				'benchmark' => [
-					'math' => '0.079',
-					'string' => '0.199',
-					'loop' => '0.311',
-					'ifelse' => '0.432',
+					'math' => '0.074',
+					'string' => '0.201',
+					'loop' => '0.280',
+					'ifelse' => '0.512',
 				],
-				'total' => '1.022',
+				'total' => '1.068',
 			],
-			'mysql' => '1.762',
+			'mysql' => '1.907',
 			'wordpress_db' => [
-				'time' => '1.375',
-				'queries_per_second' => '1455',
+				'time' => '1.606',
+				'queries_per_second' => '1245.33',
 			],
-			'filesystem' => '1.503',
+			'filesystem' => '2.503',
 		];
 		
-		$results['a2hosting-mwp'] = [
-			'name' => 'A2 Hosting Managed WordPress',
+		$results['a2hosting-other'] = [
+			'name' => 'Fly',
+			'explanation' => 'Premium Managed',
 			'php' => [
 				'benchmark' => [
-					'math' => '0.068',
-					'string' => '0.193',
-					'loop' => '0.261',
-					'ifelse' => '0.422',
+					'math' => '0.078',
+					'string' => '0.196',
+					'loop' => '0.268',
+					'ifelse' => '0.393',
 				],
-				'total' => '0.945',
+				'total' => '0.935',
 			],
-			'mysql' => '1.751',
+			'mysql' => '1.863',
 			'wordpress_db' => [
-				'time' => '1.125',
-				'queries_per_second' => '1778',
+				'time' => '1.673',
+				'queries_per_second' => '1195.4',
 			],
-			'filesystem' => '2.338',
+			'filesystem' => '2.337',
 		];
+
+		if(file_exists('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php')){
+            require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
+            $private_opts = new A2_Optimized_Private_Optimizations();
+			$results['a2hosting-other'] = $private_opts->get_baseline_results();
+        }
 
 		return $results;
 	}

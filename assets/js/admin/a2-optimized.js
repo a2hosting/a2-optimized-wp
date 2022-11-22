@@ -52,7 +52,7 @@ const plugin_draw_a2hosting_box = {
 }
 
 function generateSingleBarGraphData(graph, dataPoint) {
-	graph_products = ['host', 'a2hosting-turbo', 'a2hosting-mwp'];
+	graph_products = ['host', 'a2hosting-turbo', 'a2hosting-other'];
 
 	let set_title = graph.legend_text;
 
@@ -65,7 +65,7 @@ function generateSingleBarGraphData(graph, dataPoint) {
 
 	graph_products.forEach((product, index, array) => {
 		let data_entry = page_data.graph_data[product];
-		graph_labels[index] = data_entry.display_text;
+		graph_labels[index] = data_entry.explanation;
 
 
 		let value = parseFloat(data_entry[dataPoint]);
@@ -87,7 +87,7 @@ function generateSingleBarGraphData(graph, dataPoint) {
 }
 
 function generateStackedBarGraphData(graph, dataPoints = []) {
-	graph_products = ['host', 'a2hosting-turbo', 'a2hosting-mwp'];
+	graph_products = ['host', 'a2hosting-turbo', 'a2hosting-other'];
 
 	let set_title = graph.legend_text;
 
@@ -103,7 +103,7 @@ function generateStackedBarGraphData(graph, dataPoints = []) {
 
 	// pre grab some info by product -> metric
 	graph_products.forEach((el, prodIndex, array) => {
-		graph_labels[prodIndex] = page_data.graph_data[el].display_text;
+		graph_labels[prodIndex] = page_data.graph_data[el].explanation;
 		dataPoints.forEach((dataPointName, metricIndex, array) => {
 			let data_entry = page_data.graph_data[el];
 

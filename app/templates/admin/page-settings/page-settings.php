@@ -185,7 +185,7 @@
 								<div class="row">
 									<div class="col-sm-11 col-sm-offset-1">
 										<h4>{{graphs.webperformance.display_text}}</h4>
-										<p>{{graphs.webperformance.metric_text}}</p>
+										<p><span v-html="graphs.webperformance.metric_text"></span></p>
 									</div>
 								</div>
 								<div class="row" style="max-height:500px;">
@@ -201,7 +201,6 @@
 								<div class="row">
 									<div class="col-sm-11 col-sm-offset-1">
 										<h4>{{graphs.webperformance.display_text}}</h4>
-										<p>{{graphs.webperformance.metric_text}}</p>
 									</div>
 								</div>
 								<div class="row">
@@ -220,7 +219,7 @@
 								<div class="row">
 									<div class="col-sm-11 col-sm-offset-1">
 										<h4>{{graphs.serverperformance.display_text}}</h4>
-										<p>{{graphs.serverperformance.metric_text}}</p>
+										<p><span v-html="graphs.serverperformance.metric_text"></span></p>
 									</div>
 								</div>
 								<div class="row" style="max-height:500px">
@@ -236,7 +235,6 @@
 								<div class="row">
 									<div class="col-sm-11 col-sm-offset-1">
 										<h4>{{graphs.serverperformance.display_text}}</h4>
-										<p>{{graphs.serverperformance.metric_text}}</p>
 									</div>
 								</div>
 								<div class="row">
@@ -663,7 +661,7 @@
 								<div class="row">
 									<div class="col-sm-12">
 										<h4>{{graphs.overall_score.display_text}}</h4>
-										<p>{{graphs.overall_score.metric_text}}</p>
+										<p><span v-html="graphs.overall_score.metric_text"></span></p>
 									</div>
 								</div>
 								<div class="row">
