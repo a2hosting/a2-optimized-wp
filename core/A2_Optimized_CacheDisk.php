@@ -66,18 +66,17 @@ final class A2_Optimized_Cache_Disk {
 		self::delete_settings_file();
 
 		// check if settings directory exists
-		if ( ! is_dir( self::$settings_dir ) ) {
+		if ( !is_dir( self::$settings_dir ) ) {
 			// delete old advanced cache settings file(s) (1.4.0)
 			array_map( 'unlink', glob( WP_CONTENT_DIR . '/cache/a2opt-cache-advcache-*.json' ) );
 			// delete incorrect advanced cache settings file(s) that may have been created in 1.4.0 (1.4.5)
 			array_map( 'unlink', glob( ABSPATH . 'A2OPT_SETTINGS_PATH-*.json' ) );
-			// delete advanced-cache.php drop-in
-			@unlink( WP_CONTENT_DIR . '/advanced-cache.php' );
-			// delete object-cache.php drop-in
-			@unlink( WP_CONTENT_DIR . '/object-cache.php' );
-			// unset WP_CACHE constant in config file if set
-			self::set_wp_cache_constant( false );
 		}
+		// delete advanced-cache.php drop-in
+		@unlink( WP_CONTENT_DIR . '/advanced-cache.php' );
+		// unset WP_CACHE constant in config file if set
+		self::set_wp_cache_constant( false );
+		//wp_die();
 	}
 
 	/**

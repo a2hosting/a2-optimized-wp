@@ -1,6 +1,8 @@
 <?php
 namespace A2_Optimized\App;
 
+
+
 /**
  * Fired during plugin activation.
  *
@@ -9,7 +11,6 @@ namespace A2_Optimized\App;
  * @since      3.0.0
  * @package    A2_Optimized
  * @subpackage A2_Optimized/App
- * @author     Your Name <email@example.com>
  */
 class Activator {
 
