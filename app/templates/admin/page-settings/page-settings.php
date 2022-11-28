@@ -520,6 +520,9 @@
 									<div v-if="show_coaching" class="notice notice-warning">
 										<p>Click Run Check to see how fast your page loads. The higher the score the better!</p>
 									</div>
+									<div v-if="graphs.status_message" class="notice notice-warning">
+										<p v-html="graphs.status_message"></p>
+									</div>
 								</div>
 								<div class="col-sm-11 col-sm-offset-1">
 									<div v-if="graphs.pagespeed_mobile" class="col-sm-5 box-element" :class="graphs.pagespeed_mobile.overall_score.color_class">
@@ -645,6 +648,9 @@
 					<div class="col-sm-12">
 						<div class="notice notice-warning"><p>Click Run Check to see how fast your page loads.</p></div>
 					</div>
+				</div>
+				<div v-if="status_message" class="notice notice-warning">
+					<p v-html="status_message"></p>
 				</div>
 				<div class="row padding-bottom"></div>
 				<div class="row">
