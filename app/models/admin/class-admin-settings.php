@@ -190,6 +190,8 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 					'filesystem' => $benchmark['filesystem']
 				];
 				$entry = array_merge(self::BENCHMARK_DISPLAY_DATA[$key], $entry);
+				$entry['display_text'] = $benchmark['name'];
+				$entry['explanation'] = $benchmark['explanation'];
 				$result['graph_data'][$key] = $entry;
 			}
 			$result['graphs']['webperformance'] = self::BENCHMARK_DISPLAY_DATA['webperformance'];
@@ -407,36 +409,43 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			'benchmark-host' => [
 				'display_text' => 'Your Host',
 				'metric_text' => '',
-				'explanation' => 'this is your pathetic slow host',
+				'explanation' => 'Your Host',
 				'color_class' => 'thishost'
 			],
 			'a2hosting-turbo' => [
 				'display_text' => 'Turbo Boost',
 				'metric_text' => '',
-				'explanation' => 'fast as lightning',
+				'explanation' => '',
 				'color_class' => 'warn'
 			],
-			'a2hosting-mwp' => [
+			'a2hosting-other' => [
 				'display_text' => 'Managed Wordpress',
 				'metric_text' => '',
-				'explanation' => 'this is your pathetic slow host',
+				'explanation' => '',
 				'color_class' => 'success'
 			],
 			'webperformance' => [
 				'display_text' => 'Web Performance',
-				'metric_text' => 'How does your hosting provider compare to A2 Hosting?',
+				'metric_text' => "How does your hosting <strong>compare</strong> to A2 Hosting's best plans? With the graphs below <strong>LOWER IS BETTER</strong>.",
 				'legend_text' => "Overall Wordpress Execution Time",
-				'explanation' => 'The web performance score measures how your current host performs compared to A2 Hosting. This web performance score looks at server speed and other metrics to determine how fast your website will load, based on which hosting company & plan you host your website with. <br />
-
-				The lower the score on the graph the faster your website will load. Not all hosting companies and plans use the same hardware. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them. ',
+				'explanation' => 'The web performance score measures how your current host performs compared to A2 Hosting. This web performance score looks at server speed and other metrics to determine how fast your website will load, based on which hosting company & plan you host your website with. <br /><br />
+				The lower the score on the graph the faster your website will load. Not all hosting companies and plans use the same hardware. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them.<br /><br />
+				Graphs are representitive of the following, and individual results may vary based on current server load, PHP version, WordPress version, etc.<br />
+				<li><strong>Fastest Shared</strong> is our Turbo Max 2022 Shared plan on our current fastest server.</li>
+				<li><strong>Premium Managed</strong> is our Fly Managed WordPress plan on our current fastest server.</li>
+				<li><strong>Avg. of all Plans</strong> is an calculated average of WordPress sites across all A2 Hosting plans and servers.</li>',
 				'color_class' => 'success'
 			],
 			'serverperformance' => [
 				'display_text' => 'Server Performance',
-				'metric_text' => "How fast is your hosting provider compare to A2 Hosting's server?",
+				'metric_text' => "How fast is your hosting <strong>compared</strong> to A2 Hosting's best plans? With the graphs below <strong>LOWER IS BETTER</strong>.",
 				'legend_text' => "PHP, Mysql, and File I/O Response Time Comparison",
-				'explanation' => 'The lower the scores on the graph, the faster your experience will be in the WordPress Admin dashboard and on pages that use dynamic content that can\'t be easily cached—like search forms and shopping carts. <br />
-				Not all hosting companies and plans use the same hardware. If your current host has a lower server performance score than A2 Hosting, then consider moving your websites to A2 Hosting. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them.',
+				'explanation' => 'The lower the scores on the graph, the faster your experience will be in the WordPress Admin dashboard and on pages that use dynamic content that can\'t be easily cached—like search forms and shopping carts. <br /><br />
+				Not all hosting companies and plans use the same hardware. If your current host has a lower server performance score than A2 Hosting, then consider moving your websites to A2 Hosting. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them.<br /><br />
+				Graphs are representitive of the following, and individual results may vary based on current server load, PHP version, WordPress version, etc.<br />
+				<li><strong>Fastest Shared</strong> is our Turbo Max 2022 Shared plan on our current fastest server.</li>
+				<li><strong>Premium Managed</strong> is our Fly Managed WordPress plan on our current fastest server.</li>
+				<li><strong>Avg. of all Plans</strong> is an calculated average of WordPress sites across all A2 Hosting plans and servers.</li>',
 				'color_class' => 'success'
 			],
 			'optimizations' => [
