@@ -98,6 +98,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				],
 				'last_check_date' => $pagespeed_last_check,
 				'graphs' => $graphs,
+				'status_message' => $args['status_message'],
 			];
 			$data_json = json_encode($data);
 

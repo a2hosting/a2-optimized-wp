@@ -82,7 +82,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 					break;
 			}
 
-
 			echo json_encode($data);
 			wp_die();
 		}
@@ -202,12 +201,18 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		}
 
 		public function get_frontend_benchmark($run = false) {
+			$status_message = "";
 			if ($run) {
 				$desktop_result = $this->benchmark->get_lighthouse_results('desktop');
 				$mobile_result = $this->benchmark->get_lighthouse_results('mobile');
 
 				if ($desktop_result['status'] != 'success' || $mobile_result['status'] != 'success') {
-					// then what? dunno.
+					if(isset($desktop_result['message'])){
+						$status_message = $desktop_result['message'];
+					}
+					if(isset($mobile_result['message'])){
+						$status_message = $mobile_result['message'];
+					}
 				}
 			}
 
@@ -276,6 +281,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result['pagespeed_mobile'] = $this->get_graph_data('None', $mobile, null);
 			}
 
+			$result['status_message'] = $status_message;
 			return $result;
 		}
 

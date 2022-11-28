@@ -263,7 +263,8 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
 								'notifications' => $notifications,
 								'graphs' => $graphs['pagespeed_desktop'],
-								'run_benchmarks' => $run_benchmarks
+								'run_benchmarks' => $run_benchmarks,
+								'status_message' => $graphs['status_message'],
 							]
 						);
 
