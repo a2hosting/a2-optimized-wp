@@ -698,56 +698,18 @@ class A2_Optimized_CLI {
 	 */
 
 	public function recommendations($args, $assoc_args) {
-		$opts = new A2_Optimized_Optimizations;
-		$action = $args[0];
+		if(file_exists('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php')){
+            require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
+            $private_opts = new A2_Optimized_Private_Optimizations;
 
-		$output = 'Recommendations are coming soon.';
+			$action = $args[0];
 
-		/*
-		switch ($action) {
-			case 'show':
-				$output .= "We would enable the following optimizations:\n";
-				$optimizations = $opts->get_recommended_optimizations();
-				foreach ($optimizations as $k => $optimization) {
-					if (isset($optimization['is_configured'])) {
-						$optimizations[$k]['is_configured']($optimizations[$k]);
-					}
-				}
+			$output = $private_opts->apply_recommendation($action);
 
-				$optimization_count = 0;
-				foreach ($optimizations as $k => $optimization) {
-					if (!$optimization['configured']) {
-						if (!isset($optimization['compatibility_issue'])) {
-							$output .= $optimization['name'] . "\n";
-							$optimization_count++;
-						}
-					}
-				}
-
-				if ($optimization_count == 0) {
-					$output = "Site is already optimized!\n\n";
-				}
-
-				break;
-			case 'save':
-				$opts->save_optimizations();
-				$output .= "Saved current optimizations.\n";
-
-				break;
-			case 'apply':
-				echo "Saving current optimizations...\n";
-				$opts->apply_recommended_optimizations();
-				$output .= "Recommended optimizations have been applied.\n";
-
-				break;
-			case 'restore':
-				$opts->restore_optimizations();
-				$output .= "Restored previous optimization state.\n";
-
-				break;
+        } else {
+			$output = "Not available";
 		}
-		*/
-
+		
 		echo $output;
 	}
 }
