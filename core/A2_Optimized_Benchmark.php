@@ -455,7 +455,7 @@ class A2_Optimized_Benchmark {
 	 * @param string $strategy Desktop or Mobile 
 	 * @return array $results Array containing the results of the test 
 	 */
-	public function get_lighthouse_results($strategy = "desktop", $retry_count = 3, $result_desc = null){
+	public function get_lighthouse_results($strategy = "desktop", $retry_count = 5, $result_desc = null){
 		$output = [];
 	
 		$url = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' . get_site_url() . '&strategy=' . $strategy;
@@ -464,7 +464,6 @@ class A2_Optimized_Benchmark {
 			$url .= '&key=' . $pagespeed_options['api-key'];
 		}
 		$response = wp_remote_get($url, ['timeout' => 15]);
-
 		if(is_array($response) && !is_wp_error($response)){
 			$lighthouse_data = json_decode($response['body'], true);
 			if(!isset($lighthouse_data['error']) || empty($lighthouse_data['error'])){
@@ -484,13 +483,11 @@ class A2_Optimized_Benchmark {
 
 				$output = [
 					'status' => 'success',
-					'message' => 'New results from Pagespeed Insights recorded.'
+					'message' => ''
 				];
 			} else {
-				$non_retry_errors = ['API_KEY_INVALID'];
-				$error_reason = $lighthouse_data['error']['details'][0]['reason'];
-
-				if (in_array($error_reason, $non_retry_errors) || $retry_count <= 0){
+				$error_code = $lighthouse_data['error']['code'];
+				if (in_array($error_code, [500,400]) || $retry_count <= 0){
 					$error_msg = '';
 					if(isset($lighthouse_data['error']['message'])){
 						$error_msg = $lighthouse_data['error']['message'];

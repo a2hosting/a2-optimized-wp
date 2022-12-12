@@ -35,7 +35,8 @@
 	page_data.strategies = [
 		{option: 'Desktop', value: 'desktop'},
 		{option: 'Mobile', value: 'mobile'},
-	]
+	];
+	page_data.frontend_benchmark_status = '';
 </script>
 
 <script type="text/x-template" id="info-button-template">
@@ -66,21 +67,6 @@
 		</div>
 	</div>
 </script>
-<!--
-<script type="text/x-template" id="flip-panel-template">
-	<div :id="content_id" class="box-element" :class="status_class" class="flip-card flip-card-inner">
-		<div class="info-toggle-button">
-			<span @click="toggleFlipPanel($event);"><span class="glyphicon glyphicon-question-sign" aria-hidden="true"></span></span>
-		</div>
-		<div v-show="content_index == 0" class="graph-data flip-card-front">
-			<slot name="content1"></slot>
-		</div>
-		<div v-show="content_index == 1" class="graph-info flip-card-back">
-			<slot name="content2"></slot>
-		</div>
-	</div>
-</script>
--->
 
 <script type="text/x-template" id="graph-legend-template">
 	<div class="col-sm-10 graph-legend ">
@@ -158,20 +144,7 @@
 <script type="text/x-template" id="hosting-matchup-template">
 	<div class="col-sm-12">
 		<div class="row">
-			<div class="col-md-12 col-lg-2 side-nav">
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
-					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=server_performance')" 
-					class="navlink-button"  :class="nav.webperf_class">Web Performance</button>
-				</div>
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
-					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
-					class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
-				</div>
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
-					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=advanced_settings')" 
-					class="navlink-button" :class="nav.advs_class">Advanced Settings</button>
-				</div>
-			</div>
+			<performance-sidebar @nav-change-url="this.$parent.loadSubPage"></performance-sidebar>
 			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-hostingmatchup">
 				<div class="row">
 					<div class="col-sm-12">
@@ -262,20 +235,7 @@
 <script type="text/x-template" id="advanced-settings-template">
 	<div class="col-sm-12">
 		<div class="row">
-			<div class="col-md-12 col-lg-2 side-nav">
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
-					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=server_performance')" 
-					class="navlink-button"  :class="nav.webperf_class">Web Performance</button>
-				</div>
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
-					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
-					class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
-				</div>
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
-					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=advanced_settings')" 
-					class="navlink-button" :class="nav.advs_class">Advanced Settings</button>
-				</div>
-			</div>
+			<performance-sidebar @nav-change-url="this.$parent.loadSubPage"></performance-sidebar>
 			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-advanced-settings">
 				<opt-extra-settings :extra_settings="advanced_settings" slug_override="advanced">
 				</opt-extra-settings>
@@ -561,8 +521,8 @@
 									<div v-if="show_coaching" class="notice notice-warning">
 										<p>Click Run Check to see how fast your page loads. The higher the score the better!</p>
 									</div>
-									<div v-if="graphs.status_message" class="notice notice-warning">
-										<p v-html="graphs.status_message"></p>
+									<div v-if="frontend_benchmark_status" class="notice notice-warning">
+										<p v-html="frontend_benchmark_status"></p>
 									</div>
 								</div>
 								<div class="col-sm-11 col-sm-offset-1">
@@ -662,23 +622,27 @@
 	</div>
 </script>
 
+<script type="text/x-template" id="performance-sidebar-template">
+	<div class="col-md-12 col-lg-2 side-nav">
+		<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+			<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=server_performance')" 
+			class="navlink-button"  :class="nav.webperf_class">Web Performance</button>
+		</div>
+		<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+			<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
+			class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
+		</div>
+		<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+			<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=advanced_settings')" 
+			class="navlink-button" :class="nav.advs_class">Advanced Settings</button>
+		</div>
+	</div>
+</script>
+
 <script type="text/x-template" id="server-performance-template">
 	<div class="col-sm-12">
 		<div class="row">
-			<div class="col-md-12 col-lg-2 side-nav">
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
-					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=server_performance')" 
-					class="navlink-button"  :class="nav.webperf_class">Web Performance</button>
-				</div>
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
-					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
-					class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
-				</div>
-				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
-					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=advanced_settings')" 
-					class="navlink-button" :class="nav.advs_class">Advanced Settings</button>
-				</div>
-			</div>
+			<performance-sidebar @nav-change-url="this.$parent.loadSubPage"></performance-sidebar>
 			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-serverperformance">
 				<div class="row">
 					<div class="col-sm-12">
@@ -693,8 +657,8 @@
 						<div class="notice notice-warning"><p>Click Run Check to see how fast your page loads.</p></div>
 					</div>
 				</div>
-				<div v-if="status_message" class="notice notice-warning">
-					<p v-html="status_message"></p>
+				<div v-if="frontend_benchmark_status" class="notice notice-warning">
+					<p v-html="frontend_benchmark_status"></p>
 				</div>
 				<div class="row padding-bottom"></div>
 				<div class="row">

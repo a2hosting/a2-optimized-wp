@@ -649,6 +649,13 @@ Vue.component('optimizations-performance', {
 	}
 });
 
+Vue.component("performance-sidebar", {
+	data() {
+		return page_data;
+	},
+	template: "#performance-sidebar-template"
+});
+
 Vue.component("modal", {
 	props: {
 		show_busy: { Boolean: false },
@@ -880,12 +887,19 @@ let app = new Vue({
 					page_data.closeModal();
 				})
 				.then((response) => {
-					if (run_checks && response.data.status_message == '') {
+					let status_message = response.data.status_message;
+
+					if (run_checks && status_message == '') {
 						page_data.last_check_date = 'just now';
 					} else {
-						page_data.last_check_date = response.data.overall_score.last_check_date;
+						if (response.data.overall_score){
+							page_data.last_check_date = response.data.overall_score.last_check_date;
+						}
+						else {
+							page_data.last_check_date = response.data.pagespeed_desktop.overall_score.last_check_date;
+						}
 					}
-					page_data.frontend_benchmark_status = response.data.status_message;
+					page_data.frontend_benchmark_status = status_message;
 					if (page == 'hosting-matchup') {
 						page_data.graphs = response.data.graphs;
 						page_data.graph_data = response.data.graph_data;

@@ -66,10 +66,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				case 'server-performance':
 				case 'page-speed-score':
 					$raw_frontend_data = $this->get_frontend_benchmark($run_checks);
-
 					if ($page == 'server-performance') {
 						$strategy = 'pagespeed_' . $_POST['a2_performance_strategy'];
 						$frontend_data = $raw_frontend_data[$strategy];
+					}
+					else {
+						$frontend_data = $raw_frontend_data;
 					}
 
 					$opt_data = $this->get_opt_performance();
@@ -325,9 +327,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 						break;
 					}
 				}
+
 				// set these to false if no benchmarks
 				$result['pagespeed_desktop'] = $this->get_graph_data($desktop_check_date, $last_desktop, $prev_desktop);
 				$result['pagespeed_mobile'] = $this->get_graph_data($mobile_check_date, $last_mobile, $prev_mobile);
+
 			} else {
 				$desktop = [
 					"strategy" => "desktop",
@@ -359,7 +363,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result['pagespeed_desktop'] = $this->get_graph_data('None', $desktop, null);
 				$result['pagespeed_mobile'] = $this->get_graph_data('None', $mobile, null);
 			}
-
 			$result['status_message'] = $status_message;
 			return $result;
 		}
