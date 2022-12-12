@@ -181,14 +181,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		}
 
 		public function get_advanced_settings(){
-/*
-		$pagespeed_options = get_option('a2opt-pagespeed');
-		if($pagespeed_options && isset($pagespeed_options['api_key'])){
-			$url = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' . get_site_url() . '&strategy=' . $strategy . '&key=' . $pagespeed_options['api_key'];
-		} else {
-			$url = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' . get_site_url() . '&strategy=' . $strategy;
-		}
-*/
 			$advanced_settings_current = get_option('a2opt-pagespeed');
 
 			if ($advanced_settings_current == null){
