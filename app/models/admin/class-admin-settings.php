@@ -47,6 +47,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 			add_action( 'wp_ajax_run_benchmarks', [$this, 'run_benchmarks'] );
 			add_action( 'wp_ajax_apply_optimizations', [$this, 'apply_optimizations'] );
+			add_action( 'wp_ajax_update_advanced_options', [$this, 'update_advanced_options']);
 			add_action( 'wp_ajax_add_notification', [$this, 'add_notification'] );
 		}
 
@@ -64,16 +65,19 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			switch($page){
 				case 'server-performance':
 				case 'page-speed-score':
-					$frontend_data = $this->get_frontend_benchmark($run_checks);
-
+					$raw_frontend_data = $this->get_frontend_benchmark($run_checks);
 					if ($page == 'server-performance') {
 						$strategy = 'pagespeed_' . $_POST['a2_performance_strategy'];
-						$frontend_data = $frontend_data[$strategy];
+						$frontend_data = $raw_frontend_data[$strategy];
+					}
+					else {
+						$frontend_data = $raw_frontend_data;
 					}
 
 					$opt_data = $this->get_opt_performance();
 
 					$data = array_merge($frontend_data, $opt_data['graphs']);
+					$data['status_message'] = $raw_frontend_data['status_message'];
 					break;
 				case 'hosting-matchup':
 					$hosting_data = $this->get_hosting_benchmark($run_checks);
@@ -147,6 +151,75 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 			echo json_encode($data);
 			wp_die();
+		}
+
+		public function update_advanced_options() {
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ){ 
+				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
+				wp_die(); 
+			}
+
+			$data = [];
+
+			$settings = [];
+			foreach($_POST as $k => $value){
+				if(substr($k, 0, 4) === "opt-"){
+					$k = str_replace("opt-", "", $k);
+					$settings[$k] = $value;
+				}
+			}
+
+			update_option('a2opt-pagespeed', $settings);
+
+			$data['updated_data']['advanced_settings'] = $this->get_advanced_settings();
+
+			$data['result'] = 'success';
+
+			echo json_encode($data);
+			wp_die();
+
+		}
+
+		public function get_advanced_settings(){
+			$advanced_settings_current = get_option('a2opt-pagespeed');
+
+			if ($advanced_settings_current == null){
+				$advanced_settings_current = [
+					'api-key' => '',
+					'default-strategy' =>'desktop'
+				];
+			}
+
+			$advanced_settings['advanced'] = [
+				'title' => 'Advanced Settings',
+				'explanation' => 'Advanced settings for the A2Opt application',
+				'settings_sections' => [
+					'a2opt-pagespeed' => [
+						'title' => '',
+						'description' => '',
+						'settings' => [
+							'default-strategy' => [
+								'description' => 'Default strategy',
+								'label' => '',
+								'input_type' => 'options',
+								'input_options' => [
+									'Desktop' => 'desktop',
+									'Mobile' => 'mobile'
+								],
+								'value' => $advanced_settings_current['default-strategy'],
+							],
+							'api-key' => [
+								'description' => 'Google API Key',
+								'label' => 'Check <a target="_blank" href="https://developers.google.com/speed/docs/insights/v5/get-started">HERE</a> for more information about using a Google API Key.  Leave blank if you are unsure.',
+								'input_type' => 'text',
+								'value' => $advanced_settings_current['api-key'],
+							]
+						]
+					]
+				]
+			];
+	
+			return $advanced_settings;
 		}
 
 		public function get_hosting_benchmark($run = false) {
@@ -246,9 +319,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 						break;
 					}
 				}
+
 				// set these to false if no benchmarks
 				$result['pagespeed_desktop'] = $this->get_graph_data($desktop_check_date, $last_desktop, $prev_desktop);
 				$result['pagespeed_mobile'] = $this->get_graph_data($mobile_check_date, $last_mobile, $prev_mobile);
+
 			} else {
 				$desktop = [
 					"strategy" => "desktop",
@@ -280,7 +355,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$result['pagespeed_desktop'] = $this->get_graph_data('None', $desktop, null);
 				$result['pagespeed_mobile'] = $this->get_graph_data('None', $mobile, null);
 			}
-
 			$result['status_message'] = $status_message;
 			return $result;
 		}
