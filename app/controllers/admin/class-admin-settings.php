@@ -254,15 +254,22 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				}
 				$run_benchmarks = false;
 				$notifications = $this->get_model()->get_notifications();
+				$options = get_option('a2opt-pagespeed');
+				$strategy = 'desktop';
+				if (isset($options['default-strategy'])){
+					$strategy = $options['default-strategy'];
+				}
 				switch ($page) {
 					case 'server_performance':
 						$graphs = $this->get_model()->get_frontend_benchmark($run_benchmarks);
+
 						$this->view->admin_server_performance_page(
 							[
 								'page_title'    => A2_Optimized::PLUGIN_NAME,
 								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
 								'notifications' => $notifications,
-								'graphs' => $graphs['pagespeed_desktop'],
+								'graphs' => $graphs['pagespeed_' . $strategy],
+								'default_strategy' => $strategy,
 								'run_benchmarks' => $run_benchmarks,
 								'status_message' => $graphs['status_message'],
 							]
@@ -278,6 +285,17 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 								'notifications' => $notifications,
 								'data' => $data,
 								'run_benchmarks' => $run_benchmarks
+							]
+						);
+						break;
+					case 'advanced_settings':
+						$data = $this->get_model()->get_advanced_settings();
+						$this->view->admin_advanced_settings_page(
+							[
+								'page_title'    => A2_Optimized::PLUGIN_NAME,
+								'settings_name' => $this->get_model()->get_plugin_settings_option_key(),
+								'notifications' => $notifications,
+								'data' => $data,
 							]
 						);
 						break;

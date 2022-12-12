@@ -464,10 +464,11 @@ Vue.component('optimization-entry', {
 Vue.component('opt-extra-settings', {
 	props: {
 		extra_settings: Object,
+		slug_override: String
 	},
 	data() {
 		return {
-			selected_slug: '',
+			selected_slug: this.slug_override ?? '',
 		}
 	},
 	computed: {
@@ -487,16 +488,18 @@ Vue.component('opt-extra-settings', {
 	methods: {
 		adjustSettingVisibility: function () {
 			// hide or show the redis/memcached server fields
-			let cache_type = page_data['extra_settings']['a2_object_cache']['settings_sections']['a2_optimized_objectcache_type']['settings']['a2_optimized_objectcache_type']['value'];
+			if (page_data['extra_settings']){
+				let cache_type = page_data['extra_settings']['a2_object_cache']['settings_sections']['a2_optimized_objectcache_type']['settings']['a2_optimized_objectcache_type']['value'];
 
-			let memcached_server = document.getElementById('setting-memcached_server');
-			let redis_server = document.getElementById('setting-redis_server');
-
-			if (memcached_server) {
-				memcached_server.style = cache_type == 'memcached' ? '' : 'display:none;'
-			}
-			if (redis_server) {
-				redis_server.style = cache_type == 'redis' ? '' : 'display:none;'
+				let memcached_server = document.getElementById('setting-memcached_server');
+				let redis_server = document.getElementById('setting-redis_server');
+	
+				if (memcached_server) {
+					memcached_server.style = cache_type == 'memcached' ? '' : 'display:none;'
+				}
+				if (redis_server) {
+					redis_server.style = cache_type == 'redis' ? '' : 'display:none;'
+				}
 			}
 		}
 	}
@@ -655,6 +658,67 @@ Vue.component("modal", {
 		return page_data;
 	},
 	template: "#modal-template"
+});
+
+Vue.component('advanced-settings', {
+	data() {
+		return page_data;
+	},
+	template: "#advanced-settings-template",
+	methods: {
+		updateAdvancedOptions: function (event, slug = "", value = "") {
+			page_data.openModal('Updating Options...');
+			let params = new URLSearchParams();
+			params.append('action', 'update_advanced_options');
+			params.append('nonce', ajax.nonce);
+
+			let root_object = page_data.advanced_settings;
+
+			if (slug) {
+				params.append('opt-' + slug, value);
+			}
+			else {
+				for (let parent in root_object) { // a2_page_cache
+					for (let item in root_object[parent]['settings_sections']) { // site_clear
+						for (let subitem in root_object[parent]['settings_sections'][item]['settings']) { // clear_site_cache_on_changed_plugin
+							params.append('opt-' + subitem, root_object[parent]['settings_sections'][item]['settings'][subitem]['value']);
+
+							// If this item has extra_fields
+							if (root_object[parent]['settings_sections'][item]['settings'][subitem].hasOwnProperty('extra_fields')) {
+								for (let extra_field in root_object[parent]['settings_sections'][item]['settings'][subitem]['extra_fields']) { // cache_expiry_time
+									params.append('opt-' + extra_field, root_object[parent]['settings_sections'][item]['settings'][subitem]['extra_fields'][extra_field]['value']);
+								}
+							}
+						}
+					}
+				}
+			}
+
+			axios
+				.post(ajax.url, params)
+				.catch((error) => {
+					alert('There was a problem getting optimization data. See console log.');
+					console.log(error.message);
+					page_data.closeModal();
+				})
+				.then((response) => {
+					page_data.closeModal();
+					if (response.data.updated_data != null) {
+						page_data.advanced_settings = response.data.updated_data.advanced_settings;
+						page_data.mainkey++;
+						page_data.showSuccess = true;
+					}
+					else {
+						alert('invalid data received, please reload page');
+						page_data.mainkey++;
+						page_data.showSuccess = false;
+					}
+					this.$nextTick(function () { // wait until things are re-rendered from the mainkey++ update, and then trigger the circles re-render
+						page_data.updateView++;
+					});
+				});
+		}
+	}
 });
 
 Vue.component('server-performance', {
@@ -816,11 +880,12 @@ let app = new Vue({
 					page_data.closeModal();
 				})
 				.then((response) => {
-					if (run_checks) {
+					if (run_checks && response.data.status_message == '') {
 						page_data.last_check_date = 'just now';
 					} else {
 						page_data.last_check_date = response.data.overall_score.last_check_date;
 					}
+					page_data.frontend_benchmark_status = response.data.status_message;
 					if (page == 'hosting-matchup') {
 						page_data.graphs = response.data.graphs;
 						page_data.graph_data = response.data.graph_data;

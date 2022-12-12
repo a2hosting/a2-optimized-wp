@@ -457,9 +457,12 @@ class A2_Optimized_Benchmark {
 	 */
 	public function get_lighthouse_results($strategy = "desktop", $retry_count = 3, $result_desc = null){
 		$output = [];
-		
+	
 		$url = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' . get_site_url() . '&strategy=' . $strategy;
-		
+		$pagespeed_options = get_option('a2opt-pagespeed');
+		if($pagespeed_options && isset($pagespeed_options['api-key'])){
+			$url .= '&key=' . $pagespeed_options['api-key'];
+		}
 		$response = wp_remote_get($url, ['timeout' => 15]);
 
 		if(is_array($response) && !is_wp_error($response)){
@@ -484,16 +487,23 @@ class A2_Optimized_Benchmark {
 					'message' => 'New results from Pagespeed Insights recorded.'
 				];
 			} else {
-				if ($retry_count > 0){
-					$output = $this->get_lighthouse_results($strategy, $retry_count--, $result_desc);
-				} else {
+				$non_retry_errors = ['API_KEY_INVALID'];
+				$error_reason = $lighthouse_data['error']['details'][0]['reason'];
+
+				if (in_array($error_reason, $non_retry_errors) || $retry_count <= 0){
+					$error_msg = '';
+					if(isset($lighthouse_data['error']['message'])){
+						$error_msg = $lighthouse_data['error']['message'];
+					}
 					$output = [
 						'status' => 'error',
-						'message' => 'There was an error retrieving results from Pagespeed. Please try again in a few minutes.',
+						'message' => 'There was an error retrieving results from Pagespeed. ' . $error_msg,
 					];
 				}
+				else {
+					$output = $this->get_lighthouse_results($strategy, --$retry_count, $result_desc);
+				}
 			};
-			
 		} else {
 			$output = [
 				'status' => 'error',

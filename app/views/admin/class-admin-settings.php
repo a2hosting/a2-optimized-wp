@@ -98,6 +98,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				],
 				'last_check_date' => $pagespeed_last_check,
 				'graphs' => $graphs,
+				'default_strategy' => $args['default_strategy'],
 				'status_message' => $args['status_message'],
 			];
 			$data_json = json_encode($data);
@@ -129,6 +130,31 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'last_check_date' => $last_check,
 				'graphs' => $data['graphs'],
 				'graph_data' => $data['graph_data']
+			];
+			$data_json = json_encode($data);
+
+			$data['data_json'] = $data_json;
+			$args['data'] = $data;
+
+			echo $this->render_template(
+				'admin/page-settings/page-settings.php',
+				$args
+			); // WPCS: XSS OK.
+		}
+		
+		public function admin_advanced_settings_page($args = []) {
+			$data = $args['data'];
+
+			$data = [
+				'mainkey' => 1,
+				'updateView' => 0,
+				'content-element' => '<advanced-settings :update-Child="updateView" :key="mainkey" ' . self::EVENT_LISTENERS . '></advanced-settings>',
+				'home_url' => home_url(),
+				'nav' => [
+					'wsp_class' => 'current',
+					'advs_class' => 'current'
+				],
+				'advanced_settings' => $data
 			];
 			$data_json = json_encode($data);
 

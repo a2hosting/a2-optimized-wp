@@ -32,6 +32,10 @@
 		noAction: null,
 		yesAction: null,
 	};
+	page_data.strategies = [
+		{option: 'Desktop', value: 'desktop'},
+		{option: 'Mobile', value: 'mobile'},
+	]
 </script>
 
 <script type="text/x-template" id="info-button-template">
@@ -163,6 +167,10 @@
 					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
 					class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
 				</div>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=advanced_settings')" 
+					class="navlink-button" :class="nav.advs_class">Advanced Settings</button>
+				</div>
 			</div>
 			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-hostingmatchup">
 				<div class="row">
@@ -251,6 +259,36 @@
 	</div>
 </script>
 
+<script type="text/x-template" id="advanced-settings-template">
+	<div class="col-sm-12">
+		<div class="row">
+			<div class="col-md-12 col-lg-2 side-nav">
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=server_performance')" 
+					class="navlink-button"  :class="nav.webperf_class">Web Performance</button>
+				</div>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
+					class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
+				</div>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=advanced_settings')" 
+					class="navlink-button" :class="nav.advs_class">Advanced Settings</button>
+				</div>
+			</div>
+			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-advanced-settings">
+				<opt-extra-settings :extra_settings="advanced_settings" slug_override="advanced">
+				</opt-extra-settings>
+			</div>
+
+			<div class="col-sm-9 text-right" style="padding-top: 1em;">
+				<a href="#" @click.prevent="updateAdvancedOptions()" class="cta-btn-green btn-xlg btn-lg cta-btn-green text-right">Update</a>
+			</div>
+		</div>
+	</div>
+</script>
+
+
 <script type="text/x-template" id="optimization-entry">
 	<div class="row">
 		<div class="col-md-8 col-lg-9 ">
@@ -298,6 +336,9 @@
 					<div v-else>
 						<div class="col-md-9">
 							<h4 class="less-vertical-space setting-desc">{{ setting.description }}</h4>
+							<p v-if="setting.label">
+								<span v-html="setting.label"></span>
+							</p>
 						</div>
 					</div>
 					<p v-if="setting.input_type == 'text'">
@@ -633,13 +674,16 @@
 					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
 					class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
 				</div>
+				<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
+					<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=advanced_settings')" 
+					class="navlink-button" :class="nav.advs_class">Advanced Settings</button>
+				</div>
 			</div>
 			<div class="col-md-12 col-lg-10 border-left" id="a2-optimized-serverperformance">
 				<div class="row">
 					<div class="col-sm-12">
 						<select name="server-perf-strategy" id="server-perf-strategy-select" class="form-element" @change="strategyChanged($event)">
-							<option selected value="desktop">Desktop</option>
-							<option value="mobile">Mobile</option>
+							<option v-for="s in strategies" :value="s.value" :selected="s.value == default_strategy">{{s.option}}</option>
 						</select>
 						<a class="btn cta-btn-green" @click="pageSpeedCheck()">Run Check</a> <span class="last-check">Last Check: {{ last_check_date }}</span>
 					</div>
