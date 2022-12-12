@@ -268,6 +268,7 @@ class A2_Optimized_Optimizations {
                 'description' => '<strong>Benefit:</strong> Makes your site faster for your visitors.<br />
                 <strong>How-it-works:</strong> Allows site visitors to save copies of your web pages on their device or browser. When they return to your website in the future, your site files will load faster.<br /> 
                 <strong>What does it impact:</strong> Time to First Byte (TTFB)',
+                'extra_info' => ''
             ],
             'a2_page_cache_gzip' => [
                 'error' => '',
@@ -280,6 +281,7 @@ class A2_Optimized_Optimizations {
                 'description' => '<strong>Benefit:</strong> Makes your site faster for visitors.<br />
                 <strong>How it works:</strong> Compresses all text files to make them smaller.<br />
                 <strong>What does it impact:</strong> Time to First Byte (TTFB)',
+                'extra_info' => ''
             ],
             'a2_object_cache' => [
                 'error' => '',
@@ -292,6 +294,7 @@ class A2_Optimized_Optimizations {
                 'description' => '<strong>Benefit:</strong> Makes your site faster.<br />
                 <strong>How-it-works:</strong> Serves cached items such as images, files, and metadata in less than a millisecond. You have the option to modify these settings to best suit your needs. <br /> 
                 Tap Modify to make changes.',
+                'extra_info' => ''
             ],
             'a2_page_cache_minify_html' => [
                 'error' => '',
@@ -303,7 +306,8 @@ class A2_Optimized_Optimizations {
                 'compatibility' => ['pagebuilder', 'jsmin'],
                 'description' => '<strong>Benefit:</strong> Increases your site’s speed by reducing the file size sent to site visitors.<br />
                 <strong>How it works:</strong> Removes extra spaces, tables, and line breaks in the HTML.',
-                'remove_link' => true
+                'remove_link' => true,
+                'extra_info' => ''
             ],
             'a2_page_cache_minify_jscss' => [
                 'error' => '',
@@ -317,7 +321,8 @@ class A2_Optimized_Optimizations {
                 'description' => '<strong>Benefit:</strong> Reduces the size of files sent to your customer.<br />
                 <strong>How it works:</strong> Removes extra spaces, tabs, and line breaks in inline CSS and Javascript.<br />
                 <strong>What to know:</strong> This may cause issues with some page builders or other Javascript-heavy front-end plugins/themes. ',
-                'remove_link' => true
+                'remove_link' => true,
+                'extra_info' => ''
             ],
             'a2_db_optimizations' => [
                 'error' => '',
@@ -330,6 +335,7 @@ class A2_Optimized_Optimizations {
                 <strong>How it works:</strong> Periodically cleans MySQL database of expired transients (a type of cached data used in WordPress) as well as trashed and spam comments. It will also optimize all tables. You can select to also remove post revisions and trashed posts from the Database Optimization Settings. You have the option to modify these settings to best suit your needs. <br />
                 Tap Modify to make changes.
                 ',
+                'extra_info' => ''
             ],
             'woo_cart_fragments' => [
                 'error' => '',
@@ -342,6 +348,7 @@ class A2_Optimized_Optimizations {
                 'description' => '<strong>Benefit:</strong> Makes your WooCommerce site faster<br />
                 <strong>How-it-works:</strong> Disables WooCommerce Cart Fragments on your homepage, and enables the "redirect to cart page" option in WooCommerce.<br />
                 <strong>What to know:</strong> Slow performance and errors on WooCommerce sites are caused by a high number of AJAX requests because they are  uncached. If you are running a WooCommerce site and notice a high number of AJAX requests, disabling Cart Fragments AJAX may help improve your site\'s stability. ',
+                'extra_info' => ''
             ],
             'xmlrpc_requests' => [
                 'error' => '',
@@ -354,6 +361,7 @@ class A2_Optimized_Optimizations {
                 'description' => '<strong>Benefit:</strong> Improves the security of your website.<br />
                 <strong>How-it-works:</strong> Disables XML-RPC services. Although XML-RPC API is safe and is enabled by default, some WordPress security experts suggest disabling it.<br />
                 <strong>What to know:</strong> Closes one more door that a potential hacker may try to exploit to hack your website.',
+                'extra_info' => ''
             ],
             'htaccess' => [
                 'error' => '',
@@ -367,6 +375,7 @@ class A2_Optimized_Optimizations {
                 'description' => '<strong>Benefit:</strong> Protects your configuration files - parameters, options, settings, and preferences applied to an operating system.<br />
                 <strong>How-it-works:</strong> Generates a Forbidden error to web users and bots when trying to access WordPress configuration files.<br />
                 <strong>What to know:</strong> Prevents POST requests to the site not originating from a user on the site. If you are using a plugin to allow remote posts and comments, disable this option.',
+                'extra_info' => ''
             ],
             'lock_editing' => [
                 'error' => '',
@@ -378,6 +387,7 @@ class A2_Optimized_Optimizations {
                 'kb' => 'http://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-with-the-a2-optimized-plugin',
                 'description' => '<strong>Benefit:</strong> Improves the security of your website.<br />
                 <strong>How-it-works:</strong> Prevents misuse of the WordPress Admin built-in editing capabilities.',
+                'extra_info' => ''
             ],
             'hide_login' => [
                 'error' => '',
@@ -390,6 +400,7 @@ class A2_Optimized_Optimizations {
                 'description' => '<strong>Benefit:</strong> Makes it more difficult for bad actors and bots to hack your website.<br />
                 <strong>How it works:</strong> Changes the URL of the login page for your WordPress website.<br />
                 <strong>What to know:</strong> Record the new login page URL so you don’t forget where to log in. ',
+                'extra_info' => ''
             ],
             'captcha' => [
                 'error' => '',
@@ -400,6 +411,7 @@ class A2_Optimized_Optimizations {
                 'configured' => false,
                 'description' => '<strong>Benefit:</strong> Decreases spam and increase your site’s security. <br />
                 <strong>How-it-works:</strong> Adds CAPTCHA to comment forms and login screens to deter bots from posting comments to your blog or brute force login - a hacking method that uses trial and error to crack passwords, login credentials, and encryption keys - to your admin panel.',
+                'extra_info' => ''
             ],
             'compress_images' => [
                 'error' => '',
@@ -410,6 +422,7 @@ class A2_Optimized_Optimizations {
                 'configured' => false,
                 'description' => '<strong>Benefit:</strong> Reduces the file size of your images to make your website load faster.<br />
                 <strong>How it works:</strong> Automatically compresses images when you upload them to your site.',
+                'extra_info' => ''
             ],
             'turbo' => [
                 'error' => '',
@@ -422,6 +435,7 @@ class A2_Optimized_Optimizations {
                 'description' => '<strong>Benefit:</strong> Operates on a limited occupancy, upgraded server hardware with advanced caching software making the CPU (central processing unit) 40% faster and 20x faster page loads.<br /> 
                 <strong>How it works:</strong> Servers compile .htaccess files - a file that controls the high-level configuration of your website - to make speed improvements. Any changes to .htaccess files are immediately re-compiled. Turbo Web Hosting servers have their own PHP API that provides speed improvements.<br />
                 <strong>What to know:</strong> Turbo servers can handle 9X more traffic with 3X faster read/write speeds.',
+                'extra_info' => ''
             ],
         ];
 
@@ -451,12 +465,14 @@ class A2_Optimized_Optimizations {
             $private_optimizations = $this->private_opts->get_optimizations();
             // pull any fields from opt to private opt that may be missing.
             $new_optimizations = array_merge($optimizations, $private_optimizations);
-            $preserve_keys = ['description', 'error'];
+            $preserve_keys = ['description', 'error', 'kb', 'extra_info'];
             foreach ($new_optimizations as $key => $opt){
                 foreach ($preserve_keys as $preserve){
                     if (!isset($opt[$preserve])){
                         if (array_key_exists($key, $optimizations)){
-                            $new_optimizations[$key][$preserve] = $optimizations[$key][$preserve];
+                            if (array_key_exists($preserve, $optimizations[$key])){
+                                $new_optimizations[$key][$preserve] = $optimizations[$key][$preserve];
+                            }
                         }
                         else {
                             $new_optimizations[$key][$preserve] = '';
@@ -482,6 +498,13 @@ class A2_Optimized_Optimizations {
         if ($invalid) {
             $optimizations['a2_object_cache']['configured'] = false;
             $optimizations['a2_object_cache']['error'] = "Unable to update object cache: {$invalid}. Please check your connection information.";
+        }
+
+        if ($optimizations['hide_login']['configured'] == true){
+            $login_url_option = get_option('wpseh_l01gnhdlwp');
+            $login_url = home_url() . "?" . $login_url_option;
+            $message = "Your login url is: <a href='{$login_url}'>{$login_url}</a>";
+            $optimizations['hide_login']['extra_info'] = $message;
         }
 
         return $optimizations;
