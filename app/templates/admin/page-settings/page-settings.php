@@ -250,9 +250,11 @@
 
 
 <script type="text/x-template" id="optimization-entry">
-	<div class="row">
+<div>
+	<div class="row margin-bottom-20">
 		<div class="col-md-8 col-lg-9 ">
-			<h4>{{ name }} <a class="glyphicon glyphicon-chevron-down toggle" aria-hidden="true" v-on:click.prevent="desc_toggle(slug)" :id="'opt_item_toggle_' + slug"></a></h4>
+			<h4 class="less-vertical-space">{{ name }} <a class="glyphicon glyphicon-chevron-down toggle" aria-hidden="true" v-on:click.prevent="desc_toggle(slug)" :id="'opt_item_toggle_' + slug"></a></h4>
+			<span v-html="extra_info"></span>
 			<div :id="'opt_item_desc_' + slug" style="display: none" v-html="description" class="desc"></div>
 			<div :id="'opt_item_error_' + slug" v-if="error" v-html="error" style="border: 2px solid red;"></div>
 		</div>
@@ -266,6 +268,7 @@
 			</li>
 		</div>
 	</div>
+</div>
 </script>
 
 <script type="text/x-template" id="opt-extra-settings-template">
