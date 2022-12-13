@@ -2,8 +2,8 @@
 Contributors: a2hosting, supersoju
 Tags: a2 hosting, cache, caching, speed, fast, optimize, site performance, image optimization, image compression, site security, seo, gzip compression, minify code, code minification
 Requires at least: 5.1
-Tested up to: 6.1
-Stable tag: 3.0.2.3
+Tested up to: 6.1.1
+Stable tag: 3.0.3
 Requires PHP: 5.6
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -149,6 +149,11 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 
 == Changelog ==
+
+= 3.0.3 =
+* Users may now supply their own Google Pagespeed Insights API key to run benchmarks. This is available through the "Advanced Settings" panel under the "Website and Server Performance" tab.
+* If the "Login URL Change" feature is enabled, the new login URL is displayed by the toggle.
+* Other small QoL improvements.
 
 = 3.0.2.2 =
 * Small update for A2 hosting customers
