@@ -819,7 +819,7 @@
 				<p>Join the A2 family and get access to these amazing speed-enhancing features to give your site the ultimate speed boost.  Best of all we offer FREE website migration!</p>
 			</template>
 			<template v-slot:footer>
-				<p><small>* Features are not available on Startup or Drive plans.</small></p>
+				<p><small>* Feature supported on all managed plans except Shared plans Startup and Drive</small></p>
 				<a href="https://www.a2hosting.com/hosting" target="_blank" class="btn cta-btn-green">Get Started</a>
 			</template>
 		</modal>
