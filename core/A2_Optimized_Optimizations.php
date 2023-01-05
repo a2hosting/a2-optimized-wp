@@ -57,6 +57,18 @@ class A2_Optimized_Optimizations {
         $cache_type = get_option('a2_optimized_objectcache_type');
         $db_optimizations = get_option('a2_db_optimizations');
 
+        if(!$db_optimizations){
+            $db_optimizations = [
+                'remove_revision_posts' => 0,
+                'remove_trashed_posts' => 0,
+                'remove_spam_comments' => 0,
+                'remove_trashed_comments' => 0,
+                'remove_expired_transients' => 0,
+                'optimize_tables' => 0
+            ];
+            update_option('a2_db_optimizations', $db_optimizations);
+        }
+
         $extra_settings = [];
 
         if (!is_plugin_active( 'litespeed-cache/litespeed-cache.php' )) {
