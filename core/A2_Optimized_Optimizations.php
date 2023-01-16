@@ -45,6 +45,217 @@ class A2_Optimized_Optimizations {
         return $result;
 	}
 
+    public const LITESPEED_SETTINGS_KEYS = [
+        "_version",
+        "hash",
+        "auto_upgrade",
+        "api_key",
+        "server_ip",
+        "guest",
+        "guest_optm",
+        "news",
+        "guest_uas",
+        "guest_ips",
+        "cache",
+        "cache-priv",
+        "cache-commenter",
+        "cache-rest",
+        "cache-page_login",
+        "cache-favicon",
+        "cache-resources",
+        "cache-mobile",
+        "cache-mobile_rules",
+        "cache-browser",
+        "cache-exc_useragents",
+        "cache-exc_cookies",
+        "cache-exc_qs",
+        "cache-exc_cat",
+        "cache-exc_tag",
+        "cache-force_uri",
+        "cache-force_pub_uri",
+        "cache-priv_uri",
+        "cache-exc",
+        "cache-exc_roles",
+        "cache-drop_qs",
+        "cache-ttl_pub",
+        "cache-ttl_priv",
+        "cache-ttl_frontpage",
+        "cache-ttl_feed",
+        "cache-ttl_rest",
+        "cache-ttl_browser",
+        "cache-ttl_status",
+        "cache-login_cookie",
+        "cache-vary_group",
+        "purge-upgrade",
+        "purge-stale",
+        "purge-post_all",
+        "purge-post_f",
+        "purge-post_h",
+        "purge-post_p",
+        "purge-post_pwrp",
+        "purge-post_a",
+        "purge-post_y",
+        "purge-post_m",
+        "purge-post_d",
+        "purge-post_t",
+        "purge-post_pt",
+        "purge-timed_urls",
+        "purge-timed_urls_time",
+        "purge-hook_all",
+        "esi",
+        "esi-cache_admbar",
+        "esi-cache_commform",
+        "esi-nonce",
+        "util-instant_click",
+        "util-no_https_vary",
+        "debug-disable_all",
+        "debug",
+        "debug-ips",
+        "debug-level",
+        "debug-filesize",
+        "debug-cookie",
+        "debug-collaps_qs",
+        "debug-inc",
+        "debug-exc",
+        "debug-exc_strings",
+        "db_optm-revisions_max",
+        "db_optm-revisions_age",
+        "optm-css_min",
+        "optm-css_comb",
+        "optm-css_comb_ext_inl",
+        "optm-ucss",
+        "optm-ucss_inline",
+        "optm-ucss_whitelist",
+        "optm-ucss_exc",
+        "optm-css_exc",
+        "optm-js_min",
+        "optm-js_comb",
+        "optm-js_comb_ext_inl",
+        "optm-js_exc",
+        "optm-html_min",
+        "optm-html_lazy",
+        "optm-qs_rm",
+        "optm-ggfonts_rm",
+        "optm-css_async",
+        "optm-ccss_per_url",
+        "optm-ccss_sep_posttype",
+        "optm-ccss_sep_uri",
+        "optm-css_async_inline",
+        "optm-css_font_display",
+        "optm-js_defer",
+        "optm-emoji_rm",
+        "optm-noscript_rm",
+        "optm-ggfonts_async",
+        "optm-exc_roles",
+        "optm-ccss_con",
+        "optm-js_defer_exc",
+        "optm-gm_js_exc",
+        "optm-dns_prefetch",
+        "optm-dns_prefetch_ctrl",
+        "optm-exc",
+        "optm-guest_only",
+        "object",
+        "object-kind",
+        "object-host",
+        "object-port",
+        "object-life",
+        "object-persistent",
+        "object-admin",
+        "object-transients",
+        "object-db_id",
+        "object-user",
+        "object-pswd",
+        "object-global_groups",
+        "object-non_persistent_groups",
+        "discuss-avatar_cache",
+        "discuss-avatar_cron",
+        "discuss-avatar_cache_ttl",
+        "optm-localize",
+        "optm-localize_domains",
+        "media-lazy",
+        "media-lazy_placeholder",
+        "media-placeholder_resp",
+        "media-placeholder_resp_color",
+        "media-placeholder_resp_svg",
+        "media-lqip",
+        "media-lqip_qual",
+        "media-lqip_min_w",
+        "media-lqip_min_h",
+        "media-placeholder_resp_async",
+        "media-iframe_lazy",
+        "media-add_missing_sizes",
+        "media-lazy_exc",
+        "media-lazy_cls_exc",
+        "media-lazy_parent_cls_exc",
+        "media-iframe_lazy_cls_exc",
+        "media-iframe_lazy_parent_cls_exc",
+        "media-lazy_uri_exc",
+        "media-lqip_exc",
+        "media-vpi",
+        "media-vpi_cron",
+        "img_optm-auto",
+        "img_optm-cron",
+        "img_optm-ori",
+        "img_optm-rm_bkup",
+        "img_optm-webp",
+        "img_optm-lossless",
+        "img_optm-exif",
+        "img_optm-webp_replace",
+        "img_optm-webp_attr",
+        "img_optm-webp_replace_srcset",
+        "img_optm-jpg_quality",
+        "crawler",
+        "crawler-usleep",
+        "crawler-run_duration",
+        "crawler-run_interval",
+        "crawler-crawl_interval",
+        "crawler-threads",
+        "crawler-timeout",
+        "crawler-load_limit",
+        "crawler-sitemap",
+        "crawler-drop_domain",
+        "crawler-map_timeout",
+        "crawler-roles",
+        "crawler-cookies",
+        "misc-heartbeat_front",
+        "misc-heartbeat_front_ttl",
+        "misc-heartbeat_back",
+        "misc-heartbeat_back_ttl",
+        "misc-heartbeat_editor",
+        "misc-heartbeat_editor_ttl",
+        "cdn",
+        "cdn-ori",
+        "cdn-ori_dir",
+        "cdn-exc",
+        "cdn-quic",
+        "cdn-cloudflare",
+        "cdn-cloudflare_email",
+        "cdn-cloudflare_key",
+        "cdn-cloudflare_name",
+        "cdn-cloudflare_zone",
+        "cdn-mapping",
+        "cdn-attr",
+        "qc-token",
+        "qc-nameservers",
+        "_cache"
+    ];
+
+    public function get_litespeed_settings_snapshot(){
+        $snapshot = [];
+        $litespeed_namespace = 'litespeed.conf.';
+        foreach (self::LITESPEED_SETTINGS_KEYS as $key){
+            $snapshot[$key] = get_option($litespeed_namespace . $key);
+        }
+        return $snapshot;
+    }
+
+    public function set_litespeed_from_snapshot($snapshot){
+        $litespeed_namespace = 'litespeed.conf.';
+        foreach (self::LITESPEED_SETTINGS_KEYS as $key){
+            update_option($litespeed_namespace . $key, $snapshot[$key]);
+        }
+    }
+
     public function get_extra_settings(){
         $cache_settings = A2_Optimized_Cache::get_settings();
         $cache_expires = $cache_settings['cache_expires'] ? 'true' : 'false';
@@ -56,6 +267,7 @@ class A2_Optimized_Optimizations {
         $redis_server = get_option('a2_optimized_redis_server');
         $cache_type = get_option('a2_optimized_objectcache_type');
         $db_optimizations = get_option('a2_db_optimizations');
+        $litespeed_lock = get_option('a2_litespeed_lock');
 
         if(!$db_optimizations){
             $db_optimizations = [
@@ -179,6 +391,25 @@ class A2_Optimized_Optimizations {
                             'label' => '',
                             'input_type' => 'text',
                             'value' => $redis_server,
+                        ]
+                    ]
+                ]
+            ]
+        ];
+
+        $extra_settings['turbo'] = [
+            'title' => 'Prevent changes to Litespeed',
+            'explanation' => 'Hands off',
+            'settings_sections' => [
+                'a2_litespeed_lock' => [
+                    'title' => '',
+                    'description' => '',
+                    'settings' => [
+                        'a2_litespeed_lock' => [
+                            'description' => 'Revert litespeed to optimized config if changes are detected',
+                            'label' => "",
+                            'input_type' => 'checkbox',
+                            'value' => $litespeed_lock['locked'] == 1 ? 'true' : 'false'
                         ]
                     ]
                 ]
@@ -753,6 +984,20 @@ class A2_Optimized_Optimizations {
                     $db_optimizations[$optimization] = '0';
                 }
                 $updated = update_option('a2_db_optimizations', $db_optimizations);
+                return true;
+                break;
+            case 'a2_litespeed_lock':
+                $litespeed_lock = get_option('a2_litespeed_lock');
+                $setting_val = $value == 'true' ? 1 : 0;
+                $new_value = [
+                    'locked' => $setting_val,
+                    'snapshot' => []
+                ];
+                if ($value == 'true'){
+                    $snapshot = $this->get_litespeed_settings_snapshot();
+                    $new_value['snapshot'] = $snapshot;
+                }
+                $updated = update_option('a2_litespeed_lock', $new_value);
                 return true;
                 break;
             default:
