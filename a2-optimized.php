@@ -112,7 +112,6 @@ function run_a2_optimized() {
 
 	new A2_Optimized_SiteData;
 	$optimizations = new A2_Optimized_Optimizations;
-	$current_page = admin_url(sprintf('admin.php?%s', http_build_query($_GET)));
 
 	$litespeed_lock = get_option('a2_litespeed_lock');
 	$current_page = isset($_GET['page']) ? $_GET['page'] : '';

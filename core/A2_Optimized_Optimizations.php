@@ -45,7 +45,7 @@ class A2_Optimized_Optimizations {
         return $result;
 	}
 
-    public const LITESPEED_SETTINGS_KEYS = [
+    const LITESPEED_SETTINGS_KEYS = [
         "_version",
         "hash",
         "auto_upgrade",
