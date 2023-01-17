@@ -113,10 +113,27 @@ function run_a2_optimized() {
 	new A2_Optimized_SiteData;
 	$optimizations = new A2_Optimized_Optimizations;
 
+	$litespeed_lock = get_option('a2_litespeed_lock');
+	$current_page = isset($_GET['page']) ? $_GET['page'] : '';
+
+	if ($litespeed_lock['locked'] == 1 && substr($current_page, 0, 9) == 'litespeed'){
+		add_action( 'admin_notices', function() { //todo: if we end up needing more notices, we should make them into their own class
+			?>
+			<div class="notice notice-error">
+					<p>Changes to the litespeed plugin have been disabled by A2 Optimized.  Any edits will be discarded.</p>
+			</div>
+			<?php
+		} );
+
+		$optimizations->set_litespeed_from_snapshot($litespeed_lock['snapshot']);
+	}
+
+
 	if ($optimizations->is_xmlrpc_request() && get_option('a2_block_xmlrpc')) {
 		$optimizations->block_xmlrpc_request();
 		add_filter('xmlrpc_methods', ['A2_Optimized_Optimizations', 'remove_xmlrpc_methods']);
 	}
+
 }
 
 run_a2_optimized();
