@@ -120,7 +120,7 @@ function run_a2_optimized() {
 		add_action( 'admin_notices', function() { //todo: if we end up needing more notices, we should make them into their own class
 			?>
 			<div class="notice notice-error">
-					<p>Changes to the litespeed plugin have been disabled by A2 Optimized.  Any edits will be discarded.</p>
+					<p>Access to LiteSpeed settings has been restricted to protect the optimization work done by A2 Hosting Support. Visit <a href='admin.php?page=a2-optimized&a2_page=optimizations'>A2 Optimized</a> to turn restrictions off and allow custom changes. Changes made may require additional optimization work at an additional cost.</p>
 			</div>
 			<?php
 		} );
