@@ -31,7 +31,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				$last_check = $graphs['pagespeed_mobile']['overall_score']['last_check_date'];
 			}
 
-			if(isset($_GET['data-collection'])){
+			if(isset($_GET['data-collection']) && isset($_GET['nonce']) && wp_verify_nonce($_GET['nonce'], 'a2opt_datacollection_nonce') ){
 				if($_GET['data-collection'] == 'yes'){
 					update_option('a2_sitedata_allow', '1');
 				}
