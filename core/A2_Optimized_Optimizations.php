@@ -398,15 +398,15 @@ class A2_Optimized_Optimizations {
         ];
 
         $extra_settings['turbo'] = [
-            'title' => 'Prevent changes to Litespeed',
-            'explanation' => 'Hands off',
+            'title' => 'LiteSpeed Adjustment Prevention',
+            'explanation' => 'Changes to LiteSpeed will automatically revert to the optimized version. Turn this off to be able to make custom changes.',
             'settings_sections' => [
                 'a2_litespeed_lock' => [
                     'title' => '',
                     'description' => '',
                     'settings' => [
                         'a2_litespeed_lock' => [
-                            'description' => 'Revert litespeed to optimized config if changes are detected',
+                            'description' => 'Changes to LiteSpeed will automatically revert to the optimized version. Turn this off to be able to make custom changes.',
                             'label' => "",
                             'input_type' => 'checkbox',
                             'value' => $litespeed_lock['locked'] == 1 ? 'true' : 'false'
