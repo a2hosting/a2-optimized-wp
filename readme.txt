@@ -152,6 +152,11 @@ Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hostin
 
 == Changelog ==
 
+= 3.0.5 =
+* More information provided on page regarding requirements for Redis caching
+* Added feature to lock Litespeed Cache settings once optimized
+* Will attempt to clean up files left by previous versions of the plugin
+
 = 3.0.4 =
 * Small QoL improvements.
 
