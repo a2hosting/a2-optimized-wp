@@ -116,7 +116,7 @@ function run_a2_optimized() {
 	$litespeed_lock = get_option('a2_litespeed_lock');
 	$current_page = isset($_GET['page']) ? $_GET['page'] : '';
 
-	if ($litespeed_lock['locked'] == 1 && substr($current_page, 0, 9) == 'litespeed'){
+	if (is_array($litespeed_lock) && isset($litespeed_lock['locked']) && $litespeed_lock['locked'] == 1 && substr($current_page, 0, 9) == 'litespeed'){
 		add_action( 'admin_notices', function() { //todo: if we end up needing more notices, we should make them into their own class
 			?>
 			<div class="notice notice-error">
