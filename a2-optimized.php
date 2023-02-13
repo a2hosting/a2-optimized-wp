@@ -113,21 +113,7 @@ function run_a2_optimized() {
 	new A2_Optimized_SiteData;
 	$optimizations = new A2_Optimized_Optimizations;
 
-	$litespeed_lock = get_option('a2_litespeed_lock');
-	$current_page = isset($_GET['page']) ? $_GET['page'] : '';
-
-	if (is_array($litespeed_lock) && isset($litespeed_lock['locked']) && $litespeed_lock['locked'] == 1 && substr($current_page, 0, 9) == 'litespeed'){
-		add_action( 'admin_notices', function() { //todo: if we end up needing more notices, we should make them into their own class
-			?>
-			<div class="notice notice-error">
-					<p>Access to LiteSpeed settings has been restricted to protect the optimization work done by A2 Hosting Support. Visit <a href='admin.php?page=a2-optimized&a2_page=optimizations'>A2 Optimized</a> to turn restrictions off and allow custom changes. Changes made may require additional optimization work at an additional cost.</p>
-			</div>
-			<?php
-		} );
-
-		$optimizations->set_litespeed_from_snapshot($litespeed_lock['snapshot']);
-	}
-
+	$optimizations->maybe_display_litespeed_notice();
 
 	if ($optimizations->is_xmlrpc_request() && get_option('a2_block_xmlrpc')) {
 		$optimizations->block_xmlrpc_request();
