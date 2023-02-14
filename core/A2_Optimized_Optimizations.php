@@ -762,7 +762,6 @@ class A2_Optimized_Optimizations {
     }
 
     public function get_best_practices() {
-        //TODO: should this be the site health items instead?
         $response = [
             'regenerate_salts' => [
                 'title' => 'Regenerate wp-config salts',
@@ -1862,4 +1861,67 @@ PHP;
 
 		return $commentdata;
 	}
+
+    public function maybe_display_litespeed_notice(){
+
+        $litespeed_lock = get_option('a2_litespeed_lock');
+        $current_page = isset($_GET['page']) ? $_GET['page'] : '';
+
+        $this->maybe_keep_lightspeed_lock();
+
+        if (is_array($litespeed_lock) && isset($litespeed_lock['locked']) && $litespeed_lock['locked'] == 1 && substr($current_page, 0, 9) == 'litespeed'){
+            add_action( 'admin_notices', function() {
+                ?>
+                <div class="notice notice-error">
+                        <p>Access to LiteSpeed settings has been restricted to protect the optimization work done by A2 Hosting Support. Visit <a href='admin.php?page=a2-optimized&a2_page=optimizations'>A2 Optimized</a> to turn restrictions off and allow custom changes. Changes made may require additional optimization work at an additional cost.</p>
+                </div>
+                <?php
+            } );
+    
+            $this->set_litespeed_from_snapshot($litespeed_lock['snapshot']);
+        }
+    }
+
+    private function maybe_keep_lightspeed_lock(){
+        $litespeed_options = get_option('a2_litespeed_lock');
+       
+        if ( ! function_exists( 'get_plugins' ) ) {
+            require_once ABSPATH . 'wp-admin/includes/plugin.php';
+        }
+        
+        $plugins = get_plugins();
+        $active_plugins = '';
+        foreach ($plugins as $slug => $plugin) {
+            if (is_plugin_active($slug)) {
+                $active_plugins .= $slug . ',';
+            }
+        }
+
+        $active_theme = wp_get_theme();
+        $theme_name = $active_theme->get('Name');
+
+        if($litespeed_options && is_array($litespeed_options)){
+            if(isset($litespeed_options['theme'])){ // Check that we have the same theme
+                if($theme_name != $litespeed_options['theme']){
+                    $litespeed_options['locked'] = 0;
+                }
+            }
+            
+            if(isset($litespeed_options['plugins'])){ // Check that we have the same plugins
+                if($active_plugins != $litespeed_options['plugins']){
+                    $litespeed_options['locked'] = 0;
+                }
+            }
+
+        } else {
+            $litespeed_options = [];
+            $litespeed_options['locked'] = 0;
+        }
+        
+        $litespeed_options['theme'] = $theme_name;
+        $litespeed_options['plugins'] = $active_plugins;
+
+        update_option('a2_litespeed_lock', $litespeed_options);
+    }
+
 }
