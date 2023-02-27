@@ -698,7 +698,7 @@ class A2_Optimized_Optimizations {
             $optimizations['a2_object_cache']['name'] = 'Object Caching with Memcached or Redis';
             if (get_option('litespeed.conf.object') == 1) {
                 $optimizations['a2_object_cache']['configured'] = true;
-                $optimizations['a2_object_cache']['description'] .= '<br /><strong>This feature is provided by the LiteSpeed Cache plugin.</strong></p>';
+                $optimizations['a2_object_cache']['description'] .= '<br /><strong>The plugin LiteSpeed Cache (Turbo Feature) must be enabled for Redis caching to be available.</strong></p>';
                 $optimizations['a2_object_cache']['locked'] = true;
             }
             unset($optimizations['a2_page_cache']);
