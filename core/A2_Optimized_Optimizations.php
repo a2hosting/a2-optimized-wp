@@ -14,8 +14,22 @@ class A2_Optimized_Optimizations {
             require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
             $this->private_opts = new A2_Optimized_Private_Optimizations(); 
         }
+        $this->hooks();
     }
-    
+   
+    /**
+	 * Integration hooks.
+	 */
+	protected function hooks() {
+		$wpconfig_clean_cron = get_option('a2_optimized_wpconfig_cleanup');
+		if ($wpconfig_clean_cron && $wpconfig_clean_cron == 1) {
+			add_action('a2_execute_wpconfig_cleanup', [&$this, 'maybe_clean_wpconfig_backup']);
+			if (!wp_next_scheduled('a2_execute_wpconfig_cleanup')) {
+				wp_schedule_event(time(), 'daily', 'a2_execute_wpconfig_cleanup');
+			}
+		}
+	}
+
     public function get_optimizations() {
 		$public_opts = $this->get_public_optimizations();
         $extra_settings = $this->get_extra_settings();
@@ -680,6 +694,17 @@ class A2_Optimized_Optimizations {
                 <strong>What to know:</strong> Turbo servers can handle 9X more traffic with 3X faster read/write speeds.',
                 'extra_info' => ''
             ],
+            'a2_wpconfig_cleanup' => [
+                'error' => '',
+                'name' => 'Remove old wp-config.php backups',
+                'slug' => 'a2_wpconfig_cleanup',
+                'premium' => false,
+                'optional' => true,
+                'configured' => $this->is_active('a2_wpconfig_cleanup'),
+                'category' => 'security',
+                'description' => 'A2 Optimized will create a backup file of your wp-config.php if there are possible breaking changes made. This feature will enable automatic removal of the backup files after 1 week.',
+                'extra_info' => ''
+            ],
         ];
 
         $optimizations = $this->apply_optimization_filter($optimizations);
@@ -870,6 +895,13 @@ class A2_Optimized_Optimizations {
                     return $this->disable_woo_cart_fragments();
                 }
                 break;
+            case 'a2_wpconfig_cleanup':
+                if($value == 'true'){
+                    return $this->enable_wpconfig_cleanup();
+                } else {
+                    return $this->disable_wpconfig_cleanup();
+                }
+                break;
             case 'xmlrpc_requests':
                 if($value == 'true'){
                     return $this->enable_xmlrpc_requests();
@@ -976,7 +1008,7 @@ class A2_Optimized_Optimizations {
             case 'remove_trashed_comments':
             case 'remove_expired_transients':
             case 'optimize_tables':
-                    $db_optimizations = get_option('a2_db_optimizations');
+                $db_optimizations = get_option('a2_db_optimizations');
                 if($value == 'true'){
                     $db_optimizations[$optimization] = '1';
                 } else {
@@ -1166,6 +1198,11 @@ class A2_Optimized_Optimizations {
                 $exists = is_dir($dir);
                 $result['current'] = $exists ? "You are on A2 Hosting" : "You are not on an A2 Hosting server.";
                 if ($exists) {
+                    $result['value'] = true;
+                }
+                break;
+            case 'a2_wpconfig_cleanup':
+                if(get_option('a2_optimized_wpconfig_cleanup')){
                     $result['value'] = true;
                 }
                 break;
@@ -1386,6 +1423,24 @@ class A2_Optimized_Optimizations {
         // Rebuild cache settings file
         A2_Optimized_Cache_Disk::create_settings_file($cache_settings);
 
+        return true;
+    }
+    
+    /**
+    *  Enable automated removal of wp-config.php backups made by A2 Optimized
+    */
+    public function enable_wpconfig_cleanup(){
+        update_option('a2_optimized_wpconfig_cleanup', 1);
+
+        return true;
+    }
+
+    /**
+    *  Disable automated removal of wp-config.php backups made by A2 Optimized
+    */
+    public function disable_wpconfig_cleanup(){
+        delete_option('a2_optimized_wpconfig_cleanup');
+        
         return true;
     }
     
@@ -1922,6 +1977,22 @@ PHP;
         $litespeed_options['plugins'] = $active_plugins;
 
         update_option('a2_litespeed_lock', $litespeed_options);
+    }
+
+    /*
+     * Check if we should remove the backup of wp-config.php
+     */
+    public function maybe_clean_wpconfig_backup() {
+        $wpconfig_clean = get_option('a2_optimized_wpconfig_cleanup');
+        $backup_file = ABSPATH . 'wp-config.bak-a2.php';
+
+
+        if ($wpconfig_clean && $wpconfig_clean == 1 && file_exists($backup_file)) {
+            $last_modified = filemtime($backup_file);
+            if((time() - $last_modified) > 604800){ // file was last modified more than a week ago
+                unlink($backup_file);
+            }
+        }
     }
 
 }
