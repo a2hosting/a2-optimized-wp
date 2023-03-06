@@ -32,8 +32,15 @@ class Deactivator {
 			flock($fp, LOCK_UN);	// release the lock
 		}
 
-		// deactivate the scheduled weekly database optimizations
+		// deactivate the scheduled cron tasks
 		wp_clear_scheduled_hook('a2_execute_db_optimizations');
+		wp_clear_scheduled_hook('a2_execute_wpconfig_cleanup');
+		
+		// Remove bcrypt password plugin
+		$dest = trailingslashit( WPMU_PLUGIN_DIR ) . 'wp-password-bcrypt.php';
+        if(file_exists($dest)){
+            unlink($dest);
+        }
 
 		// clean disk cache files
 		\A2_Optimized_Cache::on_deactivation(is_multisite() && is_network_admin());
