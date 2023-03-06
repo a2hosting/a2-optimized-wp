@@ -705,6 +705,17 @@ class A2_Optimized_Optimizations {
                 'description' => 'A2 Optimized will create a backup file of your wp-config.php if there are possible breaking changes made. This feature will enable automatic removal of the backup files after 1 week.',
                 'extra_info' => ''
             ],
+            'a2_bcrypt_passwords' => [
+                'error' => '',
+                'name' => 'Use bcrypt password hashing',
+                'slug' => 'a2_bcrypt_passwords',
+                'premium' => false,
+                'optional' => true,
+                'configured' => $this->is_active('a2_bcrypt_passwords'),
+                'category' => 'security',
+                'description' => 'Replaces native WordPress password hashing with the modern and secure bcrypt method.' . WPMU_PLUGIN_DIR,
+                'extra_info' => ''
+            ],
         ];
 
         $optimizations = $this->apply_optimization_filter($optimizations);
@@ -900,6 +911,13 @@ class A2_Optimized_Optimizations {
                     return $this->enable_wpconfig_cleanup();
                 } else {
                     return $this->disable_wpconfig_cleanup();
+                }
+                break;
+            case 'a2_bcrypt_passwords':
+                if($value == 'true'){
+                    return $this->enable_bcrypt_passwords();
+                } else {
+                    return $this->disable_bcrypt_passwords();
                 }
                 break;
             case 'xmlrpc_requests':
@@ -1206,6 +1224,11 @@ class A2_Optimized_Optimizations {
                     $result['value'] = true;
                 }
                 break;
+            case 'a2_bcrypt_passwords':
+                if(file_exists(WPMU_PLUGIN_DIR . '/wp-password-bcrypt.php')){
+                    $result['value'] = true;
+                }
+                break;
         }
 
         $result['is_warning'] = !$result['value'];
@@ -1441,6 +1464,38 @@ class A2_Optimized_Optimizations {
     public function disable_wpconfig_cleanup(){
         delete_option('a2_optimized_wpconfig_cleanup');
         
+        return true;
+    }
+    
+    /**
+    * Enable bcrypt password plugin
+    */
+    public function enable_bcrypt_passwords(){
+        $plugin_file = 'wp-password-bcrypt.php';
+
+        $src = trailingslashit( A2OPT_DIR . "/includes") . $plugin_file;
+        $dest = trailingslashit( WPMU_PLUGIN_DIR ) . $plugin_file;
+
+        if(!file_exists($dest)){
+            // Create mu-plugins if it doesn't already exist
+            if (!is_dir( WPMU_PLUGIN_DIR )){
+                wp_mkdir_p( WPMU_PLUGIN_DIR );
+            }
+
+            // copy mu plugin over
+            copy( $src, $dest );
+        }
+        return true;
+    }
+
+    /**
+    * Disable bcrypt password plugin
+    */
+    public function disable_bcrypt_passwords(){
+        $dest = trailingslashit( WPMU_PLUGIN_DIR ) . 'wp-password-bcrypt.php';
+        if(file_exists($dest)){
+            unlink($dest);
+        }
         return true;
     }
     
