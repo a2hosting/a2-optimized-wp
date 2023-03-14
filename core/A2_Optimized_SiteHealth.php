@@ -723,27 +723,27 @@ class A2_Optimized_SiteHealth {
 			$frontend_benchmarks_last = array_pop($frontend_benchmarks);
 
 			$a2_optimized['fields']['benchmark_frontend_overall'] = array(
-				'label' => 'Fronted Benchmark Overall Score',
+				'label' => 'Frontend Benchmark Overall Score',
 				'value' => $frontend_benchmarks_last['scores']['overall_score']
 			);
 			$a2_optimized['fields']['benchmark_frontend_fcp'] = array(
-				'label' => 'Fronted Benchmark FCP',
+				'label' => 'Frontend Benchmark FCP',
 				'value' => $frontend_benchmarks_last['scores']['fcp']
 			);
 			$a2_optimized['fields']['benchmark_frontend_ttfb'] = array(
-				'label' => 'Fronted Benchmark TTFB',
+				'label' => 'Frontend Benchmark TTFB',
 				'value' => $frontend_benchmarks_last['scores']['ttfb']
 			);
 			$a2_optimized['fields']['benchmark_frontend_lcp'] = array(
-				'label' => 'Fronted Benchmark LCP',
+				'label' => 'Frontend Benchmark LCP',
 				'value' => $frontend_benchmarks_last['scores']['lcp']
 			);
 			$a2_optimized['fields']['benchmark_frontend_fid'] = array(
-				'label' => 'Fronted Benchmark FID',
+				'label' => 'Frontend Benchmark FID',
 				'value' => $frontend_benchmarks_last['scores']['fid']
 			);
 			$a2_optimized['fields']['benchmark_frontend_cls'] = array(
-				'label' => 'Fronted Benchmark CLS',
+				'label' => 'Frontend Benchmark CLS',
 				'value' => $frontend_benchmarks_last['scores']['cls']
 			);
 		}
