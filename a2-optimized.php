@@ -110,6 +110,11 @@ function run_a2_optimized() {
 		add_filter('preprocess_comment', ['A2_Optimized_Optimizations', 'captcha_comment_authenticate'], 1, 3);
 	}
 
+	if(file_exists('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php')){
+		require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
+		new A2_Optimized_Private_Optimizations(); 
+	}
+
 	new A2_Optimized_SiteData;
 	$optimizations = new A2_Optimized_Optimizations;
 
