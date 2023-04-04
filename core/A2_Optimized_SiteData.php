@@ -112,6 +112,7 @@ class A2_Optimized_SiteData {
             $data['locale'] = get_locale();
             $data['server'] = strtolower( PHP_OS );
             $data['hosting_provider'] = $this->get_hosting_provider();
+            $data['enabled_opts'] = $this->get_enabled_opts();
         }
 
         return $data;
@@ -201,6 +202,22 @@ class A2_Optimized_SiteData {
         }
 
         return array_key_exists( $host_header, $host_headers );
+    }
+
+    private function get_enabled_opts(){
+        $a2_optimizations = new A2_Optimized_Optimizations;
+        
+        $enabled_opts = [];
+
+        foreach($a2_optimizations->get_optimizations() as $k => $opt){
+            if($opt['configured']){
+                $enabled_opts[$k] = true;
+            } else {
+                $enabled_opts[$k] = false;
+            }
+        };
+
+        return json_encode($enabled_opts);
     }
 }
 
