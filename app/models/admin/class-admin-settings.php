@@ -611,7 +611,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$latest_score = 0;
 				$previous_score = 0;
 				
-				if(isset($latest['scores']) || isset($latest['scores'][$metric])){
+				if(isset($latest['scores']) && isset($latest['scores'][$metric])){
 					$latest_score = $latest['scores'][$metric];
 				}
 
