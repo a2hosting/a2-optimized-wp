@@ -611,11 +611,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$latest_score = 0;
 				$previous_score = 0;
 				
-				if(isset($latest['scores']) && isset($latest['scores'][$metric])){
+				if(isset($latest['scores'][$metric])){
 					$latest_score = $latest['scores'][$metric];
 				}
 
-				if(is_array($previous) && is_array($previous['scores'])){
+				if(isset($previous['scores'][$metric])){
 					$previous_score = $previous['scores'][$metric];
 				}
 
@@ -670,7 +670,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$lcv = 0;
 				$pattern = "/\[([^]]*)\] *\(([^)]*)\)/i";
                 $replacement = '<a href="$2" target="_blank">$1</a>';
-				if(is_array($latest) && is_array($latest['scores']) && is_array($latest['scores']['audit_result'])){
+				if(isset($latest['scores']['audit_result'])){
 					foreach ($latest['scores']['audit_result'] as $audit) {
 						$display_value = '';
 						$description = preg_replace($pattern, $replacement, $audit['description']);
