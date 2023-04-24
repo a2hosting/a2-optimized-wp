@@ -289,6 +289,9 @@
 					<div v-if="setting.extra_fields">
 						<div class="col-md-6 col-lg-6">
 							<h4 class="less-vertical-space setting-desc-extra">{{ setting.description }}</h4>
+							<p v-if="setting.label">
+								<span v-html="setting.label"></span>
+							</p>
 						</div>
 						<div class="col-md-3 col-lg-4">
 							<div v-for="(field, field_name) in setting.extra_fields">

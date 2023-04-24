@@ -408,8 +408,8 @@ class A2_Optimized_Optimizations {
                     'description' => '',
                     'settings' => [
                         'redis_server' => [
-                            'description' => 'Redis Server - Handled by Litespeed Cache',
-                            'label' => '',
+                            'description' => 'Redis Server',
+                            'label' => '<b>Handled by Litespeed Cache</b>. You can make changes <a href="admin.php?page=litespeed-cache#object">here</a>',
                             'input_type' => 'text',
                             'disabled' => '1',
                             'value' => $redis_server,
