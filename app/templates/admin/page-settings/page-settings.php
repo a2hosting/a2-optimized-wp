@@ -281,7 +281,7 @@
 		<div v-for="section in opt_group.settings_sections" class="padding-15 opt-extra-settings-items">
 			<div class="row">
 				<div class="col-lg-10">
-					<h4 v-if="section.title" class="less-vertical-space section-title">{{ section.title}}</h4>
+					<h4 v-if="section.title" class="less-vertical-space section-title">{{ section.title }}</h4>
 				</div>
 			</div>
 			<div v-for="(setting, setting_name) in section.settings" :key="setting_name" :id="'setting-' + setting_name" class="setting-item">
@@ -292,7 +292,7 @@
 						</div>
 						<div class="col-md-3 col-lg-4">
 							<div v-for="(field, field_name) in setting.extra_fields">
-								<input :name="field_name" :id="field_name" :type="field.input_type" v-model="field.value"></input>
+								<input :name="field_name" :id="field_name" :type="field.input_type" v-model="field.value" :disabled="field.disabled == '1'"></input>
 							</div>
 						</div>
 					</div>
@@ -305,7 +305,7 @@
 						</div>
 					</div>
 					<p v-if="setting.input_type == 'text'">
-						<input type="text" :id="'cb-' + setting_name" :name="setting_name" v-model="setting.value" class="opt-setting-input text-input"/>
+						<input type="text" :id="'cb-' + setting_name" :name="setting_name" v-model="setting.value" class="opt-setting-input text-input" :disabled="setting.disabled == '1'" />
 					</p>
 					<div v-else-if="setting.input_type == 'options'" class="col-md-3">
 						<select :id="'select-' + setting_name" :name="setting_name" v-model="setting.value" @change="adjustSettingVisibility()">
