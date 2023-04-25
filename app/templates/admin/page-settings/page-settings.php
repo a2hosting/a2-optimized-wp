@@ -256,7 +256,6 @@
 			<h4 class="less-vertical-space">{{ name }} <a class="glyphicon glyphicon-chevron-down toggle" aria-hidden="true" v-on:click.prevent="desc_toggle(slug)" :id="'opt_item_toggle_' + slug"></a></h4>
 			<span v-html="extra_info"></span>
 			<div :id="'opt_item_desc_' + slug" style="display: none" v-html="description" class="desc"></div>
-			<div :id="'opt_item_error_' + slug" v-if="error" v-html="error" style="border: 2px solid red;"></div>
 		</div>
 		<div class="col-md-1 col-lg-1  padding-top-30">
 			<a v-if="extra_setting" href="javascript:void(0)" @click="toggleExtraSettings(slug, $event)">Modify</a>
