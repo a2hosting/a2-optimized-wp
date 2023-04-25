@@ -354,13 +354,20 @@ class A2_Optimized_Optimizations {
         else {
             // override the object cache settings with the litespeed values
             $litespeed_cache_type = get_option('litespeed.conf.object-kind');
+            if(get_option('litespeed.conf.object-port') == '0'){
+                // socket connection
+                $object_cache = get_option('litespeed.conf.object-host');
+            } else {
+                // TCP connection, include port
+                $object_cache = get_option('litespeed.conf.object-host') . ":" . get_option('litespeed.conf.object-port');
+            }
             if ($litespeed_cache_type == 1){
                 $cache_type = 'redis';
-                $redis_server = get_option('litespeed.conf.object-host');
+                $redis_server = $object_cache;
             }
             else {
                 $cache_type = 'memcached';
-                $memcached_server = get_option('litespeed.conf.object-host');
+                $memcached_server = $object_cache;
             }
         }
 
@@ -402,8 +409,9 @@ class A2_Optimized_Optimizations {
                     'settings' => [
                         'redis_server' => [
                             'description' => 'Redis Server',
-                            'label' => '',
+                            'label' => '<b>Handled by Litespeed Cache</b>. You can make changes <a href="admin.php?page=litespeed-cache#object">here</a>',
                             'input_type' => 'text',
+                            'disabled' => '1',
                             'value' => $redis_server,
                         ]
                     ]
@@ -777,6 +785,7 @@ class A2_Optimized_Optimizations {
         if ($invalid) {
             $optimizations['a2_object_cache']['configured'] = false;
             $optimizations['a2_object_cache']['error'] = "Unable to update object cache: {$invalid}. Please check your connection information.";
+            delete_option('a2_optimized_memcached_invalid'); // we've displayed the error, and we'll allow the user to reset and check again.
         }
 
         if ($optimizations['hide_login']['configured'] == true){
