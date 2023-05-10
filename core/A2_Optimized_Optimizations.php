@@ -519,6 +519,10 @@ class A2_Optimized_Optimizations {
         return $extra_settings;
     }
 
+	private function get_litespeed_description() {
+		return '<strong>Requires:</strong> LiteSpeed Cache (Installed by default on new A2 Hosting WordPress installs. Can be installed/re-installed if necessary <a href="' . get_admin_url() . 'plugin-install.php?s=litespeed%2520cache&tab=search&type=term">here</a>)<br />';
+	}
+
     public function get_public_optimizations(){
 
         $optimizations = [
@@ -556,7 +560,7 @@ class A2_Optimized_Optimizations {
                 'configured' => $this->is_active('a2_object_cache'),
                 'category' => 'performance',
                 'compatibility' => ['caching'],
-                'description' => '<strong>Benefit:</strong> Makes your site faster.<br />
+                'description' => $this->get_litespeed_description() . '<strong>Benefit:</strong> Makes your site faster.<br />
                 <strong>How-it-works:</strong> Serves cached items such as images, files, and metadata in less than a millisecond. You have the option to modify these settings to best suit your needs. <br /> 
                 Tap Modify to make changes.',
                 'extra_info' => ''
@@ -697,7 +701,7 @@ class A2_Optimized_Optimizations {
                 'category' => 'performance',
                 'compatibility' => ['caching'],
                 'premium' => true,
-                'description' => '<strong>Benefit:</strong> Operates on a limited occupancy, upgraded server hardware with advanced caching software making the CPU (central processing unit) 40% faster and 20x faster page loads.<br /> 
+                'description' => $this->get_litespeed_description() . '<strong>Benefit:</strong> Operates on a limited occupancy, upgraded server hardware with advanced caching software making the CPU (central processing unit) 40% faster and 20x faster page loads.<br /> 
                 <strong>How it works:</strong> Servers compile .htaccess files - a file that controls the high-level configuration of your website - to make speed improvements. Any changes to .htaccess files are immediately re-compiled. Turbo Web Hosting servers have their own PHP API that provides speed improvements.<br />
                 <strong>What to know:</strong> Turbo servers can handle 9X more traffic with 3X faster read/write speeds.',
                 'extra_info' => ''

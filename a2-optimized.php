@@ -12,7 +12,7 @@
  * Version: 3.0.6.3.1
  * Author: A2 Hosting
  * Author URI: https://www.a2hosting.com/
- * Description: A2 Optimized - WordPress Optimization Plugin
+ * Description: Automatically optimizes performance and security. Works together with LiteSpeed Cache.
  * Text Domain: a2-optimized
  * License: GPLv3
  * Domain Path:       /languages
