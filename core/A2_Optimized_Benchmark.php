@@ -463,7 +463,7 @@ class A2_Optimized_Benchmark {
 		if($pagespeed_options && isset($pagespeed_options['api-key'])){
 			$url .= '&key=' . $pagespeed_options['api-key'];
 		}
-		$response = wp_remote_get($url, ['timeout' => 15]);
+		$response = wp_remote_get($url, ['timeout' => 45]);
 		if(is_array($response) && !is_wp_error($response)){
 			$lighthouse_data = json_decode($response['body'], true);
 			if(!isset($lighthouse_data['error']) || empty($lighthouse_data['error'])){
