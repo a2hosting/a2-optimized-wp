@@ -455,7 +455,7 @@ class A2_Optimized_Benchmark {
 	 * @param string $strategy Desktop or Mobile 
 	 * @return array $results Array containing the results of the test 
 	 */
-	public function get_lighthouse_results($strategy = "desktop", $retry_count = 5, $result_desc = null){
+	public function get_lighthouse_results($strategy = "desktop", $retry_count = 3, $result_desc = null){
 		$output = [];
 	
 		$url = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' . get_site_url() . '&strategy=' . $strategy;
