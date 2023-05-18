@@ -14,6 +14,9 @@ class A2_Optimized_Optimizations {
             require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
             $this->private_opts = new A2_Optimized_Private_Optimizations(); 
         }
+	if (!function_exists('is_plugin_active')) {
+	    include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+	}
         $this->hooks();
     }
    
