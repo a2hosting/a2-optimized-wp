@@ -455,7 +455,7 @@ class A2_Optimized_Benchmark {
 	 * @param string $strategy Desktop or Mobile 
 	 * @return array $results Array containing the results of the test 
 	 */
-	public function get_lighthouse_results($strategy = "desktop", $retry_count = 5, $result_desc = null){
+	public function get_lighthouse_results($strategy = "desktop", $retry_count = 3, $result_desc = null){
 		$output = [];
 	
 		$url = 'https://www.googleapis.com/pagespeedonline/v5/runPagespeed?url=' . get_site_url() . '&strategy=' . $strategy;
@@ -463,7 +463,7 @@ class A2_Optimized_Benchmark {
 		if($pagespeed_options && isset($pagespeed_options['api-key'])){
 			$url .= '&key=' . $pagespeed_options['api-key'];
 		}
-		$response = wp_remote_get($url, ['timeout' => 15]);
+		$response = wp_remote_get($url, ['timeout' => 45]);
 		if(is_array($response) && !is_wp_error($response)){
 			$lighthouse_data = json_decode($response['body'], true);
 			if(!isset($lighthouse_data['error']) || empty($lighthouse_data['error'])){
