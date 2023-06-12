@@ -1237,6 +1237,7 @@ class A2_Optimized_Optimizations {
 					}
 				}
 				switch ($theme_count) {
+					case 0:
 					case 1:
 						$result['current'] = 'One theme configured.';
 						$result['value'] = true;
