@@ -320,13 +320,11 @@ class A2_Optimized_CLI {
 	 * Returns a site health report for the current site
 	 */
 	public function send_report_data($args, $assoc_args) {
-
 		$a2opt_sitedata = new A2_Optimized_SiteData();
 
 		$a2opt_sitedata->send_sitedata();
-			
-		echo "Sent site data report\n\r";
 
+		echo "Sent site data report\n\r";
 	}
 
 	/**
@@ -710,18 +708,17 @@ class A2_Optimized_CLI {
 	 */
 
 	public function recommendations($args, $assoc_args) {
-		if(file_exists('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php')){
-            require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
-            $private_opts = new A2_Optimized_Private_Optimizations;
+		if (file_exists('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php')) {
+			require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
+			$private_opts = new A2_Optimized_Private_Optimizations;
 
 			$action = $args[0];
 
 			$output = $private_opts->apply_recommendation($action);
-
-        } else {
-			$output = "Not available";
+		} else {
+			$output = 'Not available';
 		}
-		
+
 		echo $output;
 	}
 }
