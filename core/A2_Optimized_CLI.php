@@ -269,7 +269,7 @@ class A2_Optimized_CLI {
 			case 'bcrypt':
 				$optimizations->disable_bcrypt_passwords();
 
-				return WP_CLI::success(esc_html__( $site_type . ' Bcrypt passwords enabled.', 'a2-optimized-wp' ));
+				return WP_CLI::success(esc_html__( $site_type . ' Bcrypt passwords disabled.', 'a2-optimized-wp' ));
 
 				break;
 		}
