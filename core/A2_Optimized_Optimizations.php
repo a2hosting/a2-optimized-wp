@@ -751,6 +751,8 @@ class A2_Optimized_Optimizations {
 				$optimizations['a2_object_cache']['locked'] = true;
 			}
 			unset($optimizations['a2_page_cache']);
+
+			$optimizations['turbo']['description'] .= '<br /><strong>Additional Tools:</strong> <a href="admin.php?page=litespeed-cache#excludes">Exclude files from cache</a>';
 		}
 
 		if (class_exists('A2_Optimized_Private_Optimizations')) {
