@@ -179,6 +179,19 @@ class A2_Optimized_CLI {
 				return WP_CLI::success(esc_html__( $site_type . ' Bcrypt passwords enabled.', 'a2-optimized-wp' ));
 
 				break;
+			case 'system_cron':
+				if (file_exists('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php')) {
+					require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
+					$private_opts = new A2_Optimized_Private_Optimizations;
+
+					$private_opts->apply_optimization('cron_disable', 'true');
+
+					return WP_CLI::success(esc_html__( $site_type . ' System cron enabled.', 'a2-optimized-wp' ));
+				} else {
+					return WP_CLI::error(esc_html__( $site_type . ' Not supported', 'a2-optimized-wp' ));
+				}
+
+				break;
 		}
 	}
 
