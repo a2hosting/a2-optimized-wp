@@ -37,6 +37,9 @@ class A2_Optimized_Maintenance {
 	}
 
 	private function maybe_schedule_xmlsitemap_sync() {
+		if (!function_exists('is_plugin_active')) {
+			include_once(ABSPATH . 'wp-admin/includes/plugin.php');
+		}
 		if (is_plugin_active('litespeed-cache/litespeed-cache.php') && is_plugin_active('google-sitemap-generator/sitemap.php')) {
 			return true;
 		}
