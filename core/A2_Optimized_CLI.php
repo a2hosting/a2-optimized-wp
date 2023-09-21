@@ -734,4 +734,22 @@ class A2_Optimized_CLI {
 
 		echo $output;
 	}
+
+	/*
+	 * Sync "XML Sitemap Generator for Google" with "Litespeed Cache"
+	 *
+	 * ## EXAMPLES
+	 *
+	 *    # Sync sitemap location from XML Sitemap plugin to Litespeed Cache plugin
+	 *    $ wp a2-optimized sync_xmlsitemap
+	 *
+	 */
+
+	public function sync_xmlsitemap($args, $assoc_args) {
+		$a2opt_maint = new A2_Optimized_Maintenance();
+
+		$a2opt_maint->sync_xmlsitemap_location();
+
+		return WP_CLI::success(esc_html__( 'Memcached server updated.', 'a2-optimized-wp' ));
+	}
 }
