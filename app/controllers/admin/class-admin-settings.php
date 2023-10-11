@@ -48,7 +48,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			// Enqueue Styles & Scripts.
 			add_action('admin_print_scripts-' . static::$hook_suffix, [ $this, 'enqueue_scripts' ]);
 			add_action('admin_print_styles-' . static::$hook_suffix, [ $this, 'enqueue_styles' ]);
-			
+
 			// Register Fields.
 			add_action('load-' . static::$hook_suffix, [ $this, 'register_fields' ]);
 
@@ -62,10 +62,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 			);
 
 			add_filter('submenu_file', [ $this, 'highlight_active_submenu' ]);
-
-
 		}
-
 
 		/**
 		 * Create menu for Plugin inside Settings menu
@@ -95,14 +92,14 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'Page Load Speed Score', // phpcs:ignore
 				'manage_options',
 				'admin.php?page=a2-optimized'
-			);	
+			);
 			add_submenu_page(
 				'a2-optimized',
 				'Website and Server Performance', // phpcs:ignore
 				'Website and Server Performance', // phpcs:ignore
 				'manage_options',
 				'admin.php?page=a2-optimized&amp;a2_page=server_performance'
-			);	
+			);
 			add_submenu_page(
 				'a2-optimized',
 				'Optimization', // phpcs:ignore
@@ -110,24 +107,25 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				'manage_options',
 				'admin.php?page=a2-optimized&amp;a2_page=optimizations'
 			);
-			remove_submenu_page('a2-optimized','a2-optimized'); //Removes duplicated top level item	
+			remove_submenu_page('a2-optimized', 'a2-optimized'); //Removes duplicated top level item
 
 			// @codingStandardsIgnoreEnd.
 		}
-		
+
 		/**
-		 * Highlights the current active submenu 
+		 * Highlights the current active submenu
 		 *
 		 * @since    3.0.0
 		 */
-		function highlight_active_submenu($submenu_file){
+		public function highlight_active_submenu($submenu_file) {
 			if (isset($_GET['page']) && $_GET['page'] == 'a2-optimized') {
-				if(!isset($_GET['a2_page']) || $_GET['a2_page'] == 'page_speed_score'){
+				if (!isset($_GET['a2_page']) || $_GET['a2_page'] == 'page_speed_score') {
 					return 'admin.php?page=a2-optimized';
 				} else {
 					return 'admin.php?page=a2-optimized&amp;a2_page=' . $_GET['a2_page'];
 				}
 			}
+
 			return $submenu_file;
 		}
 
@@ -143,7 +141,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 
 			wp_enqueue_script(
 				A2_Optimized::PLUGIN_ID . '_vue-js',
-				A2_Optimized::get_plugin_url() . 'assets/js/admin/vue.js',
+				A2_Optimized::get_plugin_url() . 'assets/js/admin/vue.min.js',
 				[],
 				A2_Optimized::PLUGIN_VERSION,
 				false
@@ -256,7 +254,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 				$notifications = $this->get_model()->get_notifications();
 				$options = get_option('a2opt-pagespeed');
 				$strategy = 'desktop';
-				if (isset($options['default-strategy'])){
+				if (isset($options['default-strategy'])) {
 					$strategy = $options['default-strategy'];
 				}
 				switch ($page) {
@@ -287,6 +285,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 								'run_benchmarks' => $run_benchmarks
 							]
 						);
+
 						break;
 					case 'advanced_settings':
 						$data = $this->get_model()->get_advanced_settings();
@@ -298,6 +297,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 								'data' => $data,
 							]
 						);
+
 						break;
 					case 'optimizations':
 						$data = $this->get_model()->get_opt_performance();
@@ -310,6 +310,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 								'data' => $data,
 							]
 						);
+
 						break;
 					case 'page_speed_score':
 					default:
@@ -327,6 +328,7 @@ if (! class_exists(__NAMESPACE__ . '\\' . 'Admin_Settings')) {
 								'run_benchmarks' => $run_benchmarks
 							]
 						);
+
 						break;
 				}
 			} else {
