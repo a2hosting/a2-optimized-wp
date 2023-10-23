@@ -330,6 +330,34 @@ class A2_Optimized_CLI {
 	}
 
 	/**
+	 * Returns status of specified security options
+	 */
+	public function is_active($args, $assoc_args) {
+		$optimizations = new A2_Optimized_Optimizations;
+		$return = array();
+
+		$specialMapping = array(
+			'lock_plugins' => 'lock_editing',
+			'bcrypt' => 'a2_bcrypt_passwords',
+		);
+	
+		if (count($args) > 0) {
+			$slugs = explode(',', $args[0]);
+				
+			foreach ($slugs as $slug) {
+				$name = $slug;
+				if (array_key_exists($slug, $specialMapping)) {
+					$name = $specialMapping[$slug];
+				}
+				$stat = $optimizations->is_active($name, TRUE);
+				$return[$slug] = $stat;
+			}
+		}
+
+		return WP_CLI::line(json_encode($return));
+	}
+
+	/**
 	 * Returns a site health report for the current site
 	 */
 	public function send_report_data($args, $assoc_args) {
