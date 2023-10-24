@@ -297,7 +297,7 @@ class A2_Optimized_CLI {
 
 				break;
 			case 'remove_conf_backups':
-				$optimizations->disable_wpcon;
+				$optimizations->disable_wpconfig_cleanup();
 
 				return WP_CLI::success(esc_html__( $site_type . ' No longer removing config backups.', 'a2-optimized-wp' ));
 
