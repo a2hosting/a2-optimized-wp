@@ -192,6 +192,17 @@ class A2_Optimized_CLI {
 				}
 
 				break;
+			case 'regenerate_salts':
+				$optimizations->regenerate_wpconfig_salts();
+
+				return WP_CLI::success(esc_html__( $site_type . ' salts have been regenerated.', 'a2-optimized-wp' ));
+
+				break;
+			case 'remove_conf_backups':
+					$optimizations->enable_wpconfig_cleanup();
+					
+					return WP_CLI::success(esc_html__( $site_type . ' config backups are scheduled to be removed.', 'a2-optimized-wp' )); 
+				break;
 		}
 	}
 
@@ -285,6 +296,12 @@ class A2_Optimized_CLI {
 				return WP_CLI::success(esc_html__( $site_type . ' Bcrypt passwords disabled.', 'a2-optimized-wp' ));
 
 				break;
+			case 'remove_conf_backups':
+				$optimizations->disable_wpconfig_cleanup();
+
+				return WP_CLI::success(esc_html__( $site_type . ' No longer removing config backups.', 'a2-optimized-wp' ));
+
+				break;
 		}
 	}
 
@@ -339,6 +356,7 @@ class A2_Optimized_CLI {
 		$specialMapping = array(
 			'lock_plugins' => 'lock_editing',
 			'bcrypt' => 'a2_bcrypt_passwords',
+			'remove_conf_backups' => 'a2_wpconfig_cleanup',
 		);
 	
 		if (count($args) > 0) {
@@ -349,7 +367,7 @@ class A2_Optimized_CLI {
 				if (array_key_exists($slug, $specialMapping)) {
 					$name = $specialMapping[$slug];
 				}
-				$stat = $optimizations->is_active($name, TRUE);
+				$stat = $optimizations->is_active($name, FALSE);
 				$return[$slug] = $stat;
 			}
 		}
