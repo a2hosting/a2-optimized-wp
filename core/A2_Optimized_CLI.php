@@ -192,6 +192,17 @@ class A2_Optimized_CLI {
 				}
 
 				break;
+			case 'regenerate_salts':
+				$optimizations->regenerate_wpconfig_salts();
+
+				return WP_CLI::success(esc_html__( $site_type . ' salts have been regenerated.', 'a2-optimized-wp' ));
+
+				break;
+			case 'remove_conf_backups':
+					$optimizations->enable_wpconfig_cleanup();
+					
+					return WP_CLI::success(esc_html__( $site_type . ' config backups are scheduled to be removed.', 'a2-optimized-wp' )); 
+				break;
 		}
 	}
 
@@ -285,6 +296,12 @@ class A2_Optimized_CLI {
 				return WP_CLI::success(esc_html__( $site_type . ' Bcrypt passwords disabled.', 'a2-optimized-wp' ));
 
 				break;
+			case 'remove_conf_backups':
+				$optimizations->disable_wpconfig_cleanup();
+
+				return WP_CLI::success(esc_html__( $site_type . ' No longer removing config backups.', 'a2-optimized-wp' ));
+
+				break;
 		}
 	}
 
@@ -327,6 +344,47 @@ class A2_Optimized_CLI {
 		} else {
 			echo "Error writing report file, check file permissions\n\r";
 		}
+	}
+
+	/**
+	 * Returns status of specified security options
+	 */
+	public function is_active($args, $assoc_args) {
+		$optimizations = new A2_Optimized_Optimizations;
+		$return = array();
+
+		$specialMapping = array(
+			'lock_plugins' => 'lock_editing',
+			'bcrypt' => 'a2_bcrypt_passwords',
+			'remove_conf_backups' => 'a2_wpconfig_cleanup',
+			'xmlrpc' => 'xmlrpc_requests',
+		);
+
+		$output_json = (array_key_exists('format', $assoc_args) && $assoc_args['format'] == 'json');
+	
+		if (count($args) > 0) {
+			$slugs = explode(',', $args[0]);
+				
+			foreach ($slugs as $slug) {
+				$name = $slug;
+				if (array_key_exists($slug, $specialMapping)) {
+					$name = $specialMapping[$slug];
+				}
+				$stat = $optimizations->is_active($name, !$output_json);
+				$return[$slug] = $stat;
+			}
+		}
+
+		if ($output_json) {
+			return WP_CLI::line(json_encode($return));
+		} else {
+			foreach ($return as $slug => $v) {
+				echo "$slug is " . ($v === true ? 'Active' : 'Inactive') . "\n\r";
+			}
+
+			return;
+		}
+
 	}
 
 	/**
