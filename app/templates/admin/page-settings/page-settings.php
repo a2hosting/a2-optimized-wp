@@ -1,7 +1,7 @@
 <div class="wrap">
 <script> 
 	let page_data = <?php echo $data['data_json'] ?>;
-	page_data.login_url = '<?php echo esc_url(get_home_url()) . "/wp-login.php" ?>';
+	page_data.login_url = '<?php echo esc_url(get_home_url()) . '/wp-login.php' ?>';
 	page_data.show_coaching = false;
 	page_data.showModal = false;
 	page_data.modalMsg = '';
@@ -456,7 +456,9 @@
 													<span v-else>
 														<span class="glyphicon glyphicon-ok-circle"  :class="item.color_class" aria-hidden="true"></span>
 													</span>
-													<a :href="item.config_url" target="a2opt_config">Modify</a><br><span class="small">via wordpress</span>
+													<span v-if="item.config_url">
+														<a :href="item.config_url" target="a2opt_config">Modify</a><br><span class="small">via wordpress</span>
+													</span>
 												</div>
 												<div v-else class="col-md-4 col-lg-3 text-right">
 													<span v-if="item.status.is_warning">
@@ -874,9 +876,8 @@
 			</div>
 		</div>
 		<?php $reporting_active = get_option('a2_sitedata_allow');
-		if(!$reporting_active){ 
-			$data_nonce = wp_create_nonce('a2opt_datacollection_nonce');
-			?>
+		if (!$reporting_active) {
+			$data_nonce = wp_create_nonce('a2opt_datacollection_nonce'); ?>
 		<div class="row">
 			<div class="notice notice-warning">
 				<p><strong>Help Us Get You the Best Performance Possible</strong></p>
@@ -884,7 +885,8 @@
 				<p><a href="admin.php?page=a2-optimized&data-collection=yes&nonce=<?php echo $data_nonce; ?>" class="btn btn-primary">Yes, I would like to help</a>&nbsp;<a href="admin.php?page=a2-optimized&data-collection=no&nonce=<?php echo $data_nonce; ?>" class="btn btn-default">No, thank you</a></p>
 			</div>
 		</div>
-		<?php }; ?>
+		<?php
+		} ?>
 		<div class="row" id="a2-optimized-nav">
 			<div class="col-md-12 col-lg-11 col-lg-offset-1">
 				<div class="row a2-optimized-navigation" id="a2-optimized-navigation">

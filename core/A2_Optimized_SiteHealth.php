@@ -25,11 +25,9 @@ class A2_Optimized_SiteHealth {
 	 * Integration hooks.
 	 */
 	protected function hooks() {
-		add_filter( 'debug_information', array( $this, 'add_debug_section' ) );
-		add_filter( 'site_status_tests', array( $this, 'add_site_status_items' ) );
-
+		add_filter( 'debug_information', [ $this, 'add_debug_section' ] );
+		add_filter( 'site_status_tests', [ $this, 'add_site_status_items' ] );
 	}
-
 
 	/**
 	 * Add "Save" button to Debug tab
@@ -38,12 +36,11 @@ class A2_Optimized_SiteHealth {
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
-	public function add_button_to_site_health_info_tab( $tab ) {
+	public function add_button_to_site_health_info_tab($tab) {
 		// Do nothing if this is not the "debug" tab.
 		if ( 'debug' !== $tab ) {
 			return;
-		}
-		?>
+		} ?>
 		<div class='health-check-body health-check-debug-tab hide-if-no-js'>
 			<a href='admin.php?a2-page=site_health&page=A2_Optimized_Plugin_admin'><button class='button'>Save Report</button></a>
 		</div>
@@ -60,70 +57,69 @@ class A2_Optimized_SiteHealth {
 	public function add_site_status_items($tests) {
 		if (php_sapi_name() == 'litespeed') {
 			// Litespeed server
-			$tests['direct']['a2_optimized_turbocache'] = array(
+			$tests['direct']['a2_optimized_turbocache'] = [
 				'label' => 'TurboCache',
-				'test' => array( $this, 'a2opt_turbocache_test' ),
-			);
+				'test' => [ $this, 'a2opt_turbocache_test' ],
+			];
 		}
-		
-		$tests['direct']['a2_optimized_revisions'] = array(
+
+		$tests['direct']['a2_optimized_revisions'] = [
 			'label' => 'Large amount of revisions',
-			'test' => array( $this, 'a2opt_revision_count_test' ),
-		);
-		
-		$tests['direct']['a2_optimized_large_images'] = array(
+			'test' => [ $this, 'a2opt_revision_count_test' ],
+		];
+
+		$tests['direct']['a2_optimized_large_images'] = [
 			'label' => 'Large images in Media Library',
-			'test' => array( $this, 'a2opt_large_image_test' ),
-		);
-		
-		$tests['direct']['a2_optimized_blocking_search'] = array(
+			'test' => [ $this, 'a2opt_large_image_test' ],
+		];
+
+		$tests['direct']['a2_optimized_blocking_search'] = [
 			'label' => 'Blocking search engines',
-			'test' => array( $this, 'a2opt_block_search_test' ),
-		);
-		
-		$tests['direct']['a2_optimized_caching'] = array(
+			'test' => [ $this, 'a2opt_block_search_test' ],
+		];
+
+		$tests['direct']['a2_optimized_caching'] = [
 			'label' => 'Caching enabled',
-			'test' => array( $this, 'a2opt_cache_test' ),
-		);
-		
-		$tests['direct']['a2_optimized_phpopcache'] = array(
+			'test' => [ $this, 'a2opt_cache_test' ],
+		];
+
+		$tests['direct']['a2_optimized_phpopcache'] = [
 			'label' => 'PHP OP Caching enabled',
-			'test' => array( $this, 'a2opt_phpopcache_test' ),
-		);
-		
-		$tests['direct']['a2_optimized_other_cache'] = array(
+			'test' => [ $this, 'a2opt_phpopcache_test' ],
+		];
+
+		$tests['direct']['a2_optimized_other_cache'] = [
 			'label' => 'Duplicate Caching plugins enabled',
-			'test' => array( $this, 'a2opt_other_cache_test' ),
-		);
-		
-		$tests['direct']['a2_optimized_php_memory'] = array(
+			'test' => [ $this, 'a2opt_other_cache_test' ],
+		];
+
+		$tests['direct']['a2_optimized_php_memory'] = [
 			'label' => 'PHP has good memory limits',
-			'test' => array( $this, 'a2opt_php_memory_test' ),
-		);
-		
-		
+			'test' => [ $this, 'a2opt_php_memory_test' ],
+		];
+
 		if (is_plugin_active('woocommerce/woocommerce.php')) {
-			$tests['direct']['a2_optimized_cart_fragments'] = array(
+			$tests['direct']['a2_optimized_cart_fragments'] = [
 				'label' => 'Dequeue WooCommerce Cart Fragments AJAX calls',
-				'test' => array( $this, 'a2opt_cart_fragments_test' ),
-			);
+				'test' => [ $this, 'a2opt_cart_fragments_test' ],
+			];
 		}
-		
-		$tests['direct']['a2_optimized_gzip_compression'] = array(
+
+		$tests['direct']['a2_optimized_gzip_compression'] = [
 			'label' => 'Gzip Compression Enabled',
-			'test' => array( $this, 'a2opt_gzip_test' ),
-		);
-		
-		$tests['direct']['a2_optimized_block_xmlrpc'] = array(
+			'test' => [ $this, 'a2opt_gzip_test' ],
+		];
+
+		$tests['direct']['a2_optimized_block_xmlrpc'] = [
 			'label' => 'Block Unauthorized XML-RPC Requests',
-			'test' => array( $this, 'a2opt_xml_rpc_test' ),
-		);
-		
-		$tests['direct']['a2_optimized_disable_fileedit'] = array(
+			'test' => [ $this, 'a2opt_xml_rpc_test' ],
+		];
+
+		$tests['direct']['a2_optimized_disable_fileedit'] = [
 			'label' => 'Lock Editing of Plugins and Themes from the WP Admin',
-			'test' => array( $this, 'a2opt_file_edit_test' ),
-		);
-		
+			'test' => [ $this, 'a2opt_file_edit_test' ],
+		];
+
 		return $tests;
 	}
 
@@ -133,21 +129,21 @@ class A2_Optimized_SiteHealth {
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_turbocache_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'TurboCache is enabled' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Caching can help load your site more quickly for visitors.' )
 			),
 			'actions' => '',
 			'test' => 'caching_plugin',
-		);
-  
+		];
+
 		if (!is_plugin_active('litespeed-cache/litespeed-cache.php') || !get_option('litespeed.conf.cache')) {
 			$result['status'] = 'critical'; // "Critical" section
 			$result['label'] = __( 'TurboCache is available but not enabled' );
@@ -164,33 +160,33 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check if Revision count is too large
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_revision_count_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'Reasonable number of post revisions' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Caching can help load your site more quickly for visitors.' )
 			),
 			'actions' => '',
 			'test' => 'revision_count',
-		);
- 
-		$args = array(
+		];
+
+		$args = [
 			'numberposts' => -1,
 			'post_type' => 'revision'
-		);
- 
+		];
+
 		$post_revisions = get_posts( $args );
 
 		if (count($post_revisions) > 1000) {
@@ -204,36 +200,36 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check if large images are in the media library
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_large_image_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'Media library images are a reasonable size' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Large images can lead to poor site performance' )
 			),
 			'actions' => '',
 			'test' => 'large_images',
-		);
+		];
 
 		$large_image_count = 0;
 
-		$query_images_args = array(
+		$query_images_args = [
 			'post_type' => 'attachment',
 			'post_mime_type' => 'image',
 			'post_status' => 'inherit',
 			'posts_per_page' => -1,
-		);
+		];
 
 		$query_images = new WP_Query( $query_images_args );
 
@@ -257,27 +253,27 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check if discourage search engines is enabled
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_block_search_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'Search engines are allowed' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Your site is visable to search engines' )
 			),
 			'actions' => '',
 			'test' => 'blocking_search',
-		);
+		];
 
 		if (get_option('blog_public') == 0) {
 			$result['status'] = 'critical';
@@ -290,27 +286,27 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check if caching is enabled
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_cache_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'Site Caching is enabled' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Your site is cached and fast!' )
 			),
 			'actions' => '',
 			'test' => 'caching_enabled',
-		);
+		];
 
 		if (!is_plugin_active('litespeed-cache/litespeed-cache.php') && get_option('a2_cache_enabled') != 1) {
 			$result['status'] = 'critical';
@@ -328,33 +324,33 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check if PHP OpCache is enabled
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_phpopcache_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'PHP OpCaching is enabled' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Your site is cached and fast!' )
 			),
 			'actions' => '',
 			'test' => 'opcaching_enabled',
-		);
+		];
 
-		if(function_exists('opcache_get_status')){
+		if (function_exists('opcache_get_status')) {
 			$opcache_status = opcache_get_status();
 		} else {
 			$opcache_status = false;
-		};
+		}
 
 		if (!is_array($opcache_status) || !$opcache_status['opcache_enabled']) {
 			$result['status'] = 'recommended';
@@ -367,44 +363,36 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check if other caching plugins are enabled
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_other_cache_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'No conflicting cache plugins detected' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Your site is cached and fast!' )
 			),
 			'actions' => '',
 			'test' => 'caching_enabled',
-		);
+		];
 
 		$active_plugins = get_option('active_plugins');
-		
-		$incompatible_plugins = array(
-			'wp-super-cache',
-			'wp-fastest-cache',
-			'wp-file-cache',
-			'w3-total-cache',
-			'sg-cachepress',
-			'cache-enabler',
-			'comet-cache',
-			'wp-rocket',
-			'surge'
-		);
-  
+
+		$a2_optimizations = new A2_Optimized_Optimizations;
+
+		$incompatible_plugins = $a2_optimizations->get_incompatible_plugins();
+
 		$found_plugin = false;
-		
+
 		foreach ($active_plugins as $active_plugin) {
 			$plugin_folder = explode('/', $active_plugin);
 			if (in_array($plugin_folder[0], $incompatible_plugins)) {
@@ -428,27 +416,27 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check PHP Memory limits
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_php_memory_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'PHP has good memory limits' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'PHP Memory is good' )
 			),
 			'actions' => '',
 			'test' => 'php_memory',
-		);
+		];
 
 		$memory_limit = $this->return_bytes(ini_get('memory_limit'));
 		if ($memory_limit < 134217727) { // 128mb
@@ -462,27 +450,27 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check number of unused plugins
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_plugin_count_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'Large number of unused plugins' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Unused plugins could present a security issue.' )
 			),
 			'actions' => '',
 			'test' => 'plugin_count',
-		);
+		];
 
 		$plugins = get_plugins();
 		$plugin_count = 0;
@@ -500,27 +488,27 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check number of unused themes
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_theme_count_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'Large number of unused themes' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Unused themes could present a security issue.' )
 			),
 			'actions' => '',
 			'test' => 'theme_count',
-		);
+		];
 
 		$themes = wp_get_themes();
 		$theme_count = 0;
@@ -539,27 +527,27 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check if Cart Fragment AJAX calls are dequeued
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_cart_fragments_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'Dequeue WooCommerce Cart Fragments AJAX calls' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Disable WooCommerce Cart Fragments on your homepage.' )
 			),
 			'actions' => '',
 			'test' => 'cart_fragments',
-		);
+		];
 
 		if (!get_option('a2_wc_cart_fragments')) {
 			$result['status'] = 'recommended';
@@ -567,58 +555,57 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check if GZIP compression is enabled
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_gzip_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'You should enable GZIP compression' ),
 			'status' => 'recommended', // Default "failing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Compresses all text files to make them smaller.' )
 			),
 			'actions' => '',
 			'test' => 'gzip_compression',
-		);
+		];
 
-		if(is_plugin_active('litespeed-cache/litespeed-cache.php')){
+		if (is_plugin_active('litespeed-cache/litespeed-cache.php')) {
 			$result['status'] = 'good';
-		}
-		else if(get_option('a2_cache_enabled') == 1 && A2_Optimized_Cache_Engine::$settings['compress_cache']) {
+		} elseif (get_option('a2_cache_enabled') == 1 && A2_Optimized_Cache_Engine::$settings['compress_cache']) {
 			$result['status'] = 'good';
 		}
 
 		return $result;
 	}
-	
+
 	/**
 	 * Check if XML-RPC requests are blocked
 	 *
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_xml_rpc_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'Block Unauthorized XML-RPC Requests' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Completely Disable XML-RPC services' )
 			),
 			'actions' => '',
 			'test' => 'block_xmlrpc',
-		);
+		];
 
 		if (!get_option('a2_block_xmlrpc')) {
 			$result['status'] = 'recommended';
@@ -633,20 +620,20 @@ class A2_Optimized_SiteHealth {
 	 * @return array Array with added A2 Optimized items.
 	 */
 	public function a2opt_file_edit_test() {
-		$result = array(
+		$result = [
 			'label' => __( 'Lock Editing of Plugins and Themes from the WP Admin' ),
 			'status' => 'good', // Default "passing" section
-			'badge' => array(
+			'badge' => [
 				'label' => __( 'Performance' ),
 				'color' => 'orange',
-			),
+			],
 			'description' => sprintf(
 				'<p>%s</p>',
 				__( 'Prevents exploits that use the built in editing capabilities of the WP Admin' )
 			),
 			'actions' => '',
 			'test' => 'file_edit',
-		);
+		];
 
 		if (!get_option('a2_optimized_lockdown')) {
 			$result['status'] = 'recommended';
@@ -654,7 +641,7 @@ class A2_Optimized_SiteHealth {
 
 		return $result;
 	}
-	
+
 	/**
 	 * Add A2 Optimized section to Info tab.
 	 *
@@ -663,116 +650,116 @@ class A2_Optimized_SiteHealth {
 	 * @return array Array with added A2 Optimized info section.
 	 */
 	public function add_debug_section($debug_info) {
-		$a2_optimized = array(
+		$a2_optimized = [
 			'label' => 'A2Optimized',
-			'fields' => array(
-				'version' => array(
+			'fields' => [
+				'version' => [
 					'label' => 'Version',
 					'value' => A2OPT_FULL_VERSION,
-				),
-			),
-		);
-	   
+				],
+			],
+		];
+
 		/* MySQL Version */
 		global $wpdb;
 		$mysqlVersion = $wpdb->db_version();
 
-		$a2_optimized['fields']['mysql_version'] = array(
+		$a2_optimized['fields']['mysql_version'] = [
 			'label' => 'MySQL Version',
 			'value' => $mysqlVersion
-		);
+		];
 
 		/* PHP Version */
-		$a2_optimized['fields']['php_version'] = array(
+		$a2_optimized['fields']['php_version'] = [
 			'label' => 'PHP Version',
 			'value' => phpversion()
-		);
-		
+		];
+
 		/* CPU Info */
-		if(function_exists('exec')){
+		if (function_exists('exec')) {
 			$cpu_info = exec('cat /proc/cpuinfo | grep "model name\\|processor"');
 			$cpu_info = str_replace('model name', '', $cpu_info);
 			$cpu_info = str_replace('processor', '', $cpu_info);
 			$cpu_info = str_replace(':', '', $cpu_info);
-			$a2_optimized['fields']['cpu_info'] = array(
+			$a2_optimized['fields']['cpu_info'] = [
 				'label' => 'CPU Info',
 				'value' => $cpu_info
-			);
-		};
-	
+			];
+		}
+
 		/* Webserver info */
-		$a2_optimized['fields']['http_server'] = array(
+		$a2_optimized['fields']['http_server'] = [
 			'label' => 'Web Server',
 			'value' => php_sapi_name()
-		);
-		
+		];
+
 		/* PHP Memory Limit */
-		$a2_optimized['fields']['php_memory'] = array(
+		$a2_optimized['fields']['php_memory'] = [
 			'label' => 'PHP Memory Limit',
 			'value' => ini_get('memory_limit')
-		);
-		
+		];
+
 		/* Frontend Benchmarks */
-		$frontend_benchmarks = get_option('a2opt-benchmarks-frontend');		
-		if(empty($frontend_benchmarks) || !is_array($frontend_benchmarks)){
-			$a2_optimized['fields']['benchmark_frontend_overall'] = array(
+		$frontend_benchmarks = get_option('a2opt-benchmarks-frontend');
+		if (empty($frontend_benchmarks) || !is_array($frontend_benchmarks)) {
+			$a2_optimized['fields']['benchmark_frontend_overall'] = [
 				'label' => 'Frontend Benchmark',
 				'value' => 'Test not run yet'
-			);
+			];
 		} else {
 			$frontend_benchmarks_last = array_pop($frontend_benchmarks);
 
-			$a2_optimized['fields']['benchmark_frontend_overall'] = array(
+			$a2_optimized['fields']['benchmark_frontend_overall'] = [
 				'label' => 'Frontend Benchmark Overall Score',
 				'value' => $frontend_benchmarks_last['scores']['overall_score']
-			);
-			$a2_optimized['fields']['benchmark_frontend_fcp'] = array(
+			];
+			$a2_optimized['fields']['benchmark_frontend_fcp'] = [
 				'label' => 'Frontend Benchmark FCP',
 				'value' => $frontend_benchmarks_last['scores']['fcp']
-			);
-			$a2_optimized['fields']['benchmark_frontend_ttfb'] = array(
+			];
+			$a2_optimized['fields']['benchmark_frontend_ttfb'] = [
 				'label' => 'Frontend Benchmark TTFB',
 				'value' => $frontend_benchmarks_last['scores']['ttfb']
-			);
-			$a2_optimized['fields']['benchmark_frontend_lcp'] = array(
+			];
+			$a2_optimized['fields']['benchmark_frontend_lcp'] = [
 				'label' => 'Frontend Benchmark LCP',
 				'value' => $frontend_benchmarks_last['scores']['lcp']
-			);
-			$a2_optimized['fields']['benchmark_frontend_fid'] = array(
+			];
+			$a2_optimized['fields']['benchmark_frontend_fid'] = [
 				'label' => 'Frontend Benchmark FID',
 				'value' => $frontend_benchmarks_last['scores']['fid']
-			);
-			$a2_optimized['fields']['benchmark_frontend_cls'] = array(
+			];
+			$a2_optimized['fields']['benchmark_frontend_cls'] = [
 				'label' => 'Frontend Benchmark CLS',
 				'value' => $frontend_benchmarks_last['scores']['cls']
-			);
+			];
 		}
-		
+
 		/* Backend Benchmarks */
 		$backend_benchmarks = get_option('a2opt-benchmarks-hosting');
-		if(empty($backend_benchmarks) || !is_array($backend_benchmarks)){
-			$a2_optimized['fields']['benchmark_hosting_overall'] = array(
+		if (empty($backend_benchmarks) || !is_array($backend_benchmarks)) {
+			$a2_optimized['fields']['benchmark_hosting_overall'] = [
 				'label' => 'Hosting Benchmark',
 				'value' => 'Test not run yet'
-			);
+			];
 		} else {
 			$backend_benchmarks_last = array_pop($backend_benchmarks);
-			$a2_optimized['fields']['benchmark_hosting_overall'] = array(
+			$a2_optimized['fields']['benchmark_hosting_overall'] = [
 				'label' => 'Hosting Benchmark Overall Score',
 				'value' => round($backend_benchmarks_last['wordpress_db']['queries_per_second'])
-			);
-			$a2_optimized['fields']['benchmark_hosting_php'] = array(
+			];
+			$a2_optimized['fields']['benchmark_hosting_php'] = [
 				'label' => 'Hosting Benchmark PHP Score',
 				'value' => $backend_benchmarks_last['php']['total']
-			);
-			$a2_optimized['fields']['benchmark_hosting_mysql'] = array(
+			];
+			$a2_optimized['fields']['benchmark_hosting_mysql'] = [
 				'label' => 'Hosting Benchmark MySQL Score',
 				'value' => $backend_benchmarks_last['mysql']['benchmark']['mysql_total']
-			);
-			$a2_optimized['fields']['benchmark_hosting_filesystem'] = array(
+			];
+			$a2_optimized['fields']['benchmark_hosting_filesystem'] = [
 				'label' => 'Hosting Benchmark Filesystem Score',
 				'value' => $backend_benchmarks_last['filesystem']
-			);
+			];
 		}
 
 		$debug_info['a2-optimized-wp'] = $a2_optimized;
@@ -789,16 +776,19 @@ class A2_Optimized_SiteHealth {
 	 */
 	private function return_bytes($val) {
 		$val = trim($val);
-		$last = strtolower($val[strlen($val)-1]);
+		$last = strtolower($val[strlen($val) - 1]);
 		$val = substr($val, 0, -1);
-		switch($last) {
+		switch ($last) {
 			case 'g':
 				$val *= 1024;
+				// no break
 			case 'm':
 				$val *= 1024;
+				// no break
 			case 'k':
 				$val *= 1024;
 		}
+
 		return $val;
 	}
 }
