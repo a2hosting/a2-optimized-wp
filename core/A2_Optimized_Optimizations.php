@@ -853,7 +853,7 @@ class A2_Optimized_Optimizations {
 			'post_revisions' => [
 				'title' => 'Post Revisions',
 				'description' => 'The number of post revisions should be less than than 10 for most sites. This could slow down page loads.',
-				'status' => $this->is_active('posts_revisions', false),
+				'status' => $this->is_active('post_revisions', false),
 			],
 			'show_on_front' => [
 				'title' => 'Recent Posts showing on home page',
@@ -1288,7 +1288,7 @@ class A2_Optimized_Optimizations {
 				}
 
 				break;
-			case 'posts_revisions':
+			case 'post_revisions':
 				if (defined('WP_POST_REVISIONS') && WP_POST_REVISIONS == true) {
 					// post revisions are active
 					if (is_numeric(WP_POST_REVISIONS) && WP_POST_REVISIONS <= 10) {
