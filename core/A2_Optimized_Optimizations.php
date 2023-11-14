@@ -32,6 +32,23 @@ class A2_Optimized_Optimizations {
 		}
 	}
 
+	public function get_incompatible_plugins() {
+		return [
+			'wp-optimize/wp-optimize.php',
+			'w3-total-cache/w3-total-cache.php',
+			'wp-fastest-cache/wpFastestCache.php',
+			'wp-super-cache/wp-cache.php',
+			'surge/surge.php',
+			'hummingbird-performance/wp-hummingbird.php',
+			'wp-rocket/wp-rocket.php',
+			'comet-cache/comet-cache.php',
+			'autoptimize/autoptimize.php',
+			'wp-smushit/wp-smush.php',
+			'imagify/imagify.php',
+			'shortpixel-image-optimiser/wp-shortpixel.php',
+		];
+	}
+
 	public function get_optimizations() {
 		$public_opts = $this->get_public_optimizations();
 		$extra_settings = $this->get_extra_settings();
@@ -833,6 +850,11 @@ class A2_Optimized_Optimizations {
 				'config_url' => admin_url() . 'options-reading.php',
 				'status' => $this->is_active('posts_per_rss', false),
 			],
+			'post_revisions' => [
+				'title' => 'Post Revisions',
+				'description' => 'The number of post revisions should be less than than 10 for most sites. This could slow down page loads.',
+				'status' => $this->is_active('post_revisions', false),
+			],
 			'show_on_front' => [
 				'title' => 'Recent Posts showing on home page',
 				'description' => 'Speed up your home page by selecting a static page to display.',
@@ -856,6 +878,59 @@ class A2_Optimized_Optimizations {
 				'description' => 'Unused, inactive plugins should be deleted. WordPress will still check for updates on each plugin even if it is not active, which could slow down your site. For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping">WordPress Housekeeping</a>',
 				'config_url' => admin_url() . 'plugins.php',
 				'status' => $this->is_active('plugins', false),
+			],
+			'incompatible_plugins' => [
+				'title' => 'Incompatible Plugins',
+				'description' => 'Some caching and optimization plugins will interfere with A2 Optimized or Litespeed cache. These plugins should be disabled.',
+				'config_url' => admin_url() . 'plugins.php',
+				'status' => $this->is_active('incompatible_plugins', false),
+			],
+			'default_admin_user' => [
+				'title' => 'Default "Admin" User',
+				'description' => 'Having a user with the login of "admin" could make your site more vulnerable to brute force attacks. This user should be replaced with less common username.',
+				'config_url' => admin_url() . 'users.php',
+				'status' => $this->is_active('default_admin_user', false),
+			],
+			'default_db_prefix' => [
+				'title' => 'Default Database Prefix',
+				'description' => 'Having a database prefix of "wp_" could make it easier for your site to be compromised.',
+				'status' => $this->is_active('default_db_prefix', false),
+			],
+			'large_images' => [
+				'title' => 'Large Images in the Media Library',
+				'description' => 'Images larger than 1mb may not be properly optimized and could cause performance issues for your site visitors.',
+				'config_url' => admin_url() . 'upload.php',
+				'status' => $this->is_active('large_images', false),
+			],
+			'disable_trackbacks' => [
+				'title' => 'Disable Trackbacks and Pingbacks',
+				'description' => 'Trackbacks and Pingbacks could contribute to slower page load times and increased spam content on your site.',
+				'config_url' => admin_url() . 'options-discussion.php',
+				'status' => $this->is_active('disable_trackbacks', false),
+			],
+			'anyone_can_register' => [
+				'title' => 'Anyone Can Register',
+				'description' => 'Allowing anyone to register to your site could lead to increased spam content.',
+				'config_url' => admin_url() . 'options-general.php',
+				'status' => $this->is_active('anyone_can_register', false),
+			],
+			'remove_dummy_content' => [
+				'title' => 'Remove default WordPress Content',
+				'description' => 'When setting up a new WordPress site, some default content is created. The "Hello World" post and "Sample Page" should be removed as they could be considered duplicate content.',
+				'config_url' => admin_url() . 'edit.php',
+				'status' => $this->is_active('remove_dummy_content', false),
+			],
+			'privacy_policy' => [
+				'title' => 'Site has a Privacy Policy',
+				'description' => 'When setting up a new WordPress site, a draft "Privacy Policy" page is created. This should be populated and published.',
+				'config_url' => admin_url() . 'edit.php?post_type=page',
+				'status' => $this->is_active('privacy_policy', false),
+			],
+			'default_category' => [
+				'title' => 'Default Post Category is "Uncategorized"',
+				'description' => 'When setting up a new WordPress site, the default category for posts is "Uncategorized". This category should be replaced with one better suited to your content.',
+				'config_url' => admin_url() . 'options-writing.php',
+				'status' => $this->is_active('default_category', false),
 			],
 			'a2_hosting' => [
 				'title' => 'Hosted with A2 Hosting',
@@ -1213,6 +1288,23 @@ class A2_Optimized_Optimizations {
 				}
 
 				break;
+			case 'post_revisions':
+				if (defined('WP_POST_REVISIONS') && WP_POST_REVISIONS == true) {
+					// post revisions are active
+					if (is_numeric(WP_POST_REVISIONS) && WP_POST_REVISIONS <= 10) {
+						$result['current'] = 'Post revisions are enabled, but less than 10.';
+						$result['value'] = true;
+					} else {
+						$result['current'] = 'Post revisions are enabled with a limit higher than 10.';
+						$result['value'] = false;
+					}
+				} else {
+					// No post revisions
+					$result['current'] = 'Post revisions are disabled.';
+					$result['value'] = true;
+				}
+
+				break;
 			case 'show_on_front':
 				$sof = get_option('show_on_front');
 				$result['current'] = "Showing {$sof} on front page.";
@@ -1274,6 +1366,151 @@ class A2_Optimized_Optimizations {
 				if ($inactive_plugin_count <= 4) {
 					$result['value'] = true;
 				}
+
+				break;
+			case 'incompatible_plugins':
+				$active_plugins = get_option('active_plugins');
+				$found_plugins = [];
+				$plugin_list = null;
+				$incompatible_plugins = $this->get_incompatible_plugins();
+				foreach ($active_plugins as $active_plugin) {
+					if (in_array($active_plugin, $incompatible_plugins)) {
+						$plugin_folder = explode('/', $active_plugin);
+						$found_plugins[] = $plugin_folder[0];
+					}
+				}
+				if (count($found_plugins) > 0) {
+					$result['value'] = false;
+					$plugin_list = implode(', ', $found_plugins);
+				} else {
+					$result['value'] = true;
+				}
+				$result['current'] = count($found_plugins) . ' incompatible plugins.';
+				if ($plugin_list) {
+					$result['current'] .= ' ' . $plugin_list;
+				}
+
+				break;
+			case 'default_admin_user':
+				$users = get_users( [ 'role__in' => [ 'author', 'editor', 'administrator', 'shop_manager' ] ] );
+				$found_admin = false;
+				foreach ($users as $user) {
+					if (strtolower($user->user_login) == 'admin') {
+						$found_admin = true;
+					}
+				}
+				if ($found_admin) {
+					$result['current'] = 'A privileged user with the login of "admin" was found.';
+					$result['value'] = false;
+				} else {
+					$result['current'] .= 'No user with the login of "admin" was found.';
+					$result['value'] = true;
+				}
+
+				break;
+			case 'default_db_prefix':
+				global $wpdb;
+				if ($wpdb->prefix == 'wp_') {
+					$result['value'] = false;
+				} else {
+					$result['value'] = true;
+				}
+				$result['current'] = 'Your DB prefix is: ' . $wpdb->prefix . '.';
+
+				break;
+			case 'large_images':
+				$large_files = 0;
+
+				$args = [
+					'post_type' => 'attachment',
+					'numberposts' => -1,
+					'post_mime_type' => 'image',
+					'post_status' => null,
+					'post_parent' => null, // any parent
+				];
+				$attachments = get_posts($args);
+				if ($attachments) {
+					foreach ($attachments as $post) {
+						setup_postdata($post);
+						$file = wp_get_original_image_path($post->ID);
+						if (((filesize($file) / 1024) / 1024) > 1) {
+							$large_files++;
+						}
+					}
+				}
+
+				if ($large_files > 0) {
+					$result['value'] = false;
+				} else {
+					$result['value'] = true;
+				}
+				$result['current'] = 'Found ' . $large_files . ' large images.';
+
+				break;
+			case 'disable_trackbacks':
+				$ping_status = get_option('default_ping_status');
+				if ($ping_status && $ping_status == 'open') {
+					$result['value'] = false;
+				} else {
+					$result['value'] = true;
+					$ping_status = 'closed';
+				}
+				$result['current'] = 'Pingback and Trackback status is currently ' . $ping_status . '.';
+
+				break;
+			case 'anyone_can_register':
+				$register_status = get_option('users_can_register');
+				if ($register_status && $register_status == '1') {
+					$result['value'] = false;
+					$register_status = 'open';
+				} else {
+					$result['value'] = true;
+					$register_status = 'closed';
+				}
+				$result['current'] = 'Registration on your site is currently ' . $register_status . '.';
+
+				break;
+			case 'remove_dummy_content':
+				$found_default_content = [];
+
+				$hello_query = new WP_Query( [ 'name' => 'hello-world' ] );
+				if ( $hello_query->have_posts() ) {
+					$found_default_content[] = 'Hello World!';
+				}
+				$sample_query = new WP_Query( [ 'pagename' => 'sample-page' ] );
+				if ( $sample_query->have_posts() ) {
+					$found_default_content[] = 'Sample Page';
+				}
+
+				if (count($found_default_content) > 0) {
+					$result['value'] = false;
+					$result['current'] = 'Found the following default content: ' . implode(', ', $found_default_content);
+				} else {
+					$result['value'] = true;
+					$result['current'] = 'No default content found.';
+				}
+
+				break;
+			case 'privacy_policy':
+				$priv_query = new WP_Query( [ 'pagename' => 'privacy-policy' ] );
+				if ( $priv_query->have_posts() ) {
+					$result['value'] = true;
+					$result['current'] = 'Found a Privacy Policy page.';
+				} else {
+					$result['value'] = false;
+					$result['current'] = 'Privacy policy page may not be published';
+				}
+
+				break;
+			case 'default_category':
+				$default_category = get_option('default_category');
+				$term = get_term($default_category);
+				if ($term->slug == 'uncategorized') {
+					$result['value'] = false;
+				} else {
+					$result['value'] = true;
+				}
+				$result['current'] = 'Default post category is ' . $term->name . ' (' . $term->slug . ').';
 
 				break;
 			case 'a2_hosting':
