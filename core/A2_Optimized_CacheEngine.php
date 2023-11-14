@@ -34,7 +34,7 @@ final class A2_Optimized_Cache_Engine {
 	 * specific HTTP request headers from current request
 	 *
 	 */
-		
+
 	public static $request_headers;
 
 	/**
@@ -103,7 +103,7 @@ final class A2_Optimized_Cache_Engine {
 		}
 
 		// check request URI
-		if ( str_replace( array( '.ico', '.txt', '.xml', '.xsl' ), '', $_SERVER['REQUEST_URI'] ) !== $_SERVER['REQUEST_URI'] ) {
+		if ( str_replace( [ '.ico', '.txt', '.xml', '.xsl' ], '', $_SERVER['REQUEST_URI'] ) !== $_SERVER['REQUEST_URI'] ) {
 			return false;
 		}
 
@@ -148,9 +148,9 @@ final class A2_Optimized_Cache_Engine {
 	 */
 
 	private static function get_request_headers() {
-		$request_headers = ( function_exists( 'apache_request_headers' ) ) ? apache_request_headers() : array();
+		$request_headers = ( function_exists( 'apache_request_headers' ) ) ? apache_request_headers() : [];
 
-		$request_headers = array(
+		$request_headers = [
 			'Accept' => ( isset( $request_headers['Accept'] ) ) ? $request_headers['Accept'] : ( ( isset( $_SERVER[ 'HTTP_ACCEPT' ] ) ) ? $_SERVER[ 'HTTP_ACCEPT' ] : '' ),
 			'Accept-Encoding' => ( isset( $request_headers['Accept-Encoding'] ) ) ? $request_headers['Accept-Encoding'] : ( ( isset( $_SERVER[ 'HTTP_ACCEPT_ENCODING' ] ) ) ? $_SERVER[ 'HTTP_ACCEPT_ENCODING' ] : '' ),
 			'Host' => ( isset( $request_headers['Host'] ) ) ? $request_headers['Host'] : ( ( isset( $_SERVER[ 'HTTP_HOST' ] ) ) ? $_SERVER[ 'HTTP_HOST' ] : '' ),
@@ -158,7 +158,7 @@ final class A2_Optimized_Cache_Engine {
 			'User-Agent' => ( isset( $request_headers['User-Agent'] ) ) ? $request_headers['User-Agent'] : ( ( isset( $_SERVER[ 'HTTP_USER_AGENT' ] ) ) ? $_SERVER[ 'HTTP_USER_AGENT' ] : '' ),
 			'X-Forwarded-Proto' => ( isset( $request_headers['X-Forwarded-Proto'] ) ) ? $request_headers['X-Forwarded-Proto'] : ( ( isset( $_SERVER[ 'HTTP_X_FORWARDED_PROTO' ] ) ) ? $_SERVER[ 'HTTP_X_FORWARDED_PROTO' ] : '' ),
 			'X-Forwarded-Scheme' => ( isset( $request_headers['X-Forwarded-Scheme'] ) ) ? $request_headers['X-Forwarded-Scheme'] : ( ( isset( $_SERVER[ 'HTTP_X_FORWARDED_SCHEME' ] ) ) ? $_SERVER[ 'HTTP_X_FORWARDED_SCHEME' ] : '' ),
-		);
+		];
 
 		return $request_headers;
 	}
@@ -236,7 +236,7 @@ final class A2_Optimized_Cache_Engine {
 		if ( ! empty( self::$settings['excluded_post_ids'] ) && function_exists( 'is_singular' ) && is_singular() ) {
 			$post_id = get_queried_object_id();
 			$excluded_post_ids = array_map( 'absint', (array) explode( ',', self::$settings['excluded_post_ids'] ) );
-		
+
 			if ( in_array( $post_id, $excluded_post_ids, true ) ) {
 				return true;
 			}
@@ -273,7 +273,11 @@ final class A2_Optimized_Cache_Engine {
 			if ( ! empty( self::$settings['excluded_cookies'] ) ) {
 				$cookies_regex = self::$settings['excluded_cookies'];
 			} else {
-				$cookies_regex = '/^(wp-postpass|wordpress_logged_in|comment_author)_/';
+				if (is_plugin_active('woocommerce/woocommerce.php')) {
+					$cookies_regex = '/^(wp-postpass|wordpress_logged_in|comment_author|woocommerce_cart_hash|woocommerce_items_in_cart|woocommerce_recently_viewed)_/';
+				} else {
+					$cookies_regex = '/^(wp-postpass|wordpress_logged_in|comment_author)_/';
+				}
 			}
 			// bypass cache if an excluded cookie is found
 			foreach ( $_COOKIE as $key => $value) {
@@ -360,7 +364,7 @@ final class A2_Optimized_Cache_Engine {
 
 	public static function deliver_cache() {
 		$cache_file = A2_Optimized_Cache_Disk::get_cache();
-		
+
 		if ( A2_Optimized_Cache_Disk::cache_exists( $cache_file ) && ! A2_Optimized_Cache_Disk::cache_expired( $cache_file ) && ! self::bypass_cache()  ) {
 			// set X-Cache-Handler response header
 			header( 'X-Cache-Handler: cache-enabler-engine' );
