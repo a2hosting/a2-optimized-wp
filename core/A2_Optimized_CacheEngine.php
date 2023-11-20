@@ -267,13 +267,15 @@ final class A2_Optimized_Cache_Engine {
 			}
 		}
 
+
 		// if cookie excluded
 		if ( ! empty( $_COOKIE ) ) {
 			// set regex matching cookies that should bypass the cache
 			if ( ! empty( self::$settings['excluded_cookies'] ) ) {
 				$cookies_regex = self::$settings['excluded_cookies'];
 			} else {
-				if (is_plugin_active('woocommerce/woocommerce.php')) {
+				$active_plugins = get_option('active_plugins');
+				if(in_array('woocommerce/woocommerce.php', $active_plugins)){
 					$cookies_regex = '/^(wp-postpass|wordpress_logged_in|comment_author|woocommerce_cart_hash|woocommerce_items_in_cart|woocommerce_recently_viewed)_/';
 				} else {
 					$cookies_regex = '/^(wp-postpass|wordpress_logged_in|comment_author)_/';
