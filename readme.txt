@@ -143,7 +143,7 @@ If your site is slower after enabling caching in A2 Optimized, talk to a develop
 
 = Can I use A2 Optimized with WordFence? =
 
-A2 Optimized is compatible with most of the features in WordFence, however you should disable caching and logging in WordFence. Also, is page caching in A2 Optimized is enabled, some WordFence features that required WordPress to be fully loaded may not trigger.
+A2 Optimized is compatible with most of the features in WordFence, however you should disable caching and logging in WordFence. Also, if page caching in A2 Optimized is enabled, some WordFence features that required WordPress to be fully loaded may not trigger.
 
 = Can I use A2 Optimized on any host? =
 
