@@ -898,7 +898,7 @@ class A2_Optimized_Optimizations {
 			],
 			'large_images' => [
 				'title' => 'Large Images in the Media Library',
-				'description' => 'Images larger than 1mb may not be properly optimized and could cause performance issues for your site visitors.',
+				'description' => 'Images larger than 1mb may not be properly optimized and could cause performance issues for your site visitors. For performance reasons, A2 Optimized only looks the latest 1000 images in your media library.',
 				'config_url' => admin_url() . 'upload.php',
 				'status' => $this->is_active('large_images', false),
 			],
@@ -1423,7 +1423,7 @@ class A2_Optimized_Optimizations {
 
 				$args = [
 					'post_type' => 'attachment',
-					'numberposts' => -1,
+					'numberposts' => 1000,
 					'post_mime_type' => 'image',
 					'post_status' => null,
 					'post_parent' => null, // any parent
