@@ -9,7 +9,7 @@
  * @wordpress-plugin
  * Plugin Name: A2 Optimized WP
  * Plugin URI: https://wordpress.org/plugins/a2-optimized/
- * Version: 3.0.7.2
+ * Version: 3.0.8
  * Author: A2 Hosting
  * Author URI: https://www.a2hosting.com/
  * Description: Automatically optimizes performance and security. Works together with LiteSpeed Cache.
@@ -24,7 +24,7 @@ if ( ! defined( 'WPINC' ) ) {
 }
 
 define( 'A2OPT_VERSION', '3.0' );
-define( 'A2OPT_FULL_VERSION', '3.0.7.2' );
+define( 'A2OPT_FULL_VERSION', '3.0.8' );
 define( 'A2OPT_MIN_PHP', '5.6' );
 define( 'A2OPT_MIN_WP', '5.1' );
 define( 'A2OPT_FILE', __FILE__ );
