@@ -87,21 +87,24 @@ function run_a2_optimized() {
 
 	register_activation_hook( __FILE__, [ new A2_Optimized\App\Activator(), 'activate' ] );
 	register_deactivation_hook( __FILE__, [ new A2_Optimized\App\Deactivator(), 'deactivate' ] );
-	
+
 	new A2_Optimized_Maintenance;
 
 	if (get_option('a2_cache_enabled') == 1) {
-		if(in_array('litespeed-cache/litespeed-cache.php', apply_filters('active_plugins', get_option('active_plugins')))){ 
+		if (in_array('litespeed-cache/litespeed-cache.php', apply_filters('active_plugins', get_option('active_plugins')))) {
 			A2_Optimized_Cache_Disk::clean();
 			update_option('a2_cache_enabled', 0);
 		} else {
 			add_action('plugins_loaded', [ 'A2_Optimized_Cache', 'init' ]);
 		}
 	}
-    if(is_admin()){
+	if (is_admin()) {
 		new A2_Optimized_SiteHealth;
 		if (defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT) {
 			add_action('admin_menu', ['A2_Optimized_Optimizations', 'addLockedEditor'], 100, 100);
+		}
+		if (in_array('easy-hide-login/wp-hide-login.php', apply_filters('active_plugins', get_option('active_plugins')))) {
+			add_filter( 'admin_email_check_interval', '__return_false' );
 		}
 	}
 	if (get_option('A2_Optimized_Plugin_recaptcha', 0) == 1 && !is_admin()) {
@@ -112,9 +115,9 @@ function run_a2_optimized() {
 		add_filter('preprocess_comment', ['A2_Optimized_Optimizations', 'captcha_comment_authenticate'], 1, 3);
 	}
 
-	if(file_exists('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php')){
+	if (file_exists('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php')) {
 		require_once('/opt/a2-optimized/wordpress/class.A2_Optimized_Private_Optimizations_v3.php');
-		new A2_Optimized_Private_Optimizations(); 
+		new A2_Optimized_Private_Optimizations();
 	}
 
 	new A2_Optimized_SiteData;
@@ -126,7 +129,6 @@ function run_a2_optimized() {
 		$optimizations->block_xmlrpc_request();
 		add_filter('xmlrpc_methods', ['A2_Optimized_Optimizations', 'remove_xmlrpc_methods']);
 	}
-
 }
 
 run_a2_optimized();
