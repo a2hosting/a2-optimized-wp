@@ -852,7 +852,7 @@ class A2_Optimized_Optimizations {
 			],
 			'post_revisions' => [
 				'title' => 'Post Revisions',
-				'description' => 'The number of post revisions should be less than than 10 for most sites. This could slow down page loads.',
+				'description' => 'The number of post revisions should be less than than 100 for most sites. This could slow down page loads.',
 				'status' => $this->is_active('post_revisions', false),
 			],
 			'show_on_front' => [
@@ -1291,11 +1291,11 @@ class A2_Optimized_Optimizations {
 			case 'post_revisions':
 				if (defined('WP_POST_REVISIONS') && WP_POST_REVISIONS == true) {
 					// post revisions are active
-					if (is_numeric(WP_POST_REVISIONS) && WP_POST_REVISIONS <= 10) {
-						$result['current'] = 'Post revisions are enabled, but less than 10.';
+					if (is_numeric(WP_POST_REVISIONS) && WP_POST_REVISIONS <= 100) {
+						$result['current'] = 'Post revisions are enabled, but less than 100.';
 						$result['value'] = true;
 					} else {
-						$result['current'] = 'Post revisions are enabled with a limit higher than 10.';
+						$result['current'] = 'Post revisions are enabled with a limit higher than 100.';
 						$result['value'] = false;
 					}
 				} else {
