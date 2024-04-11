@@ -828,12 +828,26 @@ let app = new Vue({
 	data: page_data,
 	mounted() {
 		document.addEventListener("DOMContentLoaded", function () {
+			console.log('mounted');
 			if (page_data.last_check_date && page_data.last_check_date == 'None'){
 				setTimeout(() => {
 					page_data.show_coaching = true;
 				}, 2000);
-			}
-		});
+			};
+			this.time_since_update = 60;
+			setInterval(function () {
+				console.log('tick');
+				/*
+				this.time_since_update = this.time_since_update - 1;
+				if(this.time_since_update < 1){
+					this.time_since_update = 60;
+				}
+				*/
+			}.bind(this), 1000);
+			});
+	},
+	ready: function () {
+		console.log('ready!');
 	},
 	methods: {
 		addFakeNotif: function () {
@@ -888,36 +902,38 @@ let app = new Vue({
 				})
 				.then((response) => {
 					let status_message = response.data.status_message;
-          let valid_data = false;
+					let valid_data = false;
+					
+					page_data.closeModal();
 
 					if (run_checks && status_message == '') {
 						page_data.last_check_date = 'just now';
 					} else {
 						if (response.data.overall_score){
 							page_data.last_check_date = response.data.overall_score.last_check_date;
-              valid_data = true;
-            } else if (response.data.pagespeed_desktop.overall_score) {
-              page_data.last_check_date = response.data.pagespeed_desktop.overall_score.last_check_date;
-              valid_data = true;
-            } else {
-              // Invalid data
-              page_data.closeModal();
-              alert("There was a problem getting benchmark data from Google Pagespeed, please try again in a few mintues.");
-            }
+							valid_data = true;
+						} else if (response.data.pagespeed_desktop.overall_score) {
+							page_data.last_check_date = response.data.pagespeed_desktop.overall_score.last_check_date;
+							valid_data = true;
+						} else {
+							// Invalid data
+							page_data.closeModal();
+							alert("There was a problem getting benchmark data from Google Pagespeed, please try again in a few mintues.");
+						}
 					}
-          if(valid_data){
-            page_data.frontend_benchmark_status = status_message;
-            if (page == 'hosting-matchup') {
-              page_data.graphs = response.data.graphs;
-              page_data.graph_data = response.data.graph_data;
+					if(valid_data){
+						page_data.frontend_benchmark_status = status_message;
+						if (page == 'hosting-matchup') {
+							page_data.graphs = response.data.graphs;
+							page_data.graph_data = response.data.graph_data;
 
-              that.$root.$emit('render_hosting_matchup_graphs');
-            } else {
-              page_data.graphs = response.data;
-            }
-            page_data.updateView++;
-            page_data.closeModal();
-          }
+							that.$root.$emit('render_hosting_matchup_graphs');
+						} else {
+							page_data.graphs = response.data;
+						}
+						page_data.updateView++;
+						page_data.closeModal();
+					}
 				});
 		},
 		promptForAction(header, message, yesAction = null, noAction = null) {
