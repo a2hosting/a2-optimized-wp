@@ -635,10 +635,12 @@
 			<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=server_performance')" 
 			class="navlink-button"  :class="nav.webperf_class">Web Performance</button>
 		</div>
+		<!--
 		<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
 			<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=hosting_matchup')" 
 			class="navlink-button" :class="nav.hmatch_class">Hosting Matchup</button>
 		</div>
+		-->
 		<div class="col-md-5 col-md-offset-1 col-lg-12 col-lg-offset-0 navlink-wrapper">
 			<button type="button" @click="$emit('nav-change-url', 'admin.php?page=a2-optimized&a2_page=advanced_settings')" 
 			class="navlink-button" :class="nav.advs_class">Advanced Settings</button>
