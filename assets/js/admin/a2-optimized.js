@@ -828,26 +828,12 @@ let app = new Vue({
 	data: page_data,
 	mounted() {
 		document.addEventListener("DOMContentLoaded", function () {
-			console.log('mounted');
 			if (page_data.last_check_date && page_data.last_check_date == 'None'){
 				setTimeout(() => {
 					page_data.show_coaching = true;
 				}, 2000);
 			};
-			this.time_since_update = 60;
-			setInterval(function () {
-				console.log('tick');
-				/*
-				this.time_since_update = this.time_since_update - 1;
-				if(this.time_since_update < 1){
-					this.time_since_update = 60;
-				}
-				*/
-			}.bind(this), 1000);
-			});
-	},
-	ready: function () {
-		console.log('ready!');
+		});
 	},
 	methods: {
 		addFakeNotif: function () {
