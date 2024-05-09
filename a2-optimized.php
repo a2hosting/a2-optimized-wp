@@ -2,7 +2,7 @@
 /**
  * Main Plugin File
  *
- * @link              http://example.com
+ * @link              https://www.a2hosting.com
  * @since             3.0.0
  * @package           A2_Optimized
  *
