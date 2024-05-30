@@ -869,13 +869,13 @@ class A2_Optimized_Optimizations {
 			],
 			'themes' => [
 				'title' => 'Unused Themes',
-				'description' => 'Unused, non-default themes should be deleted.  For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping#Theme_Housekeeping">WordPress Housekeeping</a>',
+				'description' => 'Unused, non-default themes should be deleted.  For more information read the WordPress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping#Theme_Housekeeping">WordPress Housekeeping</a>',
 				'config_url' => admin_url() . 'themes.php',
 				'status' => $this->is_active('themes', false),
 			],
 			'plugins' => [
 				'title' => 'Inactive Plugins',
-				'description' => 'Unused, inactive plugins should be deleted. WordPress will still check for updates on each plugin even if it is not active, which could slow down your site. For more information read the Wordpress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping">WordPress Housekeeping</a>',
+				'description' => 'Unused, inactive plugins should be deleted. WordPress will still check for updates on each plugin even if it is not active, which could slow down your site. For more information read the WordPress.org Codex on <a target="_blank" href="http://codex.wordpress.org/WordPress_Housekeeping">WordPress Housekeeping</a>',
 				'config_url' => admin_url() . 'plugins.php',
 				'status' => $this->is_active('plugins', false),
 			],
