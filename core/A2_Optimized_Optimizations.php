@@ -852,7 +852,7 @@ class A2_Optimized_Optimizations {
 			],
 			'post_revisions' => [
 				'title' => 'Post Revisions',
-				'description' => 'The number of post revisions should be less than than 100 for most sites. This could slow down page loads.',
+				'description' => 'The number of post revisions should be less than than 100 for most sites. This could slow down page loads. Learn how to <a href=”https://www.a2hosting.com/kb/installable-applications/optimization-and-configuration/wordpress2/optimizing-wordpress-post-revision-storage/" target="_blank“>adjust your post revision setting</a>.',
 				'status' => $this->is_active('post_revisions', false),
 			],
 			'show_on_front' => [

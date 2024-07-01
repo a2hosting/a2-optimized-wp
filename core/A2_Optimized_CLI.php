@@ -595,7 +595,7 @@ class A2_Optimized_CLI {
 							break;
 						case 'wordpress':
 							if (!$output_json) {
-								echo "Running Wordpress benchmarks. Please wait a moment.\r\n";
+								echo "Running WordPress benchmarks. Please wait a moment.\r\n";
 							}
 							$result = $a2opt_benchmark->run_wordpress_benchmarks();
 							$result = $result['queries_per_second'];

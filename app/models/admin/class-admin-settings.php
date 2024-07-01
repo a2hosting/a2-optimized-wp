@@ -53,24 +53,23 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 		/* Callback for run_benchmarks AJAX request */
 		public function run_benchmarks() {
-			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ){ 
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ) {
 				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
-				wp_die(); 
+				wp_die();
 			}
-			
+
 			$target_url = $_POST['target_url'];
 			$page = $_POST['a2_page'];
 			$run_checks = $_POST['run_checks'] !== 'false';
 
-			switch($page){
+			switch ($page) {
 				case 'server-performance':
 				case 'page-speed-score':
 					$raw_frontend_data = $this->get_frontend_benchmark($run_checks);
 					if ($page == 'server-performance') {
 						$strategy = 'pagespeed_' . $_POST['a2_performance_strategy'];
 						$frontend_data = $raw_frontend_data[$strategy];
-					}
-					else {
+					} else {
 						$frontend_data = $raw_frontend_data;
 					}
 
@@ -78,11 +77,13 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 					$data = array_merge($frontend_data, $opt_data['graphs']);
 					$data['status_message'] = $raw_frontend_data['status_message'];
+
 					break;
 				case 'hosting-matchup':
 					$hosting_data = $this->get_hosting_benchmark($run_checks);
 
 					$data = $hosting_data;
+
 					break;
 			}
 
@@ -93,27 +94,26 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		//// notification functions //
 		public function get_notifications() {
 			$notifications = get_option(self::NOTIFICATIONS_KEY);
-			if ($notifications && count($notifications) == 0){
+			if ($notifications && count($notifications) == 0) {
 				$notifications = [];
 			}
 
 			return $notifications;
-
 		}
 
-		public function add_notification(){
-			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ){ 
+		public function add_notification() {
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ) {
 				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
-				wp_die(); 
+				wp_die();
 			}
 			$new_notification = '';
-			if(isset($_POST) && isset($_POST['a2_notification_text'])){
+			if (isset($_POST) && isset($_POST['a2_notification_text'])) {
 				$new_notification = esc_html($_POST['a2_notification_text']);
 			}
-			if (!empty($new_notification)){
+			if (!empty($new_notification)) {
 				$notifications = $this->get_notifications();
 				$max_id = 0;
-				if (count($notifications) > 0){
+				if (count($notifications) > 0) {
 					$max_id = max(array_keys($notifications));
 				}
 				$new_id = $max_id + 1;
@@ -127,24 +127,24 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		////
 		/* Callback for apply_optimizations AJAX request */
 		public function apply_optimizations() {
-			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ){ 
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ) {
 				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
-				wp_die(); 
+				wp_die();
 			}
-			
+
 			$data = [];
 
 			$optimizations = [];
-			foreach($_POST as $k => $value){
-				if(substr($k, 0, 4) === "opt-"){
-					$k = str_replace("opt-", "", $k);
+			foreach ($_POST as $k => $value) {
+				if (substr($k, 0, 4) === 'opt-') {
+					$k = str_replace('opt-', '', $k);
 					$optimizations[$k] = $value;
 					$this->optimizations->apply_optimization($k, $value);
 				}
 			}
 
 			$opt_perf = $this->get_opt_performance();
-			
+
 			$data['updated_data'] = $opt_perf;
 
 			$data['result'] = 'success';
@@ -154,17 +154,17 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		}
 
 		public function update_advanced_options() {
-			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ){ 
+			if ( !wp_verify_nonce($_POST['nonce'], 'a2opt_ajax_nonce') || !current_user_can('manage_options') ) {
 				echo json_encode(['result' => 'fail', 'status' => 'Permission Denied']);
-				wp_die(); 
+				wp_die();
 			}
 
 			$data = [];
 
 			$settings = [];
-			foreach($_POST as $k => $value){
-				if(substr($k, 0, 4) === "opt-"){
-					$k = str_replace("opt-", "", $k);
+			foreach ($_POST as $k => $value) {
+				if (substr($k, 0, 4) === 'opt-') {
+					$k = str_replace('opt-', '', $k);
 					$settings[$k] = $value;
 				}
 			}
@@ -177,13 +177,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 
 			echo json_encode($data);
 			wp_die();
-
 		}
 
-		public function get_advanced_settings(){
+		public function get_advanced_settings() {
 			$advanced_settings_current = get_option('a2opt-pagespeed');
 
-			if ($advanced_settings_current == null){
+			if ($advanced_settings_current == null) {
 				$advanced_settings_current = [
 					'api-key' => '',
 					'default-strategy' =>'desktop'
@@ -218,12 +217,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 					]
 				]
 			];
-	
+
 			return $advanced_settings;
 		}
 
 		public function get_hosting_benchmark($run = false) {
-			if($run){
+			if ($run) {
 				$this->benchmark->run_hosting_test_suite();
 			}
 			$backend_benchmarks = get_option('a2opt-benchmarks-hosting');
@@ -232,7 +231,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$result = [
 				'last_check_date' => 'None'
 			];
-			if ($backend_benchmarks){
+			if ($backend_benchmarks) {
 				$bm = array_pop($backend_benchmarks);
 				$result['last_check_date'] = $this->get_readable_last_check_date($bm['sysinfo']['time']);
 				$hostentry = [
@@ -241,8 +240,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 					'wordpress_db' => $bm['wordpress_db']['time'],
 					'filesystem' => $bm['filesystem'],
 				];
-			}
-			else {
+			} else {
 				$hostentry = [
 					'php' => null,
 					'mysql' => null,
@@ -251,10 +249,10 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				];
 			}
 			$hostentry = array_merge(self::BENCHMARK_DISPLAY_DATA['benchmark-host'], $hostentry);
-	
+
 			$result['graph_data']['host'] = $hostentry;
-	
-			foreach ($baseline_benchmarks as $key => $benchmark){
+
+			foreach ($baseline_benchmarks as $key => $benchmark) {
 				$entry = [
 					'php' => $benchmark['php']['total'],
 					'mysql' => $benchmark['mysql'],
@@ -274,16 +272,16 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 		}
 
 		public function get_frontend_benchmark($run = false) {
-			$status_message = "";
+			$status_message = '';
 			if ($run) {
 				$desktop_result = $this->benchmark->get_lighthouse_results('desktop');
 				$mobile_result = $this->benchmark->get_lighthouse_results('mobile');
 
 				if ($desktop_result['status'] != 'success' || $mobile_result['status'] != 'success') {
-					if(isset($desktop_result['message'])){
+					if (isset($desktop_result['message'])) {
 						$status_message = $desktop_result['message'];
 					}
-					if(isset($mobile_result['message'])){
+					if (isset($mobile_result['message'])) {
 						$status_message = $mobile_result['message'];
 					}
 				}
@@ -323,39 +321,39 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				// set these to false if no benchmarks
 				$result['pagespeed_desktop'] = $this->get_graph_data($desktop_check_date, $last_desktop, $prev_desktop);
 				$result['pagespeed_mobile'] = $this->get_graph_data($mobile_check_date, $last_mobile, $prev_mobile);
-
 			} else {
 				$desktop = [
-					"strategy" => "desktop",
-					"description" => null,
-					"scores" => [
-						"fcp" => 0,
-						"lcp" => 0,
-						"cls" => 0,
-						"fid" => 0,
-						"ttfb" => 0,
-						"audit_result" => [],
-						"overall_score" => 0
+					'strategy' => 'desktop',
+					'description' => null,
+					'scores' => [
+						'fcp' => 0,
+						'lcp' => 0,
+						'cls' => 0,
+						'fid' => 0,
+						'ttfb' => 0,
+						'audit_result' => [],
+						'overall_score' => 0
 					]
 				];
 
 				$mobile = [
-					"strategy" => "mobile",
-					"description" => null,
-					"scores" => [
-						"fcp" => 0,
-						"lcp" => 0,
-						"cls" => 0,
-						"fid" => 0,
-						"ttfb" => 0,
-						"audit_result" => [],
-						"overall_score" => 0
+					'strategy' => 'mobile',
+					'description' => null,
+					'scores' => [
+						'fcp' => 0,
+						'lcp' => 0,
+						'cls' => 0,
+						'fid' => 0,
+						'ttfb' => 0,
+						'audit_result' => [],
+						'overall_score' => 0
 					]
 				];
 				$result['pagespeed_desktop'] = $this->get_graph_data('None', $desktop, null);
 				$result['pagespeed_mobile'] = $this->get_graph_data('None', $mobile, null);
 			}
 			$result['status_message'] = $status_message;
+
 			return $result;
 		}
 
@@ -366,28 +364,27 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$extra_settings = $result['optimizations']['extra_settings']; // has to be before $result['optimizations'] gets changed
 			$settings_tethers = $result['optimizations']['settings_tethers'];
 
-
 			$displayed_optimizations = [];
 			$other_optimizations = [];
 			$opt_counts = [];
 			$graphs = [];
 			$categories = ['performance', 'security', 'bestp'];
-			
+
 			/* Setup initial counts */
-			foreach($categories as $cat){
+			foreach ($categories as $cat) {
 				$opt_counts[$cat]['active'] = 0;
 				$opt_counts[$cat]['total'] = 0;
 			}
 
 			/* Assign optimizations to display area and determine which are configured */
-			foreach($result['optimizations'] as $k => $optimization){
-				foreach($categories as $cat){
-					if(isset($optimization['category']) && $optimization['category'] == $cat){
-						if(isset($optimization['optional'])){
+			foreach ($result['optimizations'] as $k => $optimization) {
+				foreach ($categories as $cat) {
+					if (isset($optimization['category']) && $optimization['category'] == $cat) {
+						if (isset($optimization['optional'])) {
 							$other_optimizations[$cat][$k] = $optimization;
 						} else {
 							$displayed_optimizations[$cat][$k] = $optimization;
-							if($optimization['configured']){
+							if ($optimization['configured']) {
 								$opt_counts[$cat]['active']++;
 							}
 							$opt_counts[$cat]['total']++;
@@ -396,41 +393,40 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				}
 			}
 
-			foreach($result['best_practices'] as $key => $item){
+			foreach ($result['best_practices'] as $key => $item) {
 				$color_class = 'warn';
-				if(!$item['status']['is_warning']){
+				if (!$item['status']['is_warning']) {
 					$color_class = 'success';
 				}
 				$result['best_practices'][$key]['color_class'] = $color_class;
 
-				if (!isset($item['slug'])){
+				if (!isset($item['slug'])) {
 					$opt_counts['bestp']['total']++;
-					if ($color_class == 'success'){
+					if ($color_class == 'success') {
 						$opt_counts['bestp']['active']++;
 					}
 				}
 			}
 
 			/* Determine circle colors */
-			foreach($categories as $cat){
+			foreach ($categories as $cat) {
 				$color_class = 'danger';
-				if($opt_counts[$cat]['active'] > 1){
+				if ($opt_counts[$cat]['active'] > 1) {
 					$color_class = 'warn';
 				}
-				if($opt_counts[$cat]['active'] == $opt_counts[$cat]['total']){
+				if ($opt_counts[$cat]['active'] == $opt_counts[$cat]['total']) {
 					$color_class = 'success';
 				}
-				if($opt_counts[$cat]['total'] == 0){
-					$opt_counts[$cat]['total'] = 1;	
+				if ($opt_counts[$cat]['total'] == 0) {
+					$opt_counts[$cat]['total'] = 1;
 				}
 				$graphs[$cat] = [
 					'score' => ($opt_counts[$cat]['active'] / $opt_counts[$cat]['total']),
 					'max' => 1, //todo not being used?  otherwise, shouldn't it be $opt_counts[$cat]['total'] ?
-					'text' => $opt_counts[$cat]['active'] . "/" . $opt_counts[$cat]['total'],
-					'color_class' => $color_class,  
+					'text' => $opt_counts[$cat]['active'] . '/' . $opt_counts[$cat]['total'],
+					'color_class' => $color_class,
 				];
 				$graphs[$cat] = array_merge($graphs[$cat], self::BENCHMARK_DISPLAY_DATA['optimizations'][$cat]);
-	
 			}
 
 			$result['graphs'] = $graphs;
@@ -439,6 +435,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$result['other_optimizations'] = $other_optimizations;
 			$result['extra_settings'] = $extra_settings;
 			$result['settings_tethers'] =$settings_tethers;
+
 			return $result;
 		}
 
@@ -507,7 +504,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			'webperformance' => [
 				'display_text' => 'Web Performance',
 				'metric_text' => "How does your hosting <strong>compare</strong> to A2 Hosting's best plans? With the graphs below <strong>LOWER IS BETTER</strong>.",
-				'legend_text' => "Overall Wordpress Execution Time",
+				'legend_text' => 'Overall Wordpress Execution Time',
 				'explanation' => 'The web performance score measures how your current host performs compared to A2 Hosting. This web performance score looks at server speed and other metrics to determine how fast your website will load, based on which hosting company & plan you host your website with. <br /><br />
 				The lower the score on the graph the faster your website will load. Not all hosting companies and plans use the same hardware. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them.<br /><br />
 				Graphs are representitive of the following, and individual results may vary based on current server load, PHP version, WordPress version, etc.<br />
@@ -519,7 +516,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			'serverperformance' => [
 				'display_text' => 'Server Performance',
 				'metric_text' => "How fast is your hosting <strong>compared</strong> to A2 Hosting's best plans? With the graphs below <strong>LOWER IS BETTER</strong>.",
-				'legend_text' => "PHP, Mysql, and File I/O Response Time Comparison",
+				'legend_text' => 'PHP, Mysql, and File I/O Response Time Comparison',
 				'explanation' => 'The lower the scores on the graph, the faster your experience will be in the WordPress Admin dashboard and on pages that use dynamic content that can\'t be easily cached—like search forms and shopping carts. <br /><br />
 				Not all hosting companies and plans use the same hardware. If your current host has a lower server performance score than A2 Hosting, then consider moving your websites to A2 Hosting. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them.<br /><br />
 				Graphs are representitive of the following, and individual results may vary based on current server load, PHP version, WordPress version, etc.<br />
@@ -531,19 +528,19 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			'optimizations' => [
 				'performance' => [
 					'display_text' => 'Performance',
-					'metric_text' => "Optimizations that will help your performance.",
+					'metric_text' => 'Optimizations that will help your performance.',
 					'legend_text' => '',
 					'explanation' => ''
 				],
 				'security' => [
 					'display_text' => 'Security',
-					'metric_text' => "Optimizations that will help your security.",
+					'metric_text' => 'Optimizations that will help your security.',
 					'legend_text' => '',
 					'explanation' => ''
 				],
 				'bestp' => [
 					'display_text' => 'Best Practices',
-					'metric_text' => "Optimizations that bring things in line with current best practices.",
+					'metric_text' => 'Optimizations that bring things in line with current best practices.',
 					'legend_text' => '',
 					'explanation' => ''
 				],
@@ -554,7 +551,6 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				'mysql' => 'MYSQL Query Response Time',
 				'php' => 'PHP Response Time'
 			]
-
 		];
 
 		const BENCHMARK_SCORE_PROFILES = [
@@ -593,12 +589,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			];
 		}
 
-		public function get_readable_last_check_date($last_check_date){
-			if ($last_check_date == 'None'){
+		public function get_readable_last_check_date($last_check_date) {
+			if ($last_check_date == 'None') {
 				return $last_check_date;
-			}
-			else {
-				return human_time_diff(strtotime($last_check_date)) . " ago";
+			} else {
+				return human_time_diff(strtotime($last_check_date)) . ' ago';
 			}
 		}
 
@@ -606,16 +601,16 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			$metrics = ['overall_score', 'fcp', 'ttfb', 'cls','lcp', 'fid'];
 
 			$result = [];
-			
+
 			foreach ($metrics as $metric) {
 				$latest_score = 0;
 				$previous_score = 0;
-				
-				if(isset($latest['scores'][$metric])){
+
+				if (isset($latest['scores'][$metric])) {
 					$latest_score = $latest['scores'][$metric];
 				}
 
-				if(isset($previous['scores'][$metric])){
+				if (isset($previous['scores'][$metric])) {
 					$previous_score = $previous['scores'][$metric];
 				}
 
@@ -629,10 +624,9 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				*/
 
 				$status_info = $this->get_score_status_and_thresholds($metric, $latest_score);
-				if ($last_check_date == 'None'){
+				if ($last_check_date == 'None') {
 					$status_info['status'] = 'empty';
 				}
-
 
 				$decimalplaces = self::BENCHMARK_SCORE_PROFILES[$metric]['decimalplaces'];
 				$latest_score = round($latest_score, $decimalplaces);
@@ -669,12 +663,12 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				$audits = [];
 				$lcv = 0;
 				$pattern = "/\[([^]]*)\] *\(([^)]*)\)/i";
-                $replacement = '<a href="$2" target="_blank">$1</a>';
-				if(isset($latest['scores']['audit_result'])){
+				$replacement = '<a href="$2" target="_blank">$1</a>';
+				if (isset($latest['scores']['audit_result'])) {
 					foreach ($latest['scores']['audit_result'] as $audit) {
 						$display_value = '';
 						$description = preg_replace($pattern, $replacement, $audit['description']);
-						if(isset($audit['displayValue'])){
+						if (isset($audit['displayValue'])) {
 							$description .= '<br />' . $audit['displayValue'];
 						}
 						$audits[] = [

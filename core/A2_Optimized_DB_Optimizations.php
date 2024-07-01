@@ -77,7 +77,7 @@ class A2_Optimized_DBOptimizations {
 	}
 
 	/**
-	 * Update a Wordpress setting in the toggles array.
+	 * Update a WordPress setting in the toggles array.
 	 *
 	 * @param string $setting  The setting to update in the toggles array
 	 * @param bool $value      Update the setting to true or false
@@ -198,7 +198,7 @@ class A2_Optimized_DBOptimizations {
 	}
 
 	/**
-	 * Optimize Wordpress tables
+	 * Optimize WordPress tables
 	 */
 	public function optimize_tables() {
 		$query = 'SHOW TABLES';

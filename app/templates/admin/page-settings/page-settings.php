@@ -864,8 +864,8 @@
 					<ul id="menu-links" class="dropdown-menu" aria-labelledby="drop-links-wrapper">
 						<li><a target="_blank" href="https://my.a2hosting.com/">A2 Client Area</a></li>
 						<li><a target="_blank" href="https://my.a2hosting.com/submitticket.php?action=support">A2 Client Support</a></li>
-						<li><a target="_blank" href="https://wordpress.org/support/plugin/a2-optimized-wp/">Wordpress Support</a></li>
-						<li><a target="_blank" href="https://www.a2hosting.com/kb/collections/wordpress-articles">Wordpress Knowledge Base</a></li>
+						<li><a target="_blank" href="https://wordpress.org/support/plugin/a2-optimized-wp/">WordPress Support</a></li>
+						<li><a target="_blank" href="https://www.a2hosting.com/kb/collections/wordpress-articles">WordPress Knowledge Base</a></li>
 					</ul>
 				</div>
 			</div>
