@@ -228,7 +228,14 @@ class A2_Optimized_SiteHealth {
 			'post_type' => 'attachment',
 			'post_mime_type' => 'image',
 			'post_status' => 'inherit',
-			'posts_per_page' => -1,
+			'posts_per_page' => 500,
+			'meta_query'     => [
+				[
+					'key'     => '_wp_attachment_metadata',  // Meta key for image metadata.
+					'value'   => 'full',                    // Search for 'full' size images in the metadata.
+					'compare' => 'LIKE'
+				],
+			]
 		];
 
 		$query_images = new WP_Query( $query_images_args );
@@ -244,7 +251,7 @@ class A2_Optimized_SiteHealth {
 
 		if ($large_image_count > 3) {
 			$result['status'] = 'recommended';
-			$result['label'] = ( $large_image_count . ' large images found in media library' );
+			$result['label'] = ( 'Several large images found in media library' );
 			$result['description'] = sprintf(
 				'<p>%s</p>',
 				__( 'Unoptimized images may slow down rendering of your site.' )
