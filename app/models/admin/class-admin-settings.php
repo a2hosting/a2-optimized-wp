@@ -58,6 +58,11 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				wp_die();
 			}
 
+			if (!isset($_POST['a2_page']) || !isset($_POST['target_url']) || !isset($_POST['run_checks'])) {
+				echo json_encode(['result' => 'fail', 'status' => 'No page specified']);
+				wp_die();
+			}
+
 			$target_url = $_POST['target_url'];
 			$page = $_POST['a2_page'];
 			$run_checks = $_POST['run_checks'] !== 'false';
@@ -504,7 +509,7 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 			'webperformance' => [
 				'display_text' => 'Web Performance',
 				'metric_text' => "How does your hosting <strong>compare</strong> to A2 Hosting's best plans? With the graphs below <strong>LOWER IS BETTER</strong>.",
-				'legend_text' => "Overall WordPress Execution Time",
+				'legend_text' => 'Overall WordPress Execution Time',
 				'explanation' => 'The web performance score measures how your current host performs compared to A2 Hosting. This web performance score looks at server speed and other metrics to determine how fast your website will load, based on which hosting company & plan you host your website with. <br /><br />
 				The lower the score on the graph the faster your website will load. Not all hosting companies and plans use the same hardware. A2 Hosting uses the best server hardware on the market, focusing on speed & security. A2 Hosting also offers free site migration to help you move your existing websites to them.<br /><br />
 				Graphs are representitive of the following, and individual results may vary based on current server load, PHP version, WordPress version, etc.<br />
