@@ -68,7 +68,8 @@ class A2_Optimized_Benchmark {
 
 			$existing_results[date('Y-m-d H:i:s')] = $results;
 
-			update_option('a2opt-benchmarks-hosting', $existing_results);
+			update_option('a2opt-benchmarks-hosting', $existing_results, false);
+			$this->prune_benchmarks('backend', 10);
 
 			return [
 				'status' => 'success',
@@ -238,9 +239,9 @@ class A2_Optimized_Benchmark {
 		}
 
 		if ($benchmarks_type == 'frontend') {
-			update_option('a2opt-benchmarks-frontend', $benchmarks);
+			update_option('a2opt-benchmarks-frontend', $benchmarks, false);
 		} elseif ($benchmarks_type == 'backend') {
-			update_option('a2opt-benchmarks-hosting', $benchmarks);
+			update_option('a2opt-benchmarks-hosting', $benchmarks, false);
 		}
 	}
 
@@ -493,7 +494,9 @@ class A2_Optimized_Benchmark {
 					'description' => $result_desc,
 					'scores' => $this->filter_lighthouse_data($lighthouse_data)
 				];
-				update_option($option_key, $existing_results);
+				update_option($option_key, $existing_results, false);
+
+				$this->prune_benchmarks('frontend', 5);
 
 				$output = [
 					'status' => 'success',

@@ -100,9 +100,15 @@ function run_a2_optimized() {
 	}
 	if (is_admin()) {
 		new A2_Optimized_SiteHealth;
+
+		$benchmarks = new A2_Optimized_Benchmarks;
+		$benchmarks->prune_benchmarks('backend', 10);
+		$benchmarks->prune_benchmarks('frontend', 5);
+
 		if (defined('DISALLOW_FILE_EDIT') && DISALLOW_FILE_EDIT) {
 			add_action('admin_menu', ['A2_Optimized_Optimizations', 'addLockedEditor'], 100, 100);
 		}
+
 		if (in_array('easy-hide-login/wp-hide-login.php', apply_filters('active_plugins', get_option('active_plugins')))) {
 			add_filter( 'admin_email_check_interval', '__return_false' );
 		}
