@@ -1,10 +1,10 @@
 # A2 Optimized WP - Turbocharge and secure your WordPress site
 
 Contributors: a2hosting, supersoju
-Tags: a2 hosting, cache, caching, speed, fast, optimize, site performance, image optimization, image compression, site security, seo, gzip compression, minify code, code minification
+Tags: a2 hosting, cache, speed, optimize, site performance
 Requires at least: 5.1
 Tested up to: 6.6
-Stable tag: 3.0.9
+Stable tag: 3.0.10
 Requires PHP: 7.0
 License: GPLv3
 License URI: http://www.gnu.org/licenses/gpl-3.0.html
@@ -152,6 +152,9 @@ A2 Optimized is compatible with most of the features in WordFence, however you s
 Yes.  A2 Optimized works on any host that supports WordPress; however, A2 Hosting provides a few more tools for speeding up your site when hosted on an A2 Hosting server.
 
 ## Changelog
+
+### 3.0.10
+* Automatically clean out old front-end benchmarks results as they were getting quite large for some sites.
 
 ### 3.0.8
 * Fixed an issue where sites with low memory limits and tens of thousands of large images may experience problems loading the A2 Optimized dashboard.
