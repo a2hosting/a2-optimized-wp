@@ -58,13 +58,8 @@ if ( ! class_exists( __NAMESPACE__ . '\\' . 'Admin_Settings' ) ) {
 				wp_die();
 			}
 
-			if (!isset($_POST['a2_page']) || !isset($_POST['target_url']) || !isset($_POST['run_checks'])) {
-				echo json_encode(['result' => 'fail', 'status' => 'No page specified']);
-				wp_die();
-			}
-
-			$target_url = $_POST['target_url'];
-			$page = $_POST['a2_page'];
+			$target_url = isset($_POST['target_url']) && !empty($_POST['target_url']) ? $_POST['target_url'] : get_home_url();
+			$page = isset($_POST['a2_page']) && !empty($_POST['a2_page']) ? $_POST['a2_page'] : 'server_performance';
 			$run_checks = $_POST['run_checks'] !== 'false';
 
 			switch ($page) {
