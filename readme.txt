@@ -1,7 +1,7 @@
 === A2 Optimized WP - Turbocharge and secure your WordPress site ===
 Contributors: a2hosting, supersoju
 Tags: a2 hosting, cache, speed, optimize, site performanceRequires at least: 5.1
-Tested up to: 6.6
+Tested up to: 6.7
 Stable tag: 3.0.12
 Requires PHP: 7.0
 License: GPLv3
