@@ -210,7 +210,7 @@ class A2_Optimized_SiteData {
         $enabled_opts = [];
 
         foreach($a2_optimizations->get_optimizations() as $k => $opt){
-            if($opt['configured']){
+            if(isset($opt['configured']) && $opt['configured']){
                 $enabled_opts[$k] = true;
             } else {
                 $enabled_opts[$k] = false;
