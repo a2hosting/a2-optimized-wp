@@ -137,4 +137,19 @@ function run_a2_optimized() {
 	}
 }
 
+add_filter( 'plugin_action_links_a2-optimized-wp/a2-optimized.php', 'a2opt_settings_link' );
+function a2opt_settings_link( $links ) {
+        $url = esc_url( add_query_arg(
+                'page',
+                'a2-optimized&a2_page=optimizations',
+                get_admin_url() . 'admin.php'
+        ) );
+        $settings_link = "<a href='$url'>" . __( 'Settings' ) . '</a>';
+        array_push(
+                $links,
+                $settings_link
+        );
+        return $links;
+}
+
 run_a2_optimized();
